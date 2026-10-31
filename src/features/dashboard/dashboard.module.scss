@@ -19,7 +19,7 @@
 .heroCopy {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 .heroTitle {
   margin: 0;
@@ -85,14 +85,20 @@
 .statTile {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   min-width: 0;
-  padding: 22px 20px;
+  padding: 20px;
   & + & {
     border-left: 1px solid var(--border-subtle);
   }
 }
-.statLabel,
+.statLabel {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  letter-spacing: 0.4px;
+  color: var(--text-secondary);
+}
 .eyebrow {
   font-size: 11px;
   line-height: 14px;

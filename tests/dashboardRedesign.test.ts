@@ -40,7 +40,12 @@ describe('dashboard redesign', () => {
     expect(source).toContain('useRevealOnScroll<HTMLElement>');
     const styles = readFileSync('src/features/dashboard/dashboard.module.scss', 'utf8');
     expect(styles).toMatch(/\.statValue\s*\{[^}]*font-size: 28px;/);
-    expect(styles).toMatch(/\.statLabel,[\s\S]*?text-transform: uppercase;/);
+    // Stat labels are sentence-case caption text; only the section eyebrow is an overline.
+    const statLabel = styles.match(/\.statLabel\s*\{[^}]*\}/)?.[0] ?? '';
+    expect(statLabel).toContain('font-size: 12px;');
+    expect(statLabel).toContain('font-weight: 400;');
+    expect(statLabel).not.toContain('uppercase');
+    expect(styles).toMatch(/\.eyebrow\s*\{[^}]*text-transform: uppercase;/);
     expect(styles).not.toMatch(/gradient|backdrop-filter|box-shadow|#[a-f0-9]{3,8}\b/i);
   });
 });

@@ -5,10 +5,9 @@
 .searchBar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex: 1 1 240px;
+  gap: 4px;
+  width: 300px;
   min-width: 0;
-  max-width: 560px;
 }
 
 .searchInputWrapper {
@@ -24,78 +23,42 @@
   }
 }
 
-.searchInput {
-  height: 32px !important;
-  border-radius: 6px !important;
-  font-size: 13px !important;
-  padding-right: 128px !important;
+.searchInput:global(.input) {
+  height: 32px;
+  padding-block: 0;
+  padding-right: 64px;
+  border-radius: 6px;
+  font-size: 13px;
 }
 
-.searchRight {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.searchIcon {
+  color: var(--icon-default);
 }
 
 .searchCount {
   display: inline-flex;
   align-items: center;
-  min-height: 26px;
-  padding: 0 8px;
-  border-radius: $radius-full;
-  color: var(--text-secondary);
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 4px;
+  color: var(--text-tertiary);
   font-family: $font-mono;
-  font-size: 11.5px;
-  font-weight: 650;
+  font-size: 11px;
   font-variant-numeric: tabular-nums;
-  background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+  background: var(--bg-raised);
   pointer-events: none;
   white-space: nowrap;
 }
 
-.searchButton {
-  @include button-reset;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: $radius-full;
-  border: 1px solid var(--text-primary);
-  background: var(--text-primary);
-  color: var(--bg-secondary);
-  transition:
-    transform var(--dur-press, 160ms) var(--ease-out-strong, ease-out),
-    background-color $transition-fast,
-    border-color $transition-fast,
-    opacity $transition-fast;
-
-  &:active:not(:disabled) {
-    transform: scale(0.94);
-  }
-
-  &:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .searchButton:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--text-primary) 86%, var(--bg-secondary));
-    border-color: transparent;
-  }
-}
-
 .searchActions {
   display: flex;
-  gap: 6px;
+  gap: 2px;
   flex-shrink: 0;
 
   button {
-    min-width: 32px;
-    width: 32px;
-    height: 32px;
+    min-width: 28px;
+    width: 28px;
+    height: 28px;
     padding: 0 !important;
     border-radius: 6px;
   }
@@ -114,17 +77,18 @@
   line-height: 18px;
 }
 
+/* Fills the viewport below the page header (header ≈ 148px + bottom gutter 32px). */
 .editorWrapper {
   width: 100%;
   flex: 0 0 auto;
-  height: clamp(500px, 70vh, 1040px);
+  height: max(420px, calc(100vh - 180px));
   border: 1px solid var(--border-default);
   border-radius: 10px;
   overflow: hidden;
   background: var(--bg-surface);
 
   @supports (height: 100dvh) {
-    height: clamp(500px, 70dvh, 1040px);
+    height: max(420px, calc(100dvh - 180px));
   }
 
   :global {
@@ -146,7 +110,7 @@
     }
 
     .cm-content {
-      padding: 12px 0;
+      padding: 14px 0;
       caret-color: var(--text-primary);
     }
 
@@ -154,15 +118,42 @@
       padding: 0 16px;
     }
 
+    .cm-cursor,
+    .cm-dropCursor {
+      border-left-color: var(--text-primary);
+    }
+
+    .cm-selectionBackground,
+    .cm-editor.cm-focused .cm-selectionBackground,
+    .cm-content ::selection {
+      background: color-mix(in srgb, var(--info-color) 28%, transparent) !important;
+    }
+
     .cm-gutters {
-      border-right: 1px solid var(--border-default);
-      background: var(--bg-raised);
+      border-right: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      color: var(--text-muted);
     }
 
     .cm-lineNumbers .cm-gutterElement {
       padding: 0 8px 0 12px;
       min-width: 40px;
       color: var(--text-muted);
+    }
+
+    .cm-foldGutter .cm-gutterElement {
+      color: var(--text-muted);
+    }
+
+    .cm-yamlScalar,
+    .cm-yamlScalar span {
+      color: var(--status-warning);
+    }
+
+    .cm-panels {
+      background: var(--bg-raised);
+      color: var(--text-primary);
+      border-color: var(--border-default);
     }
 
     .cm-activeLine,
@@ -187,38 +178,14 @@
 
 /* ---------- 响应式 ---------- */
 
-@include mobile {
+@media (max-width: 768px) {
   .searchBar {
-    flex-basis: 100%;
-    max-width: none;
-    flex-wrap: wrap;
+    flex: 1 1 100%;
+    width: auto;
+    order: -1;
   }
 
-  .searchActions {
-    justify-content: stretch;
-    flex: 1;
-
-    button {
-      flex: 1;
-      width: auto;
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .searchInput {
-    padding-right: 108px !important;
-  }
-}
-
-/* ---------- 无障碍 ---------- */
-
-@media (prefers-reduced-motion: reduce) {
-  .searchButton {
-    transition: none;
-  }
-
-  .searchButton:active:not(:disabled) {
-    transform: none;
+  .editorWrapper {
+    height: max(360px, calc(100dvh - 260px));
   }
 }

@@ -483,6 +483,7 @@ export function LogsPage() {
                   placeholder={t('logs.search_placeholder')}
                   aria-label={t('logs.search_placeholder')}
                   className={styles.searchInput}
+                  leftElement={<IconSearch size={16} className={styles.searchIcon} />}
                   rightElement={
                     searchQuery ? (
                       <button
@@ -494,9 +495,7 @@ export function LogsPage() {
                       >
                         <IconX size={16} />
                       </button>
-                    ) : (
-                      <IconSearch size={16} className={styles.searchIcon} />
-                    )
+                    ) : undefined
                   }
                 />
               </div>

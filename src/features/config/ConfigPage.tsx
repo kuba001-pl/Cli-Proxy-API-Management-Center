@@ -304,6 +304,11 @@ export function ConfigPage() {
         reloadDisabled={doc.loading || doc.saving}
         reloading={doc.loading}
         onReload={doc.handleReload}
+        leadingActions={
+          mode === 'source' ? (
+            <SourceSearchBar search={sourceSearch} disabled={disableControls || doc.loading} />
+          ) : undefined
+        }
         extraActions={
           <ModeSwitch
             mode={mode}
@@ -324,13 +329,11 @@ export function ConfigPage() {
         </div>
       )}
 
-      <div className={styles.toolbar} data-reveal>
-        {mode === 'visual' ? (
+      {mode === 'visual' ? (
+        <div className={styles.toolbar} data-reveal>
           <ConfigSearch disabled={disableControls || doc.loading} onJump={jumpToField} />
-        ) : (
-          <SourceSearchBar search={sourceSearch} disabled={disableControls || doc.loading} />
-        )}
-      </div>
+        </div>
+      ) : null}
 
       {mode === 'visual' ? (
         <>

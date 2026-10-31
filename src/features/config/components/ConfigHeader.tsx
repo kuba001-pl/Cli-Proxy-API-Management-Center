@@ -13,6 +13,8 @@ export type ConfigHeaderProps = {
   onReload: () => void;
   /** Editor mode switch, alongside Reload at every viewport width. */
   extraActions?: ReactNode;
+  /** Optional control rendered before Reload (the Source-mode search bar). */
+  leadingActions?: ReactNode;
 };
 
 /**
@@ -25,6 +27,7 @@ export function ConfigHeader({
   reloading,
   onReload,
   extraActions,
+  leadingActions,
 }: ConfigHeaderProps) {
   const { t } = useTranslation();
   const toneClass: Record<HeaderMetaSegment['tone'], string> = {
@@ -58,6 +61,7 @@ export function ConfigHeader({
         </p>
       </div>
       <div className={styles.actions} data-reveal>
+        {leadingActions}
         <Button
           type="button"
           variant="ghost"

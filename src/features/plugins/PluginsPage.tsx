@@ -559,7 +559,7 @@ export function PluginsPage() {
           onChange={(event) => setFilter(event.target.value)}
           placeholder={t('plugin_management.search_placeholder')}
           aria-label={t('plugin_management.search_label')}
-          rightElement={<IconSearch size={16} />}
+          leftElement={<IconSearch size={16} />}
         />
         <Button
           variant="secondary"

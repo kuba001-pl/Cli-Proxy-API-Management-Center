@@ -49,6 +49,11 @@
     cursor: not-allowed;
   }
 
+  :global(input.input) {
+    height: 32px;
+    padding-block: 0;
+  }
+
   :global(textarea.input) {
     min-height: 112px;
   }
@@ -128,7 +133,7 @@
 
 /* 控件槽宽度分三档；百分比兜底保证标题列永远有一半以上的位置。 */
 .size_sm {
-  --setting-control: min(120px, 42%);
+  --setting-control: min(150px, 42%);
 }
 
 .size_md {

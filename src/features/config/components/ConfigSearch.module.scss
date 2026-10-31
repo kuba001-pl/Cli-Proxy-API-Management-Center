@@ -20,14 +20,11 @@
 }
 
 .searchControl {
-  padding-right: 38px !important;
+  padding-right: 12px;
 }
 
 .searchIcon {
-  display: inline-flex;
-  align-items: center;
-  color: var(--text-tertiary);
-  pointer-events: none;
+  color: var(--icon-default);
 }
 
 .searchResults {

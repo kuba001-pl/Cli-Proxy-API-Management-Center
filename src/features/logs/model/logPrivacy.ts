@@ -1,10 +1,19 @@
-import { PRIVACY_MASK, findEmails, privacyFileName, privacyText } from '@/utils/privacy';
+import {
+  PRIVACY_MASK,
+  findEmails,
+  privacyFileName,
+  privacyText,
+  replaceEmails,
+  splitCredentialFileName,
+} from '@/utils/privacy';
 import type { LogEntry } from './logSelectors';
 
 // Logs are free text: recognize explicitly labelled identities without treating
 // ordinary messages, request IDs or timestamps as account names.
 const IDENTITY_FIELD =
   /(\b(?:username|user_name|user|account(?:[_ -]?(?:name|label))?|email)["']?(?:[ \t]*[:=]\s*|\s+))(?:"([^"]+)"|'([^']+)'|([^\s"',;|<>]+))/gi;
+
+const FILE_EXTENSION = /\.(?:json|log|txt)$/i;
 
 export function logIdentities(text: string): string[] {
   const identities = new Set<string>();
@@ -13,10 +22,28 @@ export function logIdentities(text: string): string[] {
   }
   for (const email of findEmails(text)) {
     // The generic email matcher can include a credential/log file extension.
-    identities.add(email.replace(/\.(?:json|log|txt)$/i, ''));
+    const stem = email.replace(FILE_EXTENSION, '');
+    identities.add(stem);
+    // Credential names (`claude-5aebc0bd-jane@x.test.json`) also expose the bare account.
+    const credential = splitCredentialFileName(stem);
+    if (credential.prefix && credential.identity) identities.add(credential.identity);
   }
   return [...identities];
 }
+
+/**
+ * The email matcher swallows a credential file's provider/hash prefix as part of the local
+ * part, so mask those tokens as file names first: keep provider, hash and plan segments and
+ * dot out only the account (`antigravity-••••••••••••••••.json`).
+ */
+const maskCredentialFileNames = (text: string): string =>
+  replaceEmails(text, (token) => {
+    const extension = token.match(FILE_EXTENSION)?.[0] ?? '';
+    const stem = extension ? token.slice(0, -extension.length) : token;
+    const { prefix, identity } = splitCredentialFileName(stem);
+    if (!prefix || !identity) return token;
+    return privacyFileName(true, stem, [identity]) + extension;
+  });
 
 export function privacyLogText(
   enabled: boolean,
@@ -24,7 +51,7 @@ export function privacyLogText(
   identities = logIdentities(enabled ? text : '')
 ): string {
   if (!enabled) return text;
-  return privacyText(true, text, identities).replace(
+  return privacyText(true, maskCredentialFileNames(text), identities).replace(
     IDENTITY_FIELD,
     (_match, prefix: string) => `${prefix}${PRIVACY_MASK}`
   );

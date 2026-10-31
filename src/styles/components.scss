@@ -140,6 +140,24 @@ select.input {
   height: 36px;
 }
 
+/* Leading decorative slot of the shared Input (search glyph etc.). */
+.input-leading {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  color: var(--icon-default);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+/* Element-qualified so per-page `.x:global(.input)` padding shorthands don't hide the glyph. */
+input.input.input-has-leading {
+  padding-left: 36px;
+}
+
 textarea {
   min-height: 88px;
   resize: vertical;

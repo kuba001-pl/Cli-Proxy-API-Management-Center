@@ -10,6 +10,8 @@
 }
 
 .bar {
+  box-sizing: border-box;
+  min-width: 514px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -29,8 +31,9 @@
   gap: 10px;
   padding-left: 6px;
   color: var(--text-primary);
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 600;
+  line-height: 20px;
   white-space: nowrap;
 }
 
@@ -56,6 +59,11 @@
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
+
+  :global(.btn) {
+    font-size: 13px;
+    white-space: nowrap;
+  }
 }
 
 @keyframes config-save-in {
@@ -72,6 +80,7 @@
   }
 
   .bar {
+    min-width: 0;
     flex-wrap: wrap;
     gap: 12px;
   }
@@ -79,6 +88,12 @@
   .actionsGroup {
     flex: 1;
     justify-content: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .status {
+    flex-basis: 100%;
   }
 }
 

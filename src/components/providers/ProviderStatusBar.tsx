@@ -9,32 +9,11 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { computeTooltipPlacement } from './statusTooltipPlacement';
+import { statusBlockTone } from './statusBlockTone';
 import { useTranslation } from 'react-i18next';
 import type { StatusBarData, StatusBlockDetail } from '@/utils/recentRequests';
 
 const defaultStyles: Record<string, string> = {};
-
-/**
- * 根据成功率 (0–1) 在三个色标之间做 RGB 线性插值
- * 0 → 红 (#ef4444)  →  0.5 → 金黄 (#facc15)  →  1 → 绿 (#22c55e)
- */
-const COLOR_STOPS = [
-  { r: 239, g: 68, b: 68 }, // #ef4444
-  { r: 250, g: 204, b: 21 }, // #facc15
-  { r: 34, g: 197, b: 94 }, // #22c55e
-] as const;
-
-function rateToColor(rate: number): string {
-  const t = Math.max(0, Math.min(1, rate));
-  const segment = t < 0.5 ? 0 : 1;
-  const localT = segment === 0 ? t * 2 : (t - 0.5) * 2;
-  const from = COLOR_STOPS[segment];
-  const to = COLOR_STOPS[segment + 1];
-  const r = Math.round(from.r + (to.r - from.r) * localT);
-  const g = Math.round(from.g + (to.g - from.g) * localT);
-  const b = Math.round(from.b + (to.b - from.b) * localT);
-  return `rgb(${r}, ${g}, ${b})`;
-}
 
 function formatTime(timestamp: number): string {
   const date = new Date(timestamp);
@@ -187,8 +166,13 @@ export function ProviderStatusBar({ statusData, styles: stylesProp }: ProviderSt
     <div className={s.statusBar}>
       <div className={s.statusBlocks} ref={blocksRef}>
         {statusData.blockDetails.map((detail, idx) => {
-          const isIdle = detail.rate === -1;
-          const blockStyle = isIdle ? undefined : { backgroundColor: rateToColor(detail.rate) };
+          const tone = statusBlockTone(detail);
+          const toneClass =
+            tone === 'idle'
+              ? s.statusBlockIdle
+              : tone === 'failure'
+                ? s.statusBlockFailure
+                : s.statusBlockSuccess;
           const isActive = activeTooltip === idx;
 
           return (
@@ -199,10 +183,7 @@ export function ProviderStatusBar({ statusData, styles: stylesProp }: ProviderSt
               onPointerLeave={handlePointerLeave}
               onPointerDown={(e) => handlePointerDown(e, idx)}
             >
-              <div
-                className={`${s.statusBlock} ${isIdle ? s.statusBlockIdle : ''}`}
-                style={blockStyle}
-              />
+              <div className={`${s.statusBlock} ${toneClass ?? ''}`} data-tone={tone} />
               {isActive && renderTooltip(detail)}
             </div>
           );

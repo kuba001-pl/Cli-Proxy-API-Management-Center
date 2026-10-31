@@ -34,6 +34,24 @@ describe('logs display privacy', () => {
     );
   });
 
+  test('keeps provider, hash and plan segments of credential file names in log lines', () => {
+    expect(
+      privacyLogText(true, 'selected credential claude-5aebc0bd-jane.doe@example.com.json')
+    ).toBe(`selected credential claude-5aebc0bd-${PRIVACY_MASK}.json`);
+    expect(privacyLogText(true, 'refreshed codex-dbffca66-jane.doe@example.com-plus.json')).toBe(
+      `refreshed codex-dbffca66-${PRIVACY_MASK}-plus.json`
+    );
+    const mixed = privacyLogText(
+      true,
+      'retry antigravity-jane.doe@example.com.json for jane.doe@example.com'
+    );
+    expect(mixed).toBe(`retry antigravity-${PRIVACY_MASK}.json for ${PRIVACY_MASK}`);
+    expect(mixed).not.toContain('jane');
+    expect(privacyLogText(false, 'claude-5aebc0bd-jane@example.com.json')).toBe(
+      'claude-5aebc0bd-jane@example.com.json'
+    );
+  });
+
   test('caches masked entries without changing searchable text or action identifiers', () => {
     const entry: LogEntry = {
       id: 7,

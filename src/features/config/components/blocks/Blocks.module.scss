@@ -149,6 +149,7 @@
 }
 
 .apiKeysCopy {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 3px;
@@ -162,10 +163,16 @@
   line-height: 1.4;
 }
 
+/* Redundant with the section context; kept for screen readers only (matches config.png). */
 .apiKeysHint {
-  color: var(--text-secondary);
-  font-size: 12px;
-  line-height: 1.55;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .apiKeyList {

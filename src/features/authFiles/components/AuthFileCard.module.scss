@@ -330,6 +330,12 @@
 .statusBlockIdle {
   background: var(--bg-active);
 }
+.statusBlockSuccess {
+  background: var(--text-tertiary);
+}
+.statusBlockFailure {
+  background: var(--status-danger);
+}
 @media (max-width: 700px) {
   .details {
     padding-left: 20px;

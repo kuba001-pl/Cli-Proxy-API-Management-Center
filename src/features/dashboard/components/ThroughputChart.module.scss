@@ -302,10 +302,38 @@
 
 /* ---------- 数据表 ---------- */
 
-.tableToggle {
+// A single divider, not a second card: override the shared Collapsible surface
+// (element-qualified so it wins regardless of stylesheet order).
+details.tableToggle {
+  margin-top: 4px;
+  border: 0;
   border-top: 1px solid var(--border-subtle);
-  padding-top: 12px;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
   font-size: 13px;
+
+  > summary {
+    padding: 14px 0 0;
+    font-weight: 600;
+    color: var(--text-secondary);
+
+    &:hover {
+      background: transparent;
+      color: var(--text-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--text-secondary);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+  }
+
+  > div {
+    padding: 12px 0 0;
+    border-top: 0;
+  }
 }
 
 .table {

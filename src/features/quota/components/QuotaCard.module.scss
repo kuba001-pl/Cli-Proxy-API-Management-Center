@@ -58,10 +58,13 @@
   white-space: nowrap;
   color: var(--text-primary);
 }
+// Meter columns are shared with nested groups (Antigravity) through --quota-columns.
 .body {
+  --quota-columns: 3;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr));
-  gap: 20px 24px;
+  grid-template-columns: repeat(var(--quota-columns), minmax(0, 1fr));
+  align-items: start;
+  gap: 16px 24px;
   min-width: 0;
 }
 .idleBody {
@@ -201,6 +204,11 @@
     max-width: none;
   }
 }
+@media (max-width: 1100px) {
+  .body {
+    --quota-columns: 2;
+  }
+}
 @include mobile {
   .card {
     grid-template-columns: minmax(0, 1fr);
@@ -210,8 +218,7 @@
     grid-column: 1;
   }
   .body {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px 16px;
+    gap: 16px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
