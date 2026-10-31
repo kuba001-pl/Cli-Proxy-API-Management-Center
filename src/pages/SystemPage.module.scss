@@ -34,7 +34,7 @@
   height: 108px;
   border-radius: 26px;
   object-fit: cover;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+  box-shadow: var(--shadow);
 }
 
 .aboutTitle {
@@ -68,25 +68,25 @@
   padding: $spacing-md $spacing-lg;
   border-radius: $radius-lg;
   border: 1px solid var(--border-color);
-  background: color-mix(in srgb, var(--bg-secondary) 82%, transparent);
+  background: var(--bg-surface);
   text-align: left;
 }
 
 .tapTile {
   border: 1px solid var(--border-color);
-  background: color-mix(in srgb, var(--bg-secondary) 82%, transparent);
+  background: var(--bg-surface);
   color: inherit;
   padding: $spacing-md $spacing-lg;
   cursor: pointer;
   transition:
-    transform 0.18s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    transform var(--dur-hover) var(--ease-out-strong),
+    border-color var(--dur-hover) var(--ease-out-strong),
+    box-shadow var(--dur-hover) var(--ease-out-strong);
 
   &:hover {
     transform: translateY(-1px);
     border-color: var(--primary-color);
-    box-shadow: 0 8px 18px rgba($primary-color, 0.18);
+    box-shadow: var(--shadow);
   }
 
   &:active {
@@ -171,7 +171,7 @@
 
     .value {
       color: var(--text-primary);
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-family: $font-mono;
     }
   }
 }
@@ -188,7 +188,7 @@
   padding: $spacing-sm $spacing-md;
   background-color: var(--bg-secondary);
   border-radius: $radius-md;
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-family: $font-mono;
   font-size: 13px;
 
   &:hover {
@@ -223,9 +223,7 @@
   border-radius: $radius-full;
   border: 1px solid var(--border-color);
   background-color: var(--bg-secondary);
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
-    monospace;
+  font-family: $font-mono;
 }
 
 .modelName {
@@ -264,7 +262,7 @@
       font-size: 16px;
       font-weight: 600;
       color: var(--text-primary);
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-family: $font-mono;
     }
   }
 }
@@ -285,13 +283,13 @@
   border-radius: $radius-lg;
   text-decoration: none;
   color: inherit;
-  transition: all 0.2s ease;
+  transition: all var(--dur-hover) var(--ease-out-strong);
 
   &:hover {
     background-color: var(--bg-hover);
     border-color: var(--primary-color);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
   }
 
   &:active {
@@ -306,13 +304,13 @@
   width: 44px;
   height: 44px;
   border-radius: $radius-md;
-  background-color: #24292f;
-  color: white;
+  background-color: var(--bg-raised);
+  color: var(--text-secondary);
   flex-shrink: 0;
 
   &.github,
   &.docs {
-    background-color: #24292f;
+    background-color: var(--bg-raised);
   }
 }
 
@@ -367,5 +365,15 @@
     font-weight: 600;
     line-height: 1.22;
     letter-spacing: -0.006em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tapTile,
+  .linkCard {
+    transition: none;
+    &:hover {
+      transform: none;
+    }
   }
 }

@@ -166,3 +166,32 @@
     transform: none;
   }
 }
+
+.panel {
+  border-radius: 12px;
+  background: var(--bg-surface);
+  border-color: var(--border-default);
+  gap: 14px;
+  padding: 20px;
+}
+.panelTitle {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+.panelBody > :global(.empty-state) {
+  border: 1px dashed var(--border-subtle);
+  border-radius: 8px;
+  padding: 20px 16px;
+}
+.viewModeSwitch {
+  border-radius: 8px;
+  background: var(--bg-app);
+}
+
+.panelBody :global(.empty-title) {
+  color: var(--text-tertiary);
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 400;
+}

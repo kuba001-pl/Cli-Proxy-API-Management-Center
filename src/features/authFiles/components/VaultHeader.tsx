@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { Button } from '@/components/ui/Button';
 import { IconRefreshCw, IconUpload } from '@/components/ui/icons';
 import { useRevealGroup } from '@/hooks/motion';
 import styles from './VaultHeader.module.scss';
@@ -71,36 +71,32 @@ export function VaultHeader(props: VaultHeaderProps) {
       </div>
       <div className={styles.actions} data-reveal>
         {onRefreshCredentials && (
-          <button
-            type="button"
-            className={styles.ghostAction}
+          <Button
+            variant="ghost"
+            size="sm"
+            loading={refreshingCredentials}
             onClick={onRefreshCredentials}
             disabled={
               disableControls || loading || refreshingCredentials || credentialRefreshDisabled
             }
           >
-            {refreshingCredentials ? <LoadingSpinner size={14} /> : <IconRefreshCw size={14} />}
+            {!refreshingCredentials && <IconRefreshCw size={14} />}
             {t('auth_files.refresh_all_button')}
-          </button>
+          </Button>
         )}
-        <button
-          type="button"
-          className={styles.ghostAction}
-          onClick={onRefresh}
-          disabled={loading || refreshing}
-        >
+        <Button variant="secondary" size="sm" onClick={onRefresh} disabled={loading || refreshing}>
           <IconRefreshCw size={14} className={refreshing ? styles.spinning : undefined} />
           {t('common.refresh')}
-        </button>
-        <button
-          type="button"
-          className={styles.primaryAction}
+        </Button>
+        <Button
+          size="sm"
+          loading={uploading}
           onClick={onUpload}
           disabled={disableControls || uploading}
         >
-          {uploading ? <LoadingSpinner size={14} /> : <IconUpload size={15} />}
+          {!uploading && <IconUpload size={15} />}
           {t('auth_files.upload_button')}
-        </button>
+        </Button>
       </div>
     </header>
   );

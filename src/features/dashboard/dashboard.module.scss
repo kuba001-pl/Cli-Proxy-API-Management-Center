@@ -1,985 +1,460 @@
 @use '../../styles/mixins' as *;
 
-/* 可视化配色与动效 tokens（--viz-*、--ease-out-strong、--dur-*）已提升到 themes.scss :root。 */
 .page {
-  position: relative;
-  max-width: 1120px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
   width: 100%;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(44px, 6.5vh, 76px);
-}
-
-/* ---------- 环境层（ambient）---------- */
-
-/*
- * 页面被 .page-transition（overflow: hidden）裁切，环境层绝不能伸出页面顶端，
- * 否则会在容器上缘被硬切出一条分界线。因此这里不做越界定位：
- * 强度用 mask 从顶端 0 平滑升起，任何祖先在哪裁切都只会切到零强度区。
- */
-.ambient {
-  position: absolute;
-  inset: 0 -40px auto;
-  height: 560px;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-/* 环境层收敛为一道极淡的顶部绿色 wash：绿色只属于"活着的流量"。
- * radial-gradient 本身就是连续的，不需要 blur（blur 的溢出反而会被裁出硬边）。 */
-.washTop {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: min(960px, 96vw);
-  height: 480px;
-  transform: translateX(-50%);
-  background: radial-gradient(
-    ellipse 75% 70% at 50% 18%,
-    color-mix(in srgb, var(--viz-success) 10%, transparent),
-    transparent 70%
-  );
-  mask-image: linear-gradient(to bottom, transparent, #000 26%, #000 62%, transparent);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 26%, #000 62%, transparent);
-}
-
-.gridWash {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(to right, var(--border-color) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--border-color) 1px, transparent 1px);
-  background-size: 72px 72px;
-  opacity: 0.24;
-  /* 同样从顶端 0 淡入（intersect 取两层交集），避免网格在裁切线处满强度起步 */
-  mask-image:
-    linear-gradient(to bottom, transparent, #000 48px),
-    radial-gradient(ellipse 70% 60% at 50% 0%, #000 0%, transparent 78%);
-  -webkit-mask-image:
-    linear-gradient(to bottom, transparent, #000 48px),
-    radial-gradient(ellipse 70% 60% at 50% 0%, #000 0%, transparent 78%);
-  mask-composite: intersect;
-  -webkit-mask-composite: source-in;
-}
-
-/* ---------- Hero ---------- */
-
-.hero {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
-  gap: clamp($spacing-lg, 4vw, 56px);
-  align-items: center;
-  padding-top: clamp($spacing-md, 3vh, 40px);
-  /* 底部留出脉搏线的呼吸空间 */
-  padding-bottom: clamp(64px, 11vh, 120px);
-
-  @media (max-width: 900px) {
-    grid-template-columns: minmax(0, 1fr);
-    padding-bottom: clamp(48px, 8vh, 72px);
-  }
-}
-
-/* 签名元素：横贯 hero 底部的实时流量脉搏线 */
-.heroWire {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -10px;
-  height: clamp(88px, 15vh, 160px);
-  z-index: 0;
-  pointer-events: none;
-}
-
-.heroCopy {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: $spacing-md;
   min-width: 0;
 }
 
-/* 判词标题：文案来自实时状态，短，所以敢放大 */
+.hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.heroCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 .heroTitle {
   margin: 0;
-  font-size: clamp(44px, 6.2vw, 80px);
-  line-height: 1.05;
+  font-size: 28px;
+  line-height: 34px;
   font-weight: 700;
-  letter-spacing: -0.035em;
-  color: var(--text-primary);
-  text-wrap: balance;
+  letter-spacing: -0.4px;
 }
-
-/* 句号即状态灯，颜色由 TSX 按语义色注入 */
-.heroPeriod {
-  display: inline;
-  margin-inline-start: clamp(4px, 0.08em, 7px);
-  letter-spacing: 0;
-}
-
-/* 有活流量时状态灯极缓呼吸（仅 opacity，inline 元素安全） */
-.heroPeriodLive {
-  animation: periodBreath 3.2s ease-in-out 1.8s infinite;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
-}
-
 .heroMeta {
   margin: 0;
-  font-family: $font-mono;
-  font-size: 13px;
-  letter-spacing: 0.02em;
-  color: var(--text-secondary);
-  font-variant-numeric: tabular-nums;
+  font: 12.5px/18px $font-mono;
+  color: var(--text-tertiary);
 }
-
 .heroActions {
   display: flex;
+  align-items: center;
+  gap: 8px;
   flex-wrap: wrap;
-  gap: $spacing-sm;
-  margin-top: $spacing-xs;
 }
-
 .primaryAction,
 .ghostAction {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 11px 20px;
-  border-radius: $radius-full;
-  font-size: 14px;
+  justify-content: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: var(--bg-raised);
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 18px;
   font-weight: 600;
   text-decoration: none;
-  transition:
-    transform var(--dur-press) var(--ease-out-strong),
-    background-color $transition-fast,
-    border-color $transition-fast,
-    box-shadow var(--dur-hover) var(--ease-out-strong),
-    color $transition-fast;
-
-  /* 按下即回应：不等 click，指针落下就缩 */
-  &:active {
-    transform: scale(0.97);
+  transition: background var(--dur-hover) var(--ease-out-strong);
+  &:hover {
+    background: var(--bg-active);
   }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-
-    &:active {
-      transform: none;
-    }
+  &:focus-visible {
+    outline: 2px solid var(--text-secondary);
+    outline-offset: 3px;
   }
 }
-
-/* 墨色药丸：浅色主题下是深墨，深色主题自动反相为浅纸 */
-.primaryAction {
-  background: var(--text-primary);
-  color: var(--bg-secondary);
-  border: 1px solid transparent;
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      transform: translateY(-1px);
-      background: color-mix(in srgb, var(--text-primary) 86%, var(--bg-secondary));
-      box-shadow: 0 12px 26px color-mix(in srgb, var(--text-primary) 22%, transparent);
-    }
-  }
-
-  /* 悬停态下按压：抬升让位于回缩 */
-  &:active {
-    transform: translateY(0) scale(0.97);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        transform: none;
-      }
-    }
-  }
-}
-
-/* 次要动作降为安静的文字链接：不抬升，箭头代它点头 */
 .ghostAction {
-  padding-left: $spacing-xs;
-  padding-right: $spacing-xs;
-  border: none;
-  color: var(--text-secondary);
+  border-color: transparent;
   background: transparent;
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      color: var(--text-primary);
-      background: transparent;
-
-      .linkArrow {
-        transform: translateX(3px);
-      }
-    }
-  }
+  color: var(--text-secondary);
 }
-
-/* 文字链接末尾的箭头：hover 时前移 3px，暗示去向 */
 .linkArrow {
-  display: inline-block;
-  transition: transform var(--dur-hover, 200ms) var(--ease-out-strong, ease-out);
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-    transform: none !important;
-  }
+  margin-left: 4px;
+  color: var(--text-tertiary);
 }
 
-/* Hero 数字仪表卡 —— 悬浮在脉搏线之上的玻璃面板 */
-.heroPanel {
-  --glass-blur: 14px;
-
-  position: relative;
-  z-index: 1;
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  background: var(--bg-surface);
+}
+.statTile {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xs;
-  padding: clamp($spacing-lg, 2.5vw, 28px);
-  border-radius: 20px;
-  border: 1px solid var(--glass-border);
-  background: linear-gradient(
-    145deg,
-    color-mix(in srgb, var(--bg-primary) 90%, transparent),
-    color-mix(in srgb, var(--bg-secondary) 74%, transparent)
-  );
-  backdrop-filter: var(--glass-backdrop-filter);
-  -webkit-backdrop-filter: var(--glass-backdrop-filter);
-  box-shadow: var(--shadow-lg);
+  gap: 12px;
+  min-width: 0;
+  padding: 22px 20px;
+  & + & {
+    border-left: 1px solid var(--border-subtle);
+  }
 }
-
+.statLabel,
+.eyebrow {
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+.statValue {
+  font-size: 28px;
+  line-height: 34px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  font-variant-numeric: tabular-nums;
+}
+.statHint {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--text-tertiary);
+}
+.statMeter {
+  margin-top: -4px;
+}
 .heroPanelTop {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: $spacing-sm;
+  gap: 8px;
 }
-
-.heroPanelLabel {
-  font-family: $font-mono;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-
 .liveBadge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 9px;
-  border-radius: $radius-full;
-  border: 1px solid color-mix(in srgb, var(--viz-success) 35%, transparent);
-  background: color-mix(in srgb, var(--viz-success) 8%, transparent);
-  font-family: $font-mono;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--success-badge-text);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--status-success);
 }
-
 .liveDot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--viz-success);
-  animation: livePing 2s ease-out infinite;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
+  background: var(--status-success);
 }
-
-/* 遥测数字统一等宽：这是 CLI 代理，mono 是它的母语 */
-.heroFigure {
-  font-family: $font-mono;
-  font-size: clamp(42px, 5.6vw, 62px);
-  line-height: 1.05;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-}
-
-.heroPanelMeta {
-  font-family: $font-mono;
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
-/* 成功/失败构成比例条 */
-.ratioBar {
-  display: flex;
-  gap: 2px;
-  height: 6px;
-  margin-top: $spacing-sm;
-}
-
-.ratioSegment {
-  display: block;
-  min-width: 4px;
-  border-radius: 3px;
-}
-
 .heroSplit {
   display: flex;
-  flex-wrap: wrap;
-  gap: $spacing-md;
-  padding-top: $spacing-sm;
-  border-top: 1px solid var(--border-color);
-  font-size: 12px;
-  color: var(--text-secondary);
+  flex-direction: column;
+  gap: 6px;
 }
-
 .heroSplitItem {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-
+  font-size: 12px;
+  color: var(--text-tertiary);
   b {
-    font-family: $font-mono;
     color: var(--text-primary);
-    font-variant-numeric: tabular-nums;
+    font-family: $font-mono;
   }
 }
-
 .splitSwatch {
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
+  width: 6px;
+  height: 6px;
   flex: none;
 }
-
 .splitSuccess {
-  background: var(--viz-success);
+  background: var(--text-tertiary);
 }
-
 .splitFailure {
-  background: var(--viz-failure);
+  background: var(--status-danger);
 }
 
-/* ---------- KPI 行 ---------- */
-
-.statsRow {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: $spacing-md;
-
-  @media (max-width: 900px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  @media (max-width: 460px) {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-.statTile {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: $spacing-lg;
-  border-radius: 14px;
-  border: 1px solid var(--border-color);
-  background: color-mix(in srgb, var(--bg-primary) 82%, transparent);
-  transition: border-color $transition-fast;
-
-  /* 左上角色签：语义色调由 --tile-accent 注入 */
-  &::before {
-    content: '';
-    width: 28px;
-    height: 3px;
-    margin-bottom: 2px;
-    border-radius: $radius-full;
-    background: var(--tile-accent, var(--border-hover));
-  }
-
-  /* 卡片不可点击，因此不抬升不投影——悬停只轻描边框辅助聚焦 */
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      border-color: var(--border-hover);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-}
-
-.statLabel {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.statValue {
-  font-family: $font-mono;
-  font-size: 28px;
-  line-height: 1.1;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-}
-
-.statMeter {
-  margin: 4px 0 2px;
-}
-
-.statHint {
-  font-size: 12px;
-  line-height: 1.45;
-  color: var(--text-tertiary);
-}
-
-/* ---------- 通用区块 ---------- */
-
-.section {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-lg;
-}
-
-.sectionHead {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-/* 终端光标前缀是全页的结构记号 */
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-family: $font-mono;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-
-  &::before {
-    content: '▍';
-    color: var(--viz-success);
-    font-size: 12px;
-    line-height: 1;
-  }
-}
-
-.sectionTitle {
-  margin: 0;
-  font-size: clamp(22px, 2.6vw, 30px);
-  line-height: 1.18;
-  font-weight: 650;
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
-  text-wrap: balance;
-}
-
-.sectionDescription {
-  margin: 0;
-  max-width: 64ch;
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--text-secondary);
-}
-
+.trafficPanel,
 .panel {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
-  padding: clamp($spacing-lg, 2.4vw, 28px);
-  border-radius: 16px;
-  border: 1px solid var(--border-color);
-  background: color-mix(in srgb, var(--bg-primary) 82%, transparent);
+  padding: 24px;
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  background: var(--bg-surface);
+  min-width: 0;
 }
-
+.trafficPanel {
+  .panel {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+  .sectionHead {
+    padding-right: 200px;
+    margin-bottom: 16px;
+  }
+}
+.section {
+  margin-top: 24px;
+}
+.sectionHead,
 .panelHead {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 16px;
 }
-
+.sectionTitle,
 .panelTitle {
   margin: 0;
   font-size: 18px;
-  font-weight: 650;
-  letter-spacing: -0.01em;
-  color: var(--text-primary);
+  line-height: 24px;
+  font-weight: 700;
 }
-
+.sectionDescription,
+.emptyNote {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--text-tertiary);
+}
 .panelLink {
-  align-self: flex-start;
-  margin-top: auto;
+  display: inline-block;
+  margin-top: 16px;
   font-size: 13px;
-  font-weight: 600;
-  color: var(--primary-active);
-  text-decoration: none;
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      text-decoration: underline;
-
-      .linkArrow {
-        transform: translateX(3px);
-      }
+  color: var(--text-secondary);
+}
+.moreDetails {
+  color: var(--text-secondary);
+  font-size: 13px;
+  > summary {
+    cursor: pointer;
+    padding: 8px 0;
+    &:focus-visible {
+      outline: 2px solid var(--text-secondary);
+      outline-offset: 3px;
     }
   }
 }
-
-.emptyNote {
-  margin: 0;
-  padding: $spacing-lg 0;
-  text-align: center;
-  font-size: 13px;
-  color: var(--text-tertiary);
-}
-
-/* ---------- 供应商列表 ---------- */
-
-.fleetList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.fleetRow {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1.3fr) minmax(80px, 1fr) auto minmax(96px, 0.7fr);
-  align-items: center;
-  gap: $spacing-md;
-  padding: $spacing-md 0;
-  border-bottom: 1px solid var(--border-color);
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  @media (max-width: 760px) {
-    grid-template-columns: minmax(0, 1fr) auto;
-    row-gap: $spacing-sm;
-  }
-}
-
-/* 列表按流量排序，位次是真实信息 */
-.fleetRank {
-  font-family: $font-mono;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-quaternary);
-  font-variant-numeric: tabular-nums;
-
-  @media (max-width: 760px) {
-    display: none;
-  }
-}
-
-.fleetIdentity {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.fleetName {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-  @include text-ellipsis;
-}
-
-.fleetMeta {
-  font-size: 12px;
-  color: var(--text-tertiary);
-}
-
-.fleetSpark {
-  height: 28px;
-
-  @media (max-width: 760px) {
-    grid-column: 1 / -1;
-    order: 3;
-  }
-}
-
-.fleetNumbers {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 1px;
-}
-
-.fleetTotal {
-  font-family: $font-mono;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-}
-
-.fleetTotalLabel {
-  font-size: 11px;
-  color: var(--text-tertiary);
-}
-
-.fleetRate {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.fleetRateValue {
-  font-family: $font-mono;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  font-variant-numeric: tabular-nums;
-}
-
-.fleetMeter {
-  height: 5px;
-}
-
-/* ---------- 双栏细节区 ---------- */
-
-.detailGrid {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: $spacing-md;
-
-  @media (max-width: 900px) {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-/* 分段条：相邻色块之间用 2px 表面色间隙分隔 */
-.healthBar {
-  display: flex;
-  gap: 2px;
-  height: 10px;
-  margin-top: $spacing-xs;
-}
-
-.healthSegment {
-  display: block;
-  border-radius: 3px;
-  min-width: 4px;
-}
-
-.healthActive {
-  background: var(--viz-success);
-}
-
-.healthUnavailable {
-  background: var(--amber-color);
-}
-
-.healthDisabled {
-  background: var(--text-quaternary);
-}
-
-.healthLegend {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: $spacing-md;
-  font-size: 12px;
-  color: var(--text-secondary);
-
-  li {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  b {
-    font-family: $font-mono;
-    color: var(--text-primary);
-    font-variant-numeric: tabular-nums;
-  }
-}
-
-.healthKey {
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
-  flex: none;
-}
-
-.typeBreakdown {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-  padding-top: $spacing-md;
-  border-top: 1px solid var(--border-color);
-}
-
-.typeBreakdownLabel {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-
-.typeList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.typeChip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 10px;
-  border-radius: $radius-full;
-  border: 1px solid var(--border-color);
-  background: color-mix(in srgb, var(--bg-secondary) 60%, transparent);
-  font-size: 12px;
-  color: var(--text-secondary);
-
-  b {
-    font-family: $font-mono;
-    color: var(--text-primary);
-    font-variant-numeric: tabular-nums;
-  }
-}
-
-/* ---------- 运行参数表 ---------- */
-
-.specList {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.specRow {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: $spacing-md;
-  padding: 9px 0;
-  border-bottom: 1px solid var(--border-color);
-
-  &:last-child {
-    border-bottom: none;
-  }
-}
-
-.specLabel {
-  font-size: 13px;
-  color: var(--text-secondary);
-}
-
-.specValue {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
-  text-align: right;
-  min-width: 0;
-  font-variant-numeric: tabular-nums;
-  @include text-ellipsis;
-}
-
-.specMono {
-  font-family: $font-mono;
-  font-weight: 500;
-  font-size: 12px;
-}
-
+.fleetList,
+.healthLegend,
+.typeList,
 .toggleList {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+.fleetRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  & + & {
+    border-top: 1px solid var(--border-subtle);
+  }
+}
+.fleetRank {
+  color: var(--text-muted);
+  font-family: $font-mono;
+}
+.fleetIdentity {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.fleetName {
+  color: var(--text-primary);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.fleetMeta,
+.fleetTotalLabel {
+  color: var(--text-tertiary);
+  font-size: 12px;
+}
+.fleetSpark {
+  width: 100px;
+  height: 28px;
+}
+.fleetNumbers,
+.fleetRate {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 80px;
+  text-align: right;
+}
+.fleetTotal,
+.fleetRateValue {
+  color: var(--text-primary);
+  font-family: $font-mono;
+}
+.fleetMeter {
+  width: 80px;
+}
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+.healthBar {
+  display: flex;
+  gap: 4px;
+  height: 5px;
+  margin-bottom: 16px;
+}
+.healthSegment {
+  border-radius: 3px;
+}
+.healthActive {
+  background: var(--status-success);
+}
+.healthUnavailable {
+  background: var(--status-warning);
+}
+.healthDisabled {
+  background: var(--text-muted);
+}
+.healthLegend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    b {
+      margin-left: auto;
+      font-family: $font-mono;
+    }
+  }
+}
+.healthKey {
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+}
+.typeBreakdown {
+  margin-top: 16px;
+}
+.typeBreakdownLabel {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+.typeList,
+.toggleList {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
+  margin-top: 8px;
 }
-
+.typeChip,
 .togglePill {
   display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 10px;
-  border-radius: $radius-full;
-  border: 1px solid var(--border-color);
+  gap: 8px;
+  padding: 4px 8px;
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
   font-size: 12px;
-  color: var(--text-secondary);
-
-  b {
-    font-weight: 650;
-  }
 }
-
+.specList {
+  margin: 0;
+}
+.specRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.specLabel {
+  color: var(--text-tertiary);
+}
+.specValue {
+  margin: 0;
+  color: var(--text-primary);
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.specMono {
+  font-family: $font-mono;
+}
 .toggleOn {
-  border-color: color-mix(in srgb, var(--viz-success) 40%, transparent);
-  background: color-mix(in srgb, var(--viz-success) 10%, transparent);
-
-  b {
-    color: var(--success-badge-text);
-  }
+  color: var(--text-primary);
 }
-
 .toggleOff {
-  background: color-mix(in srgb, var(--bg-secondary) 60%, transparent);
-
-  b {
-    color: var(--text-tertiary);
-  }
+  color: var(--text-tertiary);
 }
-
-/* ---------- CTA ---------- */
-
 .ctaGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: $spacing-md;
-
-  @media (max-width: 900px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  @include mobile {
-    grid-template-columns: minmax(0, 1fr);
-  }
+  gap: 12px;
 }
-
 .ctaCard {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: $spacing-lg;
-  border-radius: 14px;
-  border: 1px solid var(--border-color);
-  background: color-mix(in srgb, var(--bg-primary) 76%, transparent);
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  color: var(--text-primary);
+  background: var(--bg-surface);
   text-decoration: none;
-  overflow: hidden;
-  transition:
-    transform var(--dur-press) var(--ease-out-strong),
-    border-color $transition-fast,
-    box-shadow var(--dur-hover) var(--ease-out-strong);
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      transform: translateY(-2px);
-      border-color: var(--border-hover);
-      box-shadow: 0 14px 30px rgb(0 0 0 / 0.12);
-
-      .ctaArrow {
-        transform: translateX(3px);
-        opacity: 1;
-      }
-    }
+  &:hover {
+    background: var(--bg-raised);
   }
-
-  /* 整卡可点：按下回缩，面积大所以比按钮更含蓄 */
-  &:active {
-    transform: translateY(0) scale(0.98);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-
-    &:active {
-      transform: none;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        transform: none;
-
-        .ctaArrow {
-          transform: none;
-        }
-      }
-    }
+  &:focus-visible {
+    outline: 2px solid var(--text-secondary);
+    outline-offset: 3px;
   }
 }
-
 .ctaIcon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  margin-bottom: $spacing-xs;
-  border-radius: $radius-md;
-  border: 1px solid var(--border-color);
-  background: color-mix(in srgb, var(--text-primary) 6%, transparent);
-  color: var(--text-primary);
+  color: var(--icon-default);
 }
-
 .ctaTitle {
-  font-size: 15px;
-  font-weight: 650;
-  color: var(--text-primary);
+  font-weight: 600;
 }
-
 .ctaDescription {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--text-secondary);
+  font-size: 12px;
+  color: var(--text-tertiary);
 }
-
 .ctaArrow {
   position: absolute;
-  top: $spacing-lg;
-  right: $spacing-lg;
-  font-size: 15px;
-  color: var(--text-tertiary);
-  opacity: 0.55;
-  transition:
-    transform var(--dur-hover) var(--ease-out-strong),
-    opacity var(--dur-hover) var(--ease-out-strong);
+  top: 16px;
+  right: 16px;
+  color: var(--icon-default);
 }
 
-@keyframes periodBreath {
-  0%,
-  100% {
-    opacity: 1;
+@media (max-width: 1000px) {
+  .statsRow {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  50% {
-    opacity: 0.45;
+  .statTile {
+    border-bottom: 1px solid var(--border-subtle);
   }
 }
-
-@keyframes livePing {
-  0% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--viz-success) 40%, transparent);
+@include mobile {
+  .statsRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  70% {
-    box-shadow: 0 0 0 6px transparent;
+  .statTile {
+    padding: 16px;
   }
-  100% {
-    box-shadow: 0 0 0 0 transparent;
+  .trafficPanel,
+  .panel {
+    padding: 16px;
+  }
+  .trafficPanel .sectionHead {
+    padding-right: 0;
+  }
+  .detailGrid,
+  .ctaGrid {
+    grid-template-columns: 1fr;
+  }
+  .fleetSpark,
+  .fleetRank {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .primaryAction,
+  .ghostAction {
+    transition: none;
   }
 }

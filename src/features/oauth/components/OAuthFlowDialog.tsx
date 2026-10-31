@@ -1,3 +1,5 @@
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyText } from '@/utils/privacy';
 import { useId, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal } from '@/components/ui/Modal';
@@ -92,6 +94,7 @@ function ProviderHint({ text, sponsor }: Pick<OAuthFlowDialogProps, 'text' | 'sp
 
 function FlowBody(props: OAuthFlowDialogProps & { view: Exclude<FlowView, 'success'> }) {
   const { t } = useTranslation();
+  const privacy = usePrivacyStore((state) => state.enabled);
   const { view, providerId, state, text, onStart } = props;
   const isDevin = providerId === 'devin';
 
@@ -101,7 +104,7 @@ function FlowBody(props: OAuthFlowDialogProps & { view: Exclude<FlowView, 'succe
         <ProviderHint text={text} sponsor={props.sponsor} />
         {view === 'failed' && (
           <div className={styles.alert} role="alert">
-            {text('oauth_status_error')} {state.error || ''}
+            {text('oauth_status_error')} {privacyText(privacy, state.error)}
           </div>
         )}
         <div>
@@ -123,7 +126,7 @@ function FlowBody(props: OAuthFlowDialogProps & { view: Exclude<FlowView, 'succe
       )}
       {state.cancelError && (
         <div className={styles.alert} role="alert">
-          {t('auth_login.devin_oauth_cancel_error')} {state.cancelError}
+          {t('auth_login.devin_oauth_cancel_error')} {privacyText(privacy, state.cancelError)}
         </div>
       )}
       <ol className={styles.steps}>
@@ -181,6 +184,7 @@ function Step({
 
 function OpenStep({ state, text }: OAuthFlowDialogProps) {
   const { t } = useTranslation();
+  const privacy = usePrivacyStore((state) => state.enabled);
   const url = state.url;
   const parts = url ? splitAuthUrl(url) : null;
 
@@ -188,9 +192,9 @@ function OpenStep({ state, text }: OAuthFlowDialogProps) {
     <Step title={t('auth_login.step_open_auth_page')}>
       <div className={styles.urlField} aria-busy={!url}>
         {parts ? (
-          <span className={styles.urlText} title={url}>
+          <span className={styles.urlText} title={privacyText(privacy, url)}>
             <span className={styles.urlHost}>{parts.host}</span>
-            <span className={styles.urlRest}>{parts.rest}</span>
+            <span className={styles.urlRest}>{privacyText(privacy, parts.rest)}</span>
           </span>
         ) : (
           <span className={styles.urlSkeleton} aria-label={t('auth_login.generating_link')} />
@@ -219,6 +223,7 @@ function CallbackStep({
   onCallbackSubmit,
 }: OAuthFlowDialogProps) {
   const { t } = useTranslation();
+  const privacy = usePrivacyStore((state) => state.enabled);
   const inputId = useId();
   const hintId = useId();
   const feedbackId = useId();
@@ -241,7 +246,7 @@ function CallbackStep({
     : state.callbackStatus === 'error'
       ? {
           tone: 'error' as const,
-          message: `${t('auth_login.oauth_callback_status_error')} ${state.callbackError || ''}`,
+          message: `${t('auth_login.oauth_callback_status_error')} ${privacyText(privacy, state.callbackError)}`,
         }
       : state.callbackStatus === 'success' && state.status === 'waiting'
         ? { tone: 'success' as const, message: t('auth_login.oauth_callback_status_success') }
@@ -267,6 +272,7 @@ function CallbackStep({
           id={inputId}
           className={`input ${styles.callbackInput}`}
           value={state.callbackUrl || ''}
+          type={privacy ? 'password' : 'text'}
           onChange={(event) => onCallbackChange(event.target.value)}
           placeholder={t(placeholderKey)}
           disabled={disabled}
@@ -292,7 +298,7 @@ function CallbackStep({
           className={feedback.tone === 'error' ? styles.feedbackError : styles.feedbackSuccess}
           role={feedback.tone === 'error' ? 'alert' : 'status'}
         >
-          {feedback.message}
+          {privacyText(privacy, feedback.message)}
         </p>
       )}
     </Step>
@@ -301,6 +307,7 @@ function CallbackStep({
 
 function FlowStatusBar({ providerId, state, text, onStart, onCancel }: OAuthFlowDialogProps) {
   const { t } = useTranslation();
+  const privacy = usePrivacyStore((state) => state.enabled);
   const isDevin = providerId === 'devin';
   const failed = state.status === 'error';
   const generating = !failed && !state.url;
@@ -319,7 +326,7 @@ function FlowStatusBar({ providerId, state, text, onStart, onCancel }: OAuthFlow
           {generating
             ? t('auth_login.generating_link')
             : failed
-              ? `${text('oauth_status_error')} ${state.error || ''}`
+              ? `${text('oauth_status_error')} ${privacyText(privacy, state.error)}`
               : text('oauth_status_waiting')}
         </span>
       </p>

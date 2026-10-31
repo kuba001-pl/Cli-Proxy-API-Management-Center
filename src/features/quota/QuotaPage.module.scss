@@ -7,7 +7,7 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   width: 100%;
   min-width: 0;
 }
@@ -17,7 +17,7 @@
 .workbench {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   min-width: 0;
 }
 
@@ -29,6 +29,9 @@
   justify-content: space-between;
   gap: 12px;
   min-width: 0;
+
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
 
   > :first-child {
     flex: 1 1 auto;
@@ -51,10 +54,10 @@
   align-items: center;
   flex: 0 1 340px;
   min-width: 0;
-  height: 36px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  background: var(--bg-secondary);
+  height: 32px;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: var(--bg-app);
   color: var(--text-secondary);
 
   &:focus-within {
@@ -121,14 +124,14 @@
 
 .sort {
   flex: 0 0 auto;
-  min-width: 148px;
+  min-width: 100px;
   max-width: 100%;
 
   button[aria-haspopup='listbox'] {
-    height: 36px;
-    border-color: transparent;
-    border-radius: 10px;
-    background: transparent;
+    height: 32px;
+    border-color: var(--border-default);
+    border-radius: 8px;
+    background: var(--bg-raised);
     box-shadow: none;
     color: var(--text-secondary);
 
@@ -164,7 +167,7 @@
 
   .clearSearch {
     width: 36px;
-    height: 36px;
+    height: 32px;
   }
 
   .sort button[aria-haspopup='listbox'] {
@@ -175,10 +178,10 @@
 .errorBanner {
   font-size: 12.5px;
   line-height: 1.5;
-  color: var(--danger-color);
-  background: var(--bg-error-light);
-  border: 1px solid var(--warning-border);
-  border-radius: 10px;
+  color: var(--status-danger);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
   padding: 9px 12px;
   overflow-wrap: anywhere;
 }
@@ -188,10 +191,18 @@
  * 与认证文件页配额模式（.gridQuota）同一档。 */
 
 .grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
-  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.providerHeading {
+  padding: 28px 0 16px;
+}
+
+.emptyState {
+  border: 1px dashed var(--border-default);
+  border-radius: 12px;
 }
 
 /* ---------- 分页 ---------- */

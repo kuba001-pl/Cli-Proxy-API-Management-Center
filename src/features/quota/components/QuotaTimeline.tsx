@@ -16,7 +16,8 @@ import { useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatRelativeInstant, TYPE_COLORS } from '@/utils/quota';
-import { getQuotaCacheKey, getQuotaDisplayName } from '@/utils/quota/identity';
+import { getQuotaCacheKey, getQuotaPrivacyDisplayName } from '@/utils/quota/identity';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { useNow } from '@/hooks/useNow';
 import type { ResolvedTheme, ThemeColors } from '@/types';
 import {
@@ -61,6 +62,7 @@ export interface QuotaTimelineProps {
   initialMode?: TimelineMode;
   /** Injectable initial date offset for tests/screenshots; defaults to the current period. */
   initialOffset?: number;
+  collapsible?: boolean;
 }
 
 export function QuotaTimeline({
@@ -71,8 +73,10 @@ export function QuotaTimeline({
   now: nowProp,
   initialMode = 'weekly',
   initialOffset = 0,
+  collapsible = false,
 }: QuotaTimelineProps) {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const [mode, setMode] = useState<TimelineMode>(initialMode);
   const [offset, setOffset] = useState(initialOffset);
 
@@ -94,14 +98,11 @@ export function QuotaTimeline({
     () =>
       entries.map((entry) => ({
         name: getQuotaCacheKey(entry.file),
-        displayName:
-          entry.type === 'devin'
-            ? getQuotaDisplayName(entry.file)
-            : displayNameFor(entry.file.name),
+        displayName: getQuotaPrivacyDisplayName(entry.file, privacyEnabled, displayNameFor),
         provider: entry.type,
         quota: quotaFor(entry),
       })),
-    [entries, quotaFor, displayNameFor]
+    [entries, quotaFor, displayNameFor, privacyEnabled]
   );
 
   // Keep the timeline hidden until at least one loaded credential exposes a
@@ -158,7 +159,7 @@ export function QuotaTimeline({
 
   if (!hasAnyLane) return null;
 
-  return (
+  const content = (
     <section className={styles.timeline}>
       <header className={styles.head}>
         <div>
@@ -313,6 +314,14 @@ export function QuotaTimeline({
         </footer>
       )}
     </section>
+  );
+  return collapsible ? (
+    <details className={styles.disclosure}>
+      <summary>{t('quota_management.windows_title')}</summary>
+      {content}
+    </details>
+  ) : (
+    content
   );
 }
 

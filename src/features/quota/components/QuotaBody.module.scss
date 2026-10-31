@@ -1,22 +1,15 @@
 @use '../../../styles/mixins' as *;
 
-/* ============================================================
- * 额度卡片 body 的全页外衣（类型化契约见 features/quota/types.ts）。
- *
- * 1. 额度行 / 水位条 / Antigravity 分组 —— mono 遥测风，与紧凑外衣同族；
- * 2. 套餐 chip 行 —— 朴素文字。档位由卡面表达（QuotaCard.module.scss），
- *    这里的高档套餐名只换成卡面提供的强调色（--quota-plan-accent）。
- * ============================================================ */
+/* Shared provider bodies use neutral rows; amounts and provider details retain their layout. */
 
 /* ---------- 额度行 ---------- */
 
 .quotaRow {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
   min-width: 0;
 }
-
 .quotaRowHeader {
   display: flex;
   align-items: baseline;
@@ -24,35 +17,74 @@
   gap: 8px;
   min-width: 0;
 }
-
-.quotaModel {
-  min-width: 0;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  @include text-ellipsis;
-}
-
-/* 遥测：mono + 等宽数字，刷新时数字不跳位 */
 .quotaMeta {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  gap: 7px;
-  flex-shrink: 0;
-  font-family: $font-mono;
+  gap: 6px;
   font-size: 11.5px;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.01em;
 }
-
-/* 百分比穿墨色而非填充色 —— 文字不承担状态编码，颜色留给水位条 */
+.quotaModel {
+  min-width: 0;
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
 .quotaPercent {
-  font-weight: 650;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   color: var(--text-primary);
+  white-space: nowrap;
 }
-
 .quotaReset {
-  color: var(--text-quaternary);
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--text-tertiary);
+}
+// Meter rows use a consistent label/value, track and reset layout. Other rows
+// retain their own amounts, status notes and balances without overlapping grid cells.
+.quotaRow:has(.quotaBar) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: start;
+  .quotaRowHeader,
+  .quotaMeta {
+    display: contents;
+  }
+  .quotaModel {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .quotaPercent {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  > .quotaBar,
+  > [role='meter'] {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+  }
+  .quotaReset {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+  .quotaResetRelative {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    font-size: 12px;
+    line-height: 18px;
+  }
+  &:has(.quotaResetRelative) .quotaReset {
+    grid-row: 4;
+  }
+  .quotaAmount {
+    grid-column: 1 / -1;
+  }
 }
 
 /* Countdown beside the absolute reset time. The separator is a pseudo-element
@@ -62,14 +94,12 @@
   color: var(--text-tertiary);
 
   &::before {
-    content: '·';
-    margin: 0 4px;
-    color: var(--text-quaternary);
+    content: '';
   }
 }
 
 .quotaResetRelativeSoon {
-  color: var(--warning-text);
+  color: var(--status-warning);
   font-weight: 600;
 }
 
@@ -82,6 +112,7 @@
 }
 
 .quotaMessage {
+  grid-column: 1 / -1;
   font-family: $font-mono;
   font-size: 11.5px;
   line-height: 1.5;
@@ -95,9 +126,9 @@
  * percent === null 时宽度为 0 —— 未知不着色。 */
 
 .quotaBar {
-  height: 6px;
+  height: 5px;
   border-radius: $radius-full;
-  background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+  background: var(--meter-track);
   overflow: hidden;
 }
 
@@ -105,11 +136,11 @@
   height: 100%;
   border-radius: $radius-full;
   /* 刷新时平滑重定向到新水位（可中断） */
-  transition: width 360ms var(--ease-out-strong, ease);
+  transition: width var(--dur-hover) var(--ease-out-strong);
   /* 数据到达是本页的高潮时刻：水位逐行铺开（每行 40ms 级差）。
    * 走 scaleX 而非 width，避免与上面的 width 过渡互相抢夺同一属性。 */
   transform-origin: left center;
-  animation: quota-meter-fill 480ms var(--ease-out-strong, ease-out) both;
+  animation: quota-meter-fill var(--dur-hover) var(--ease-out-strong) both;
   animation-delay: calc(var(--meter-index, 0) * 40ms);
 }
 
@@ -120,32 +151,34 @@
 }
 
 .quotaBarFillHigh {
-  background: var(--viz-success);
+  background: var(--status-success);
 }
 
 .quotaBarFillMedium {
-  background: var(--quota-medium-color);
+  background: var(--status-warning);
 }
 
 .quotaBarFillLow {
-  background: var(--viz-failure);
+  background: var(--status-danger);
 }
 
 /* ---------- Antigravity 分组 ---------- */
 
 .antigravityQuotaGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr));
+  gap: 20px 24px;
 
   & + & {
     margin-top: 3px;
     padding-top: 9px;
-    border-top: 1px dashed color-mix(in srgb, var(--border-color) 80%, transparent);
+    border-top: 1px solid var(--border-subtle);
   }
 }
 
 .antigravityQuotaGroupHeader {
+  grid-column: 1 / -1;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -192,6 +225,7 @@
 /* ---------- 套餐 chip 行 ---------- */
 
 .codexPlan {
+  grid-column: 1 / -1;
   display: flex;
   align-items: center;
   gap: 6px 12px;
@@ -222,6 +256,7 @@
 }
 
 .codexResetCredits {
+  grid-column: 1 / -1;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -242,17 +277,17 @@
   justify-content: space-between;
   gap: 2px $spacing-sm;
   padding: 6px 8px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
+  border: 1px solid var(--border-subtle);
   border-radius: $radius-sm;
-  background-color: color-mix(in srgb, var(--bg-secondary) 72%, transparent);
+  background-color: var(--bg-surface);
   font-size: 12px;
   line-height: 1.35;
   min-width: 0;
 }
 
 .codexResetCreditRowSoon {
-  border-color: var(--warning-border);
-  background-color: var(--warning-bg);
+  border-color: var(--border-default);
+  background-color: var(--bg-surface);
 }
 
 .codexResetCreditLabel {
@@ -271,11 +306,12 @@
 }
 
 .codexResetCreditsError {
+  grid-column: 1 / -1;
   font-size: 12px;
   line-height: 1.4;
-  color: var(--warning-text);
-  background-color: var(--warning-bg);
-  border: 1px solid var(--warning-border);
+  color: var(--status-warning);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-default);
   border-radius: $radius-sm;
   padding: $spacing-xs $spacing-sm;
 }
@@ -289,7 +325,7 @@
 .premiumPlanValue,
 .elitePlanValue {
   font-weight: 600;
-  color: var(--quota-plan-accent, var(--text-primary));
+  color: var(--text-primary);
   white-space: nowrap;
   min-width: 0;
 }

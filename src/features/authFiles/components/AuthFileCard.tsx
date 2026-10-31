@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useId, useState, type CSSProperties } from 'react';
 import { getAuthFileRefreshKey } from '@/features/authFiles/manualRefresh';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
@@ -6,6 +6,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { SelectionCheckbox } from '@/components/ui/SelectionCheckbox';
 import { ToggleSwitch } from '@/components/ui/ToggleSwitch';
 import {
+  IconChevronDown,
   IconDownload,
   IconInfo,
   IconModelCluster,
@@ -21,7 +22,7 @@ import {
   formatModified,
   getAuthFileStatusMessage,
   hasAuthFileStatusWarning,
-  getTypeColor,
+  getAuthFileIcon,
   getTypeLabel,
   isRuntimeOnlyAuthFile,
   normalizeProviderKey,
@@ -29,7 +30,13 @@ import {
   type AuthFileQuotaFilter,
   type ResolvedTheme,
 } from '@/features/authFiles/constants';
-import { deriveAuthFileIdentity } from '@/features/authFiles/identity';
+import { authFileDisplayIdentity, authFilePrivacyIdentities } from '../privacy';
+import { privacyText } from '@/utils/privacy';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { useQuotaStore } from '@/stores';
+import { QUOTA_ADAPTERS } from '@/features/quota/providers';
+import { getQuotaCacheKey } from '@/utils/quota/identity';
+import { summarizeAuthFileQuota, type AuthFileCachedQuota } from '../quotaSummary';
 import { resolveAuthFileQuotaType } from '@/features/authFiles/logic';
 import type { AuthFileStatusBarData } from '@/features/authFiles/hooks/useAuthFilesStatusBarCache';
 import { AuthFileQuotaSection } from '@/features/authFiles/components/AuthFileQuotaSection';
@@ -64,6 +71,9 @@ export type AuthFileCardProps = {
 
 export function AuthFileCard(props: AuthFileCardProps) {
   const { t, i18n } = useTranslation();
+  const privacy = usePrivacyStore((state) => state.enabled);
+  const [expanded, setExpanded] = useState(false);
+  const detailsId = useId();
   const {
     file,
     compact,
@@ -94,10 +104,10 @@ export function AuthFileCard(props: AuthFileCardProps) {
   const showManualRefreshButton = !isRuntimeOnly && supportsAuthFileManualRefresh(providerKey);
   const isManualRefreshing = manualRefreshing[getAuthFileRefreshKey(file)] === true;
   const typeLabel = getTypeLabel(t, providerKey);
-  const typeColor = getTypeColor(providerKey, resolvedTheme);
+  const icon = getAuthFileIcon(providerKey, resolvedTheme);
 
   const quotaType = resolveAuthFileQuotaType(file, quotaFilterType);
-  const showQuotaLayout = Boolean(quotaType) && !isRuntimeOnly && !compact;
+  const showQuotaLayout = Boolean(quotaType) && !isRuntimeOnly;
 
   const successCount = file.successCount ?? 0;
   const failureCount = file.failureCount ?? 0;
@@ -107,14 +117,26 @@ export function AuthFileCard(props: AuthFileCardProps) {
     (authIndexKey && statusBarCache.get(authIndexKey)) ||
     statusBarDataFromRecentRequests(file.recentRequests ?? []);
 
-  const rawStatusMessage = getAuthFileStatusMessage(file);
+  const identities = authFilePrivacyIdentities(file);
+  const rawStatusMessage = privacyText(privacy, getAuthFileStatusMessage(file), identities);
   const hasStatusWarning = hasAuthFileStatusWarning(file);
 
   const priorityValue = Number.isSafeInteger(file.priority) ? file.priority : undefined;
   const weightValue = Number.isSafeInteger(file.weight) ? file.weight : undefined;
-  const noteValue = typeof file.note === 'string' ? file.note.trim() : '';
+  const noteValue = privacyText(
+    privacy,
+    typeof file.note === 'string' ? file.note.trim() : '',
+    identities
+  );
   // Lead with account identity and use the file name as secondary text.
-  const identity = deriveAuthFileIdentity(file);
+  const identity = authFileDisplayIdentity(file, privacy);
+  const quota = useQuotaStore((state) =>
+    quotaType
+      ? (QUOTA_ADAPTERS[quotaType].storeSelector(state)[getQuotaCacheKey(file)] as
+          AuthFileCachedQuota | undefined)
+      : undefined
+  );
+  const summary = summarizeAuthFileQuota(quota);
   const siwcExpires = file.siwcExpiresAt
     ? formatDateTimeValue(file.siwcExpiresAt, i18n.language)
     : '';
@@ -138,205 +160,83 @@ export function AuthFileCard(props: AuthFileCardProps) {
   return (
     <article className={cardClasses} style={cardStyle}>
       <header className={styles.head}>
-        {!isRuntimeOnly && (
-          <SelectionCheckbox
-            checked={selected}
-            onChange={() => onToggleSelect(file.name)}
-            className={styles.selection}
-            ariaLabel={t('auth_files.card_select', { name: file.name })}
-            title={t('auth_files.card_select', { name: file.name })}
-          />
-        )}
-        <h3 className={styles.identity}>
-          <span
-            className={styles.providerBadge}
-            style={{
-              backgroundColor: typeColor.bg,
-              color: typeColor.text,
-              ...(typeColor.border ? { border: typeColor.border } : {}),
-            }}
-          >
-            {typeLabel}
-          </span>
-          <span
-            className={`${styles.account} ${identity.kind === 'fileName' ? styles.accountMono : ''}`}
-            title={identity.primary}
-          >
-            {identity.primary}
-          </span>
-        </h3>
-        {isRuntimeOnly && (
-          <span className={styles.runtimeLabel}>{t('auth_files.type_virtual')}</span>
-        )}
-      </header>
-
-      {identity.secondary && (
-        <p className={styles.fileName} title={identity.fullName}>
-          {identity.secondary}
-        </p>
-      )}
-
-      {!compact && noteValue && (
-        <p className={styles.note} title={noteValue}>
-          {noteValue}
-        </p>
-      )}
-
-      {rawStatusMessage && hasStatusWarning && (
-        <div className={styles.warning} title={rawStatusMessage}>
-          <IconInfo className={styles.warningIcon} size={14} />
-          <span>{rawStatusMessage}</span>
-        </div>
-      )}
-
-      <AuthFileCooldownSection
-        snapshot={file.cooldownSnapshot}
-        resetting={isCooldownResetting}
-        resetDisabled={
-          disableControls ||
-          statusUpdating[getAuthFileRefreshKey(file)] === true ||
-          isManualRefreshing
-        }
-        onReset={authIndexKey ? () => onCooldownReset(file) : undefined}
-      />
-
-      <div className={styles.health}>
-        <div className={styles.healthHead}>
-          <span className={styles.healthLabel}>{t('auth_files.card_requests')}</span>
-          <span className={styles.healthCounts}>
-            <span
-              className={`${styles.countOk} ${successCount > 0 ? styles.countLive : ''}`}
-              title={t('stats.success')}
-            >
-              {t('stats.success')} {successCount}
-            </span>
-            <span
-              className={`${styles.countFail} ${failureCount > 0 ? styles.countLive : ''}`}
-              title={t('stats.failure')}
-            >
-              {t('stats.failure')} {failureCount}
-            </span>
-          </span>
-        </div>
-        <ProviderStatusBar statusData={statusData} styles={styles} />
-      </div>
-
-      <div className={styles.metaRow}>
-        <span title={t('auth_files.file_size')}>{file.size ? formatFileSize(file.size) : '-'}</span>
-        <span className={styles.metaDivider} aria-hidden="true">
-          ·
-        </span>
-        <span title={t('auth_files.file_modified')}>{formatModified(file)}</span>
-        {priorityValue !== undefined && (
-          <>
-            <span className={styles.metaDivider} aria-hidden="true">
-              ·
-            </span>
-            <span className={styles.metaPriority} title={t('auth_files.priority_hint')}>
-              <span className={styles.metaMetricLabel}>{t('auth_files.priority_display')}</span>
-              <span>{priorityValue}</span>
-            </span>
-          </>
-        )}
-        {weightValue !== undefined && (
-          <>
-            <span className={styles.metaDivider} aria-hidden="true">
-              ·
-            </span>
-            <span className={styles.metaWeight} title={t('auth_files.weight_tooltip')}>
-              <span className={styles.metaMetricLabel}>{t('auth_files.weight_display')}</span>
-              <span>{weightValue}</span>
-            </span>
-          </>
-        )}
-      </div>
-
-      {supportsSiwcBinding(file) && (
-        <div className={styles.siwcRow}>
-          <SiwcStatusBadge status={getSiwcBindingStatus(file)} />
-          {siwcExpires && (
-            <span className={styles.siwcExpires} title={file.siwcExpiresAt}>
-              {t('siwc.expires', { date: siwcExpires })}
-            </span>
-          )}
-        </div>
-      )}
-
-      {showQuotaLayout && quotaType && (
-        <AuthFileQuotaSection file={file} quotaType={quotaType} disableControls={disableControls} />
-      )}
-
-      <footer className={styles.actions}>
-        <div className={styles.actionsMain}>
-          {showModelsButton && (
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => onShowModels(file)}
-              title={t('auth_files.models_button')}
-              disabled={disableControls}
-            >
-              <IconModelCluster size={14} />
-              {t('auth_files.models_button')}
-            </Button>
-          )}
+        <div className={styles.rowLead}>
           {!isRuntimeOnly && (
-            <div className={styles.utilityActions}>
-              {showManualRefreshButton && (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => onManualRefresh(file)}
-                  className={styles.iconButton}
-                  title={t('auth_files.manual_refresh_button')}
-                  disabled={
-                    disableControls ||
-                    file.disabled ||
-                    statusUpdating[getAuthFileRefreshKey(file)] === true ||
-                    isManualRefreshing
-                  }
-                >
-                  {isManualRefreshing ? <LoadingSpinner size={14} /> : <IconRefreshCw size={15} />}
-                </Button>
-              )}
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => onDownload(file.name)}
-                className={styles.iconButton}
-                title={t('auth_files.download_button')}
-                disabled={disableControls}
-              >
-                <IconDownload size={15} />
-              </Button>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => onOpenPrefixProxyEditor(file)}
-                className={styles.iconButton}
-                title={t('auth_files.prefix_proxy_button')}
-                disabled={disableControls || isManualRefreshing}
-              >
-                <IconSettings size={15} />
-              </Button>
-              <Button
-                variant="danger"
-                size="sm"
-                onClick={() => onDelete(file.name)}
-                className={styles.iconButton}
-                title={t('auth_files.delete_button')}
-                disabled={disableControls || deleting === file.name || isManualRefreshing}
-              >
-                {deleting === file.name ? <LoadingSpinner size={14} /> : <IconTrash2 size={15} />}
-              </Button>
-            </div>
+            <SelectionCheckbox
+              checked={selected}
+              onChange={() => onToggleSelect(file.name)}
+              ariaLabel={t('auth_files.card_select', { name: identity.fullName })}
+              title={t('auth_files.card_select', { name: identity.fullName })}
+            />
+          )}
+          <button
+            type="button"
+            className={styles.expand}
+            aria-expanded={expanded}
+            aria-controls={detailsId}
+            aria-label={`${t(expanded ? 'common.collapse' : 'common.expand')} ${identity.primary}`}
+            onClick={() => setExpanded((value) => !value)}
+          >
+            <IconChevronDown size={14} />
+          </button>
+          <span className={styles.providerIcon} title={typeLabel}>
+            {icon ? <img src={icon} alt={typeLabel} /> : typeLabel.slice(0, 1)}
+          </span>
+          <div className={styles.identity}>
+            <h3 className={styles.account} title={identity.primary}>
+              {identity.primary}
+            </h3>
+            {identity.secondary && (
+              <span className={styles.fileName} title={identity.fullName}>
+                {identity.secondary}
+              </span>
+            )}
+            {supportsSiwcBinding(file) && <SiwcStatusBadge status={getSiwcBindingStatus(file)} />}
+            {isRuntimeOnly && (
+              <span className={styles.runtimeLabel}>{t('auth_files.type_virtual')}</span>
+            )}
+          </div>
+        </div>
+        <div className={styles.plan}>
+          <span>{summary.plan || '—'}</span>
+          {priorityValue !== undefined && (
+            <span className={styles.muted}>
+              {t('auth_files.priority_display')} {priorityValue}
+            </span>
           )}
         </div>
-        {!isRuntimeOnly && (
-          <div className={styles.toggleWrap}>
-            <span className={styles.toggleLabel}>{t('auth_files.status_toggle_label')}</span>
+        <div className={styles.health}>
+          <ProviderStatusBar statusData={statusData} styles={styles} />
+          <span className={styles.healthCounts}>
+            {t('stats.success')} {successCount} · {t('stats.failure')} {failureCount}
+          </span>
+        </div>
+        <div className={styles.lowest}>
+          {summary.lowest ? (
+            <>
+              <div className={styles.quotaLabel}>
+                <span>
+                  {summary.lowest.labelKey
+                    ? t(summary.lowest.labelKey, summary.lowest.labelParams ?? {})
+                    : summary.lowest.label}
+                </span>
+                <strong>{Math.round(summary.lowest.remaining)}%</strong>
+              </div>
+              <div className={styles.meter}>
+                <span
+                  style={{ width: `${summary.lowest.remaining}%` }}
+                  data-warning={summary.lowest.remaining < 50 || undefined}
+                />
+              </div>
+            </>
+          ) : (
+            <span className={styles.muted}>—</span>
+          )}
+        </div>
+        <div className={styles.toggleWrap}>
+          {!isRuntimeOnly && (
             <ToggleSwitch
-              ariaLabel={t('auth_files.card_toggle', { name: file.name })}
+              ariaLabel={t('auth_files.card_toggle', { name: identity.fullName })}
               checked={!file.disabled}
               disabled={
                 disableControls ||
@@ -345,9 +245,162 @@ export function AuthFileCard(props: AuthFileCardProps) {
               }
               onChange={(value) => onToggleStatus(file, value)}
             />
+          )}
+        </div>
+        <button
+          type="button"
+          className={styles.expand}
+          aria-label={`${t(expanded ? 'common.collapse' : 'common.expand')} ${identity.primary}`}
+          aria-expanded={expanded}
+          aria-controls={detailsId}
+          onClick={() => setExpanded((value) => !value)}
+        >
+          ···
+        </button>
+      </header>
+      <div id={detailsId} className={styles.details} hidden={!expanded}>
+        {noteValue && (
+          <p className={styles.note} title={noteValue}>
+            {noteValue}
+          </p>
+        )}
+
+        {rawStatusMessage && hasStatusWarning && (
+          <div className={styles.warning} title={rawStatusMessage}>
+            <IconInfo className={styles.warningIcon} size={14} />
+            <span>{rawStatusMessage}</span>
           </div>
         )}
-      </footer>
+
+        <AuthFileCooldownSection
+          snapshot={file.cooldownSnapshot}
+          resetting={isCooldownResetting}
+          resetDisabled={
+            disableControls ||
+            statusUpdating[getAuthFileRefreshKey(file)] === true ||
+            isManualRefreshing
+          }
+          onReset={authIndexKey ? () => onCooldownReset(file) : undefined}
+        />
+
+        <div className={styles.expandedBody}>
+          <div className={styles.quotaDetail}>
+            {showQuotaLayout && quotaType && (
+              <AuthFileQuotaSection
+                file={file}
+                quotaType={quotaType}
+                disableControls={disableControls}
+              />
+            )}
+          </div>
+          <div className={styles.fileDetail}>
+            <div className={styles.metaRow}>
+              <span>
+                <span className={styles.metaMetricLabel}>{t('auth_files.file_size')}</span>
+                {file.size ? formatFileSize(file.size) : '—'}
+              </span>
+              <span>
+                <span className={styles.metaMetricLabel}>{t('auth_files.file_modified')}</span>
+                {formatModified(file)}
+              </span>
+              {priorityValue !== undefined && (
+                <span title={t('auth_files.priority_hint')}>
+                  <span className={styles.metaMetricLabel}>{t('auth_files.priority_display')}</span>
+                  {priorityValue}
+                </span>
+              )}
+              {weightValue !== undefined && (
+                <span title={t('auth_files.weight_tooltip')}>
+                  <span className={styles.metaMetricLabel}>{t('auth_files.weight_display')}</span>
+                  {weightValue}
+                </span>
+              )}
+            </div>
+            {supportsSiwcBinding(file) && siwcExpires && (
+              <span className={styles.siwcExpires} title={file.siwcExpiresAt}>
+                {t('siwc.expires', { date: siwcExpires })}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <footer className={styles.actions}>
+          <div className={styles.actionsMain}>
+            {showModelsButton && (
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => onShowModels(file)}
+                title={t('auth_files.models_button')}
+                disabled={disableControls}
+              >
+                <IconModelCluster size={14} />
+                {t('auth_files.models_button')}
+              </Button>
+            )}
+            {!isRuntimeOnly && (
+              <div className={styles.utilityActions}>
+                {showManualRefreshButton && (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => onManualRefresh(file)}
+                    className={styles.iconButton}
+                    title={t('auth_files.manual_refresh_button')}
+                    aria-label={t('auth_files.manual_refresh_button')}
+                    disabled={
+                      disableControls ||
+                      file.disabled ||
+                      statusUpdating[getAuthFileRefreshKey(file)] === true ||
+                      isManualRefreshing
+                    }
+                  >
+                    {isManualRefreshing ? (
+                      <LoadingSpinner size={14} />
+                    ) : (
+                      <IconRefreshCw size={15} />
+                    )}
+                  </Button>
+                )}
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => onDownload(file.name)}
+                  className={styles.iconButton}
+                  title={t('auth_files.download_button')}
+                  aria-label={t('auth_files.download_button')}
+                  disabled={disableControls}
+                >
+                  <IconDownload size={15} />
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => onOpenPrefixProxyEditor(file)}
+                  className={styles.iconButton}
+                  title={t('auth_files.prefix_proxy_button')}
+                  aria-label={t('auth_files.prefix_proxy_button')}
+                  disabled={disableControls || isManualRefreshing}
+                >
+                  <IconSettings size={15} />
+                </Button>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={() => onDelete(file.name)}
+                  className={styles.deleteButton}
+                  title={t('auth_files.delete_button')}
+                  aria-label={t('auth_files.delete_button')}
+                  disabled={disableControls || deleting === file.name || isManualRefreshing}
+                >
+                  {deleting === file.name ? <LoadingSpinner size={14} /> : <IconTrash2 size={15} />}
+                  {t('common.delete')}
+                </Button>
+              </div>
+            )}
+          </div>
+        </footer>
+      </div>
     </article>
   );
 }

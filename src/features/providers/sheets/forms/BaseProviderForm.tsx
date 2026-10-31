@@ -1,5 +1,7 @@
 import { useEffect, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyIdentity } from '@/utils/privacy';
 import {
   IconDownload,
   IconEye,
@@ -229,6 +231,7 @@ export function BaseProviderForm({
   onDirtyChange,
 }: BaseProviderFormProps) {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((s) => s.enabled);
   const descriptor = PROVIDER_DESCRIPTORS[brand];
   const fid = useId();
   const [form, setForm] = useState<ProviderEntryFormInput>(() =>
@@ -502,13 +505,22 @@ export function BaseProviderForm({
             <label className={styles.label} htmlFor={`${fid}-name`}>
               {t('providersPage.form.name')}
             </label>
-            <input
-              id={`${fid}-name`}
-              className={styles.input}
-              value={form.name}
-              onChange={(e) => updateField('name', e.target.value)}
-              disabled={mutating}
-            />
+            <div className={styles.identityField}>
+              <input
+                id={`${fid}-name`}
+                type={privacyEnabled ? 'password' : 'text'}
+                autoComplete="off"
+                className={`${styles.input} ${privacyEnabled ? styles.identityInputPrivate : ''}`}
+                value={form.name}
+                onChange={(e) => updateField('name', e.target.value)}
+                disabled={mutating}
+              />
+              {privacyEnabled ? (
+                <span className={styles.identityMask} aria-hidden="true">
+                  {privacyIdentity(privacyEnabled, form.name)}
+                </span>
+              ) : null}
+            </div>
           </div>
         ) : null}
 

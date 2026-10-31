@@ -1,9 +1,10 @@
 @use '../../../styles/mixins' as *;
 
 .chart {
-  --chart-height: 208px;
-  --bar-max-width: 24px;
+  --chart-height: 200px;
+  --bar-max-width: 34px;
 
+  position: relative;
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -13,6 +14,9 @@
 /* ---------- 图例 ---------- */
 
 .legend {
+  position: absolute;
+  right: 0;
+  top: -70px;
   display: flex;
   flex-wrap: wrap;
   gap: $spacing-lg;
@@ -35,16 +39,16 @@
 .legendSwatch {
   width: 10px;
   height: 10px;
-  border-radius: 3px;
+  border-radius: 2px;
   flex: none;
 }
 
 .swatchSuccess {
-  background: var(--viz-success);
+  background: var(--text-tertiary);
 }
 
 .swatchFailure {
-  background: var(--viz-failure);
+  background: var(--status-danger);
 }
 
 /* ---------- 绘图区 ---------- */
@@ -53,12 +57,12 @@
   display: flex;
   gap: $spacing-sm;
   /* 给峰值直标留出空间：柱子顶到 100% 时标签仍落在这段留白里 */
-  padding-top: 22px;
+  padding-top: 6px;
 }
 
 .yAxis {
   position: relative;
-  width: 40px;
+  width: 28px;
   height: var(--chart-height);
   flex: none;
 
@@ -135,11 +139,11 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  animation: barGrow 0.42s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: barGrow var(--dur-hover) var(--ease-out-strong) both;
   /* 级差由 TSX 按桶数归一化写入，整波 ≤360ms */
   animation-delay: var(--bar-delay, 0ms);
   transform-origin: bottom center;
-  transition: filter 120ms ease-out;
+  transition: background var(--dur-hover) var(--ease-out-strong);
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
@@ -148,7 +152,9 @@
 }
 
 .columnActive .stack {
-  filter: brightness(1.06);
+  .segmentSuccess {
+    background: var(--text-primary);
+  }
 }
 
 .segment {
@@ -159,11 +165,11 @@
 }
 
 .segmentSuccess {
-  background: var(--viz-success);
+  background: var(--text-tertiary);
 }
 
 .segmentFailure {
-  background: var(--viz-failure);
+  background: var(--status-danger);
 }
 
 /* 堆叠段之间留 2px 表面色间隙 —— 用留白而不是描边来分隔 */
@@ -186,6 +192,7 @@
 
 /* bottom 由 TSX 按柱高写入；柱子全部落定后再淡入 */
 .peakLabel {
+  display: none;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
@@ -196,7 +203,7 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   pointer-events: none;
-  animation: peakFade 240ms ease-out 620ms backwards;
+  animation: peakFade var(--dur-hover) var(--ease-out-strong) backwards;
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
@@ -217,8 +224,6 @@
 /* ---------- 悬浮提示 ---------- */
 
 .tooltip {
-  --glass-blur: 10px;
-
   position: absolute;
   top: 4px;
   z-index: 2;
@@ -228,26 +233,23 @@
   padding: $spacing-sm $spacing-md;
   min-width: 132px;
   border-radius: $radius-md;
-  border: 1px solid var(--glass-border);
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-backdrop-filter);
-  -webkit-backdrop-filter: var(--glass-backdrop-filter);
-  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-default);
+  background: var(--bg-raised);
   font-size: 12px;
   color: var(--text-secondary);
   pointer-events: none;
   /* 悬停换柱时滑到新位置（可中断，CSS transition 自然 retarget），入场只淡入 */
   transition:
-    left 200ms var(--ease-out-strong, ease-out),
-    transform 200ms var(--ease-out-strong, ease-out),
-    opacity 150ms ease-out;
+    left var(--dur-hover) var(--ease-out-strong),
+    transform var(--dur-hover) var(--ease-out-strong),
+    opacity var(--dur-hover) var(--ease-out-strong);
 
   @starting-style {
     opacity: 0;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    transition: opacity 150ms ease-out;
+    transition: opacity var(--dur-hover) var(--ease-out-strong);
   }
 }
 
@@ -282,7 +284,7 @@
 .xAxis {
   position: relative;
   height: 16px;
-  margin-left: 48px;
+  margin-left: 36px;
 
   @include mobile {
     margin-left: 38px;
@@ -301,6 +303,8 @@
 /* ---------- 数据表 ---------- */
 
 .tableToggle {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 12px;
   font-size: 13px;
 }
 
@@ -340,7 +344,7 @@
   padding: $spacing-xl;
   border-radius: $radius-lg;
   border: 1px dashed var(--border-primary);
-  background: color-mix(in srgb, var(--bg-secondary) 60%, transparent);
+  background: var(--bg-surface);
   text-align: center;
 }
 
@@ -374,5 +378,11 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .legend {
+    position: static;
   }
 }

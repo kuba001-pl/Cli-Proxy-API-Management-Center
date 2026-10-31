@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
+import { prefersReducedMotion } from '@/hooks/motion';
 import { IconX } from '../icons';
 import { FOCUSABLE_SELECTOR, lockScroll, unlockScroll } from '../scrollLock';
 import styles from './Sheet.module.scss';
@@ -34,7 +35,8 @@ interface SheetProps {
   confirmClose?: () => boolean | Promise<boolean>;
 }
 
-const CLOSE_ANIMATION_DURATION = 280;
+// Matches --dur-press, used by the closing CSS animation.
+const CLOSE_ANIMATION_DURATION = 160;
 const SIZE_CLASS: Record<SheetSize, string> = {
   md: styles.sizeMd,
   lg: styles.sizeLg,
@@ -77,14 +79,17 @@ export function Sheet({
     (notifyParent: boolean) => {
       if (closeTimerRef.current !== null) return;
       setIsClosing(true);
-      closeTimerRef.current = window.setTimeout(() => {
-        setIsVisible(false);
-        setIsClosing(false);
-        closeTimerRef.current = null;
-        if (notifyParent) {
-          onClose();
-        }
-      }, CLOSE_ANIMATION_DURATION);
+      closeTimerRef.current = window.setTimeout(
+        () => {
+          setIsVisible(false);
+          setIsClosing(false);
+          closeTimerRef.current = null;
+          if (notifyParent) {
+            onClose();
+          }
+        },
+        prefersReducedMotion() ? 0 : CLOSE_ANIMATION_DURATION
+      );
     },
     [onClose]
   );

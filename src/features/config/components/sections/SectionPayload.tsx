@@ -6,6 +6,7 @@ import { CONFIG_TAB_ICONS, SECTION_INDEX_LABELS } from '../../constants';
 import type { ConfigSectionProps } from '../../types';
 import { SectionCard } from '../SectionCard';
 import { FieldAnchor, FieldStack } from '../fields/FieldPrimitives';
+import { DirtyFieldIndicator } from '../fields/DirtyFieldIndicator';
 import { PayloadFilterRulesEditor } from '../blocks/PayloadFilterRulesEditor';
 import { PayloadRulesEditor } from '../blocks/PayloadRulesEditor';
 
@@ -60,7 +61,12 @@ export function SectionPayload({
         <FieldAnchor fieldId="payloadDefaultRules">
           <Collapsible
             key={`payloadDefaultRules-${payloadValidationKey}`}
-            label={t('config_management.visual.sections.payload.default_rules')}
+            label={
+              <>
+                {t('config_management.visual.sections.payload.default_rules')}
+                <DirtyFieldIndicator fieldId="payloadDefaultRules" />
+              </>
+            }
             hint={t('config_management.visual.sections.payload.default_rules_desc')}
             defaultOpen={hasPayloadValidationErrors}
           >
@@ -75,7 +81,12 @@ export function SectionPayload({
         <FieldAnchor fieldId="payloadDefaultRawRules">
           <Collapsible
             key={`payloadDefaultRawRules-${payloadValidationKey}`}
-            label={t('config_management.visual.sections.payload.default_raw_rules')}
+            label={
+              <>
+                {t('config_management.visual.sections.payload.default_raw_rules')}
+                <DirtyFieldIndicator fieldId="payloadDefaultRawRules" />
+              </>
+            }
             hint={t('config_management.visual.sections.payload.default_raw_rules_desc')}
             defaultOpen={hasPayloadValidationErrors}
           >
@@ -91,7 +102,12 @@ export function SectionPayload({
         <FieldAnchor fieldId="payloadOverrideRules">
           <Collapsible
             key={`payloadOverrideRules-${payloadValidationKey}`}
-            label={t('config_management.visual.sections.payload.override_rules')}
+            label={
+              <>
+                {t('config_management.visual.sections.payload.override_rules')}
+                <DirtyFieldIndicator fieldId="payloadOverrideRules" />
+              </>
+            }
             hint={t('config_management.visual.sections.payload.override_rules_desc')}
             defaultOpen={hasPayloadValidationErrors}
           >
@@ -107,7 +123,12 @@ export function SectionPayload({
         <FieldAnchor fieldId="payloadOverrideRawRules">
           <Collapsible
             key={`payloadOverrideRawRules-${payloadValidationKey}`}
-            label={t('config_management.visual.sections.payload.override_raw_rules')}
+            label={
+              <>
+                {t('config_management.visual.sections.payload.override_raw_rules')}
+                <DirtyFieldIndicator fieldId="payloadOverrideRawRules" />
+              </>
+            }
             hint={t('config_management.visual.sections.payload.override_raw_rules_desc')}
             defaultOpen={hasPayloadValidationErrors}
           >
@@ -124,7 +145,12 @@ export function SectionPayload({
         <FieldAnchor fieldId="payloadFilterRules">
           <Collapsible
             key={`payloadFilterRules-${payloadValidationKey}`}
-            label={t('config_management.visual.sections.payload.filter_rules')}
+            label={
+              <>
+                {t('config_management.visual.sections.payload.filter_rules')}
+                <DirtyFieldIndicator fieldId="payloadFilterRules" />
+              </>
+            }
             hint={t('config_management.visual.sections.payload.filter_rules_desc')}
             defaultOpen={hasPayloadValidationErrors}
           >

@@ -2,7 +2,11 @@ import { memo, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
+import { IconCopy, IconPencil, IconPlus, IconTrash2 } from '@/components/ui/icons';
 import { useAuthStore, useNotificationStore } from '@/stores';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyIdentity } from '@/utils/privacy';
+import { DirtyFieldIndicator } from '../fields/DirtyFieldIndicator';
 import { apiKeyNameFingerprint, readApiKeyNames, saveApiKeyName } from '../../apiKeyNames';
 import { copyToClipboard } from '@/utils/clipboard';
 import { makeClientId } from '@/types/visualConfig';
@@ -32,6 +36,7 @@ function ScopedApiKeysCardEditor({
   const [names, setNames] = useState(() => readApiKeyNames(apiBase));
   const [nameValue, setNameValue] = useState('');
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const showNotification = useNotificationStore((state) => state.showNotification);
   const apiKeys = useMemo(
     () =>
@@ -152,10 +157,12 @@ function ScopedApiKeysCardEditor({
         <div className={styles.apiKeysCopy}>
           <span className={styles.apiKeysTitle}>
             {t('config_management.visual.api_keys.label')}
+            <DirtyFieldIndicator fieldId="apiKeys" />
           </span>
           <span className={styles.apiKeysHint}>{t('config_management.visual.api_keys.hint')}</span>
         </div>
-        <Button size="sm" onClick={openAddModal} disabled={disabled}>
+        <Button variant="secondary" size="sm" onClick={openAddModal} disabled={disabled}>
+          <IconPlus size={14} />
           {t('config_management.visual.api_keys.add')}
         </Button>
       </div>
@@ -168,10 +175,11 @@ function ScopedApiKeysCardEditor({
             <li key={renderApiKeyIds[index] ?? `${key}-${index}`} className={styles.apiKeyRow}>
               <span className={styles.apiKeyIndex}>#{index + 1}</span>
               <span className={styles.apiKeyMeta}>
-                <span className={styles.apiKeyName}>
-                  {names[nameFingerprints[index]] ??
-                    t('config_management.visual.api_keys.input_label')}
-                </span>
+                {names[nameFingerprints[index]] ? (
+                  <span className={styles.apiKeyName}>
+                    {privacyIdentity(privacyEnabled, names[nameFingerprints[index]])}
+                  </span>
+                ) : null}
                 <span className={styles.apiKeyValue}>{maskApiKey(String(key || ''))}</span>
               </span>
               <span className={styles.apiKeyActions}>
@@ -180,16 +188,20 @@ function ScopedApiKeysCardEditor({
                   size="sm"
                   onClick={() => handleCopy(key)}
                   disabled={disabled}
+                  aria-label={t('common.copy')}
+                  title={t('common.copy')}
                 >
-                  {t('common.copy')}
+                  <IconCopy size={16} />
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => openEditModal(renderApiKeyIds[index] ?? '')}
                   disabled={disabled}
+                  aria-label={t('config_management.visual.common.edit')}
+                  title={t('config_management.visual.common.edit')}
                 >
-                  {t('config_management.visual.common.edit')}
+                  <IconPencil size={16} />
                 </Button>
                 <Button
                   variant="ghost"
@@ -197,8 +209,10 @@ function ScopedApiKeysCardEditor({
                   className={styles.apiKeyDelete}
                   onClick={() => handleDelete(renderApiKeyIds[index] ?? '')}
                   disabled={disabled}
+                  aria-label={t('config_management.visual.common.delete')}
+                  title={t('config_management.visual.common.delete')}
                 >
-                  {t('config_management.visual.common.delete')}
+                  <IconTrash2 size={16} />
                 </Button>
               </span>
             </li>

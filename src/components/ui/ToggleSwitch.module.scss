@@ -24,9 +24,11 @@
 }
 
 .track {
-  width: 44px;
-  height: 24px;
-  background: var(--border-color);
+  width: 30px;
+  height: 18px;
+  background: var(--bg-active);
+  border: 1px solid var(--border-strong);
+  flex-shrink: 0;
   border-radius: $radius-full;
   position: relative;
   transition: background-color var(--dur-hover, 200ms) var(--ease-out-strong, ease-out);
@@ -44,22 +46,24 @@
 
 .thumb {
   position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 18px;
-  height: 18px;
-  background: #fff;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  background: var(--text-tertiary);
   border-radius: $radius-full;
-  box-shadow: $shadow-sm;
+  box-shadow: none;
   transition: transform var(--dur-hover, 200ms) var(--ease-out-strong, ease-out);
 }
 
 .root input:checked + .track {
-  background: var(--primary-color);
+  background: var(--button-primary-bg);
+  border-color: var(--button-primary-bg);
 }
 
 .root input:checked + .track .thumb {
-  transform: translateX(20px);
+  background: var(--button-primary-fg);
+  transform: translateX(12px);
 }
 
 .label {

@@ -65,6 +65,7 @@
     "subtitle": "Trung tâm Quản lý"
   },
   "login": {
+    "subtitle": "Kết nối với CLI Proxy API v8 trở lên",
     "connection_current": "URL hiện tại",
     "connection_edit": "Thay đổi",
     "connection_done": "Xong",
@@ -93,6 +94,10 @@
     "error_legacy_backend": "Backend này chấp nhận Management API v0 nhưng không cung cấp v8. Vui lòng nâng cấp CLIProxyAPI lên v8 hoặc mới hơn để sử dụng trang quản lý này."
   },
   "header": {
+    "privacy_mode_on": "Đã bật chế độ riêng tư",
+    "privacy_mode_off": "Đã tắt chế độ riêng tư",
+    "hide_personal_data": "Ẩn dữ liệu cá nhân",
+    "show_personal_data": "Hiện dữ liệu cá nhân",
     "refresh_all": "Làm mới tất cả",
     "logout": "Đăng xuất"
   },
@@ -101,7 +106,7 @@
   },
   "nav": {
     "dashboard": "Bảng điều khiển",
-    "quick_start": "Bắt đầu nhanh",
+    "quick_start": "Thiết lập nhanh",
     "ai_providers": "AI Provider",
     "auth_files": "File xác thực",
     "oauth": "Đăng nhập OAuth",
@@ -222,6 +227,10 @@
     "routing_strategy_fill_first": "fill-first (ưu tiên lấp đầy)"
   },
   "auth_files": {
+    "account_column": "Tài khoản",
+    "plan_column": "Gói",
+    "recent_requests_column": "Yêu cầu gần đây",
+    "lowest_quota_column": "Hạn mức thấp nhất",
     "title": "Quản lý File xác thực",
     "meta_total": "{{count}} credential",
     "meta_active": "{{count}} đang hoạt động",
@@ -944,6 +953,9 @@
     "no_requests": "Không có yêu cầu"
   },
   "logs": {
+    "caption": "Luồng trực tiếp · nhật ký ứng dụng và yêu cầu",
+    "error_logs_file": "Tệp",
+    "error_logs_actions": "Thao tác với tệp",
     "title": "Trình xem Log",
     "refresh_button": "Làm mới Log",
     "clear_button": "Xóa Log",
@@ -1037,6 +1049,8 @@
     "meta_dirty_source": "Chỉnh sửa nguồn chưa lưu",
     "meta_errors": "{{count}} lỗi xác thực",
     "meta_synced": "Đã đồng bộ",
+    "unsaved_changes_one": "{{count}} thay đổi chưa lưu",
+    "unsaved_changes_other": "{{count}} thay đổi chưa lưu",
     "actions": {
       "discard": "Hủy thay đổi",
       "save": "Lưu thay đổi"
@@ -1095,12 +1109,12 @@
           "description": "Địa chỉ máy chủ, cổng, thư mục xác thực và API key"
         },
         "logging": {
-          "title": "Ghi log & Chẩn đoán",
+          "title": "Nhật ký",
           "description": "Debug, xuất log và thống kê sử dụng"
         },
         "advanced": {
           "antigravity_credits": "Dùng credit Antigravity",
-          "title": "Nâng cao & Thử nghiệm",
+          "title": "Nâng cao",
           "description": "Giả mạo header, cache chữ ký, nguồn plugin và các cài đặt ít thay đổi khác",
           "plugins_title": "Plugin",
           "signature_title": "Chữ ký Antigravity",
@@ -1213,7 +1227,7 @@
           "beta_features": "Tính năng Beta"
         },
         "network": {
-          "title": "Cấu hình mạng",
+          "title": "Mạng",
           "description": "Cài đặt proxy, thử lại và định tuyến",
           "proxy_url": "URL Proxy",
           "request_retry": "Số lần thử lại yêu cầu",
@@ -1249,7 +1263,7 @@
           "max_retry_interval_hint": "Đặt thành 0 hoặc số nguyên âm để bỏ qua thời gian chờ cooldown giữa các lượt thử lại."
         },
         "streaming": {
-          "title": "Cấu hình Streaming",
+          "title": "Streaming",
           "description": "Cài đặt keepalive và thử lại bootstrap",
           "keepalive_seconds": "Số giây Keepalive",
           "keepalive_hint": "Đặt 0 hoặc để trống để tắt keepalive",
@@ -1260,7 +1274,7 @@
           "disabled": "Đã tắt"
         },
         "payload": {
-          "title": "Cấu hình Payload",
+          "title": "Payload",
           "description": "Giá trị mặc định, quy tắc JSON thô, quy tắc ghi đè và quy tắc lọc",
           "default_rules": "Quy tắc mặc định",
           "default_rules_desc": "Dùng các giá trị mặc định này khi tham số không được chỉ định trong yêu cầu",
@@ -1544,6 +1558,14 @@
     "precise_save_recovery_required": "Không thể đọc lại kết quả lưu. Đã tạm dừng chỉnh sửa. Lưu lại để khôi phục mốc cơ sở của bản nháp, hoặc tải lại cấu hình."
   },
   "quota_management": {
+    "summary_label": "Hạn mức theo nhà cung cấp",
+    "lowest": "còn lại ít nhất",
+    "upcoming_title": "Lần đặt lại sắp tới",
+    "upcoming_description": "Thời điểm khôi phục từng cửa sổ hạn mức, sớm nhất trước",
+    "upcoming_filter": "Lọc cửa sổ đặt lại",
+    "upcoming_empty": "Không có lần đặt lại sắp tới cho cửa sổ này.",
+    "upcoming_show_all": "Hiển thị tất cả {{count}} lần đặt lại",
+    "upcoming_show_less": "Thu gọn danh sách đặt lại",
     "title": "Quản lý Quota",
     "description": "Theo dõi trạng thái quota OAuth của credential Antigravity, Codex, Claude, Kimi và xAI.",
     "refresh_all_credentials": "Làm mới mọi credential",
@@ -1592,6 +1614,7 @@
   },
   "routing": {
     "title": "Định tuyến",
+    "summary": "Thành viên {{members}} · Tầng {{tiers}}",
     "refresh": "Làm mới",
     "refresh_discards": "Làm mới sẽ bỏ cách sắp xếp chưa lưu.",
     "loading": "Đang tải định tuyến…",
@@ -1660,9 +1683,11 @@
     "max_retry_credentials_desc": "Số tối đa thử mỗi vòng; 0 là thử tất cả.",
     "unlimited": "Không giới hạn",
     "dirty_region": "Thay đổi định tuyến chưa lưu",
-    "dirty_count": "Thay đổi chưa lưu: {{count}}",
-    "discard": "Bỏ",
-    "save": "Lưu",
+    "dirty_count": "{{count}} thay đổi chưa lưu",
+    "dirty_count_one": "{{count}} thay đổi chưa lưu",
+    "dirty_count_other": "{{count}} thay đổi chưa lưu",
+    "discard": "Bỏ thay đổi",
+    "save": "Lưu thay đổi",
     "review_title": "Lưu thay đổi định tuyến",
     "review_hint": "Thông tin xác thực OAuth được ghi lần lượt; phần còn lại ghi vào cấu hình trong một lần.",
     "confirm_save": "Lưu thay đổi",

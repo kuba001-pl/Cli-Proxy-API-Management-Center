@@ -2,6 +2,8 @@ import { describe, expect, test } from 'bun:test';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import '../src/i18n/index';
+import { usePrivacyStore } from '../src/stores/usePrivacyStore';
+import { PRIVACY_MASK } from '../src/utils/privacy';
 import { QuotaTimeline } from '../src/features/quota/components/QuotaTimeline';
 import type { QuotaFileEntry } from '../src/features/quota/logic';
 import { buildKimiQuotaRows } from '../src/utils/quota';
@@ -149,6 +151,44 @@ describe('QuotaTimeline rendering', () => {
 
     expect(markup).toContain('role="img"');
     expect(markup).toContain('08/03 12:00');
+  });
+
+  test('masks file identities in lane labels and window tooltips while retaining the real lane key', () => {
+    // Zustand's bound hook holds its own API object. SSR reads the original
+    // snapshot, so update that snapshot for this synchronous render and restore it.
+    const snapshot = usePrivacyStore.getInitialState();
+    const wasEnabled = snapshot.enabled;
+    snapshot.enabled = true;
+    try {
+      const file = {
+        name: 'claude-person@example.test.json',
+        email: 'person@example.test',
+        type: 'claude',
+      };
+      const markup = renderToStaticMarkup(
+        createElement(QuotaTimeline, {
+          ...baseProps,
+          entries: [{ file, type: 'claude' }],
+          quotaFor: () => ({
+            status: 'success',
+            windows: [
+              {
+                label: 'Weekly',
+                usedPercent: 25,
+                resetAtMs: new Date(2026, 7, 1, 12).getTime(),
+                periodHours: 168,
+              },
+            ],
+          }),
+        })
+      );
+      expect(markup).toContain(PRIVACY_MASK);
+      expect(markup).not.toContain(file.email);
+      expect(markup).toContain(`title="claude-${PRIVACY_MASK}.json`);
+      expect(file.name).toBe('claude-person@example.test.json');
+    } finally {
+      snapshot.enabled = wasEnabled;
+    }
   });
 
   test('stays hidden before any credential exposes a usable quota window', () => {

@@ -9,7 +9,9 @@ import { useAuthStore } from '@/stores/useAuthStore';
 import type { AuthFileItem } from '@/types';
 import { formatDateTimeValue } from '@/utils/format';
 import { notifyAuthFilesChanged } from '@/features/authFiles/authFilesEvents';
-import { deriveAuthFileIdentity, stripJsonExtension } from '@/features/authFiles/identity';
+import { authFileDisplayIdentity } from '@/features/authFiles/privacy';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyText } from '@/utils/privacy';
 import { createOAuthAttempts, type OAuthAttempt } from '../oauthAttempts';
 import { splitAuthUrl } from '../flowView';
 import {
@@ -42,6 +44,7 @@ export interface SiwcBindDialogProps {
  */
 export function SiwcBindDialog({ open, onClose, onViewAuthFiles }: SiwcBindDialogProps) {
   const { t, i18n } = useTranslation();
+  const privacy = usePrivacyStore((state) => state.enabled);
   const [targets, setTargets] = useState<AuthFileItem[] | null>(null);
   const [loadFailed, setLoadFailed] = useState(false);
   const [name, setName] = useState('');
@@ -301,7 +304,7 @@ export function SiwcBindDialog({ open, onClose, onViewAuthFiles }: SiwcBindDialo
             <div className={dialogStyles.resultTitle}>{t('siwc.ok')}</div>
             {selected && (
               <p className={dialogStyles.resultHint}>
-                {t('siwc.ok_hint', { name: deriveAuthFileIdentity(selected).primary })}
+                {t('siwc.ok_hint', { name: authFileDisplayIdentity(selected, privacy).primary })}
               </p>
             )}
             <div className={dialogStyles.resultActions}>
@@ -335,6 +338,7 @@ function TargetPicker({
   expiresOf: (file: AuthFileItem) => string;
 }) {
   const { t } = useTranslation();
+  const privacy = usePrivacyStore((state) => state.enabled);
   const groupName = useId();
 
   let content: ReactNode;
@@ -357,7 +361,7 @@ function TargetPicker({
     content = (
       <div className={styles.options}>
         {targets.map((file) => {
-          const identity = deriveAuthFileIdentity(file);
+          const identity = authFileDisplayIdentity(file, privacy);
           const expires = expiresOf(file);
           const meta = [expires && t('siwc.expires', { date: expires }), identity.secondary]
             .filter(Boolean)
@@ -384,7 +388,7 @@ function TargetPicker({
                   }`}
                   title={identity.fullName}
                 >
-                  {identity.primary || stripJsonExtension(file.name)}
+                  {identity.primary}
                 </span>
                 {meta && <span className={styles.optionMeta}>{meta}</span>}
               </span>
@@ -407,7 +411,8 @@ function TargetPicker({
 /** 授权开始后的锁定目标：单行摘要，不再可改。 */
 function TargetSummary({ file }: { file: AuthFileItem }) {
   const { t } = useTranslation();
-  const identity = deriveAuthFileIdentity(file);
+  const privacy = usePrivacyStore((state) => state.enabled);
+  const identity = authFileDisplayIdentity(file, privacy);
   return (
     <div className={styles.summary}>
       <span className={styles.summaryLabel}>{t('siwc.target')}</span>
@@ -415,7 +420,7 @@ function TargetSummary({ file }: { file: AuthFileItem }) {
         className={`${styles.summaryName} ${identity.kind === 'fileName' ? styles.optionNameMono : ''}`}
         title={identity.fullName}
       >
-        {identity.primary || stripJsonExtension(file.name)}
+        {identity.primary}
       </span>
       <SiwcStatusBadge status={getSiwcBindingStatus(file)} withLabel={false} />
     </div>
@@ -454,14 +459,15 @@ function Step({
 
 function OpenStep({ url }: { url?: string }) {
   const { t } = useTranslation();
+  const privacy = usePrivacyStore((state) => state.enabled);
   const parts = url ? splitAuthUrl(url) : null;
   return (
     <Step title={t('siwc.step_open')}>
       <div className={dialogStyles.urlField} aria-busy={!url}>
         {parts ? (
-          <span className={dialogStyles.urlText} title={url}>
+          <span className={dialogStyles.urlText} title={privacyText(privacy, url)}>
             <span className={dialogStyles.urlHost}>{parts.host}</span>
-            <span className={dialogStyles.urlRest}>{parts.rest}</span>
+            <span className={dialogStyles.urlRest}>{privacyText(privacy, parts.rest)}</span>
           </span>
         ) : (
           <span className={dialogStyles.urlSkeleton} aria-label={t('siwc.starting')} />
@@ -499,6 +505,7 @@ function CallbackStep({
   onSubmit: () => void;
 }) {
   const { t } = useTranslation();
+  const privacy = usePrivacyStore((state) => state.enabled);
   const inputId = useId();
   const hintId = useId();
   const feedbackId = useId();
@@ -520,6 +527,7 @@ function CallbackStep({
           id={inputId}
           className={`input ${dialogStyles.callbackInput}`}
           value={value}
+          type={privacy ? 'password' : 'text'}
           onChange={(event) => onChange(event.target.value)}
           placeholder={CALLBACK_PLACEHOLDER}
           disabled={disabled}

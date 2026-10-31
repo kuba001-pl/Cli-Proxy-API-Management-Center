@@ -25,8 +25,8 @@
 }
 
 .searchInput {
-  height: 38px !important;
-  border-radius: 10px !important;
+  height: 32px !important;
+  border-radius: 6px !important;
   font-size: 13px !important;
   padding-right: 128px !important;
 }
@@ -93,11 +93,11 @@
   flex-shrink: 0;
 
   button {
-    min-width: 38px;
-    width: 38px;
-    height: 38px;
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
     padding: 0 !important;
-    border-radius: 10px;
+    border-radius: 6px;
   }
 }
 
@@ -107,10 +107,10 @@
   width: 100%;
   flex: 0 0 auto;
   height: clamp(500px, 70vh, 1040px);
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
   overflow: hidden;
-  background: var(--bg-primary);
+  background: var(--bg-surface);
 
   @supports (height: 100dvh) {
     height: clamp(500px, 70dvh, 1040px);
@@ -119,21 +119,33 @@
   :global {
     .cm-editor {
       height: 100%;
-      font-size: 13px;
+      font-size: 12.5px;
+      line-height: 22px;
+      color: var(--text-primary);
       font-family: $font-mono;
       background: transparent;
     }
 
     .cm-scroller {
+      font-family: $font-mono;
       overflow: auto;
       -webkit-overflow-scrolling: touch;
       touch-action: pan-x pan-y;
       overscroll-behavior: contain;
     }
 
+    .cm-content {
+      padding: 12px 0;
+      caret-color: var(--text-primary);
+    }
+
+    .cm-line {
+      padding: 0 16px;
+    }
+
     .cm-gutters {
-      border-right: 1px solid var(--border-color);
-      background: color-mix(in srgb, var(--bg-secondary) 86%, transparent);
+      border-right: 1px solid var(--border-default);
+      background: var(--bg-raised);
     }
 
     .cm-lineNumbers .cm-gutterElement {
@@ -148,16 +160,16 @@
     }
 
     .cm-selectionMatch {
-      background: rgba(224, 170, 20, 0.24);
+      background: color-mix(in srgb, var(--status-warning) 24%, transparent);
     }
 
     .cm-searchMatch {
-      background: rgba(224, 170, 20, 0.32);
-      outline: 1px solid rgba(224, 170, 20, 0.48);
+      background: color-mix(in srgb, var(--status-warning) 32%, transparent);
+      outline: 1px solid var(--status-warning);
     }
 
     .cm-searchMatch-selected {
-      background: rgba(198, 87, 70, 0.32);
+      background: color-mix(in srgb, var(--status-warning) 48%, transparent);
     }
   }
 }

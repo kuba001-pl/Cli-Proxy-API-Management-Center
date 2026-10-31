@@ -28,6 +28,6 @@
 /* 磁贴网格：一屏看全所有提供商（窄屏自动单列）；280 让常见宽度下 6 家排成 3+3 */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+  gap: 12px;
 }

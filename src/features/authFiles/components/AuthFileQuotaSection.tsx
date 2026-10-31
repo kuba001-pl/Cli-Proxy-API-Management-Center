@@ -1,3 +1,6 @@
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { authFilePrivacyIdentities } from '../privacy';
+import { privacyText } from '@/utils/privacy';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -37,7 +40,17 @@ export type AuthFileQuotaSectionProps = {
 export function AuthFileQuotaSection(props: AuthFileQuotaSectionProps) {
   const { file, quotaType, disableControls } = props;
   const { t } = useTranslation();
-  const showNotification = useNotificationStore((state) => state.showNotification);
+  const privacy = usePrivacyStore((state) => state.enabled);
+  const notify = useNotificationStore((state) => state.showNotification);
+  const showNotification = useCallback(
+    (message: string, type: Parameters<typeof notify>[1]) => {
+      notify(
+        privacyText(usePrivacyStore.getState().enabled, message, authFilePrivacyIdentities(file)),
+        type
+      );
+    },
+    [file, notify]
+  );
   const showConfirmation = useNotificationStore((state) => state.showConfirmation);
   const [resettingQuota, setResettingQuota] = useState(false);
   const adapter = QUOTA_ADAPTERS[quotaType];
@@ -122,7 +135,11 @@ export function AuthFileQuotaSection(props: AuthFileQuotaSectionProps) {
 
     showConfirmation({
       title: t('codex_quota.reset_confirm_title'),
-      message: t('codex_quota.reset_confirm_message', { name: file.name }),
+      message: privacyText(
+        usePrivacyStore.getState().enabled,
+        t('codex_quota.reset_confirm_message', { name: file.name }),
+        authFilePrivacyIdentities(file)
+      ),
       confirmText: t('codex_quota.reset_confirm_button'),
       variant: 'primary',
       onConfirm: async () => {
@@ -206,7 +223,7 @@ export function AuthFileQuotaSection(props: AuthFileQuotaSectionProps) {
       ) : quotaStatus === 'error' ? (
         <div className={styles.quotaError}>
           {t(`${adapter.i18nPrefix}.load_failed`, {
-            message: quotaErrorMessage,
+            message: privacyText(privacy, quotaErrorMessage, authFilePrivacyIdentities(file)),
           })}
         </div>
       ) : quota && !retainedClaudeUsage ? (

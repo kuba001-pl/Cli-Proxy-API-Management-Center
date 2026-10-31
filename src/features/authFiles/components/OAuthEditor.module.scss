@@ -160,9 +160,9 @@
   font-weight: 500;
   cursor: pointer;
   transition:
-    border-color 160ms ease,
-    background-color 160ms ease,
-    color 160ms ease;
+    border-color var(--dur-press) var(--ease-out-strong),
+    background-color var(--dur-press) var(--ease-out-strong),
+    color var(--dur-press) var(--ease-out-strong);
 
   img {
     width: 18px;
@@ -181,7 +181,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--primary-color);
+    outline: 2px solid var(--text-secondary);
     outline-offset: 3px;
   }
 
@@ -192,7 +192,7 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled) {
-      border-color: var(--primary-color);
+      border-color: var(--border-strong);
       background: var(--bg-tertiary);
       color: var(--text-primary);
     }
@@ -204,8 +204,8 @@
 }
 
 .providerOptionActive {
-  border-color: var(--primary-color);
-  background: var(--primary-10);
+  border-color: var(--border-strong);
+  background: var(--bg-active);
   color: var(--text-primary);
 
   .providerCheck {

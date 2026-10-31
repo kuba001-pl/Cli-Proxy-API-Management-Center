@@ -137,3 +137,30 @@
     transform: none;
   }
 }
+
+.tabs {
+  padding-bottom: 8px;
+  gap: 4px;
+  border-color: var(--border-subtle);
+}
+.tab {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.tab::after {
+  display: none;
+}
+.tabActive {
+  background: var(--bg-active);
+}
+.tabCount {
+  background: none;
+  padding: 0;
+  color: var(--text-tertiary);
+  font-size: 11px;
+}
+.tabGlyph {
+  display: none;
+}

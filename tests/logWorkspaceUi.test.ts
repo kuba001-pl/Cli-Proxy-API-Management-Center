@@ -19,13 +19,13 @@ describe('log workspace layout contract', () => {
     expect(styles).not.toMatch(/calc\(100vh\s*-/);
     expect(styles).not.toMatch(/\n\s*(?:height|min-height|max-height):\s*(?:360|420|480)px/);
     expect(layout).toMatch(
-      /&\.content-logs\s*\{\s*height: 100dvh;\s*min-height: 0;\s*overflow: hidden;/
+      /&\.content-logs,?\s*(?:&\.content-plugin-resource\s*)?\{\s*height: 100dvh;\s*min-height: 0;\s*overflow: hidden;/
     );
   });
 
   test('error archive and fullscreen share the flexible viewport contract', () => {
     const archive = styles.match(/\.errorPanel \{([^}]+)\}/)?.[1] ?? '';
-    const fullscreen = styles.match(/\.logCardFullscreen \{([^}]+)\}/)?.[1] ?? '';
+    const fullscreen = styles.match(/\.logCardFullscreen:global\(\.card\) \{([^}]+)\}/)?.[1] ?? '';
     expect(archive).toContain('flex: 1');
     expect(archive).toContain('min-height: 0');
     expect(archive).not.toMatch(/\bheight:\s*\d+px/);
@@ -81,19 +81,21 @@ describe('log workspace layout contract', () => {
     expect(styles).toMatch(
       /\.searchInput:global\(\.input\),\s*\.levelSelect > button,\s*\.filterPanelToggle:global\(\.btn\),\s*\.actionButton:global\(\.btn\) \{[^}]*height: var\(--log-control-height\)/
     );
-    expect(styles).toContain('--log-control-height: 40px');
-    expect(styles).toContain('--log-control-height: 36px');
+    expect(styles).toContain('--log-control-height: 32px');
     expect(styles).toContain('width: var(--log-control-height)');
-    expect(styles).not.toContain('height: 32px');
+    expect(styles).not.toContain('--log-control-height: 40px');
   });
 
   test('all supported locales describe both filtering and display settings', () => {
-    for (const locale of ['en', 'zh-CN', 'zh-TW', 'ru']) {
+    for (const locale of ['en', 'zh-CN', 'zh-TW', 'ru', 'vi', 'ko', 'tr']) {
       const messages = JSON.parse(readSource(`src/i18n/locales/${locale}.json`));
       expect(messages.logs.filter_panel_title).toBeTruthy();
       expect(messages.logs.show_raw_logs).toBeTruthy();
       expect(messages.logs.wrap_lines).toBeTruthy();
       expect(messages.logs.hide_management_logs).toBeTruthy();
+      expect(messages.logs.caption).toBeTruthy();
+      expect(messages.logs.error_logs_file).toBeTruthy();
+      expect(messages.logs.error_logs_actions).toBeTruthy();
     }
   });
 });

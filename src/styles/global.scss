@@ -10,7 +10,7 @@
 @use './layout.scss';
 
 body {
-  background-color: var(--bg-secondary);
+  background-color: var(--bg-app);
   color: var(--text-primary);
   transition:
     background-color $transition-normal,
@@ -45,3 +45,8 @@ body.modal-open .content {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
+}

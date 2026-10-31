@@ -40,6 +40,7 @@ export function ToggleSwitch({
       <input
         id={id}
         type="checkbox"
+        role="switch"
         checked={checked}
         onChange={handleChange}
         disabled={disabled}

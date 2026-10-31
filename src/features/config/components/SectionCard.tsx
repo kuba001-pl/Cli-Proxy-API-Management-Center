@@ -14,24 +14,12 @@ export type SectionCardProps = {
 };
 
 /**
- * 分区卡片：自然高度纵向流（替代旧的固定高度滚动吸附轮播）。
- * 表面配方与全站卡片一致：14px 圆角 / 1px 描边 / 82% color-mix。
+ * A section heading and a flat list of settings; content keeps its natural height.
  */
-export function SectionCard({
-  indexLabel,
-  icon,
-  title,
-  description,
-  animateIn = false,
-  children,
-}: SectionCardProps) {
+export function SectionCard({ title, description, animateIn = false, children }: SectionCardProps) {
   return (
     <section className={`${styles.card} ${animateIn ? styles.cardEnter : ''}`}>
       <header className={styles.header}>
-        <div className={styles.badges}>
-          {indexLabel ? <span className={styles.indexBadge}>{indexLabel}</span> : null}
-          {icon ? <span className={styles.iconBadge}>{icon}</span> : null}
-        </div>
         <div className={styles.heading}>
           <h2 className={styles.title}>{title}</h2>
           {description ? <p className={styles.description}>{description}</p> : null}

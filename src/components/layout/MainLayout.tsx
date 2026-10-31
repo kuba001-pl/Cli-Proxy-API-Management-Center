@@ -31,6 +31,7 @@ import {
   IconSidebarStore,
   IconSidebarSystem,
   IconChevronDown,
+  IconEyeOff,
 } from '@/components/ui/icons';
 import { INLINE_LOGO_JPEG } from '@/assets/logoInline';
 import {
@@ -54,6 +55,8 @@ import { LANGUAGE_LABEL_KEYS, LANGUAGE_ORDER } from '@/utils/constants';
 import { isSupportedLanguage } from '@/utils/language';
 import { getSidebarShortcutLabel, isSidebarToggleShortcut } from '@/utils/sidebarShortcut';
 import type { Theme } from '@/types';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyText } from '@/utils/privacy';
 
 const sidebarIcons: Record<string, ReactNode> = {
   dashboard: <IconSidebarDashboard size={18} />,
@@ -258,61 +261,19 @@ const headerIcons = {
   ),
 };
 
-const THEME_CARDS: Array<{
-  key: Theme;
-  labelKey: string;
-  colors: { bg: string; card: string; border: string; text: string; textMuted: string };
-}> = [
-  {
-    key: 'auto',
-    labelKey: 'theme.auto',
-    colors: {
-      bg: 'linear-gradient(135deg, #ffffff 0 50%, #111111 50% 100%)',
-      card: 'linear-gradient(135deg, #ffffff 0 50%, #1a1a1a 50% 100%)',
-      border: '#bdbdbd',
-      text: '#2d2a26',
-      textMuted: 'linear-gradient(135deg, #c9c9c9 0 50%, #5a5a5a 50% 100%)',
-    },
-  },
-  {
-    key: 'white',
-    labelKey: 'theme.white',
-    colors: {
-      bg: '#ffffff',
-      card: '#ffffff',
-      border: '#e5e5e5',
-      text: '#2d2a26',
-      textMuted: '#a29c95',
-    },
-  },
-  {
-    key: 'light',
-    labelKey: 'theme.light',
-    colors: {
-      bg: '#faf9f5',
-      card: '#f0eee8',
-      border: '#e3e1db',
-      text: '#2d2a26',
-      textMuted: '#a29c95',
-    },
-  },
-  {
-    key: 'dark',
-    labelKey: 'theme.dark',
-    colors: {
-      bg: '#151412',
-      card: '#1d1b18',
-      border: '#3a3530',
-      text: '#f6f4f1',
-      textMuted: '#9c958d',
-    },
-  },
+const THEME_CARDS: Array<{ key: Theme; labelKey: string }> = [
+  { key: 'auto', labelKey: 'theme.auto' },
+  { key: 'white', labelKey: 'theme.white' },
+  { key: 'light', labelKey: 'theme.light' },
+  { key: 'dark', labelKey: 'theme.dark' },
 ];
 
 export function MainLayout() {
   const { t } = useTranslation();
   const { showNotification } = useNotificationStore();
   const location = useLocation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
+  const togglePrivacy = usePrivacyStore((state) => state.toggle);
 
   const logout = useAuthStore((state) => state.logout);
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
@@ -861,8 +822,14 @@ export function MainLayout() {
     ) : null;
 
   const renderNavLink = (item: SidebarNavLinkItem, className = 'nav-item') => {
-    const itemLabel = item.label ?? (item.labelKey ? t(item.labelKey) : '');
-    const itemMeta = item.meta ?? (item.metaKey ? t(item.metaKey) : '');
+    const itemLabel = privacyText(
+      privacyEnabled,
+      item.label ?? (item.labelKey ? t(item.labelKey) : '')
+    );
+    const itemMeta = privacyText(
+      privacyEnabled,
+      item.meta ?? (item.metaKey ? t(item.metaKey) : '')
+    );
     const accessibleLabel = item.badgeLabel ? `${itemLabel}, ${item.badgeLabel}` : itemLabel;
 
     return (
@@ -929,7 +896,7 @@ export function MainLayout() {
             isOpen ? 'open' : ''
           }`}
           onClick={() => togglePluginResourceDrawer(item.id)}
-          aria-label={showSidebarLabels ? undefined : item.label}
+          aria-label={showSidebarLabels ? undefined : privacyText(privacyEnabled, item.label)}
           aria-describedby={
             !showSidebarLabels && item.meta && railTooltip?.targetID === item.id
               ? NAV_TOOLTIP_ID
@@ -939,25 +906,43 @@ export function MainLayout() {
           onMouseEnter={
             showSidebarLabels
               ? undefined
-              : (event) => handleRailTooltipMouseEnter(event, item.id, item.label, item.meta)
+              : (event) =>
+                  handleRailTooltipMouseEnter(
+                    event,
+                    item.id,
+                    privacyText(privacyEnabled, item.label),
+                    privacyText(privacyEnabled, item.meta)
+                  )
           }
           onMouseLeave={showSidebarLabels ? undefined : handleRailTooltipMouseLeave}
           onFocus={
             showSidebarLabels
               ? undefined
-              : (event) => handleRailTooltipFocus(event, item.id, item.label, item.meta)
+              : (event) =>
+                  handleRailTooltipFocus(
+                    event,
+                    item.id,
+                    privacyText(privacyEnabled, item.label),
+                    privacyText(privacyEnabled, item.meta)
+                  )
           }
           onBlur={
             showSidebarLabels
               ? undefined
-              : (event) => handleRailTooltipBlur(event, item.id, item.label, item.meta)
+              : (event) =>
+                  handleRailTooltipBlur(
+                    event,
+                    item.id,
+                    privacyText(privacyEnabled, item.label),
+                    privacyText(privacyEnabled, item.meta)
+                  )
           }
         >
           <span className="nav-icon">{item.icon}</span>
           {showSidebarLabels && (
             <>
               <span className="nav-text">
-                <span className="nav-label">{item.label}</span>
+                <span className="nav-label">{privacyText(privacyEnabled, item.label)}</span>
               </span>
               <span className="nav-drawer-caret" aria-hidden="true">
                 <IconChevronDown size={14} />
@@ -986,8 +971,6 @@ export function MainLayout() {
         isPluginResourcePage ? 'plugin-resource-shell' : ''
       } ${arrivingFromLogin ? 'app-shell--arriving' : ''}`}
     >
-      <div className="top-gradient-blur" aria-hidden="true" />
-
       <header className="main-header" ref={headerRef}>
         <button
           type="button"
@@ -1031,8 +1014,20 @@ export function MainLayout() {
             size="sm"
             onClick={handleRefreshAll}
             title={t('header.refresh_all')}
+            aria-label={t('header.refresh_all')}
           >
             {headerIcons.refresh}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className={privacyEnabled ? 'privacy-toggle active' : 'privacy-toggle'}
+            onClick={togglePrivacy}
+            aria-pressed={privacyEnabled}
+            aria-label={t(privacyEnabled ? 'header.privacy_mode_on' : 'header.privacy_mode_off')}
+            title={t(privacyEnabled ? 'header.show_personal_data' : 'header.hide_personal_data')}
+          >
+            <IconEyeOff size={16} />
           </Button>
           <div className={`language-menu ${languageMenuOpen ? 'open' : ''}`} ref={languageMenuRef}>
             <Button
@@ -1101,47 +1096,28 @@ export function MainLayout() {
                     role="menuitemradio"
                     aria-checked={theme === tc.key}
                   >
-                    <div
-                      className="theme-card-preview"
-                      style={{
-                        background: tc.colors.bg,
-                        border: `1px solid ${tc.colors.border}`,
-                      }}
-                    >
-                      <div
-                        className="theme-card-header"
-                        style={{
-                          background: tc.colors.card,
-                          borderBottom: `1px solid ${tc.colors.border}`,
-                        }}
-                      />
-                      <div className="theme-card-body">
-                        <div
-                          className="theme-card-sidebar"
-                          style={{
-                            background: tc.colors.card,
-                            borderRight: `1px solid ${tc.colors.border}`,
-                          }}
-                        />
-                        <div className="theme-card-content" style={{ background: tc.colors.bg }}>
-                          <div
-                            className="theme-card-line"
-                            style={{ background: tc.colors.textMuted }}
-                          />
-                          <div
-                            className="theme-card-line short"
-                            style={{ background: tc.colors.textMuted }}
-                          />
-                        </div>
-                      </div>
-                    </div>
+                    <span className="theme-card-preview" aria-hidden="true">
+                      {tc.key === 'auto'
+                        ? headerIcons.autoTheme
+                        : tc.key === 'dark'
+                          ? headerIcons.moon
+                          : tc.key === 'white'
+                            ? headerIcons.whiteTheme
+                            : headerIcons.sun}
+                    </span>
                     <span className="theme-card-label">{t(tc.labelKey)}</span>
                   </button>
                 ))}
               </div>
             )}
           </div>
-          <Button variant="ghost" size="sm" onClick={logout} title={t('header.logout')}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={logout}
+            title={t('header.logout')}
+            aria-label={t('header.logout')}
+          >
             {headerIcons.logout}
           </Button>
         </div>
@@ -1162,7 +1138,7 @@ export function MainLayout() {
         >
           <div className="sidebar-header">
             <div className="sidebar-brand" title={fullBrandName}>
-              <img src={INLINE_LOGO_JPEG} alt="CPAMC logo" className="sidebar-brand-logo" />
+              <img src={INLINE_LOGO_JPEG} alt="" className="sidebar-brand-logo" />
               {showSidebarLabels && (
                 <span className="sidebar-brand-text">
                   <span className="sidebar-brand-title">{abbrBrandName}</span>
@@ -1195,9 +1171,13 @@ export function MainLayout() {
             style={{ top: railTooltip.top }}
           >
             <span className="nav-tooltip-label" aria-hidden="true">
-              {railTooltip.label}
+              {privacyText(privacyEnabled, railTooltip.label)}
             </span>
-            {railTooltip.meta ? <span className="nav-tooltip-meta">{railTooltip.meta}</span> : null}
+            {railTooltip.meta ? (
+              <span className="nav-tooltip-meta">
+                {privacyText(privacyEnabled, railTooltip.meta)}
+              </span>
+            ) : null}
           </div>
         )}
 

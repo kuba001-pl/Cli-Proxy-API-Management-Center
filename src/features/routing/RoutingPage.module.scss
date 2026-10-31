@@ -22,7 +22,7 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   min-width: 0;
   /* While the floating save bar is up, leave room to scroll the last row above it. */
   padding-bottom: calc(
-    var(--routing-action-bar-height, 0px) + 16px + env(safe-area-inset-bottom, 0px)
+    var(--routing-action-bar-height, 0px) + 48px + env(safe-area-inset-bottom, 0px)
   );
 }
 
@@ -38,11 +38,33 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 
 .title {
   margin: 0;
-  font-size: clamp(26px, 3.2vw, 30px);
-  line-height: 1.15;
+  font-size: 28px;
+  line-height: 34px;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.4px;
   color: var(--text-primary);
+}
+
+.headerCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.summary {
+  margin: 0;
+  font-family: $font-mono;
+  font-size: 12px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-tertiary);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 /* ---------- layout ---------- */
@@ -130,13 +152,12 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 }
 
 .entryDot {
-  background: var(--viz-success);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--viz-success) 16%, transparent);
+  background: var(--status-success);
 }
 
 .exhaustedDot {
   border: 1.5px solid var(--text-tertiary);
-  background: var(--bg-secondary);
+  background: var(--bg-surface);
 }
 
 .entryLabel,
@@ -181,8 +202,8 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   height: 36px;
   padding-top: 0;
   padding-bottom: 0;
-  border-radius: 10px;
-  background: var(--bg-primary);
+  border-radius: 6px;
+  background: var(--bg-app);
   font-size: 13px;
 }
 
@@ -211,7 +232,7 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   bottom: 0;
   width: 1px;
   margin-left: -0.5px;
-  background: var(--border-primary);
+  background: var(--border-default);
 }
 
 .gapOpen {
@@ -224,8 +245,8 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   align-items: center;
   justify-content: center;
   height: 40px;
-  border: 1px dashed var(--border-primary);
-  border-radius: 12px;
+  border: 1px dashed var(--border-default);
+  border-radius: 8px;
   font-size: 12px;
   color: var(--text-tertiary);
   transition:
@@ -235,8 +256,8 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 }
 
 .gapHover .gapDrop {
-  border-color: var(--viz-success);
-  background: color-mix(in srgb, var(--viz-success) 6%, transparent);
+  border-color: var(--status-success);
+  background: color-mix(in srgb, var(--status-success) 6%, transparent);
   color: var(--text-primary);
 }
 
@@ -246,11 +267,11 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 14px $tier-pad $tier-pad;
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-  background: var(--bg-primary);
+  gap: 0;
+  padding: 0;
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  background: var(--bg-surface);
   transition:
     border-color var(--dur-hover) var(--ease-out-strong),
     background-color var(--dur-hover) var(--ease-out-strong),
@@ -258,8 +279,8 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 }
 
 .tierHover {
-  border-color: var(--viz-success);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--viz-success) 12%, transparent);
+  border-color: var(--status-success);
+  background: var(--bg-raised);
 }
 
 .tierHead {
@@ -268,7 +289,8 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   flex-wrap: wrap;
   gap: 4px 10px;
   min-width: 0;
-  min-height: $index-size;
+  min-height: 48px;
+  padding: 12px $tier-pad;
 }
 
 .tierIndex {
@@ -278,8 +300,8 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   flex-shrink: 0;
   width: $index-size;
   height: $index-size;
-  border-radius: 50%;
-  background: var(--bg-tertiary);
+  border-radius: 5px;
+  background: var(--bg-raised);
   font-family: $font-mono;
   font-size: 11.5px;
   font-weight: 600;
@@ -306,7 +328,7 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 }
 
 .tierPriorityChanged {
-  color: var(--amber-color);
+  color: var(--status-warning);
 }
 
 /* State reads as a quiet status line on the right; its dot carries the color. */
@@ -336,26 +358,18 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 
 .tierMembers {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-direction: column;
   min-width: 0;
-  padding-left: $index-size + 10px;
-
-  @include mobile {
-    padding-left: 0;
-  }
 }
 
 .tierActive {
-  border-color: color-mix(in srgb, var(--viz-success) 38%, var(--border-color));
-
   .tierIndex {
-    background: var(--viz-success);
-    color: #fff;
+    background: var(--bg-active);
+    color: var(--text-primary);
   }
 
   .tierState {
-    color: var(--viz-success);
+    color: var(--status-success);
     font-weight: 600;
   }
 }
@@ -366,21 +380,20 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 }
 
 .tierCooling .tierState {
-  color: var(--amber-color);
+  color: var(--status-warning);
 }
 
 .tierUnknown .tierState {
   color: var(--text-secondary);
 }
 
-/* Skipped tiers recede by outline, not opacity, so their (already dimmed) cards stay legible. */
+/* Keep skipped tiers legible, with quiet labels and neutral status dots. */
 .tierSkipped {
-  border-style: dashed;
-  background: transparent;
+  background: var(--bg-surface);
 
   .tierIndex {
     background: transparent;
-    box-shadow: inset 0 0 0 1px var(--border-primary);
+    box-shadow: inset 0 0 0 1px var(--border-default);
     color: var(--text-tertiary);
   }
 
@@ -389,7 +402,7 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   }
 
   .tierState::before {
-    background: var(--text-quaternary);
+    background: var(--text-muted);
   }
 }
 
@@ -401,9 +414,9 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   display: flex;
   flex-direction: column;
   padding: 20px;
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  background: var(--bg-surface);
 
   @media (max-width: $layout-stack) {
     position: static;
@@ -419,8 +432,8 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 
 .policyTitle {
   margin: 0;
-  font-size: 15px;
-  font-weight: 650;
+  font-size: 14px;
+  font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--text-primary);
 }
@@ -438,7 +451,7 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 .policySection,
 .policyRow {
   padding: 18px 0;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-subtle);
 
   &:last-child {
     padding-bottom: 0;
@@ -459,56 +472,13 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   color: var(--text-tertiary);
 }
 
-/* Vertical segmented control: a recessed track with one raised selection. */
+/* Reuse the shared segmented control; wrap long translated labels in the narrow panel. */
 .strategyGroup {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 3px;
-  border-radius: 11px;
-  background: color-mix(in srgb, var(--text-primary) 5%, transparent);
-}
+  flex-wrap: wrap;
 
-.strategyOption,
-.strategyOptionActive {
-  @include button-reset;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  height: 34px;
-  padding: 0 10px;
-  border-radius: 8px;
-  font-size: 13px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition:
-    background-color var(--dur-hover) var(--ease-out-strong),
-    box-shadow var(--dur-hover) var(--ease-out-strong),
-    color var(--dur-hover) var(--ease-out-strong);
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 1px;
-  }
-}
-
-.strategyOptionActive {
-  background: var(--floating-surface);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--text-primary) 6%, transparent),
-    0 1px 2px color-mix(in srgb, #000 8%, transparent);
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .strategyOption:hover:not(:disabled) {
-    color: var(--text-primary);
+  > button {
+    flex: 1 1 auto;
   }
 }
 
@@ -543,9 +513,9 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
     width: 60px;
     height: 32px;
     padding: 0 8px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: 6px;
+    background: var(--bg-app);
     font-family: $font-mono;
     font-size: 13px;
     font-variant-numeric: tabular-nums;
@@ -561,7 +531,7 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
     }
 
     &:focus-visible {
-      outline: 2px solid var(--primary-color);
+      outline: 2px solid var(--text-secondary);
       outline-offset: 1px;
     }
   }
@@ -569,7 +539,7 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 
 @media (hover: hover) and (pointer: fine) {
   .numberField input:hover:not(:disabled) {
-    border-color: var(--border-hover);
+    border-color: var(--border-strong);
   }
 }
 
@@ -586,7 +556,7 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   margin: 0 0 12px;
   padding: 8px 12px;
   border-radius: 8px;
-  background: var(--bg-tertiary);
+  background: var(--bg-raised);
   font-size: 12.5px;
   color: var(--text-secondary);
 }
@@ -594,7 +564,9 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 .weightList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
 }
 
 .weightRow {
@@ -602,21 +574,26 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  padding: 12px;
+
+  & + & {
+    border-top: 1px solid var(--border-subtle);
+  }
 
   input {
     width: 110px;
     height: 34px;
     padding: 0 10px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: 6px;
+    background: var(--bg-app);
     font-family: $font-mono;
     font-size: 13px;
     color: var(--text-primary);
     text-align: right;
 
     &:focus-visible {
-      outline: 2px solid var(--primary-color);
+      outline: 2px solid var(--text-secondary);
       outline-offset: 1px;
     }
   }
@@ -632,14 +609,27 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 .changeList {
   display: flex;
   flex-direction: column;
-  gap: 6px;
   max-height: 50vh;
   margin: 0;
-  padding: 0 0 0 18px;
+  padding: 0;
   overflow-y: auto;
-  font-size: 13px;
-  line-height: 1.5;
+  list-style: none;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  font-family: $font-mono;
+  font-size: 12.5px;
+  line-height: 18px;
   color: var(--text-primary);
+
+  li {
+    padding: 12px;
+    overflow-wrap: anywhere;
+
+    & + li {
+      border-top: 1px solid var(--border-subtle);
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -647,8 +637,6 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   .gapDrop,
   .tier,
   .tierIndex,
-  .strategyOption,
-  .strategyOptionActive,
   .numberField input {
     transition: none;
   }

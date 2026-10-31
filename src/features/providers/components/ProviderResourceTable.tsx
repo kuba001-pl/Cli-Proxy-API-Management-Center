@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import { privacyText } from '@/utils/privacy';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { useTranslation } from 'react-i18next';
 import {
   IconAlertTriangle,
@@ -28,6 +29,7 @@ import {
 import type { OpenAIProviderConfig } from '@/types';
 import type { StatusBarData } from '@/utils/recentRequests';
 import type { ProviderResource } from '../types';
+import { getProviderDisplayName } from '../privacy';
 import { isMultiProtocolSponsorBrand } from '../sponsorDefinitions';
 import styles from './ProviderResourceTable.module.scss';
 import statusBarStyles from './providerStatusBar.module.scss';
@@ -43,7 +45,7 @@ interface ProviderResourceTableProps {
   onToggleDisabled?: (resource: ProviderResource, disabled: boolean) => void;
 }
 
-const columnWidths = ['180px', '220px', '72px', '138px', '174px', '176px'];
+const columnWidths = ['23%', '18%', '10%', '8%', '18%', '8%', '112px'];
 
 const isSponsorResource = (resource: ProviderResource): boolean =>
   isMultiProtocolSponsorBrand(resource.brand);
@@ -89,56 +91,42 @@ export function ProviderResourceTable({
   onToggleDisabled,
 }: ProviderResourceTableProps) {
   const { t } = useTranslation();
-
-  const renderMetric = (key: string, label: string, value: number) => (
-    <span key={key} className={styles.metric}>
-      <span className={styles.metricLabel}>{label}</span>
-      <span className={styles.metricValue}>{value}</span>
-    </span>
-  );
-
-  const renderFlagTag = (key: string, label: string) => (
-    <span key={key} className={styles.flagTag}>
-      {label}
-    </span>
-  );
+  const privacyEnabled = usePrivacyStore((s) => s.enabled);
 
   const renderProtocolSummary = (r: ProviderResource) =>
     (r.flags.protocols ?? [])
       .map((protocol) => t(`providersPage.sponsor.protocols.${protocol}`))
       .join(' / ');
 
-  const renderModelsSummary = (r: ProviderResource) => {
-    const items: ReactNode[] = [];
-    if (isSponsorResource(r)) {
-      (r.flags.protocols ?? []).forEach((protocol) => {
-        items.push(renderFlagTag(protocol, t(`providersPage.sponsor.protocols.${protocol}`)));
-      });
-      return <div className={styles.metricsCell}>{items}</div>;
-    }
-    if (r.brand === 'openaiCompatibility') {
-      items.push(
-        renderMetric('models', t('providersPage.table.metrics.models'), r.modelCount),
-        renderMetric('keys', t('providersPage.table.metrics.keys'), r.apiKeyEntryCount),
-        renderMetric('headers', t('providersPage.table.metrics.headers'), r.headerCount)
-      );
-    } else {
-      items.push(
-        renderMetric('models', t('providersPage.table.metrics.models'), r.modelCount),
-        renderMetric('headers', t('providersPage.table.metrics.headers'), r.headerCount)
-      );
-      if ((r.brand === 'codex' || r.brand === 'xai') && r.flags.websockets) {
-        items.push(renderFlagTag('ws', t('providersPage.table.websocketsTag')));
-      }
-      if (r.brand === 'claude' && r.flags.cloakEnabled) {
-        items.push(renderFlagTag('cloak', t('providersPage.table.cloakTag')));
-      }
-      if (r.brand === 'claude' && r.flags.claudeCodeCliProfile) {
-        items.push(renderFlagTag('cli-profile', t('providersPage.table.cliProfileTag')));
-      }
-    }
-    return <div className={styles.metricsCell}>{items}</div>;
+  const renderFlags = (r: ProviderResource) => {
+    const flags = [
+      r.flags.claudeCodeCliProfile && t('providersPage.table.cliProfileTag'),
+      r.flags.cloakEnabled && t('providersPage.table.cloakTag'),
+      r.flags.websockets && t('providersPage.table.websocketsTag'),
+    ].filter(Boolean);
+    return flags.length ? (
+      <div className={styles.flags}>
+        {flags.map((label) => (
+          <span key={String(label)} className={styles.flagTag}>
+            {label}
+          </span>
+        ))}
+      </div>
+    ) : null;
   };
+
+  const renderModelsSummary = (r: ProviderResource) => (
+    <span
+      className={styles.modelCount}
+      title={[
+        `${t('providersPage.table.metrics.models')}: ${r.modelCount}`,
+        `${t('providersPage.table.metrics.headers')}: ${r.headerCount}`,
+        `${t('providersPage.table.metrics.keys')}: ${r.apiKeyEntryCount || Number(Boolean(r.apiKey))}`,
+      ].join(' · ')}
+    >
+      {isSponsorResource(r) ? renderProtocolSummary(r) : r.modelCount}
+    </span>
+  );
 
   const renderStatus = (r: ProviderResource) => {
     if (r.disabled) {
@@ -161,7 +149,7 @@ export function ProviderResourceTable({
     if (isSponsorResource(r)) {
       return (
         <div className={styles.primaryCell}>
-          <span className={styles.primaryName}>{r.name ?? r.identifier}</span>
+          <span className={styles.primaryName}>{getProviderDisplayName(r, privacyEnabled)}</span>
           <span className={styles.primarySub}>
             {r.apiKeyPreview ?? t('providersPage.status.notConfigured')}
           </span>
@@ -172,7 +160,7 @@ export function ProviderResourceTable({
       const extra = r.apiKeyEntryCount > 1 ? ` · +${r.apiKeyEntryCount - 1}` : '';
       return (
         <div className={styles.primaryCell}>
-          <span className={styles.primaryName}>{r.name ?? r.identifier}</span>
+          <span className={styles.primaryName}>{getProviderDisplayName(r, privacyEnabled)}</span>
           <span className={styles.primarySub}>{(r.apiKeyPreview ?? '—') + extra}</span>
         </div>
       );
@@ -180,7 +168,11 @@ export function ProviderResourceTable({
     return (
       <div className={styles.primaryCell}>
         <span className={styles.primaryName}>{r.apiKeyPreview ?? '—'}</span>
-        {r.authIndex ? <span className={styles.primarySub}>auth: {r.authIndex}</span> : null}
+        {r.authIndex ? (
+          <span className={styles.primarySub}>
+            {t('providersPage.detail.fields.authIndex')}: {r.authIndex}
+          </span>
+        ) : null}
       </div>
     );
   };
@@ -196,80 +188,84 @@ export function ProviderResourceTable({
         </span>
       );
     }
-    return <span className={styles.baseUrl}>{r.baseUrl ?? t('providersPage.status.notSet')}</span>;
+    return (
+      <span className={styles.baseUrl}>
+        {privacyText(privacyEnabled, r.baseUrl, [r.name]) || t('providersPage.status.notSet')}
+      </span>
+    );
   };
 
   return (
-    <Table
-      className={styles.providerTable}
-      cols={columnWidths.map((w, i) => (
-        <col key={i} style={{ width: w }} />
-      ))}
-    >
-      <TableHeader>
-        <TableRow>
-          <TableHead>{t('providersPage.table.key')}</TableHead>
-          <TableHead>{t('providersPage.table.baseUrl')}</TableHead>
-          <TableHead>{t('providersPage.table.prefix')}</TableHead>
-          <TableHead>{t('providersPage.table.models')}</TableHead>
-          <TableHead>{t('providersPage.table.status')}</TableHead>
-          <TableHead alignRight className={styles.actionsHead}>
-            {t('providersPage.table.actions')}
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {resources.map((resource) => {
-          return (
-            <TableRow key={resource.id} selected={resource.id === selectedId}>
-              <TableCell>{renderPrimary(resource)}</TableCell>
-              <TableCell>{renderBaseUrl(resource)}</TableCell>
-              <TableCell>
-                {resource.prefix ? (
-                  <span className={styles.chip}>{resource.prefix}</span>
-                ) : (
-                  <span className={styles.baseUrl}>{t('providersPage.status.none')}</span>
-                )}
-              </TableCell>
-              <TableCell>{renderModelsSummary(resource)}</TableCell>
-              <TableCell>
-                <div className={styles.statusCell}>
-                  {renderStatus(resource)}
-                  {usageByProvider && !isSponsorResource(resource) ? (
-                    <>
-                      {(() => {
-                        const stats = resolveTotalStats(resource, usageByProvider);
-                        return (
-                          <div className={styles.stats}>
-                            <span className={`${styles.statPill} ${styles.statSuccess}`}>
-                              {t('stats.success')}: {stats.success}
-                            </span>
-                            <span className={`${styles.statPill} ${styles.statFailure}`}>
-                              {t('stats.failure')}: {stats.failure}
-                            </span>
-                          </div>
-                        );
-                      })()}
-                      <div className={styles.statusBarWrap}>
-                        <ProviderStatusBar
-                          statusData={resolveStatusBarData(resource, usageByProvider)}
-                          styles={statusBarStyles}
-                        />
-                      </div>
-                    </>
-                  ) : null}
-                </div>
-              </TableCell>
-              <TableCell
-                alignRight
-                className={[
-                  styles.actionsCell,
-                  resource.id === selectedId ? styles.actionsCellSelected : '',
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-              >
-                <div className={styles.actions}>
+    <div className={styles.tableFrame}>
+      <Table
+        className={styles.providerTable}
+        cols={columnWidths.map((w, i) => (
+          <col key={i} style={{ width: w }} />
+        ))}
+      >
+        <TableHeader>
+          <TableRow>
+            <TableHead>{t('providersPage.table.key')}</TableHead>
+            <TableHead>{t('providersPage.table.baseUrl')}</TableHead>
+            <TableHead>{t('providersPage.table.prefix')}</TableHead>
+            <TableHead>{t('providersPage.table.metrics.models')}</TableHead>
+            <TableHead>{t('providersPage.table.status')}</TableHead>
+            <TableHead>{t('providersPage.toast.enabled')}</TableHead>
+            <TableHead alignRight className={styles.actionsHead}>
+              <span className={styles.srOnly}>{t('providersPage.table.actions')}</span>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {resources.map((resource) => {
+            return (
+              <TableRow key={resource.id} selected={resource.id === selectedId}>
+                <TableCell>
+                  {renderPrimary(resource)}
+                  {renderFlags(resource)}
+                </TableCell>
+                <TableCell>{renderBaseUrl(resource)}</TableCell>
+                <TableCell>
+                  {resource.prefix ? (
+                    <span className={styles.chip}>
+                      {privacyText(privacyEnabled, resource.prefix, [resource.name])}
+                    </span>
+                  ) : (
+                    <span className={styles.baseUrl}>{t('providersPage.status.none')}</span>
+                  )}
+                </TableCell>
+                <TableCell>{renderModelsSummary(resource)}</TableCell>
+                <TableCell>
+                  <div className={styles.statusCell}>
+                    {!usageByProvider || isSponsorResource(resource) || resource.disabled
+                      ? renderStatus(resource)
+                      : null}
+                    {usageByProvider && !isSponsorResource(resource) ? (
+                      <>
+                        {(() => {
+                          const stats = resolveTotalStats(resource, usageByProvider);
+                          return (
+                            <div className={styles.stats}>
+                              <span className={`${styles.statPill} ${styles.statSuccess}`}>
+                                {t('stats.success')}: {stats.success}
+                              </span>
+                              <span className={`${styles.statPill} ${styles.statFailure}`}>
+                                {t('stats.failure')}: {stats.failure}
+                              </span>
+                            </div>
+                          );
+                        })()}
+                        <div className={styles.statusBarWrap}>
+                          <ProviderStatusBar
+                            statusData={resolveStatusBarData(resource, usageByProvider)}
+                            styles={statusBarStyles}
+                          />
+                        </div>
+                      </>
+                    ) : null}
+                  </div>
+                </TableCell>
+                <TableCell>
                   {onToggleDisabled ? (
                     <span className={styles.toggleWrap} onClick={(e) => e.stopPropagation()}>
                       <ToggleSwitch
@@ -284,50 +280,62 @@ export function ProviderResourceTable({
                       />
                     </span>
                   ) : null}
-                  <button
-                    type="button"
-                    className={styles.iconBtn}
-                    aria-label={t('providersPage.actions.view')}
-                    title={t('providersPage.actions.view')}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onView(resource);
-                    }}
-                  >
-                    <IconEye size={16} />
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.iconBtn}
-                    aria-label={t('providersPage.actions.edit')}
-                    title={t('providersPage.actions.edit')}
-                    disabled={disableMutations}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onEdit(resource);
-                    }}
-                  >
-                    <IconPencil size={16} />
-                  </button>
-                  <button
-                    type="button"
-                    className={`${styles.iconBtn} ${styles.iconBtnDanger}`}
-                    aria-label={t('providersPage.actions.delete')}
-                    title={t('providersPage.actions.delete')}
-                    disabled={disableMutations}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDelete(resource);
-                    }}
-                  >
-                    <IconTrash2 size={16} />
-                  </button>
-                </div>
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+                </TableCell>
+                <TableCell
+                  alignRight
+                  className={[
+                    styles.actionsCell,
+                    resource.id === selectedId ? styles.actionsCellSelected : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                >
+                  <div className={styles.actions}>
+                    <button
+                      type="button"
+                      className={styles.iconBtn}
+                      aria-label={t('providersPage.actions.view')}
+                      title={t('providersPage.actions.view')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onView(resource);
+                      }}
+                    >
+                      <IconEye size={16} />
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.iconBtn}
+                      aria-label={t('providersPage.actions.edit')}
+                      title={t('providersPage.actions.edit')}
+                      disabled={disableMutations}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(resource);
+                      }}
+                    >
+                      <IconPencil size={16} />
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.iconBtn} ${styles.iconBtnDanger}`}
+                      aria-label={t('providersPage.actions.delete')}
+                      title={t('providersPage.actions.delete')}
+                      disabled={disableMutations}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(resource);
+                      }}
+                    >
+                      <IconTrash2 size={16} />
+                    </button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

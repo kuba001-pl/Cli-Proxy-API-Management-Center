@@ -65,6 +65,7 @@
     "subtitle": "Центр управления"
   },
   "login": {
+    "subtitle": "Подключитесь к CLI Proxy API v8 или новее",
     "connection_current": "Текущий URL",
     "connection_edit": "Изменить",
     "connection_done": "Готово",
@@ -93,6 +94,10 @@
     "error_ssl": "Ошибка проверки SSL/TLS сертификата"
   },
   "header": {
+    "privacy_mode_on": "Режим конфиденциальности включён",
+    "privacy_mode_off": "Режим конфиденциальности выключен",
+    "hide_personal_data": "Скрыть личные данные",
+    "show_personal_data": "Показать личные данные",
     "refresh_all": "Обновить всё",
     "logout": "Выйти"
   },
@@ -101,7 +106,7 @@
   },
   "nav": {
     "dashboard": "Панель",
-    "quick_start": "Быстрый старт",
+    "quick_start": "Быстрая настройка",
     "ai_providers": "Поставщики AI",
     "auth_files": "Файлы аутентификации",
     "oauth": "OAuth вход",
@@ -221,6 +226,10 @@
     "routing_strategy_fill_first": "fill-first (приоритет)"
   },
   "auth_files": {
+    "account_column": "Аккаунт",
+    "plan_column": "Тариф",
+    "recent_requests_column": "Последние запросы",
+    "lowest_quota_column": "Минимальная квота",
     "title": "Управление файлами авторизации",
     "meta_total": "{{count}} учётных данных",
     "meta_active": "{{count}} активно",
@@ -991,6 +1000,9 @@
     "no_requests": "Нет запросов"
   },
   "logs": {
+    "caption": "Поток событий · логи приложения и запросов",
+    "error_logs_file": "Файл",
+    "error_logs_actions": "Действия с файлом",
     "preview_too_large": "Журнал запроса превышает лимит предпросмотра в 2 МиБ. Скачайте его для просмотра.",
     "read_status_live": "Непрерывное чтение",
     "read_status_paused": "Чтение приостановлено",
@@ -1084,6 +1096,10 @@
     "meta_dirty_source": "Несохранённые правки исходника",
     "meta_errors": "Ошибок валидации: {{count}}",
     "meta_synced": "Синхронизировано",
+    "unsaved_changes_one": "{{count}} несохранённое изменение",
+    "unsaved_changes_few": "{{count}} несохранённых изменения",
+    "unsaved_changes_many": "{{count}} несохранённых изменений",
+    "unsaved_changes_other": "{{count}} несохранённого изменения",
     "actions": {
       "discard": "Отменить изменения",
       "save": "Сохранить изменения"
@@ -1306,12 +1322,12 @@
           "description": "Адрес сервера, порт, каталог аутентификации и ключи API"
         },
         "logging": {
-          "title": "Логи и диагностика",
+          "title": "Логи",
           "description": "Отладка, вывод логов и статистика использования"
         },
         "advanced": {
           "antigravity_credits": "Использовать Antigravity Credits",
-          "title": "Дополнительно и эксперименты",
+          "title": "Дополнительно",
           "description": "Подмена заголовков, кэш подписей, источники плагинов и другие редко изменяемые настройки",
           "plugins_title": "Плагины",
           "antigravity_title": "Antigravity",
@@ -1424,7 +1440,7 @@
           "beta_features": "Beta Features"
         },
         "network": {
-          "title": "Сетевые настройки",
+          "title": "Сеть",
           "description": "Параметры прокси, повторов и маршрутизации",
           "proxy_url": "URL прокси",
           "proxy_url_sponsor_hint": "Нет подходящего прокси?",
@@ -1460,7 +1476,7 @@
           "ws_auth_desc": "Аутентификация WebSocket AI Studio (oauth.providers.aistudio.ws-auth)"
         },
         "streaming": {
-          "title": "Настройки стриминга",
+          "title": "Стриминг",
           "description": "Параметры keepalive и повторов запуска",
           "keepalive_seconds": "Период keepalive (сек)",
           "keepalive_hint": "Установите 0, отрицательное целое число или оставьте поле пустым, чтобы отключить keepalive",
@@ -1471,7 +1487,7 @@
           "disabled": "Отключено"
         },
         "payload": {
-          "title": "Настройки полезной нагрузки",
+          "title": "Полезная нагрузка",
           "description": "Значения по умолчанию, raw JSON-правила, правила переопределения и фильтрации",
           "default_rules": "Правила по умолчанию",
           "default_rules_desc": "Использовать эти значения, если параметр не указан в запросе",
@@ -1591,6 +1607,14 @@
     }
   },
   "quota_management": {
+    "summary_label": "Квоты по провайдерам",
+    "lowest": "минимальный остаток",
+    "upcoming_title": "Предстоящие сбросы",
+    "upcoming_description": "Время восстановления каждого окна квоты, начиная с ближайшего",
+    "upcoming_filter": "Фильтр окон сброса",
+    "upcoming_empty": "Для этого окна нет предстоящих сбросов.",
+    "upcoming_show_all": "Показать все сбросы: {{count}}",
+    "upcoming_show_less": "Свернуть список сбросов",
     "search_label": "Поиск аккаунтов",
     "search_placeholder": "Поиск по имени файла или электронной почте",
     "search_empty_title": "Аккаунты не найдены",
@@ -1639,6 +1663,7 @@
   },
   "routing": {
     "title": "Маршрутизация",
+    "summary": "Участники {{members}} · Уровни {{tiers}}",
     "refresh": "Обновить",
     "refresh_discards": "Обновление отменит несохранённую расстановку.",
     "loading": "Загрузка маршрутизации…",
@@ -1708,8 +1733,12 @@
     "unlimited": "Без ограничений",
     "dirty_region": "Несохранённые изменения маршрутизации",
     "dirty_count": "Несохранённых изменений: {{count}}",
-    "discard": "Отменить",
-    "save": "Сохранить",
+    "dirty_count_one": "{{count}} несохранённое изменение",
+    "dirty_count_few": "{{count}} несохранённых изменения",
+    "dirty_count_many": "{{count}} несохранённых изменений",
+    "dirty_count_other": "Несохранённых изменений: {{count}}",
+    "discard": "Отменить изменения",
+    "save": "Сохранить изменения",
     "review_title": "Сохранить изменения маршрутизации",
     "review_hint": "OAuth-учётные данные записываются по одному, остальное — в конфигурацию одной записью.",
     "confirm_save": "Сохранить",

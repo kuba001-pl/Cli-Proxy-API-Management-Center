@@ -14,7 +14,6 @@ import { isSupportedLanguage } from '@/utils/language';
 import { INLINE_LOGO_JPEG } from '@/assets/logoInline';
 import type { ApiError } from '@/types';
 import { LegacyBackendError } from '@/services/api/legacyBackendProbe';
-import { DotMatrixHero } from './login/DotMatrixHero';
 import { LoginForm } from './login/LoginForm';
 import { resolveLoginRedirect } from '@/router/loginRedirect';
 import styles from './LoginPage.module.scss';
@@ -246,20 +245,23 @@ export function LoginPage() {
 
   return (
     <div className={styles.container} data-phase={phase === 'exiting' ? 'exiting' : undefined}>
-      <div className={styles.brandPanel}>
-        <DotMatrixHero />
-      </div>
-
       <div className={styles.formPanel}>
         {/* 自动登录启动页自带大徽标与品牌名，此时不再渲染顶栏，避免重复 */}
         {!showSplash && (
           <header className={styles.topBar}>
-            <div className={styles.brandMark}>
-              <img src={INLINE_LOGO_JPEG} alt="" className={styles.brandLogo} />
-              <span className={styles.brandName} title={LOGIN_BRAND_NAME}>
-                {LOGIN_BRAND_NAME}
-              </span>
-            </div>
+            <span className={styles.languageIcon} aria-hidden="true">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M2 12h20M12 2a18 18 0 0 1 0 20 18 18 0 0 1 0-20Z" />
+              </svg>
+            </span>
             <Select
               className={styles.languageSelect}
               dropdownClassName={styles.languageDropdown}
@@ -288,7 +290,13 @@ export function LoginPage() {
             </div>
           ) : (
             <div className={styles.column}>
-              <h1 className={styles.title}>{t('splash.subtitle')}</h1>
+              <div className={styles.brandMark}>
+                <img src={INLINE_LOGO_JPEG} alt="" className={styles.brandLogo} />
+                <h1 className={styles.brandName} title={LOGIN_BRAND_NAME}>
+                  {LOGIN_BRAND_NAME}
+                </h1>
+                <p className={styles.subtitle}>{t('login.subtitle')}</p>
+              </div>
               <LoginForm
                 apiBase={apiBase}
                 detectedBase={detectedBase}

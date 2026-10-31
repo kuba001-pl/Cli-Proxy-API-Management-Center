@@ -176,15 +176,23 @@ describe('routing board rendering', () => {
 });
 
 describe('routing save bar', () => {
-  test('floats over the policy column, outside the transition layer', () => {
+  test('centers the Config-style save bar outside the transition layer', () => {
     const bar = readFileSync('src/features/routing/components/RoutingSaveBar.tsx', 'utf8');
-    const policy = readFileSync('src/features/routing/components/PolicyPanel.tsx', 'utf8');
+    const styles = readFileSync(
+      'src/features/routing/components/RoutingSaveBar.module.scss',
+      'utf8'
+    );
     const page = readFileSync('src/features/routing/RoutingPage.tsx', 'utf8');
     // Portalled: sticky/fixed inside the page-transition layer does not track the viewport.
     expect(bar).toContain('createPortal(');
-    // The bar measures the column the policy panel marks.
-    expect(bar).toContain("POLICY_COLUMN_ATTR = 'data-routing-policy-column'");
-    expect(policy).toContain('data-routing-policy-column=""');
+    expect(styles).toContain('left: var(--content-center-x, 50%)');
+    expect(styles).toContain('border-radius: 10px');
+    expect(styles).toContain('-webkit-backdrop-filter: blur(12px)');
+    expect(styles).toContain('backdrop-filter: blur(12px)');
+    expect(bar).toContain('if (!visible');
+    expect(bar).toContain(
+      "useActionBarHeightVar(containerRef, '--routing-action-bar-height', visible)"
+    );
     // A page sliding out must not leave its bar behind.
     expect(page).toContain('visible={isCurrentLayer && dirty}');
   });

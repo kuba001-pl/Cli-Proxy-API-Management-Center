@@ -5,6 +5,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   hint?: ReactNode;
   error?: string;
   rightElement?: ReactNode;
+  mono?: boolean;
 }
 
 export function Input({
@@ -12,6 +13,7 @@ export function Input({
   hint,
   error,
   rightElement,
+  mono = false,
   className = '',
   id,
   ...rest
@@ -29,7 +31,7 @@ export function Input({
       <div style={{ position: 'relative' }}>
         <input
           id={inputId}
-          className={`input ${className}`.trim()}
+          className={`input ${mono ? 'input-mono' : ''} ${className}`.trim()}
           aria-invalid={Boolean(error) || rest['aria-invalid']}
           aria-describedby={describedBy}
           {...rest}

@@ -1,8 +1,23 @@
 import { useId, useRef, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SelectionCheckbox } from '@/components/ui/SelectionCheckbox';
-import { IconAlertTriangle, IconCheck, IconEye, IconEyeOff } from '@/components/ui/icons';
+import { IconAlertTriangle, IconCheck, IconEye, IconEyeOff, IconKey } from '@/components/ui/icons';
 import styles from './LoginForm.module.scss';
+
+const connectionIcon = (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="m10 13 4-4m-6 6-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2 2 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0" />
+  </svg>
+);
 
 export interface LoginFormProps {
   /** 输入框中的连接地址（可能为空，此时回退到 detectedBase） */
@@ -57,46 +72,66 @@ export function LoginForm({
   return (
     <form className={styles.form} onSubmit={handleSubmit} noValidate>
       <div className={styles.field} data-stagger>
-        <div className={styles.labelRow}>
-          <label className={styles.label} htmlFor={editingBase ? baseId : undefined}>
-            {editingBase ? t('login.custom_connection_label') : t('login.connection_current')}
-          </label>
-          <button
-            type="button"
-            className={styles.textButton}
-            aria-expanded={editingBase}
-            aria-controls={baseId}
-            disabled={locked}
-            onClick={() => {
-              const next = !editingBase;
-              onEditingBaseChange(next);
-              if (!next) keyInputRef.current?.focus();
-            }}
-          >
-            {editingBase ? t('login.connection_done') : t('login.connection_edit')}
-          </button>
-        </div>
-        {editingBase ? (
-          <input
-            id={baseId}
-            className={`${styles.input} ${styles.mono}`}
-            type="url"
-            inputMode="url"
-            autoFocus
-            autoComplete="url"
-            spellCheck={false}
-            placeholder={t('login.custom_connection_placeholder')}
-            readOnly={locked}
-            value={apiBase}
-            onChange={(event) => onApiBaseChange(event.target.value)}
-          />
-        ) : (
+        <span className={styles.label}>{t('login.connection_current')}</span>
+        <div className={styles.inputWrap}>
+          <span className={styles.fieldIcon} aria-hidden="true">
+            {connectionIcon}
+          </span>
           <div
-            id={baseId}
             className={`${styles.readout} ${styles.mono}`}
-            title={apiBase || detectedBase}
+            data-custom={editingBase}
+            title={editingBase ? detectedBase : apiBase || detectedBase}
           >
-            <span className={styles.readoutText}>{apiBase || detectedBase}</span>
+            <span className={styles.readoutText}>
+              {editingBase ? detectedBase : apiBase || detectedBase}
+            </span>
+          </div>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          className={styles.customConnection}
+          aria-label={t('login.custom_connection_label')}
+          aria-checked={editingBase}
+          aria-expanded={editingBase}
+          aria-controls={editingBase ? baseId : undefined}
+          disabled={locked}
+          onClick={() => {
+            const next = !editingBase;
+            onEditingBaseChange(next);
+            if (!next) keyInputRef.current?.focus();
+          }}
+        >
+          <span className={styles.switchTrack} aria-hidden="true" />
+          <span className={styles.connectionCopy}>
+            <span className={styles.connectionLabel}>{t('login.custom_connection_label')}</span>
+            <span className={styles.hint}>
+              {t(editingBase ? 'login.custom_connection_hint' : 'login.connection_auto_hint')}
+            </span>
+          </span>
+          <span className={styles.srOnly}>
+            {t(editingBase ? 'login.connection_done' : 'login.connection_edit')}
+          </span>
+        </button>
+        {editingBase && (
+          <div className={styles.inputWrap}>
+            <span className={styles.fieldIcon} aria-hidden="true">
+              {connectionIcon}
+            </span>
+            <input
+              id={baseId}
+              aria-label={t('login.custom_connection_label')}
+              className={`${styles.input} ${styles.mono}`}
+              type="url"
+              inputMode="url"
+              autoFocus
+              autoComplete="url"
+              spellCheck={false}
+              placeholder={t('login.custom_connection_placeholder')}
+              readOnly={locked}
+              value={apiBase}
+              onChange={(event) => onApiBaseChange(event.target.value)}
+            />
           </div>
         )}
       </div>
@@ -106,10 +141,13 @@ export function LoginForm({
           {t('login.management_key_label')}
         </label>
         <div className={styles.inputWrap}>
+          <span className={styles.fieldIcon} aria-hidden="true">
+            <IconKey size={16} />
+          </span>
           <input
             ref={keyInputRef}
             id={keyId}
-            className={`${styles.input} ${styles.inputWithAction}`}
+            className={`${styles.input} ${styles.inputWithAction} ${styles.mono}`}
             type={showKey ? 'text' : 'password'}
             name="cpa-management-key"
             autoComplete="current-password"
@@ -145,6 +183,12 @@ export function LoginForm({
       </div>
 
       <div className={styles.actions} data-stagger>
+        {error && (
+          <p id={errorId} className={styles.error} role="alert" title={error}>
+            <IconAlertTriangle size={14} aria-hidden="true" />
+            <span>{error}</span>
+          </p>
+        )}
         <button
           type="submit"
           className={styles.submit}
@@ -164,12 +208,6 @@ export function LoginForm({
             </span>
           )}
         </button>
-        {error && (
-          <p id={errorId} className={styles.error} role="alert" title={error}>
-            <IconAlertTriangle size={14} aria-hidden="true" />
-            <span>{error}</span>
-          </p>
-        )}
       </div>
     </form>
   );

@@ -1,3 +1,5 @@
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyText } from '@/utils/privacy';
 import {
   applyCredentialPolicyPatch,
   buildCredentialPolicyPatch,
@@ -7,7 +9,7 @@ import {
   type CredentialPolicyField,
   type CredentialPolicyValue,
 } from '@/features/authFiles/credentialPolicy';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { apiClient, authFilesApi, type AuthFileFieldsPatch } from '@/services/api';
 import { notifyAuthFilesChanged } from '@/features/authFiles/authFilesEvents';
@@ -488,7 +490,13 @@ export function useAuthFilesPrefixProxyEditor(
   const editorConnectionRef = useRef(apiClient.getConnectionRevision());
   const editorRequestRef = useRef(0);
   const { t } = useTranslation();
-  const showNotification = useNotificationStore((state) => state.showNotification);
+  const notify = useNotificationStore((state) => state.showNotification);
+  const showNotification = useCallback(
+    (message: string, type: Parameters<typeof notify>[1]) => {
+      notify(privacyText(usePrivacyStore.getState().enabled, message), type);
+    },
+    [notify]
+  );
 
   const [prefixProxyEditor, setPrefixProxyEditor] = useState<PrefixProxyEditorState | null>(null);
 

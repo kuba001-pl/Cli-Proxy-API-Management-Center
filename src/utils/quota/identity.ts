@@ -1,4 +1,5 @@
 import type { AuthFileItem } from '@/types';
+import { privacyFileName, privacyIdentity } from '@/utils/privacy';
 import { normalizeRecentRequestAuthIndex } from '@/utils/recentRequests';
 import { isDevinFile, isPluginQuotaFile } from './validators';
 
@@ -25,4 +26,21 @@ export function getQuotaDisplayName(file: AuthFileItem): string {
 export function getQuotaCacheFileName(key: string): string {
   const separatorIndex = key.indexOf(QUOTA_IDENTITY_SEPARATOR);
   return separatorIndex === -1 ? key : key.slice(0, separatorIndex);
+}
+
+/** One display label for cards, summaries, reset rows and all their tooltips. */
+export function getQuotaPrivacyDisplayName(
+  file: AuthFileItem,
+  enabled: boolean,
+  displayNameFor: (name: string) => string = (name) => name
+): string {
+  if (!enabled) {
+    return isDevinFile(file) || isPluginQuotaFile(file)
+      ? getQuotaDisplayName(file)
+      : displayNameFor(file.name);
+  }
+  const name = privacyFileName(true, displayNameFor(file.name), [file.email, file.projectId]);
+  if (!isDevinFile(file) && !isPluginQuotaFile(file)) return name;
+  const identity = file.email?.trim() || normalizeRecentRequestAuthIndex(file.authIndex);
+  return identity ? `${name} · ${privacyIdentity(true, identity)}` : name;
 }

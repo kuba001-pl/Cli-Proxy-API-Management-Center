@@ -1,3 +1,5 @@
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { authFilesDisplayText } from '../privacy';
 import { useCallback, useEffect, useRef, useState, type ChangeEvent, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { apiClient, authFilesApi } from '@/services/api';
@@ -77,10 +79,40 @@ export type UseAuthFilesDataResult = {
 
 export function useAuthFilesData(options?: UseAuthFilesDataOptions): UseAuthFilesDataResult {
   const { t } = useTranslation();
-  const { showNotification, showConfirmation } = useNotificationStore();
+  const { showNotification: notify, showConfirmation: confirm } = useNotificationStore();
+  const privacyFiles = useRef<AuthFileItem[]>([]);
+  const showNotification = useCallback(
+    (...args: Parameters<typeof notify>) => {
+      notify(
+        authFilesDisplayText(args[0], privacyFiles.current, usePrivacyStore.getState().enabled),
+        args[1],
+        args[2]
+      );
+    },
+    [notify]
+  );
+  const showConfirmation = useCallback(
+    (options: Parameters<typeof confirm>[0]) => {
+      confirm({
+        ...options,
+        message:
+          typeof options.message === 'string'
+            ? authFilesDisplayText(
+                options.message,
+                privacyFiles.current,
+                usePrivacyStore.getState().enabled
+              )
+            : options.message,
+      });
+    },
+    [confirm]
+  );
   const onFilesMutated = options?.onFilesMutated;
 
   const [files, setFiles] = useState<AuthFileItem[]>([]);
+  useEffect(() => {
+    privacyFiles.current = files;
+  }, [files]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');

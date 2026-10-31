@@ -1,3 +1,5 @@
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { getQuotaPrivacyDisplayName } from '@/utils/quota/identity';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNow } from '@/hooks/useNow';
@@ -89,7 +91,7 @@ export function useClaudeResetGrants(
     showConfirmation({
       title: t('claude_reset.title'),
       message: t(pending ? 'claude_reset.retry_confirm' : 'claude_reset.confirm_text', {
-        name: file.name,
+        name: getQuotaPrivacyDisplayName(file, usePrivacyStore.getState().enabled),
       }),
       confirmText: t(pending ? 'claude_reset.retry' : 'claude_reset.confirm'),
       variant: 'primary',
@@ -104,7 +106,7 @@ export function useClaudeResetGrants(
           showNotification(
             answer.code === 'cooldown_clear_failed'
               ? t('auth_files.cooldown_reset_failed', {
-                  name: file.name,
+                  name: getQuotaPrivacyDisplayName(file, usePrivacyStore.getState().enabled),
                   message: t('common.unknown_error'),
                 })
               : t(`claude_reset.${answer.unresolved ? 'unknown' : answer.code}`),

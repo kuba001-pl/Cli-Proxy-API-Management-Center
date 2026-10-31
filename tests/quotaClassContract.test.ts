@@ -26,8 +26,8 @@ describe('quota class contract', () => {
   for (const [host, path] of Object.entries(HOSTS)) {
     test(`${host} gives standalone amounts the same size as quota metadata`, async () => {
       const css = await readHost(path);
-      const amount = css.match(/\.quotaAmount\s*\{([^}]+)\}/)?.[1] ?? '';
-      const meta = css.match(/\.quotaMeta\s*\{([^}]+)\}/)?.[1] ?? '';
+      const amount = css.match(/^\.quotaAmount\s*\{([^}]+)\}/m)?.[1] ?? '';
+      const meta = css.match(/^\.quotaMeta\s*\{([^}]+)\}/m)?.[1] ?? '';
       const size = amount.match(/font-size:\s*([^;]+);/)?.[1];
       expect(size).toBeDefined();
       expect(size).toBe(meta.match(/font-size:\s*([^;]+);/)?.[1]);

@@ -4,6 +4,8 @@ import { usePageTransitionLayer } from '@/components/common/PageTransitionLayer'
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useAuthStore, useNotificationStore } from '@/stores';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { getProviderDisplayName } from './privacy';
 import { useProviderRecentRequests } from '@/components/providers/hooks/useProviderRecentRequests';
 import {
   getOpenAIProviderRecentWindowStats,
@@ -18,7 +20,6 @@ import { ProviderResourcePanel } from './components/ProviderResourcePanel';
 import type { ProviderPanelControls } from './components/ProviderResourcePanel';
 import { SponsorQuickStartPanel } from './components/SponsorQuickStartPanel';
 import { ProviderSheet, type ProviderSheetHandle } from './sheets/ProviderSheet';
-import { APIKEY_FUN_DISPLAY_NAME } from './sponsor';
 import { isMultiProtocolSponsorBrand } from './sponsorDefinitions';
 import { isSponsorPartialMutationError } from './sponsorMutationRecovery';
 import { useProviderWorkbench } from './useProviderWorkbench';
@@ -99,6 +100,7 @@ const getResourceRecentSuccess = (
 
 export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPageProps = {}) {
   const { t, i18n } = useTranslation();
+  const privacyEnabled = usePrivacyStore((s) => s.enabled);
   const connectionStatus = useAuthStore((s) => s.connectionStatus);
   const { showNotification, showConfirmation } = useNotificationStore();
 
@@ -278,12 +280,7 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
   const updatedAtLabel = workbench.snapshot
     ? formatDateTime(workbench.snapshot.fetchedAt, i18n.language)
     : t('providersPage.modelCatalog.notLoaded');
-  const headerTitle =
-    fixedBrand === 'apikeyFun'
-      ? quickStartResource
-        ? APIKEY_FUN_DISPLAY_NAME
-        : t('nav.quick_start')
-      : undefined;
+  const headerTitle = fixedBrand === 'apikeyFun' ? t('nav.quick_start') : undefined;
   const errorBanner = workbench.errorMessage ? (
     <div className="error-box">{workbench.errorMessage}</div>
   ) : null;
@@ -317,7 +314,7 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
 
   const handleDelete = useCallback(
     (resource: ProviderResource) => {
-      const name = resource.name ?? resource.apiKeyPreview ?? resource.identifier ?? '';
+      const name = getProviderDisplayName(resource, privacyEnabled);
       showConfirmation({
         title: t('providersPage.delete.title'),
         message: t('providersPage.delete.confirm', { name }),
@@ -338,7 +335,7 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
         },
       });
     },
-    [showConfirmation, showNotification, t, workbench]
+    [privacyEnabled, showConfirmation, showNotification, t, workbench]
   );
 
   const handleToggleDisabled = useCallback(
@@ -418,7 +415,6 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
         showNewAction={!fixedBrand}
         showSummary={fixedBrand !== 'apikeyFun'}
         newLabel={t('providersPage.actions.new')}
-        variant={fixedBrand === 'apikeyFun' ? 'quickStart' : undefined}
         onRefresh={() => void handleRefresh()}
         onNew={openCreate}
       />

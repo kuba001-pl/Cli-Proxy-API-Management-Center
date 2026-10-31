@@ -211,17 +211,10 @@ describe('login dot-matrix on mobile', () => {
     expect(source).toContain("origin: compact ? 'top-right' : 'bottom-right'");
   });
 
-  test('mobile shows the dots as a top banner instead of hiding them', async () => {
-    const page = await Bun.file('src/pages/LoginPage.module.scss').text();
-    const hero = await Bun.file('src/pages/login/DotMatrixHero.module.scss').text();
-    const brandPanel = page.slice(page.indexOf('.brandPanel {'), page.indexOf('.formPanel {'));
-    expect(brandPanel).not.toContain('display: none');
-    expect(brandPanel).toContain('height: var(--hero-band)');
-    expect(brandPanel).toContain('pointer-events: none');
-    expect(page).toMatch(/--hero-band: clamp\(/);
-    // 横幅向下淡出；标语在移动端让位给表单标题
-    const mobileHero = hero.slice(hero.indexOf('@media (max-width: $breakpoint-mobile)'));
-    expect(mobileHero).toMatch(/mask-image: linear-gradient\(\s*to bottom/);
-    expect(mobileHero).toMatch(/\.title \{\s*display: none;/);
+  test('the minimal sign-in screen omits the decorative banner and keeps the auto-login splash', async () => {
+    const page = await Bun.file('src/pages/LoginPage.tsx').text();
+    expect(page).not.toContain('<DotMatrixHero');
+    expect(page).toContain('const showSplash = autoLoading || autoLoginSuccess');
+    expect(page).toContain('className={styles.splash} role="status" aria-live="polite"');
   });
 });

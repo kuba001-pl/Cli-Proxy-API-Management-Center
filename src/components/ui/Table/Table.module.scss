@@ -3,7 +3,7 @@
 
 .wrap {
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: 12px;
   overflow: hidden;
   background: var(--bg-primary);
 }
@@ -24,12 +24,12 @@
   background: var(--muted-bg);
 
   th {
-    color: var(--muted-foreground);
+    color: var(--text-tertiary);
     font-weight: 500;
     font-size: 12px;
     text-align: left;
     padding: 10px 14px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-subtle);
     vertical-align: middle;
   }
 
@@ -47,17 +47,17 @@
 
   td {
     padding: 12px 14px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-subtle);
     vertical-align: top;
     line-height: 1.5;
   }
 
   &:hover td {
-    background: color-mix(in srgb, var(--accent-bg) 50%, transparent);
+    background: var(--bg-raised);
   }
 
   &.selected td {
-    background: var(--primary-8);
+    background: var(--bg-active);
   }
 }
 
@@ -67,4 +67,10 @@
 
 .alignRight {
   text-align: right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
 }

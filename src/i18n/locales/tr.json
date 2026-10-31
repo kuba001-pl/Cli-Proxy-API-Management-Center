@@ -65,6 +65,7 @@
     "subtitle": "Yönetim Merkezi"
   },
   "login": {
+    "subtitle": "CLI Proxy API v8 veya üzeri bir sürüme bağlanın",
     "connection_current": "Geçerli URL",
     "connection_edit": "Değiştir",
     "connection_done": "Tamam",
@@ -93,6 +94,10 @@
     "error_ssl": "SSL/TLS Sertifika Doğrulaması Başarısız"
   },
   "header": {
+    "privacy_mode_on": "Gizlilik modu açık",
+    "privacy_mode_off": "Gizlilik modu kapalı",
+    "hide_personal_data": "Kişisel verileri gizle",
+    "show_personal_data": "Kişisel verileri göster",
     "refresh_all": "Tümünü Yenile",
     "logout": "Çıkış"
   },
@@ -101,7 +106,7 @@
   },
   "nav": {
     "dashboard": "Pano",
-    "quick_start": "Hızlı Başlangıç",
+    "quick_start": "Hızlı Kurulum",
     "ai_providers": "AI Sağlayıcıları",
     "auth_files": "Kimlik Dosyaları",
     "oauth": "OAuth Girişi",
@@ -222,6 +227,10 @@
     "routing_strategy_fill_first": "Fill-First (Önceliklendir)"
   },
   "auth_files": {
+    "account_column": "Hesap",
+    "plan_column": "Plan",
+    "recent_requests_column": "Son istekler",
+    "lowest_quota_column": "En düşük kota",
     "title": "Kimlik Dosyası Yönetimi",
     "meta_total": "{{count}} Kimlik Bilgisi",
     "meta_active": "{{count}} Aktif",
@@ -988,6 +997,9 @@
     "no_requests": "İstek Yok"
   },
   "logs": {
+    "caption": "Canlı akış · uygulama ve istek günlükleri",
+    "error_logs_file": "Dosya",
+    "error_logs_actions": "Dosya işlemleri",
     "preview_too_large": "Bu İstek Günlüğü 2 MiB Önizleme Sınırını Aşıyor. Görmek için İndir.",
     "read_status_live": "Sürekli Okunuyor",
     "read_status_paused": "Okuma Duraklatıldı",
@@ -1081,6 +1093,8 @@
     "meta_dirty_source": "Kaydedilmemiş Kaynak Düzenlemeleri",
     "meta_errors": "{{count}} Doğrulama Hatası",
     "meta_synced": "Eşitlendi",
+    "unsaved_changes_one": "{{count}} Kaydedilmemiş Değişiklik",
+    "unsaved_changes_other": "{{count}} Kaydedilmemiş Değişiklik",
     "actions": {
       "discard": "Değişiklikleri At",
       "save": "Değişiklikleri Kaydet"
@@ -1303,12 +1317,12 @@
           "description": "Sunucu Adresi, Bağlantı Noktası, Kimlik Dizini ve API Anahtarları"
         },
         "logging": {
-          "title": "Günlük ve Tanılama",
+          "title": "Günlük",
           "description": "Hata Ayıklama, Günlük Çıktısı ve Kullanım İstatistikleri"
         },
         "advanced": {
           "antigravity_credits": "Antigravity Kredilerini Kullan",
-          "title": "Gelişmiş ve Deneysel",
+          "title": "Gelişmiş",
           "description": "Üst Bilgi Sahteciliği, İmza Önbelleği, Eklenti Kaynakları ve Nadiren Değişen Diğer Ayarlar",
           "plugins_title": "Eklentiler",
           "antigravity_title": "Antigravity",
@@ -1421,7 +1435,7 @@
           "beta_features": "Beta Özellikleri"
         },
         "network": {
-          "title": "Ağ Yapılandırması",
+          "title": "Ağ",
           "description": "Proxy, Yeniden Deneme ve Yönlendirme Ayarları",
           "proxy_url": "Proxy URL",
           "proxy_url_sponsor_hint": "Uygun Proxy Yok Mu?",
@@ -1457,7 +1471,7 @@
           "ws_auth_desc": "AI Studio WebSocket Bağlantıları için Kimlik Doğrulama İste (oauth.providers.aistudio.ws-auth)"
         },
         "streaming": {
-          "title": "Akış Yapılandırması",
+          "title": "Akış",
           "description": "Canlı Tutma ve Başlangıç Yeniden Deneme Ayarları",
           "keepalive_seconds": "Canlı Tutma Saniyesi",
           "keepalive_hint": "Canlı Tutmayı Kapatmak için 0, Negatif Tam Sayı Ayarla veya Boş Bırak",
@@ -1468,7 +1482,7 @@
           "disabled": "Devre Dışı"
         },
         "payload": {
-          "title": "Yük Yapılandırması",
+          "title": "Yük",
           "description": "Varsayılan Değerler, Ham JSON Kuralları, Geçersiz Kılma Kuralları ve Süzgeç Kuralları",
           "default_rules": "Varsayılan Kurallar",
           "default_rules_desc": "İstekte Parametreler Belirtilmediğinde Bu Varsayılan Değerleri Kullan",
@@ -1588,6 +1602,14 @@
     }
   },
   "quota_management": {
+    "summary_label": "Sağlayıcıya göre kotalar",
+    "lowest": "en düşük kalan",
+    "upcoming_title": "Yaklaşan sıfırlamalar",
+    "upcoming_description": "Her kota aralığının yenilenme zamanı, en yakın önce",
+    "upcoming_filter": "Sıfırlama aralıklarını filtrele",
+    "upcoming_empty": "Bu aralık için yaklaşan sıfırlama yok.",
+    "upcoming_show_all": "{{count}} sıfırlamanın tümünü göster",
+    "upcoming_show_less": "Daha az sıfırlama göster",
     "search_label": "Hesap Ara",
     "search_placeholder": "Dosya Adına veya E-postaya Göre Ara",
     "search_empty_title": "Eşleşen Hesap Yok",
@@ -1636,6 +1658,7 @@
   },
   "routing": {
     "title": "Yönlendirme",
+    "summary": "Üyeler {{members}} · Katmanlar {{tiers}}",
     "refresh": "Yenile",
     "refresh_discards": "Yenilemek kaydedilmemiş düzeni siler.",
     "loading": "Yönlendirme yükleniyor…",
@@ -1704,9 +1727,11 @@
     "max_retry_credentials_desc": "Tur başına denenecek en fazla kimlik; 0 hepsini dener.",
     "unlimited": "Sınırsız",
     "dirty_region": "Kaydedilmemiş yönlendirme değişiklikleri",
-    "dirty_count": "Kaydedilmemiş değişiklik: {{count}}",
-    "discard": "Vazgeç",
-    "save": "Kaydet",
+    "dirty_count": "{{count}} kaydedilmemiş değişiklik",
+    "dirty_count_one": "{{count}} kaydedilmemiş değişiklik",
+    "dirty_count_other": "{{count}} kaydedilmemiş değişiklik",
+    "discard": "Değişiklikleri iptal et",
+    "save": "Değişiklikleri kaydet",
     "review_title": "Yönlendirme değişikliklerini kaydet",
     "review_hint": "OAuth kimlikleri tek tek yazılır; geri kalan her şey yapılandırmaya tek seferde yazılır.",
     "confirm_save": "Değişiklikleri kaydet",

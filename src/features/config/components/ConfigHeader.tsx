@@ -1,6 +1,7 @@
 import { Fragment, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IconRefreshCw } from '@/components/ui/icons';
+import { Button } from '@/components/ui/Button';
 import type { HeaderMetaSegment } from '../uiState';
 import styles from './ConfigHeader.module.scss';
 
@@ -10,7 +11,7 @@ export type ConfigHeaderProps = {
   reloadDisabled: boolean;
   reloading: boolean;
   onReload: () => void;
-  /** 移动端上移到头部动作行的 ModeSwitch 槽位（桌面端为 null，ModeSwitch 在 tabs 行右端）。 */
+  /** Editor mode switch, alongside Reload at every viewport width. */
   extraActions?: ReactNode;
 };
 
@@ -57,16 +58,17 @@ export function ConfigHeader({
         </p>
       </div>
       <div className={styles.actions} data-reveal>
-        {extraActions}
-        <button
+        <Button
           type="button"
-          className={styles.ghostAction}
+          variant="ghost"
+          size="sm"
           onClick={onReload}
           disabled={reloadDisabled}
         >
           <IconRefreshCw size={14} className={reloading ? styles.spinning : undefined} />
           {t('config_management.reload')}
-        </button>
+        </Button>
+        {extraActions}
       </div>
     </header>
   );

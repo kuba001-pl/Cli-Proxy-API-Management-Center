@@ -65,6 +65,7 @@
     "subtitle": "관리 센터"
   },
   "login": {
+    "subtitle": "CLI Proxy API v8 이상에 연결하세요",
     "connection_current": "현재 URL",
     "connection_edit": "변경",
     "connection_done": "완료",
@@ -93,6 +94,10 @@
     "error_ssl": "SSL/TLS 인증서 확인에 실패했습니다"
   },
   "header": {
+    "privacy_mode_on": "개인정보 보호 모드 켜짐",
+    "privacy_mode_off": "개인정보 보호 모드 꺼짐",
+    "hide_personal_data": "개인정보 숨기기",
+    "show_personal_data": "개인정보 표시",
     "refresh_all": "모두 새로 고침",
     "logout": "로그아웃"
   },
@@ -101,7 +106,7 @@
   },
   "nav": {
     "dashboard": "대시보드",
-    "quick_start": "빠른 시작",
+    "quick_start": "빠른 설정",
     "ai_providers": "AI 공급자",
     "auth_files": "인증 파일",
     "oauth": "OAuth 로그인",
@@ -222,6 +227,10 @@
     "routing_strategy_fill_first": "fill-first (우선 채우기)"
   },
   "auth_files": {
+    "account_column": "계정",
+    "plan_column": "요금제",
+    "recent_requests_column": "최근 요청",
+    "lowest_quota_column": "최저 할당량",
     "title": "인증 파일 관리",
     "meta_total": "자격 증명 {{count}}개",
     "meta_active": "활성 {{count}}개",
@@ -988,6 +997,9 @@
     "no_requests": "요청 없음"
   },
   "logs": {
+    "caption": "실시간 스트림 · 애플리케이션 및 요청 로그",
+    "error_logs_file": "파일",
+    "error_logs_actions": "파일 작업",
     "preview_too_large": "이 요청 로그는 2 MiB 미리보기 제한을 초과합니다. 다운로드하여 확인하세요.",
     "read_status_live": "지속 읽기 중",
     "read_status_paused": "읽기 일시 중지됨",
@@ -1081,6 +1093,8 @@
     "meta_dirty_source": "저장되지 않은 소스 수정 사항",
     "meta_errors": "유효성 검사 오류 {{count}}개",
     "meta_synced": "동기화됨",
+    "unsaved_changes_one": "저장되지 않은 변경 사항 {{count}}개",
+    "unsaved_changes_other": "저장되지 않은 변경 사항 {{count}}개",
     "actions": {
       "discard": "변경 사항 취소",
       "save": "변경 사항 저장"
@@ -1303,12 +1317,12 @@
           "description": "서버 주소, 포트, 인증 디렉터리 및 API 키"
         },
         "logging": {
-          "title": "로깅 및 진단",
+          "title": "로깅",
           "description": "디버그, 로그 출력 및 사용량 통계"
         },
         "advanced": {
           "antigravity_credits": "Antigravity 크레딧 사용",
-          "title": "고급 및 실험",
+          "title": "고급",
           "description": "헤더 위장, 서명 캐시, 플러그인 소스 및 거의 변경되지 않는 기타 설정",
           "plugins_title": "플러그인",
           "antigravity_title": "Antigravity",
@@ -1421,7 +1435,7 @@
           "beta_features": "Beta Features"
         },
         "network": {
-          "title": "네트워크 설정",
+          "title": "네트워크",
           "description": "프록시, 재시도 및 라우팅 설정",
           "proxy_url": "프록시 URL",
           "proxy_url_sponsor_hint": "적합한 프록시가 없나요?",
@@ -1457,7 +1471,7 @@
           "ws_auth_desc": "AI Studio WebSocket 연결에 인증을 요구합니다 (oauth.providers.aistudio.ws-auth)"
         },
         "streaming": {
-          "title": "스트리밍 설정",
+          "title": "스트리밍",
           "description": "Keepalive 및 부트스트랩 재시도 설정",
           "keepalive_seconds": "Keepalive 시간(초)",
           "keepalive_hint": "keepalive를 비활성화하려면 0, 음의 정수로 설정하거나 비워 두세요.",
@@ -1468,7 +1482,7 @@
           "disabled": "비활성화됨"
         },
         "payload": {
-          "title": "페이로드 설정",
+          "title": "페이로드",
           "description": "기본값, 원시 JSON 규칙, 재정의 규칙 및 필터 규칙",
           "default_rules": "기본 규칙",
           "default_rules_desc": "요청에 매개변수가 지정되지 않은 경우 이 기본값을 사용합니다.",
@@ -1588,6 +1602,14 @@
     }
   },
   "quota_management": {
+    "summary_label": "공급자별 할당량",
+    "lowest": "최저 잔여량",
+    "upcoming_title": "예정된 초기화",
+    "upcoming_description": "각 할당량 기간이 복구되는 시간을 가까운 순서로 표시합니다",
+    "upcoming_filter": "초기화 기간 필터",
+    "upcoming_empty": "이 기간에는 예정된 초기화가 없습니다.",
+    "upcoming_show_all": "초기화 {{count}}개 모두 표시",
+    "upcoming_show_less": "초기화 목록 접기",
     "search_label": "계정 검색",
     "search_placeholder": "파일명 또는 이메일로 검색",
     "search_empty_title": "일치하는 계정 없음",
@@ -1636,6 +1658,7 @@
   },
   "routing": {
     "title": "라우팅",
+    "summary": "멤버 {{members}} · 계층 {{tiers}}",
     "refresh": "새로고침",
     "refresh_discards": "새로고침하면 저장하지 않은 배치가 사라집니다.",
     "loading": "라우팅을 불러오는 중…",
@@ -1705,8 +1728,10 @@
     "unlimited": "무제한",
     "dirty_region": "저장하지 않은 라우팅 변경",
     "dirty_count": "저장하지 않은 변경 {{count}}개",
-    "discard": "취소",
-    "save": "저장",
+    "dirty_count_one": "저장하지 않은 변경 {{count}}개",
+    "dirty_count_other": "저장하지 않은 변경 {{count}}개",
+    "discard": "변경 사항 취소",
+    "save": "변경 사항 저장",
     "review_title": "라우팅 변경 저장",
     "review_hint": "OAuth 자격 증명은 하나씩 기록하고, 나머지는 설정에 한 번에 기록합니다.",
     "confirm_save": "변경 저장",

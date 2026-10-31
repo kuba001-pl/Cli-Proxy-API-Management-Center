@@ -13,33 +13,30 @@ const styles = readFileSync(
 );
 
 describe('auth file card presentation contract', () => {
-  test('uses identity rather than logos or duplicate status badges', () => {
-    expect(source).not.toContain('<img');
-    expect(source).not.toContain('getAuthFileIcon');
-    expect(source).not.toContain('stateBadge');
-    expect(source).toContain('<h3');
+  test('shows provider icons and privacy-safe identity in an expandable row', () => {
+    expect(source).toContain('getAuthFileIcon');
+    expect(source).toContain('authFileDisplayIdentity(file, privacy)');
+    expect(source).toContain('aria-expanded={expanded}');
+    expect(source).toContain('aria-controls={detailsId}');
+    expect(source).toContain('hidden={!expanded}');
     expect(source).toContain('{identity.primary}');
     expect(source).toContain('{identity.secondary}');
   });
 
-  test('uses one footer toggle and credential-specific accessible names', () => {
+  test('keeps a single row toggle with privacy-safe accessible names', () => {
     const header = source.split('<header')[1].split('</header>')[0];
-    const footer = source.split('<footer')[1].split('</footer>')[0];
     expect(source.match(/<ToggleSwitch/g)).toHaveLength(1);
-    expect(header).not.toContain('<ToggleSwitch');
-    expect(header).toContain("ariaLabel={t('auth_files.card_select', { name: file.name })}");
-    expect(header).not.toContain('aria-label=');
-    expect(footer).toContain('<ToggleSwitch');
-    expect(footer).toContain("t('auth_files.card_toggle', { name: file.name })");
-    expect(footer).toContain('checked={!file.disabled}');
-    expect(footer).toContain('statusUpdating[getAuthFileRefreshKey(file)] === true ||');
-    expect(footer).toContain('isManualRefreshing');
-    expect(footer).toContain('!isRuntimeOnly &&');
+    expect(header).toContain("t('auth_files.card_select', { name: identity.fullName })");
+    expect(header).toContain("t('auth_files.card_toggle', { name: identity.fullName })");
+    expect(header).toContain('checked={!file.disabled}');
+    expect(header).toContain('statusUpdating[getAuthFileRefreshKey(file)] === true ||');
+    expect(header).toContain('isManualRefreshing');
+    expect(header).toContain('!isRuntimeOnly &&');
   });
 
-  test('dims disabled card content but keeps the re-enable controls clear', () => {
+  test('dims disabled content while keeping the re-enable control usable', () => {
     expect(source).toContain("file.disabled === true ? styles.cardDisabled : ''");
-    expect(styles).toMatch(/\.cardDisabled\s*>\s*:not\(\.actions\)\s*\{\s*opacity:\s*0\.68;/);
+    expect(styles).toContain('.cardDisabled .identity');
     expect(styles).not.toMatch(/\.cardDisabled\s*\{[^}]*opacity:/);
   });
 

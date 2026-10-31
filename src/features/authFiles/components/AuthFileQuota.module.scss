@@ -332,3 +332,23 @@ button.quotaMessageAction {
     transition: none;
   }
 }
+
+.quotaSection {
+  border: 0;
+  border-radius: 0;
+  padding: 8px 0;
+  background: none;
+}
+.quotaBar {
+  height: 4px;
+  background: var(--meter-track);
+}
+.quotaBarFillHigh {
+  background: var(--text-primary);
+}
+.quotaBarFillMedium {
+  background: var(--status-warning);
+}
+.quotaBarFillLow {
+  background: var(--status-danger);
+}

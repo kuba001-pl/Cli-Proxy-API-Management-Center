@@ -1,3 +1,5 @@
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyText } from '@/utils/privacy';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { authFilesApi } from '@/services/api';
@@ -22,7 +24,13 @@ export type UseAuthFilesModelsResult = {
 
 export function useAuthFilesModels(): UseAuthFilesModelsResult {
   const { t } = useTranslation();
-  const showNotification = useNotificationStore((state) => state.showNotification);
+  const notify = useNotificationStore((state) => state.showNotification);
+  const showNotification = useCallback(
+    (message: string, type: Parameters<typeof notify>[1]) => {
+      notify(privacyText(usePrivacyStore.getState().enabled, message), type);
+    },
+    [notify]
+  );
 
   const [modelsModalOpen, setModelsModalOpen] = useState(false);
   const [modelsLoading, setModelsLoading] = useState(false);

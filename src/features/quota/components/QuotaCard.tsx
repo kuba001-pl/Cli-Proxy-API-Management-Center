@@ -1,17 +1,13 @@
-/**
- * Provider quota card: identity, loading/error state, quota body, and actions.
- * Claude observations remain visible while refreshing or after a failed read.
- *
- * The card surface follows the plan tier (cardTier.ts); see the tier section
- * of QuotaCard.module.scss for the materials.
- */
+/** Provider quota row: identity, retained observations, loading/error state and actions. */
 
 import { useState, type CSSProperties } from 'react';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyText } from '@/utils/privacy';
 import { useTranslation } from 'react-i18next';
-import { IconRefreshCw } from '@/components/ui/icons';
+import { IconAlertTriangle, IconRefreshCw } from '@/components/ui/icons';
 import type { ClaudeQuotaState, ResolvedTheme } from '@/types';
 import { resolveQuotaErrorMessage } from '@/utils/quota';
-import { getQuotaDisplayName } from '@/utils/quota/identity';
+import { getQuotaPrivacyDisplayName } from '@/utils/quota/identity';
 import {
   getAuthFileIcon,
   getThemeSurfaceIconBackground,
@@ -65,7 +61,8 @@ export function QuotaCard(props: QuotaCardProps) {
   const file = entry.file;
   const retainedClaudeUsage =
     entry.type === 'claude' && hasClaudeUsageData(quota as ClaudeQuotaState | undefined);
-  const displayName = getQuotaDisplayName(file);
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
+  const displayName = getQuotaPrivacyDisplayName(file, privacyEnabled);
 
   // Capture the entrance delay only at mount, without a render-time ref read.
   const [mountEntranceDelayMs] = useState<number | null>(entranceDelayMs ?? null);
@@ -101,10 +98,10 @@ export function QuotaCard(props: QuotaCardProps) {
       : entry.type;
   const iconSrc = getAuthFileIcon(providerType, resolvedTheme);
   const typeLabel = getTypeLabel(t, providerType);
-  const errorMessage = resolveQuotaErrorMessage(
-    t,
-    quota?.errorStatus,
-    quota?.error || t('common.unknown_error')
+  const errorMessage = privacyText(
+    privacyEnabled,
+    resolveQuotaErrorMessage(t, quota?.errorStatus, quota?.error || t('common.unknown_error')),
+    [file.email, file.projectId]
   );
   // Claude banked resets join the plan chip row; their expiry list follows it.
   const showClaudeReset = entry.type === 'claude' && status === 'success';
@@ -141,6 +138,7 @@ export function QuotaCard(props: QuotaCardProps) {
         .join(' ')}
       style={entranceStyle}
       data-tier={tier}
+      data-provider={entry.type}
     >
       <header className={styles.head}>
         <span
@@ -181,11 +179,13 @@ export function QuotaCard(props: QuotaCardProps) {
               <div key={row} className={styles.skeletonRow} aria-hidden="true">
                 <span className={styles.skeletonLabel} />
                 <span className={styles.skeletonTrack} />
+                <span className={styles.skeletonReset} />
               </div>
             ))}
           </div>
         ) : status === 'error' ? (
           <div className={styles.errorStrip} role="alert">
+            <IconAlertTriangle size={16} aria-hidden="true" />
             {t(`${adapter.i18nPrefix}.load_failed`, { message: errorMessage })}
           </div>
         ) : quota && !retainedClaudeUsage ? (

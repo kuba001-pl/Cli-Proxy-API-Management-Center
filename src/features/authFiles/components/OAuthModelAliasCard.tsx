@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ModelMappingDiagram, type ModelMappingDiagramRef } from '@/components/modelAlias';
 import { IconChevronUp } from '@/components/ui/icons';
@@ -59,27 +60,22 @@ export function OAuthModelAliasCard(props: OAuthModelAliasCardProps) {
       <header className={styles.panelHead}>
         <h3 className={styles.panelTitle}>{t('oauth_model_alias.title')}</h3>
         <div className={styles.panelExtra}>
-          <div className={styles.viewModeSwitch}>
-            <Button
-              variant={viewMode === 'list' ? 'secondary' : 'ghost'}
-              size="sm"
-              onClick={() => onViewModeChange('list')}
-              disabled={disableControls || modelAliasError !== null}
-              aria-pressed={viewMode === 'list'}
-            >
-              {t('oauth_model_alias.view_mode_list')}
-            </Button>
-            <Button
-              variant={viewMode === 'diagram' ? 'secondary' : 'ghost'}
-              size="sm"
-              onClick={() => onViewModeChange('diagram')}
-              disabled={disableControls || modelAliasError !== null}
-              aria-pressed={viewMode === 'diagram'}
-            >
-              {t('oauth_model_alias.view_mode_diagram')}
-            </Button>
-          </div>
-          <Button size="sm" onClick={onAdd} disabled={disableControls || modelAliasError !== null}>
+          <SegmentedControl
+            value={viewMode}
+            onChange={onViewModeChange}
+            options={[
+              { value: 'list', label: t('oauth_model_alias.view_mode_list') },
+              { value: 'diagram', label: t('oauth_model_alias.view_mode_diagram') },
+            ]}
+            disabled={disableControls || modelAliasError !== null}
+            ariaLabel={t('oauth_model_alias.title')}
+          />
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={onAdd}
+            disabled={disableControls || modelAliasError !== null}
+          >
             {t('oauth_model_alias.add')}
           </Button>
         </div>

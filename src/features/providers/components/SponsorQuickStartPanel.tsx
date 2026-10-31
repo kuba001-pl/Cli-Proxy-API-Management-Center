@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/Button';
 import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
@@ -86,13 +87,24 @@ export function SponsorQuickStartPanel({
             <div className={styles.titleText}>
               <h2 className={styles.title}>{t('providersPage.providerNames.apikeyFun')}</h2>
             </div>
+            <a
+              className={styles.topLink}
+              href={APIKEY_FUN_AFFILIATE_URL}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <IconExternalLink size={14} />
+              <span>{t('providersPage.sponsor.registerNow')}</span>
+            </a>
           </div>
         </div>
 
         <div className={styles.empty}>
           <div>{t('providersPage.sponsor.emptyRegisterHint')}</div>
           <div className={styles.emptyActions}>
-            <button
+            <Button
+              size="sm"
+              variant="primary"
               type="button"
               className={`${styles.emptyActionButton} ${styles.emptyActionButtonPrimary}`}
               onClick={() => setShowCreateForm(true)}
@@ -100,9 +112,9 @@ export function SponsorQuickStartPanel({
             >
               <IconPlus size={16} />
               <span>{t('providersPage.actions.new')}</span>
-            </button>
+            </Button>
             <a
-              className={`${styles.emptyActionButton} ${styles.emptyActionButtonEmphasis}`}
+              className={styles.emptyActionButton}
               href={APIKEY_FUN_AFFILIATE_URL}
               target="_blank"
               rel="noreferrer"
@@ -149,7 +161,9 @@ export function SponsorQuickStartPanel({
 
       <div className={styles.footer}>
         {!resource ? (
-          <button
+          <Button
+            size="sm"
+            variant="ghost"
             type="button"
             className={`${formStyles.footerBtn} ${formStyles.footerBtnGhost}`}
             onClick={() => {
@@ -160,9 +174,11 @@ export function SponsorQuickStartPanel({
             disabled={submitting}
           >
             {t('providersPage.actions.cancel')}
-          </button>
+          </Button>
         ) : null}
-        <button
+        <Button
+          size="sm"
+          variant="primary"
           type="submit"
           form={formId}
           className={`${formStyles.footerBtn} ${formStyles.footerBtnPrimary} ${
@@ -182,7 +198,7 @@ export function SponsorQuickStartPanel({
               ? t('providersPage.actions.create')
               : t('providersPage.actions.save')}
           </span>
-        </button>
+        </Button>
       </div>
     </section>
   );

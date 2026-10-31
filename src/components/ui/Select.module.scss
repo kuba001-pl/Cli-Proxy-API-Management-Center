@@ -16,12 +16,12 @@
   justify-content: space-between;
   gap: 8px;
   width: 100%;
-  height: 40px;
+  height: 36px;
   padding: 0 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-default);
   border-radius: $radius-md;
-  background-color: var(--bg-primary);
-  box-shadow: var(--shadow);
+  background-color: var(--bg-app);
+  box-shadow: none;
   color: var(--text-primary);
   font-size: 13px;
   font-weight: 500;
@@ -31,28 +31,24 @@
   box-sizing: border-box;
 
   &:hover {
-    border-color: var(--border-hover);
+    border-color: var(--border-strong);
   }
 
   &:focus {
     outline: none;
-    box-shadow:
-      var(--shadow),
-      0 0 0 3px rgba($primary-color, 0.18);
+    box-shadow: 0 0 0 2px var(--border-strong);
   }
 
   &[aria-expanded='true'] {
-    border-color: var(--primary-color);
-    box-shadow:
-      var(--shadow),
-      0 0 0 3px rgba($primary-color, 0.18);
+    border-color: var(--text-secondary);
+    box-shadow: 0 0 0 2px var(--border-strong);
   }
 }
 
 .triggerSm {
-  height: 28px;
+  height: 32px;
   padding: 0 10px;
-  font-size: 12px;
+  font-size: 13px;
   box-shadow: none;
 }
 
@@ -70,7 +66,7 @@
   display: inline-flex;
   color: var(--text-secondary);
   flex-shrink: 0;
-  transition: transform 0.2s ease;
+  transition: transform $transition-fast;
 
   [aria-expanded='true'] > & {
     transform: rotate(180deg);
@@ -79,9 +75,9 @@
 
 .dropdown {
   position: fixed;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: $radius-lg;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: $radius-md;
   padding: 6px;
   box-shadow: var(--shadow-lg);
   display: flex;
@@ -104,21 +100,34 @@
   font-size: 13px;
   font-weight: 500;
   transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease;
+    background-color $transition-fast,
+    border-color $transition-fast;
   flex-shrink: 0;
 
   &:hover {
-    background: var(--bg-secondary);
+    background: var(--bg-raised);
   }
 }
 
 .optionActive {
-  border-color: rgba($primary-color, 0.5);
-  background: rgba($primary-color, 0.1);
+  border-color: var(--border-strong);
+  background: var(--bg-active);
   font-weight: 600;
 }
 
 .optionHighlighted {
-  background: var(--bg-secondary);
+  background: var(--bg-raised);
+}
+
+.trigger:disabled,
+.option:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .triggerIcon,
+  .option {
+    transition: none;
+  }
 }

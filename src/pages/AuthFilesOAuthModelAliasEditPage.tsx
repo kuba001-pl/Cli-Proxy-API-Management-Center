@@ -1,3 +1,5 @@
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyText } from '@/utils/privacy';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -265,7 +267,10 @@ export function AuthFilesOAuthModelAliasEditPage() {
           return;
         }
 
-        const errorMessage = err instanceof Error ? err.message : '';
+        const errorMessage = privacyText(
+          usePrivacyStore.getState().enabled,
+          err instanceof Error ? err.message : ''
+        );
         showNotification(`${t('notification.load_failed')}: ${errorMessage}`, 'error');
       })
       .finally(() => {
@@ -377,7 +382,10 @@ export function AuthFilesOAuthModelAliasEditPage() {
       allowNextNavigation();
       handleBack();
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : '';
+      const errorMessage = privacyText(
+        usePrivacyStore.getState().enabled,
+        err instanceof Error ? err.message : ''
+      );
       showNotification(`${t('oauth_model_alias.save_failed')}: ${errorMessage}`, 'error');
     } finally {
       setSaving(false);

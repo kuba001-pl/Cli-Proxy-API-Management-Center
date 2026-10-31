@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePageTransitionLayer } from '@/components/common/PageTransitionLayer';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useRevealGroup } from '@/hooks/motion';
 import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
 import { useVisualConfig } from '@/hooks/useVisualConfig';
@@ -31,6 +30,7 @@ import { shouldReloadVisualDraft, useConfigDocument } from './hooks/useConfigDoc
 import { useFieldJump } from './hooks/useFieldJump';
 import { useSourceSearch } from './hooks/useSourceSearch';
 import { ConfigHeader } from './components/ConfigHeader';
+import { ConfigDirtyFieldsContext } from './components/fields/dirtyFieldsContext';
 import { ConfigSearch } from './components/ConfigSearch';
 import { ConfigTabs } from './components/ConfigTabs';
 import { DiffModal } from './components/DiffModal';
@@ -62,7 +62,6 @@ export function ConfigPage() {
   const showNotification = useNotificationStore((state) => state.showNotification);
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
   const resolvedTheme = useThemeStore((state) => state.resolvedTheme);
-  const isMobile = useMediaQuery('(max-width: 768px)');
   const revealRef = useRevealGroup<HTMLDivElement>();
 
   const {
@@ -253,6 +252,8 @@ export function ConfigPage() {
     sourceDirty: doc.sourceDirty,
     errorCount: mode === 'visual' ? totalErrors : 0,
   });
+  // Source edits form one pending document; visual edits retain their field-level count.
+  const unsavedCount = doc.sourceDirty ? 1 : visualDirtyFields.size;
 
   const saveDisabled =
     disableControls ||
@@ -303,6 +304,13 @@ export function ConfigPage() {
         reloadDisabled={doc.loading || doc.saving}
         reloading={doc.loading}
         onReload={doc.handleReload}
+        extraActions={
+          <ModeSwitch
+            mode={mode}
+            disabled={doc.saving || doc.loading || doc.diffModalOpen || doc.recoveryRequired}
+            onChange={handleModeChange}
+          />
+        }
       />
 
       {doc.error && (
@@ -322,11 +330,6 @@ export function ConfigPage() {
         ) : (
           <SourceSearchBar search={sourceSearch} disabled={disableControls || doc.loading} />
         )}
-        <ModeSwitch
-          mode={mode}
-          disabled={doc.saving || doc.loading || doc.diffModalOpen || doc.recoveryRequired}
-          onChange={handleModeChange}
-        />
       </div>
 
       {mode === 'visual' ? (
@@ -346,7 +349,9 @@ export function ConfigPage() {
             id={configPanelDomId(activeSection)}
             aria-labelledby={configTabDomId(activeSection)}
           >
-            {renderActiveSection()}
+            <ConfigDirtyFieldsContext value={visualDirtyFields}>
+              {renderActiveSection()}
+            </ConfigDirtyFieldsContext>
           </div>
         </>
       ) : (
@@ -361,14 +366,14 @@ export function ConfigPage() {
 
       <FloatingSaveBar
         visible={isCurrentLayer && doc.isDirty}
-        statusText={t(
+        unsavedCount={unsavedCount}
+        statusText={
           doc.recoveryRequired
-            ? 'config_management.precise_save_recovery_required'
-            : isMobile
-              ? status.shortLabelKey
-              : status.labelKey
-        )}
-        statusTone={status.tone}
+            ? t('config_management.precise_save_recovery_required')
+            : status.key !== 'dirty'
+              ? t(status.labelKey)
+              : undefined
+        }
         saving={doc.saving}
         saveDisabled={saveDisabled}
         discardDisabled={doc.loading || doc.saving}

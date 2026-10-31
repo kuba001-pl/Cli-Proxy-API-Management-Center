@@ -12,6 +12,7 @@ import { Select, type SelectOption } from '@/components/ui/Select';
 import { ToggleSwitch } from '@/components/ui/ToggleSwitch';
 import { configFieldDomId } from '../../searchIndex';
 import { resolveRowSpans } from './rowSpans';
+import { DirtyFieldIndicator } from './DirtyFieldIndicator';
 import styles from './Field.module.scss';
 
 /** 搜索跳转的脉冲高亮 class（useFieldJump 命令式挂载/移除）。 */
@@ -99,10 +100,12 @@ function SettingRow({
         {labelFor ? (
           <label id={ids.labelId} htmlFor={labelFor} className={styles.rowLabel}>
             {label}
+            <DirtyFieldIndicator fieldId={fieldId} />
           </label>
         ) : (
           <span id={ids.labelId} className={styles.rowLabel}>
             {label}
+            <DirtyFieldIndicator fieldId={fieldId} />
           </span>
         )}
         {description ? (
