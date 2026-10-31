@@ -39,7 +39,11 @@ export function getQuotaPrivacyDisplayName(
       ? getQuotaDisplayName(file)
       : displayNameFor(file.name);
   }
-  const name = privacyFileName(true, displayNameFor(file.name), [file.email, file.projectId]);
+  // `account` may be a secret (API key): use it only as a redaction target, never display it.
+  const identities = [file.email, file.account, file.projectId].filter(
+    (value): value is string => typeof value === 'string'
+  );
+  const name = privacyFileName(true, displayNameFor(file.name), identities);
   if (!isDevinFile(file) && !isPluginQuotaFile(file)) return name;
   const identity = file.email?.trim() || normalizeRecentRequestAuthIndex(file.authIndex);
   return identity ? `${name} · ${privacyIdentity(true, identity)}` : name;

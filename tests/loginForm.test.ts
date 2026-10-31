@@ -52,10 +52,11 @@ describe('LoginForm', () => {
     expect(markup).toContain(`>${i18n.t('login.connection_edit')}<`);
   });
 
-  test('prefers the stored/custom URL over the detected one', () => {
+  test('with the custom switch off, shows the detected URL and hides the custom one', () => {
     const markup = render({ apiBase: 'https://proxy.example.com' });
-    expect(markup).toContain('https://proxy.example.com');
-    expect(markup).not.toContain('http://localhost:8317');
+    expect(markup).toContain('http://localhost:8317');
+    expect(markup).not.toContain('https://proxy.example.com');
+    expect(markup).toContain('aria-checked="false"');
   });
 
   test('edits the URL in place with a labelled input', () => {

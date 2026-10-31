@@ -1,4 +1,14 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
+import { createPortal } from 'react-dom';
+import { computeTooltipPlacement } from './statusTooltipPlacement';
 import { useTranslation } from 'react-i18next';
 import type { StatusBarData, StatusBlockDetail } from '@/utils/recentRequests';
 
@@ -40,6 +50,60 @@ function formatSuccessRate(rate: number): string {
 
 type StylesModule = Record<string, string>;
 
+const HIDDEN_TOOLTIP_STYLE: CSSProperties = {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 'auto',
+  bottom: 'auto',
+  transform: 'none',
+  zIndex: 1000,
+  visibility: 'hidden',
+};
+
+function StatusTooltipPortal({
+  anchor,
+  className,
+  children,
+}: {
+  anchor: HTMLElement | null;
+  className: string;
+  children: ReactNode;
+}) {
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [style, setStyle] = useState<CSSProperties>(HIDDEN_TOOLTIP_STYLE);
+
+  useLayoutEffect(() => {
+    const tooltip = tooltipRef.current;
+    if (!anchor || !tooltip) return;
+    const update = () => {
+      const rect = anchor.getBoundingClientRect();
+      const { top, left, placement } = computeTooltipPlacement(
+        { top: rect.top, bottom: rect.bottom, left: rect.left, width: rect.width },
+        { width: tooltip.offsetWidth, height: tooltip.offsetHeight },
+        { width: window.innerWidth, height: window.innerHeight }
+      );
+      setStyle({ ...HIDDEN_TOOLTIP_STYLE, top, left, visibility: 'visible' });
+      tooltip.dataset.placement = placement;
+    };
+    update();
+    window.addEventListener('scroll', update, true);
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update, true);
+      window.removeEventListener('resize', update);
+    };
+  }, [anchor]);
+
+  if (typeof document === 'undefined') return null;
+  return createPortal(
+    <div ref={tooltipRef} className={className} style={style} role="tooltip">
+      {children}
+    </div>,
+    document.body
+  );
+}
+
 interface ProviderStatusBarProps {
   statusData: StatusBarData;
   styles?: StylesModule;
@@ -50,6 +114,7 @@ export function ProviderStatusBar({ statusData, styles: stylesProp }: ProviderSt
   const s = (stylesProp || defaultStyles) as StylesModule;
   const [activeTooltip, setActiveTooltip] = useState<number | null>(null);
   const blocksRef = useRef<HTMLDivElement>(null);
+  const [tooltipAnchor, setTooltipAnchor] = useState<HTMLElement | null>(null);
 
   const hasData = statusData.totalSuccess + statusData.totalFailure > 0;
   const rateClass = !hasData
@@ -74,6 +139,7 @@ export function ProviderStatusBar({ statusData, styles: stylesProp }: ProviderSt
 
   const handlePointerEnter = useCallback((e: React.PointerEvent, idx: number) => {
     if (e.pointerType === 'mouse') {
+      setTooltipAnchor(e.currentTarget as HTMLElement);
       setActiveTooltip(idx);
     }
   }, []);
@@ -87,23 +153,18 @@ export function ProviderStatusBar({ statusData, styles: stylesProp }: ProviderSt
   const handlePointerDown = useCallback((e: React.PointerEvent, idx: number) => {
     if (e.pointerType === 'touch') {
       e.preventDefault();
+      setTooltipAnchor(e.currentTarget as HTMLElement);
       setActiveTooltip((prev) => (prev === idx ? null : idx));
     }
   }, []);
 
-  const getTooltipPositionClass = (idx: number, total: number): string => {
-    if (idx <= 2) return s.statusTooltipLeft;
-    if (idx >= total - 3) return s.statusTooltipRight;
-    return '';
-  };
-
-  const renderTooltip = (detail: StatusBlockDetail, idx: number) => {
+  const renderTooltip = (detail: StatusBlockDetail) => {
     const total = detail.success + detail.failure;
-    const posClass = getTooltipPositionClass(idx, statusData.blockDetails.length);
     const timeRange = `${formatTime(detail.startTime)} – ${formatTime(detail.endTime)}`;
 
+    // 通过 portal 挂到 body 并按视口定位，避免被表格的横向滚动容器裁剪
     return (
-      <div className={`${s.statusTooltip} ${posClass}`}>
+      <StatusTooltipPortal anchor={tooltipAnchor} className={s.statusTooltip ?? ''}>
         <span className={s.tooltipTime}>{timeRange}</span>
         {total > 0 ? (
           <span className={s.tooltipStats}>
@@ -118,7 +179,7 @@ export function ProviderStatusBar({ statusData, styles: stylesProp }: ProviderSt
         ) : (
           <span className={s.tooltipStats}>{t('status_bar.no_requests')}</span>
         )}
-      </div>
+      </StatusTooltipPortal>
     );
   };
 
@@ -142,7 +203,7 @@ export function ProviderStatusBar({ statusData, styles: stylesProp }: ProviderSt
                 className={`${s.statusBlock} ${isIdle ? s.statusBlockIdle : ''}`}
                 style={blockStyle}
               />
-              {isActive && renderTooltip(detail, idx)}
+              {isActive && renderTooltip(detail)}
             </div>
           );
         })}

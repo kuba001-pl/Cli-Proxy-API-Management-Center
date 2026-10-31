@@ -2,6 +2,7 @@ import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { makeClientId, type CodexLiveICEServerDraft } from '@/types/visualConfig';
 import { FieldGrid, FieldShell } from '../fields/FieldPrimitives';
 import styles from './Blocks.module.scss';
@@ -25,6 +26,8 @@ export function CodexLiveICEServersEditor({
 }) {
   const { t } = useTranslation();
   const id = useId();
+  // Privacy mode hides usernames visually only; the real value stays in state and callbacks.
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const updateServer = (serverId: string, patch: Partial<CodexLiveICEServerDraft>) =>
     onChange(value.map((server) => (server.id === serverId ? { ...server, ...patch } : server)));
 
@@ -69,6 +72,7 @@ export function CodexLiveICEServersEditor({
             <FieldGrid>
               <Input
                 label={t('config_management.visual.additions.iceUsername')}
+                type={privacyEnabled ? 'password' : 'text'}
                 value={server.username}
                 disabled={disabled}
                 autoComplete="off"

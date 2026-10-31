@@ -1159,6 +1159,7 @@
     "precise_save_recovery_required": "無法回讀儲存結果，已暫停編輯。請再次儲存以恢復草稿基準，或重新載入設定。",
     "visual_mode_latest_yaml_invalid": "伺服器最新設定包含無效 YAML，請先切回原始碼模式檢查後再儲存視覺化修改：{{message}}",
     "editor_placeholder": "key: value",
+    "privacy_source_paused": "隱私模式已開啟，原始碼編輯已暫停。關閉隱私模式後即可編輯。",
     "search_placeholder": "搜尋設定內容...",
     "search_button": "搜尋",
     "search_no_results": "無結果",

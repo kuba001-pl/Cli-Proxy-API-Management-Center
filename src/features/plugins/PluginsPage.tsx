@@ -20,6 +20,8 @@ import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { pluginsApi, pluginStoreApi } from '@/services/api';
 import { useAuthStore, useConfigStore, useNotificationStore } from '@/stores';
 import { getErrorMessage, isRecord } from '@/utils/helpers';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyDisplayText } from '@/features/config/privacy';
 import type {
   PluginConfigField,
   PluginListEntry,
@@ -63,6 +65,7 @@ const hasRestartRequiredError = (error: unknown) =>
 
 export function PluginsPage() {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const navigate = useNavigate();
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
   const apiBase = useAuthStore((state) => state.apiBase);
@@ -493,7 +496,9 @@ export function PluginsPage() {
       </div>
 
       {/* ── Alerts ── */}
-      {error ? <div className={styles.errorBox}>{error}</div> : null}
+      {error ? (
+        <div className={styles.errorBox}>{privacyDisplayText(privacyEnabled, error)}</div>
+      ) : null}
 
       {data && !data.pluginsEnabled ? (
         <div className={styles.warningBox}>{t('plugin_management.global_disabled_hint')}</div>
@@ -605,7 +610,8 @@ export function PluginsPage() {
             const deletingPlugin = deletingID === plugin.id;
             const actionBusy = Boolean(mutatingID || openingConfigID || deletingID);
             const version = plugin.metadata?.version;
-            const author = plugin.metadata?.author;
+            const author = privacyDisplayText(privacyEnabled, plugin.metadata?.author);
+            const pluginPath = privacyDisplayText(privacyEnabled, plugin.path);
 
             return (
               <article key={plugin.id} className={styles.pluginRow}>
@@ -663,9 +669,9 @@ export function PluginsPage() {
                       {plugin.path ? (
                         <span
                           className={`${styles.metaItem} ${styles.metaPath}`}
-                          title={plugin.path}
+                          title={pluginPath}
                         >
-                          {plugin.path}
+                          {pluginPath}
                         </span>
                       ) : null}
                     </div>

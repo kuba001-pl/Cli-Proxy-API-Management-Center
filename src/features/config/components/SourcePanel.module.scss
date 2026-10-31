@@ -103,6 +103,17 @@
 
 /* ---------- 编辑器面板 ---------- */
 
+.privacyNotice {
+  margin: 0 0 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--warning-border);
+  border-radius: 8px;
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  font-size: 12.5px;
+  line-height: 18px;
+}
+
 .editorWrapper {
   width: 100%;
   flex: 0 0 auto;

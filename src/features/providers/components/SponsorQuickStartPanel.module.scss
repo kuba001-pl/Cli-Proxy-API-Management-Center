@@ -135,7 +135,7 @@
 }
 .topLink:focus-visible,
 .emptyActionButton:focus-visible {
-  outline: 2px solid var(--border-strong);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 3px;
 }
 .spin {

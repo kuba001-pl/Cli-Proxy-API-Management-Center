@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { IconAlertTriangle, IconExternalLink, IconPlug } from '@/components/ui/icons';
 import { useAuthStore } from '@/stores';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyDisplayText } from '@/features/config/privacy';
 import type { PluginStoreEntry } from '@/types';
 import {
   buildRepositoryURL,
@@ -43,6 +45,7 @@ export function PluginInstallGateModal({
 }: PluginInstallGateModalProps) {
   const { t } = useTranslation();
   const apiBase = useAuthStore((state) => state.apiBase);
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const [step, setStep] = useState(1);
   const [typed, setTyped] = useState('');
   const [wasOpen, setWasOpen] = useState(false);
@@ -68,7 +71,7 @@ export function PluginInstallGateModal({
   const rawSourceText = entry.sourceName || entry.sourceUrl;
   const sourceText = isDefaultPluginStoreSource(entry)
     ? t('plugin_store.cli_proxy_api_source')
-    : rawSourceText;
+    : privacyDisplayText(privacyEnabled, rawSourceText);
   const tokenMatches = typed.trim() === token;
 
   const handleClose = () => {

@@ -190,7 +190,7 @@ export function ProviderResourceTable({
     }
     return (
       <span className={styles.baseUrl}>
-        {privacyText(privacyEnabled, r.baseUrl, [r.name]) || t('providersPage.status.notSet')}
+        {privacyText(privacyEnabled, r.baseUrl) || t('providersPage.status.notSet')}
       </span>
     );
   };

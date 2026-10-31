@@ -49,7 +49,12 @@ import { errorLogViewerReducer } from './model/errorLogViewer';
 import { shouldExitLogFullscreen } from './model/logFullscreen';
 import { useLogFilters } from './hooks/useLogFilters';
 import { isNearBottom, useLogScroller } from './hooks/useLogScroller';
-import { createLogDisplayCache, privacyLogFileName, privacyLogText } from './model/logPrivacy';
+import {
+  createLogDisplayCache,
+  logIdentities,
+  privacyLogFileName,
+  privacyLogText,
+} from './model/logPrivacy';
 import styles from './LogsPage.module.scss';
 
 const INITIAL_DISPLAY_LINES = INITIAL_VISIBLE_LINES;
@@ -183,7 +188,11 @@ export function LogsPage() {
       showNotification(t('logs.error_log_download_success'), 'success');
     } catch (err: unknown) {
       if (!requests.session.isCurrent(session)) return;
-      const message = getErrorMessage(err);
+      // Read privacy at action time: backend messages can echo identities from the file name.
+      const message = privacyLogText(usePrivacyStore.getState().enabled, getErrorMessage(err), [
+        ...logIdentities(getErrorMessage(err)),
+        ...logIdentities(name),
+      ]);
       showNotification(
         `${t('notification.download_failed')}${message ? `: ${message}` : ''}`,
         'error'
@@ -392,7 +401,8 @@ export function LogsPage() {
       showNotification(t('logs.request_log_download_success'), 'success');
     } catch (err: unknown) {
       if (!requests.session.isCurrent(session)) return;
-      const message = getErrorMessage(err);
+      // Read privacy at action time: backend messages can echo identities.
+      const message = privacyLogText(usePrivacyStore.getState().enabled, getErrorMessage(err));
       showNotification(
         `${t('notification.download_failed')}${message ? `: ${message}` : ''}`,
         'error'

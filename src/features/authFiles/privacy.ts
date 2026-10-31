@@ -1,5 +1,12 @@
 import type { AuthFileItem } from '@/types';
-import { privacyFileName, privacyIdentity, privacyText } from '@/utils/privacy';
+import {
+  PRIVACY_MASK,
+  credentialFileIdentity,
+  maskSensitiveText,
+  privacyFileName,
+  privacyIdentity,
+  privacyText,
+} from '@/utils/privacy';
 import { deriveAuthFileIdentity } from './identity';
 
 /** Account may contain an API key: use it only as a redaction target, never as display text. */
@@ -10,8 +17,10 @@ export function authFilePrivacyIdentities(file: AuthFileItem): string[] {
     file.account,
     identity.kind === 'projectId' ? identity.primary : null,
   ].filter((value): value is string => typeof value === 'string' && Boolean(value.trim()));
-  // A filename-only credential has no reliable identity split; conceal its whole stem.
-  return identities.length > 0 ? identities : [identity.primary].filter(Boolean);
+  // A filename-only credential: conceal everything between the recognized provider/hash
+  // prefix and plan suffix (or the whole stem when nothing is recognizable).
+  if (identities.length > 0 || !identity.primary) return identities;
+  return [credentialFileIdentity(identity.primary)].filter(Boolean);
 }
 
 export function authFileDisplayIdentity(file: AuthFileItem, enabled: boolean) {
@@ -20,12 +29,8 @@ export function authFileDisplayIdentity(file: AuthFileItem, enabled: boolean) {
   return {
     ...identity,
     primary:
-      identity.kind === 'fileName' && identities.some((id) => id !== identity.primary)
-        ? privacyFileName(
-            enabled,
-            identity.primary,
-            identities.filter((id) => id !== identity.primary)
-          )
+      identity.kind === 'fileName'
+        ? privacyFileName(enabled, identity.primary, identities)
         : privacyIdentity(enabled, identity.primary),
     secondary: identity.secondary ? privacyFileName(enabled, file.name, identities) : null,
     fullName: privacyFileName(enabled, file.name, identities),
@@ -51,4 +56,42 @@ export function authFileJsonIdentities(value: unknown): string[] {
       ? [entry]
       : authFileJsonIdentities(entry)
   );
+}
+
+/**
+ * Display copy of a credential JSON document with identities redacted. Works on the parsed
+ * value (before serialization) so escaping cannot hide a match, e.g. `DOMAIN\\alice`.
+ */
+export function redactAuthFileJson(value: unknown, identities: string[]): unknown {
+  const known = new Set(identities.map((identity) => identity.trim().toLowerCase()));
+  const redact = (entry: unknown): unknown => {
+    if (typeof entry === 'string') {
+      return known.has(entry.trim().toLowerCase()) && entry.trim()
+        ? PRIVACY_MASK
+        : maskSensitiveText(entry, identities);
+    }
+    if (Array.isArray(entry)) return entry.map(redact);
+    if (entry && typeof entry === 'object') {
+      return Object.fromEntries(
+        Object.entries(entry).map(([key, child]) => [
+          maskSensitiveText(key, identities),
+          redact(child),
+        ])
+      );
+    }
+    return entry;
+  };
+  return redact(value);
+}
+
+/** Pretty JSON preview text, redacted when privacy is enabled; invalid JSON is masked as text. */
+export function authFileJsonPreview(text: string, identities: string[], enabled: boolean): string {
+  if (!text) return '';
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    return privacyText(enabled, text, identities);
+  }
+  return JSON.stringify(enabled ? redactAuthFileJson(parsed, identities) : parsed, null, 2);
 }

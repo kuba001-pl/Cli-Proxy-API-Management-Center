@@ -1,20 +1,19 @@
-import { PRIVACY_MASK, privacyFileName, privacyText } from '@/utils/privacy';
+import { PRIVACY_MASK, findEmails, privacyFileName, privacyText } from '@/utils/privacy';
 import type { LogEntry } from './logSelectors';
 
 // Logs are free text: recognize explicitly labelled identities without treating
 // ordinary messages, request IDs or timestamps as account names.
 const IDENTITY_FIELD =
-  /(\b(?:username|user_name|user|account(?:[_ -]?(?:name|label))?|email)["']?\s*(?:[:=]\s*|\s+))(?:"([^"]+)"|'([^']+)'|([^\s"',;|<>]+))/gi;
-const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+  /(\b(?:username|user_name|user|account(?:[_ -]?(?:name|label))?|email)["']?(?:[ \t]*[:=]\s*|\s+))(?:"([^"]+)"|'([^']+)'|([^\s"',;|<>]+))/gi;
 
 export function logIdentities(text: string): string[] {
   const identities = new Set<string>();
   for (const match of text.matchAll(IDENTITY_FIELD)) {
     identities.add(match[2] ?? match[3] ?? match[4]);
   }
-  for (const match of text.matchAll(EMAIL)) {
+  for (const email of findEmails(text)) {
     // The generic email matcher can include a credential/log file extension.
-    identities.add(match[0].replace(/\.(?:json|log|txt)$/i, ''));
+    identities.add(email.replace(/\.(?:json|log|txt)$/i, ''));
   }
   return [...identities];
 }

@@ -1168,7 +1168,7 @@
 .form button:focus-visible,
 .passwordToggle:focus-visible,
 .footerBtn:focus-visible {
-  outline: 2px solid var(--border-strong);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

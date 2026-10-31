@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, spyOn, test } from 'bun:test';
+import { afterEach, beforeAll, describe, expect, spyOn, test } from 'bun:test';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MemberCard } from '../src/features/routing/components/MemberCard';
@@ -9,6 +9,13 @@ import { routingMemberDisplay, routingWeightLabel } from '../src/features/routin
 import { buildRoutingBoard } from '../src/services/api/routing';
 import * as privacyStore from '../src/stores/usePrivacyStore';
 import { PRIVACY_MASK } from '../src/utils/privacy';
+import i18n from '../src/i18n';
+
+// Dialog text interpolates the masked name; without an initialized i18n instance `t()` returns
+// bare keys, so this suite must not depend on another test file having initialized it.
+beforeAll(async () => {
+  await i18n.changeLanguage('en');
+});
 
 const boardFor = (email = 'alice@example.test', name = 'codex-alice_example_test.json') =>
   buildRoutingBoard({}, [{ name, email, type: 'codex', priority: 0 }]);

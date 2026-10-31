@@ -8,13 +8,15 @@ import {
   useLoginTransitionStore,
 } from '@/stores/useLoginTransitionStore';
 import { prefersReducedMotion } from '@/hooks/motion';
-import { detectApiBaseFromLocation, normalizeApiBase } from '@/utils/connection';
+import { detectApiBaseFromLocation } from '@/utils/connection';
 import { LANGUAGE_LABEL_KEYS, LANGUAGE_ORDER } from '@/utils/constants';
 import { isSupportedLanguage } from '@/utils/language';
 import { INLINE_LOGO_JPEG } from '@/assets/logoInline';
 import type { ApiError } from '@/types';
 import { LegacyBackendError } from '@/services/api/legacyBackendProbe';
+import { DotMatrixHero } from './login/DotMatrixHero';
 import { LoginForm } from './login/LoginForm';
+import { isCustomConnection, resolveLoginApiBase } from './login/loginConnection';
 import { resolveLoginRedirect } from '@/router/loginRedirect';
 import styles from './LoginPage.module.scss';
 
@@ -109,7 +111,10 @@ export function LoginPage() {
   const [managementKey, setManagementKey] = useState(
     () => useAuthStore.getState().managementKey || ''
   );
-  const [showCustomBase, setShowCustomBase] = useState(false);
+  // 自定义连接开关：决定提交时使用自定义地址还是自动检测的当前地址
+  const [customBase, setCustomBase] = useState(() =>
+    isCustomConnection(useAuthStore.getState().apiBase, detectedBase)
+  );
   const [showKey, setShowKey] = useState(false);
   const [rememberPassword, setRememberPassword] = useState(() => {
     const { rememberPassword: remembered, managementKey: key } = useAuthStore.getState();
@@ -184,6 +189,7 @@ export function LoginPage() {
           // 用户修正后即可直接重试，自定义地址也不会丢失。
           const stored = useAuthStore.getState();
           setApiBase((previous) => stored.apiBase || previous || detectedBase);
+          if (isCustomConnection(stored.apiBase, detectedBase)) setCustomBase(true);
           setManagementKey((previous) => stored.managementKey || previous);
           setRememberPassword(
             (previous) => stored.rememberPassword || Boolean(stored.managementKey) || previous
@@ -205,7 +211,7 @@ export function LoginPage() {
       return;
     }
 
-    const baseToUse = apiBase ? normalizeApiBase(apiBase) : detectedBase;
+    const baseToUse = resolveLoginApiBase({ customEnabled: customBase, apiBase, detectedBase });
     // 先进入 connecting：登录成功瞬间 isAuthenticated 变真时不会被立即重定向打断
     setPhase('connecting');
     setError('');
@@ -226,6 +232,7 @@ export function LoginPage() {
     leaveTo(redirectTarget, getLoginTransitionTimings(prefersReducedMotion()).successHold);
   }, [
     apiBase,
+    customBase,
     detectedBase,
     leaveTo,
     login,
@@ -245,6 +252,11 @@ export function LoginPage() {
 
   return (
     <div className={styles.container} data-phase={phase === 'exiting' ? 'exiting' : undefined}>
+      {/* 点阵仅在移动端以顶部横幅显示；桌面端由样式隐藏 */}
+      <div className={styles.brandPanel} aria-hidden="true">
+        <DotMatrixHero />
+      </div>
+
       <div className={styles.formPanel}>
         {/* 自动登录启动页自带大徽标与品牌名，此时不再渲染顶栏，避免重复 */}
         {!showSplash && (
@@ -300,7 +312,7 @@ export function LoginPage() {
               <LoginForm
                 apiBase={apiBase}
                 detectedBase={detectedBase}
-                editingBase={showCustomBase}
+                editingBase={customBase}
                 managementKey={managementKey}
                 showKey={showKey}
                 rememberPassword={rememberPassword}
@@ -308,7 +320,7 @@ export function LoginPage() {
                 success={phase === 'success' || phase === 'exiting'}
                 error={error}
                 onApiBaseChange={setApiBase}
-                onEditingBaseChange={setShowCustomBase}
+                onEditingBaseChange={setCustomBase}
                 onManagementKeyChange={setManagementKey}
                 onShowKeyChange={setShowKey}
                 onRememberPasswordChange={setRememberPassword}

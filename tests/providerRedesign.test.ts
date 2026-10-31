@@ -193,6 +193,26 @@ describe('provider privacy presentation', () => {
     expect(table()).toContain(resource.apiKeyPreview!);
   });
 
+  test('shows non-email channel names as-is and never treats them as URL identities', () => {
+    const channel = { ...resource, name: 'api', baseUrl: 'https://api.example.com/v1' };
+    expect(getProviderDisplayName(channel, true)).toBe('api');
+    expect(getProviderDisplayName({ ...resource, name: 'Work gateway' }, true)).toBe(
+      'Work gateway'
+    );
+    setPrivacy(true);
+    const html = render(
+      createElement(ProviderResourceTable, {
+        resources: [channel],
+        onView: noop,
+        onEdit: noop,
+        onDelete: noop,
+        onToggleDisabled: noop,
+      })
+    );
+    expect(html).toContain('https://api.example.com/v1');
+    expect(html).not.toContain(PRIVACY_MASK + '.example.com');
+  });
+
   test('returns to the original label when privacy is disabled', () => {
     setPrivacy(false);
     expect(table()).toContain(resource.name!);

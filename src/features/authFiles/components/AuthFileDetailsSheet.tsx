@@ -1,6 +1,6 @@
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { privacyFileName, privacyText } from '@/utils/privacy';
-import { authFileJsonIdentities } from '../privacy';
+import { authFileJsonIdentities, authFileJsonPreview } from '../privacy';
 import { useCallback, useMemo, type MouseEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
@@ -96,16 +96,9 @@ export function AuthFileDetailsSheet(props: AuthFileDetailsSheetProps) {
     [confirmClose, editor?.saving, navigate]
   );
 
-  const formatJsonText = (text: string) => {
-    if (!text) return '';
-    try {
-      return JSON.stringify(JSON.parse(text), null, 2);
-    } catch {
-      return text;
-    }
-  };
   const identities = [...(props.privacyIdentities ?? []), ...authFileJsonIdentities(editor?.json)];
-  const previewText = privacyText(privacy, formatJsonText(updatedText), identities);
+  // Redact the parsed object, not escaped JSON text: `DOMAIN\\alice` must not slip through.
+  const previewText = authFileJsonPreview(updatedText, identities, privacy);
   const invalidContentPreview = privacyText(privacy, editor?.invalidContentPreview, identities);
   const fileInfoText = editor?.fileInfoText ?? '';
   const displayInfoText = useMemo(() => {

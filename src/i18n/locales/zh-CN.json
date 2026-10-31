@@ -1131,6 +1131,7 @@
     "precise_save_recovery_required": "无法回读保存结果，已暂停编辑。请再次保存以恢复草稿基线，或重新加载配置。",
     "visual_mode_latest_yaml_invalid": "服务端最新配置包含无效 YAML，请先切回源码模式检查后再保存可视化修改：{{message}}",
     "editor_placeholder": "key: value",
+    "privacy_source_paused": "隐私模式已开启，源码编辑已暂停。关闭隐私模式后即可编辑。",
     "search_placeholder": "搜索配置内容...",
     "search_button": "搜索",
     "search_no_results": "无结果",

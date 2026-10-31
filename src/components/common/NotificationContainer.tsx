@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNotificationStore } from '@/stores';
+import { useNotificationStore, usePrivacyStore } from '@/stores';
+import { privacyText } from '@/utils/privacy';
 import { IconAlertTriangle, IconCheckCircle2, IconInfo, IconX } from '@/components/ui/icons';
 import { NOTIFICATION_DURATION_MS } from '@/utils/constants';
 import type { Notification } from '@/types';
@@ -35,6 +36,8 @@ function NotificationCard({
   const timerRef = useRef<ReturnType<typeof createNotificationTimer> | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const { id, type, message, duration = NOTIFICATION_DURATION_MS, isExiting } = notification;
+  // Mask at render time so toasts already on screen follow privacy toggles; the store keeps raw text.
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const Icon = notificationIcons[type];
 
   useEffect(() => {
@@ -103,7 +106,7 @@ function NotificationCard({
         aria-atomic="true"
       >
         <span className={styles.srOnly}>{t(`notification.type_${type}`)}: </span>
-        {message}
+        {privacyText(privacyEnabled, message)}
       </div>
       <button
         type="button"

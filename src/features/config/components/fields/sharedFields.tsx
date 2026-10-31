@@ -4,6 +4,7 @@
 
 import { useTranslation } from 'react-i18next';
 import type { VisualConfigValues } from '@/types/visualConfig';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { SPONSORS } from '../../sponsors';
 import { ApiKeysCardEditor } from '../blocks/ApiKeysCardEditor';
 import { SettingCell, SettingList, TextSetting, ToggleSetting } from './FieldPrimitives';
@@ -63,9 +64,13 @@ export function ProxyUrlField({ values, disabled, onChange, wide }: SharedFieldP
   const { t } = useTranslation();
   // 代理 URL 较长，调用处传 wide 独占整行；说明位挂赞助跳转（数据见 sponsors.ts，空则不渲染）。
   const sponsor = SPONSORS[0];
+  // Proxy URLs may embed user:pass@ credentials; privacy mode hides the field visually only.
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   return (
     <TextSetting
       fieldId="proxyUrl"
+      type={privacyEnabled ? 'password' : 'text'}
+      autoComplete="off"
       wide={wide}
       size="lg"
       label={t('config_management.visual.sections.network.proxy_url')}

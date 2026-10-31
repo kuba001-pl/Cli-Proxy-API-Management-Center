@@ -20,9 +20,10 @@ const connectionIcon = (
 );
 
 export interface LoginFormProps {
-  /** 输入框中的连接地址（可能为空，此时回退到 detectedBase） */
+  /** 自定义连接地址（可能为空，此时回退到 detectedBase） */
   apiBase: string;
   detectedBase: string;
+  /** 自定义连接开关：关闭时提交使用 detectedBase，开启时使用 apiBase */
   editingBase: boolean;
   managementKey: string;
   showKey: boolean;
@@ -60,6 +61,8 @@ export function LoginForm({
   const keyId = useId();
   const errorId = useId();
   const keyInputRef = useRef<HTMLInputElement | null>(null);
+  // 仅在用户主动打开开关时聚焦地址输入框；从已保存的自定义连接恢复时焦点仍在密钥输入框
+  const focusBaseOnMountRef = useRef(false);
   const locked = loading || success;
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -80,11 +83,9 @@ export function LoginForm({
           <div
             className={`${styles.readout} ${styles.mono}`}
             data-custom={editingBase}
-            title={editingBase ? detectedBase : apiBase || detectedBase}
+            title={detectedBase}
           >
-            <span className={styles.readoutText}>
-              {editingBase ? detectedBase : apiBase || detectedBase}
-            </span>
+            <span className={styles.readoutText}>{detectedBase}</span>
           </div>
         </div>
         <button
@@ -98,6 +99,7 @@ export function LoginForm({
           disabled={locked}
           onClick={() => {
             const next = !editingBase;
+            focusBaseOnMountRef.current = next;
             onEditingBaseChange(next);
             if (!next) keyInputRef.current?.focus();
           }}
@@ -120,11 +122,16 @@ export function LoginForm({
             </span>
             <input
               id={baseId}
+              ref={(node) => {
+                if (node && focusBaseOnMountRef.current) {
+                  focusBaseOnMountRef.current = false;
+                  node.focus();
+                }
+              }}
               aria-label={t('login.custom_connection_label')}
               className={`${styles.input} ${styles.mono}`}
               type="url"
               inputMode="url"
-              autoFocus
               autoComplete="url"
               spellCheck={false}
               placeholder={t('login.custom_connection_placeholder')}
@@ -151,7 +158,7 @@ export function LoginForm({
             type={showKey ? 'text' : 'password'}
             name="cpa-management-key"
             autoComplete="current-password"
-            autoFocus={!editingBase}
+            autoFocus
             spellCheck={false}
             placeholder={t('login.management_key_placeholder')}
             readOnly={locked}

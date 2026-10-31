@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, test } from 'bun:test';
 import {
   PRIVACY_MASK,
+  credentialFileIdentity,
+  findEmails,
+  isEmail,
+  splitCredentialFileName,
   maskIdentity,
   maskFileName,
   maskSensitiveText,
@@ -107,5 +111,58 @@ describe('privacy masking', () => {
     expect(usePrivacyStore.getState().enabled).toBe(false);
     usePrivacyStore.getState().setEnabled(true);
     expect(usePrivacyStore.getState().enabled).toBe(true);
+  });
+});
+
+describe('privacy masking regressions', () => {
+  test('Unicode and apostrophe local parts are masked as complete email tokens', () => {
+    expect(maskSensitiveText('from josé@example.com today')).toBe(`from ${PRIVACY_MASK} today`);
+    expect(maskSensitiveText("o'hara@example.com")).toBe(PRIVACY_MASK);
+    expect(maskSensitiveText("'quoted@example.com'.")).toBe(`'${PRIVACY_MASK}'.`);
+    expect(maskSensitiveText('用户@例子.公司')).toBe(PRIVACY_MASK);
+    expect(isEmail('josé@example.com')).toBe(true);
+    expect(findEmails('a@b and x@y.co, end.')).toEqual(['x@y.co']);
+  });
+
+  test('email scanning stays linear on huge adversarial inputs', () => {
+    const inputs = [
+      'a'.repeat(100_000),
+      `${'a'.repeat(100_000)}@`,
+      'a@'.repeat(50_000),
+      `${'a.'.repeat(50_000)}@x`,
+      `x@${'b.'.repeat(50_000)}`,
+    ];
+    const started = performance.now();
+    for (const input of inputs) maskSensitiveText(input, ['alice']);
+    expect(performance.now() - started).toBeLessThan(500);
+  });
+
+  test('known identities are replaced only at token boundaries', () => {
+    expect(maskSensitiveText('username=a status=active', ['a'])).toBe('username=a status=active');
+    expect(maskSensitiveText('user al logged in; also alice', ['al'])).toBe(
+      `user ${PRIVACY_MASK} logged in; also alice`
+    );
+    expect(maskSensitiveText('first_last and first-last', ['first.last'])).toBe(
+      `${PRIVACY_MASK} and ${PRIVACY_MASK}`
+    );
+    expect(maskSensitiveText('https://api.example.com', ['api'])).toBe(
+      `https://${PRIVACY_MASK}.example.com`
+    );
+  });
+
+  test('filename-only credentials keep provider, hash and plan segments', () => {
+    expect(splitCredentialFileName('codex-dbffca66-alice-plus')).toEqual({
+      prefix: 'codex-dbffca66-',
+      identity: 'alice',
+      suffix: '-plus',
+    });
+    expect(credentialFileIdentity('codex-dbffca66-alice-plus.json')).toBe('alice');
+    expect(credentialFileIdentity('custom-personal-name.json')).toBe('custom-personal-name');
+    expect(maskFileName('codex-dbffca66-alice-plus.json', ['codex-dbffca66-alice-plus'])).toBe(
+      `codex-dbffca66-${PRIVACY_MASK}-plus.json`
+    );
+    expect(maskFileName('custom-personal-name.json', ['custom-personal-name'])).toBe(
+      `${PRIVACY_MASK}.json`
+    );
   });
 });

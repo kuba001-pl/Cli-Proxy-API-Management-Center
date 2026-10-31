@@ -16,10 +16,9 @@
 }
 .head {
   display: grid;
-  grid-template-columns: minmax(300px, 2.1fr) minmax(88px, 0.65fr) minmax(150px, 0.95fr) minmax(
-      160px,
-      1.1fr
-    ) 64px 24px;
+  grid-template-columns:
+    minmax(300px, 2.1fr) minmax(88px, 0.65fr) minmax(150px, 0.95fr) minmax(160px, 1.1fr)
+    64px 24px;
   gap: 14px;
   align-items: center;
   padding: 14px 16px;
@@ -295,17 +294,6 @@
   font-family: $font-mono;
   font-size: 11px;
   line-height: 1.5;
-}
-
-.statusTooltipLeft {
-  left: 0;
-  transform: none;
-}
-
-.statusTooltipRight {
-  left: auto;
-  right: 0;
-  transform: none;
 }
 
 .tooltipTime {

@@ -30,6 +30,7 @@ type LocationState = { fromAuthFiles?: boolean } | null;
 
 export function AuthFilesOAuthExcludedEditPage() {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const navigate = useNavigate();
   const location = useLocation();
   const { showConfirmation, showNotification } = useNotificationStore();
@@ -367,7 +368,9 @@ export function AuthFilesOAuthExcludedEditPage() {
         <Card>
           <EmptyState
             title={t('notification.refresh_failed')}
-            description={initialLoadError || t('notification.refresh_failed')}
+            description={
+              privacyText(privacyEnabled, initialLoadError) || t('notification.refresh_failed')
+            }
             action={
               <Button variant="secondary" size="sm" onClick={() => void loadInitialData()}>
                 {t('common.refresh')}

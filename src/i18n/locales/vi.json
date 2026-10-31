@@ -1084,6 +1084,7 @@
     "visual_mode_save_blocked": "Không thể lưu từ chế độ trực quan cho đến khi sửa cú pháp YAML",
     "visual_mode_latest_yaml_invalid": "Cấu hình máy chủ mới nhất chứa YAML không hợp lệ. Hãy xem lại ở chế độ mã nguồn trước khi lưu thay đổi trực quan: {{message}}",
     "editor_placeholder": "key: value",
+    "privacy_source_paused": "Chế độ riêng tư đang bật — tạm dừng chỉnh sửa mã nguồn. Tắt chế độ riêng tư để chỉnh sửa.",
     "search_placeholder": "Tìm cấu hình...",
     "search_button": "Tìm",
     "search_no_results": "Không có kết quả",

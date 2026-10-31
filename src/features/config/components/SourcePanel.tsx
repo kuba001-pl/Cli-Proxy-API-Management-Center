@@ -1,9 +1,11 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { IconChevronDown, IconChevronUp, IconSearch } from '@/components/ui/icons';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import type { UseSourceSearchResult } from '../hooks/useSourceSearch';
+import { resolveSourceEditorView } from '../privacy';
 import styles from './SourcePanel.module.scss';
 
 const LazyConfigSourceEditor = lazy(() => import('./ConfigSourceEditor'));
@@ -99,19 +101,34 @@ export type SourcePanelProps = {
 /** YAML 源码编辑面板：lazy CodeMirror（含语法高亮/折叠/内置搜索快捷键）。 */
 export function SourcePanel({ search, value, onChange, theme, editable }: SourcePanelProps) {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
+  const view = useMemo(
+    () => resolveSourceEditorView({ value, onChange, editable, privacyEnabled }),
+    [value, onChange, editable, privacyEnabled]
+  );
 
   return (
-    <div className={styles.editorWrapper}>
-      <Suspense fallback={null}>
-        <LazyConfigSourceEditor
-          editorRef={search.editorRef}
-          value={value}
-          onChange={onChange}
-          theme={theme}
-          editable={editable}
-          placeholder={t('config_management.editor_placeholder')}
-        />
-      </Suspense>
-    </div>
+    <>
+      {view.masked ? (
+        <p className={styles.privacyNotice} role="status">
+          {t('config_management.privacy_source_paused')}
+        </p>
+      ) : null}
+      <div className={styles.editorWrapper}>
+        <Suspense fallback={null}>
+          <LazyConfigSourceEditor
+            // Remount when switching modes so a masked preview never shares undo history
+            // with the real document.
+            key={view.masked ? 'masked' : 'source'}
+            editorRef={search.editorRef}
+            value={view.value}
+            onChange={view.onChange}
+            theme={theme}
+            editable={view.editable}
+            placeholder={t('config_management.editor_placeholder')}
+          />
+        </Suspense>
+      </div>
+    </>
   );
 }

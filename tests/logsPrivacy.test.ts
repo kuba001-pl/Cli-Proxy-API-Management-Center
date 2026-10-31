@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test';
+import { readFileSync } from 'node:fs';
 import {
   createLogDisplayCache,
   privacyLogFileName,
@@ -60,5 +61,28 @@ describe('logs display privacy', () => {
     const replacement = { ...entry, raw: 'username=bob', message: 'username=bob' };
     expect(display(replacement, true)).not.toBe(masked);
     expect(display(replacement, true).raw).not.toContain('bob');
+  });
+
+  test('shares the Unicode email matcher and only masks identities at token boundaries', () => {
+    expect(privacyLogText(true, 'login josé@example.com ok')).toBe(`login ${PRIVACY_MASK} ok`);
+    expect(privacyLogText(true, "login o'hara@example.com ok")).toBe(`login ${PRIVACY_MASK} ok`);
+    expect(privacyLogText(true, 'username=a status=active')).toBe(
+      `username=${PRIVACY_MASK} status=active`
+    );
+    const started = performance.now();
+    privacyLogText(true, `user${' '.repeat(100_000)}`);
+    privacyLogText(true, 'a'.repeat(100_000));
+    expect(performance.now() - started).toBeLessThan(500);
+  });
+
+  test('download-error toasts mask backend messages with the current privacy state', () => {
+    const source = readFileSync(
+      new URL('../src/features/logs/LogsPage.tsx', import.meta.url),
+      'utf8'
+    );
+    const handler = source.slice(source.indexOf('const downloadErrorLog'));
+    expect(handler.slice(0, handler.indexOf('const openErrorLog'))).toContain(
+      'privacyLogText(usePrivacyStore.getState().enabled, getErrorMessage(err)'
+    );
   });
 });

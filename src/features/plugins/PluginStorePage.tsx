@@ -21,6 +21,8 @@ import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { pluginStoreApi } from '@/services/api';
 import { useAuthStore, useConfigStore, useNotificationStore } from '@/stores';
 import { getErrorMessage, isRecord } from '@/utils/helpers';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyDisplayText } from '@/features/config/privacy';
 import type { PluginStoreEntry, PluginStoreResponse } from '@/types';
 import {
   buildRepositoryURL,
@@ -461,6 +463,7 @@ function PluginInstallOptionsModal({
 
 export function PluginStorePage() {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const navigate = useNavigate();
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
   const apiBase = useAuthStore((state) => state.apiBase);
@@ -804,8 +807,15 @@ export function PluginStorePage() {
     const sourceName = isDefaultPluginStoreSource(entry)
       ? t('plugin_store.cli_proxy_api_source')
       : entry.sourceName;
-    const sourceText = sourceName ? t('plugin_store.source_name', { source: sourceName }) : '';
-    const metaItems = [versionText, sourceText, entry.author, entry.license].filter(Boolean);
+    const sourceText = sourceName
+      ? t('plugin_store.source_name', { source: privacyDisplayText(privacyEnabled, sourceName) })
+      : '';
+    const metaItems = [
+      versionText,
+      sourceText,
+      privacyDisplayText(privacyEnabled, entry.author),
+      entry.license,
+    ].filter(Boolean);
     const isInstalling = installingKey === entryKey;
     const hasPendingInstall = Boolean(installingKey);
     const missingAuth = entry.authRequired && !entry.authConfigured;
@@ -871,7 +881,7 @@ export function PluginStorePage() {
                 isDescriptionExpanded ? styles.cardDescExpanded : ''
               }`}
             >
-              {entry.description}
+              {privacyDisplayText(privacyEnabled, entry.description)}
             </p>
             {isDescriptionOverflowing ? (
               <button
@@ -1003,7 +1013,7 @@ export function PluginStorePage() {
       {/* ── Alerts ── */}
       {error ? (
         <div className={styles.errorBox}>
-          <span>{error.message}</span>
+          <span>{privacyDisplayText(privacyEnabled, error.message)}</span>
           {error.kind !== 'unsupported' ? (
             <Button variant="secondary" size="sm" onClick={loadStore} disabled={loading}>
               {t('plugin_store.retry')}

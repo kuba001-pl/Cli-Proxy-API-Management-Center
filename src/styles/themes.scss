@@ -10,6 +10,8 @@
   --border-subtle: #efeff1;
   --border-default: #e4e4e7;
   --border-strong: #d4d4d8;
+  // Keyboard focus outline: >= 3:1 against --bg-app and --bg-surface.
+  --focus-ring: #52525a;
   --text-primary: #111113;
   --text-secondary: #52525a;
   --text-tertiary: #7a7a82;
@@ -106,6 +108,7 @@
   --border-subtle: #161619;
   --border-default: #222226;
   --border-strong: #2e2e33;
+  --focus-ring: #a0a0a8;
   --text-primary: #ededef;
   --text-secondary: #a0a0a8;
   --text-tertiary: #6c6c74;

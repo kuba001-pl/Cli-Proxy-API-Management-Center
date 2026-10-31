@@ -4,6 +4,8 @@ import { Text } from '@codemirror/state';
 import { Chunk } from '@codemirror/merge';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyConfigText } from '../privacy';
 import styles from './DiffModal.module.scss';
 
 type DiffModalProps = {
@@ -208,6 +210,7 @@ export function DiffModal({
   loading = false,
 }: DiffModalProps) {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
 
   const diff = useMemo<DiffResult>(
     () => computeUnifiedDiff(original, modified),
@@ -295,7 +298,9 @@ export function DiffModal({
                       <span className={styles.linePrefix}>
                         {line.type === 'deletion' ? '-' : line.type === 'addition' ? '+' : ' '}
                       </span>
-                      <code className={styles.lineText}>{line.text || ' '}</code>
+                      <code className={styles.lineText}>
+                        {privacyConfigText(privacyEnabled, line.text) || ' '}
+                      </code>
                     </div>
                   ))}
                 </div>

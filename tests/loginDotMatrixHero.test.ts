@@ -211,10 +211,45 @@ describe('login dot-matrix on mobile', () => {
     expect(source).toContain("origin: compact ? 'top-right' : 'bottom-right'");
   });
 
-  test('the minimal sign-in screen omits the decorative banner and keeps the auto-login splash', async () => {
+  test('mobile shows the dots as a top banner instead of hiding them', async () => {
+    const page = await Bun.file('src/pages/LoginPage.module.scss').text();
+    const hero = await Bun.file('src/pages/login/DotMatrixHero.module.scss').text();
+    const brandPanel = page.slice(page.indexOf('.brandPanel {'), page.indexOf('.formPanel {'));
+    // 桌面端按 Figma 设计不显示点阵；移动端媒体查询内恢复为顶部横幅
+    const mobilePanel = brandPanel.slice(
+      brandPanel.indexOf('@media (max-width: $breakpoint-mobile)')
+    );
+    expect(mobilePanel).toContain('display: block');
+    expect(mobilePanel).not.toContain('display: none');
+    expect(mobilePanel).toContain('height: var(--hero-band)');
+    expect(mobilePanel).toContain('pointer-events: none');
+    expect(page).toMatch(/--hero-band: clamp\(/);
+    // 横幅向下淡出；标语在移动端让位给表单标题
+    const mobileHero = hero.slice(hero.indexOf('@media (max-width: $breakpoint-mobile)'));
+    expect(mobileHero).toMatch(/mask-image: linear-gradient\(\s*to bottom/);
+    expect(mobileHero).toMatch(/\.title \{\s*display: none;/);
+  });
+
+  test('the login page mounts the hero in the decorative banner and keeps the auto-login splash', async () => {
     const page = await Bun.file('src/pages/LoginPage.tsx').text();
-    expect(page).not.toContain('<DotMatrixHero');
+    expect(page).toMatch(
+      /<div className=\{styles\.brandPanel\} aria-hidden="true">\s*<DotMatrixHero \/>/
+    );
     expect(page).toContain('const showSplash = autoLoading || autoLoginSuccess');
     expect(page).toContain('className={styles.splash} role="status" aria-live="polite"');
+  });
+
+  test('desktop keeps the centered minimal form without the hero', async () => {
+    const page = await Bun.file('src/pages/LoginPage.module.scss').text();
+    const brandPanel = page.slice(page.indexOf('.brandPanel {'), page.indexOf('.formPanel {'));
+    const desktopPanel = brandPanel.slice(0, brandPanel.indexOf('@media'));
+    expect(desktopPanel).toContain('display: none');
+  });
+
+  test('the banner uses the shared theme tokens', async () => {
+    const hero = await Bun.file('src/pages/login/DotMatrixHero.module.scss').text();
+    expect(hero).toContain('--login-dot-color: var(--text-primary)');
+    expect(hero).toContain('background: var(--bg-app)');
+    expect(hero).not.toMatch(/var\(--login-(?:bg|title)\)/);
   });
 });

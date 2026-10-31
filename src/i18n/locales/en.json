@@ -1132,6 +1132,7 @@
     "precise_save_recovery_required": "Could not read back the save result. Editing is paused. Save again to recover the draft baseline, or reload the configuration.",
     "visual_mode_latest_yaml_invalid": "The latest server configuration contains invalid YAML. Review it in source mode before saving visual changes: {{message}}",
     "editor_placeholder": "key: value",
+    "privacy_source_paused": "Privacy mode is on — source editing is paused. Turn privacy mode off to edit.",
     "search_placeholder": "Search config...",
     "search_button": "Search",
     "search_no_results": "No results",

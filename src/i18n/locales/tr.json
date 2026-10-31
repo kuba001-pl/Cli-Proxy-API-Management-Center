@@ -1132,6 +1132,7 @@
     "precise_save_recovery_required": "Kayıt Sonucu Geri Okunamadı. Düzenleme Duraklatıldı. Taslak Tabanını Kurtarmak için Yeniden Kaydet veya Yapılandırmayı Yeniden Yükle.",
     "visual_mode_latest_yaml_invalid": "En Son Sunucu Yapılandırması Geçersiz YAML İçeriyor. Görsel Değişiklikleri Kaydetmeden Önce Kaynak Modda İncele: {{message}}",
     "editor_placeholder": "key: value",
+    "privacy_source_paused": "Gizlilik modu açık — kaynak düzenleme duraklatıldı. Düzenlemek için gizlilik modunu kapatın.",
     "search_placeholder": "Yapılandırma Ara...",
     "search_button": "Ara",
     "search_no_results": "Sonuç Yok",

@@ -138,7 +138,7 @@ export function ResourceDetailView({ resource, usageByProvider }: ResourceDetail
         {primary.map(([key, value]) => (
           <div key={key}>
             <dt className={styles.dt}>{t(`providersPage.detail.fields.${key}`)}</dt>
-            <dd className={styles.dd}>{privacyText(privacyEnabled, value, [resource.name])}</dd>
+            <dd className={styles.dd}>{privacyText(privacyEnabled, value)}</dd>
           </div>
         ))}
       </dl>
@@ -164,7 +164,7 @@ export function ResourceDetailView({ resource, usageByProvider }: ResourceDetail
                   <span className={styles.apiKeyEntryKey}>{maskApiKey(entry.apiKey)}</span>
                   {entry.proxyUrl ? (
                     <span className={styles.apiKeyEntryProxy}>
-                      {privacyText(privacyEnabled, entry.proxyUrl, [resource.name])}
+                      {privacyText(privacyEnabled, entry.proxyUrl)}
                     </span>
                   ) : null}
                   <div className={styles.apiKeyEntryStats}>
@@ -188,7 +188,7 @@ export function ResourceDetailView({ resource, usageByProvider }: ResourceDetail
             {metadata.map(([key, value]) => (
               <div key={key}>
                 <dt className={styles.dt}>{t(`providersPage.detail.fields.${key}`)}</dt>
-                <dd className={styles.dd}>{privacyText(privacyEnabled, value, [resource.name])}</dd>
+                <dd className={styles.dd}>{privacyText(privacyEnabled, value)}</dd>
               </div>
             ))}
           </dl>

@@ -57,6 +57,16 @@ describe('quota privacy display identity', () => {
     expect(getQuotaPrivacyDisplayName(credential, false)).toBe('credential.json');
   });
 
+  test('uses account only as a redaction target in labels and tooltips', () => {
+    const qwen = { name: 'qwen-alice.json', type: 'qwen', account: 'alice' };
+    expect(getQuotaPrivacyDisplayName(qwen, true)).toBe(`qwen-${PRIVACY_MASK}.json`);
+    expect(getQuotaPrivacyDisplayName(qwen, false)).toBe('qwen-alice.json');
+    const devin = { name: 'devin-alice.json', type: 'devin', account: 'alice', authIndex: 3 };
+    const label = getQuotaPrivacyDisplayName(devin, true);
+    expect(label).not.toContain('alice');
+    expect(label).toBe(`devin-${PRIVACY_MASK}.json · ${PRIVACY_MASK}`);
+  });
+
   test('leaves cache identity, source files and search on real values', () => {
     const original = { ...file, type: 'devin', authIndex: 12 };
     const cacheKey = getQuotaCacheKey(original);
