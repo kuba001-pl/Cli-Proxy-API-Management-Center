@@ -53,12 +53,12 @@
   gap: 6px;
   height: 32px;
   padding: 0 12px;
-  border-radius: $radius-full;
-  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  border: 1px solid transparent;
   background: none;
   cursor: pointer;
-  font-size: 12px;
-  font-weight: 550;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--text-secondary);
   white-space: nowrap;
   transition:
@@ -99,10 +99,10 @@
   gap: 10px;
   min-width: 216px;
   padding: 12px 14px;
-  border-radius: 12px;
+  border-radius: 8px;
   border: 1px solid var(--border-color);
-  background: var(--floating-surface);
-  box-shadow: var(--floating-shadow);
+  background: var(--bg-raised);
+  box-shadow: none;
   transform-origin: top right;
   animation: toolbar-popover-in var(--dur-hover, 200ms) var(--ease-out-strong, ease-out) both;
 }
@@ -152,9 +152,9 @@
   gap: 6px;
   height: 32px;
   padding: 0 12px;
-  border-radius: $radius-full;
-  border: 1px solid transparent;
-  background: none;
+  border-radius: 8px;
+  border: 1px solid var(--destructive-30);
+  background: var(--destructive-10);
   cursor: pointer;
   font-size: 12px;
   font-weight: 550;
@@ -200,26 +200,12 @@
   }
 }
 
-@include mobile {
-  .segmented {
-    overflow-x: auto;
-    max-width: 100%;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .segment,
   .displayButton,
   .deleteAction {
     transition: none;
   }
 
-  .segment:active,
   .displayButton:active,
   .deleteAction:active:not(:disabled) {
     transform: none;
@@ -228,35 +214,4 @@
   .popover {
     animation: none;
   }
-}
-
-.segmented {
-  border-radius: 8px;
-  background: var(--bg-app);
-  border: 1px solid var(--border-default);
-}
-.segment {
-  border-radius: 6px;
-  font-weight: 500;
-}
-.segmentActive {
-  background: var(--bg-active);
-  color: var(--text-primary);
-  box-shadow: none;
-}
-.displayButton {
-  border-color: transparent;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-}
-.deleteAction {
-  border-radius: 8px;
-  border-color: var(--destructive-30);
-  background: var(--destructive-10);
-}
-.popover {
-  border-radius: 8px;
-  background: var(--bg-raised);
-  box-shadow: none;
 }

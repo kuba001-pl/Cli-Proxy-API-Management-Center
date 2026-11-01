@@ -11,7 +11,11 @@ export function StatusBadge({
   ...rest
 }: PropsWithChildren<StatusBadgeProps>) {
   return (
-    <span className={['status-badge', status, className].filter(Boolean).join(' ')} {...rest}>
+    <span
+      className={['status-badge', 'status-badge--dot', status, className].filter(Boolean).join(' ')}
+      {...rest}
+    >
+      <span className="status-badge__dot" aria-hidden="true" />
       {children}
     </span>
   );

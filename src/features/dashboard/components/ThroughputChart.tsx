@@ -62,7 +62,6 @@ export function ThroughputChart({ traffic }: ThroughputChartProps) {
   });
 
   const activeBucket = activeIndex === null ? null : buckets[activeIndex];
-  const activeTotal = activeBucket ? activeBucket.success + activeBucket.failed : 0;
 
   if (buckets.length === 0) {
     return (
@@ -205,11 +204,6 @@ export function ThroughputChart({ traffic }: ThroughputChartProps) {
                 />
                 {t('stats.failure')}
                 <b>{activeBucket.failed.toLocaleString()}</b>
-              </span>
-              <span className={styles.tooltipRate}>
-                {activeTotal > 0
-                  ? formatPercent((activeBucket.success / activeTotal) * 100)
-                  : t('status_bar.no_requests')}
               </span>
             </div>
           )}

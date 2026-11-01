@@ -1,13 +1,8 @@
 import { privacyText } from '@/utils/privacy';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { useTranslation } from 'react-i18next';
-import {
-  IconAlertTriangle,
-  IconCheckCircle2,
-  IconEye,
-  IconPencil,
-  IconTrash2,
-} from '@/components/ui/icons';
+import { IconEye, IconPencil, IconTrash2 } from '@/components/ui/icons';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import {
   Table,
   TableBody,
@@ -31,6 +26,7 @@ import type { StatusBarData } from '@/utils/recentRequests';
 import type { ProviderResource } from '../types';
 import { getProviderDisplayName } from '../privacy';
 import { isMultiProtocolSponsorBrand } from '../sponsorDefinitions';
+import { ResourceActionsMenu } from './ResourceActionsMenu';
 import styles from './ProviderResourceTable.module.scss';
 import statusBarStyles from './providerStatusBar.module.scss';
 
@@ -45,7 +41,7 @@ interface ProviderResourceTableProps {
   onToggleDisabled?: (resource: ProviderResource, disabled: boolean) => void;
 }
 
-const columnWidths = ['23%', '18%', '10%', '8%', '18%', '8%', '112px'];
+const columnWidths = ['23%', '18%', '10%', '8%', '20%', '8%', '76px'];
 
 const isSponsorResource = (resource: ProviderResource): boolean =>
   isMultiProtocolSponsorBrand(resource.brand);
@@ -131,17 +127,15 @@ export function ProviderResourceTable({
   const renderStatus = (r: ProviderResource) => {
     if (r.disabled) {
       return (
-        <span className={`${styles.statusBadge} ${styles.statusDisabled}`}>
-          <IconAlertTriangle size={14} />
+        <StatusBadge status="warning" className={styles.statusBadge}>
           {t('providersPage.status.disabled')}
-        </span>
+        </StatusBadge>
       );
     }
     return (
-      <span className={`${styles.statusBadge} ${styles.statusActive}`}>
-        <IconCheckCircle2 size={14} />
+      <StatusBadge status="success" className={styles.statusBadge}>
         {t('providersPage.status.active')}
-      </span>
+      </StatusBadge>
     );
   };
 
@@ -242,25 +236,29 @@ export function ProviderResourceTable({
                       : null}
                     {usageByProvider && !isSponsorResource(resource) ? (
                       <>
-                        {(() => {
-                          const stats = resolveTotalStats(resource, usageByProvider);
-                          return (
-                            <div className={styles.stats}>
-                              <span className={`${styles.statPill} ${styles.statSuccess}`}>
-                                {t('stats.success')}: {stats.success}
-                              </span>
-                              <span className={`${styles.statPill} ${styles.statFailure}`}>
-                                {t('stats.failure')}: {stats.failure}
-                              </span>
-                            </div>
-                          );
-                        })()}
                         <div className={styles.statusBarWrap}>
                           <ProviderStatusBar
                             statusData={resolveStatusBarData(resource, usageByProvider)}
                             styles={statusBarStyles}
                           />
                         </div>
+                        {(() => {
+                          const stats = resolveTotalStats(resource, usageByProvider);
+                          return (
+                            <div className={styles.stats}>
+                              <span className={styles.statSuccess}>
+                                {t('providersPage.status.okCount', { count: stats.success })}
+                              </span>
+                              <span
+                                className={
+                                  stats.failure > 0 ? styles.statFailure : styles.statFailureNone
+                                }
+                              >
+                                {t('providersPage.status.failedCount', { count: stats.failure })}
+                              </span>
+                            </div>
+                          );
+                        })()}
                       </>
                     ) : null}
                   </div>
@@ -294,18 +292,6 @@ export function ProviderResourceTable({
                     <button
                       type="button"
                       className={styles.iconBtn}
-                      aria-label={t('providersPage.actions.view')}
-                      title={t('providersPage.actions.view')}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onView(resource);
-                      }}
-                    >
-                      <IconEye size={16} />
-                    </button>
-                    <button
-                      type="button"
-                      className={styles.iconBtn}
                       aria-label={t('providersPage.actions.edit')}
                       title={t('providersPage.actions.edit')}
                       disabled={disableMutations}
@@ -316,19 +302,25 @@ export function ProviderResourceTable({
                     >
                       <IconPencil size={16} />
                     </button>
-                    <button
-                      type="button"
-                      className={`${styles.iconBtn} ${styles.iconBtnDanger}`}
-                      aria-label={t('providersPage.actions.delete')}
-                      title={t('providersPage.actions.delete')}
-                      disabled={disableMutations}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete(resource);
-                      }}
-                    >
-                      <IconTrash2 size={16} />
-                    </button>
+                    <ResourceActionsMenu
+                      label={t('providersPage.actions.more')}
+                      items={[
+                        {
+                          key: 'view',
+                          label: t('providersPage.actions.view'),
+                          icon: <IconEye size={14} />,
+                          onSelect: () => onView(resource),
+                        },
+                        {
+                          key: 'delete',
+                          label: t('providersPage.actions.delete'),
+                          icon: <IconTrash2 size={14} />,
+                          danger: true,
+                          disabled: disableMutations,
+                          onSelect: () => onDelete(resource),
+                        },
+                      ]}
+                    />
                   </div>
                 </TableCell>
               </TableRow>

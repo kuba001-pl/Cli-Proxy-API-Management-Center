@@ -251,6 +251,27 @@ textarea {
   }
 }
 
+// <StatusBadge>: an unboxed colored dot + label (Figma "Status badge"). Raw `.status-badge`
+// elements keep the bordered pill above.
+.status-badge.status-badge--dot {
+  gap: 6px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+}
+
+.status-badge__dot {
+  flex-shrink: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
 .meter,
 .progress-bar {
   height: 6px;

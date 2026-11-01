@@ -1058,6 +1058,7 @@
     "loading": "Загрузка журналов...",
     "load_error": "Не удалось загрузить журналы",
     "clear_confirm": "Очистить все журналы? Действие нельзя отменить!",
+    "clear_confirm_title": "Очистить журналы",
     "clear_success": "Журналы успешно очищены",
     "download_success": "Журналы успешно скачаны",
     "auto_refresh": "Автообновление",
@@ -1621,13 +1622,17 @@
     "search_empty_title": "Аккаунты не найдены",
     "search_empty_desc": "Попробуйте другое имя файла или адрес электронной почты либо очистите поиск.",
     "search_clear": "Очистить поиск",
+    "retry": "Повторить",
     "title": "Управление квотами",
     "description": "Следите за статусом квот OAuth для учётных данных Antigravity, Codex, Claude, Kimi и xAI.",
     "refresh_all_credentials": "Обновить все учётные данные",
     "sort_label": "Сортировка",
     "sort_default": "По умолчанию",
     "sort_soonest": "Сначала ближайшее восстановление",
-    "meta_credentials": "{{count}} учётных данных",
+    "meta_credentials_one": "{{count}} учётная запись",
+    "meta_credentials_few": "{{count}} учётные записи",
+    "meta_credentials_many": "{{count}} учётных записей",
+    "meta_credentials_other": "{{count}} учётной записи",
     "meta_loaded": "{{count}} загружено",
     "meta_attention": "{{count}} требуют внимания",
     "empty_title": "Нет учётных данных с квотами",
@@ -1917,6 +1922,19 @@
     "gate_step3_action": "Установить этот плагин",
     "gate_step3_hint": "Введите точный идентификатор, показанный выше, чтобы включить установку."
   },
+  "plugin_resource": {
+    "page_count": "Страниц: {{count}}",
+    "page_count_one": "{{count}} страница",
+    "page_count_few": "{{count}} страницы",
+    "page_count_many": "{{count}} страниц",
+    "page_count_other": "{{count}} страницы",
+    "load_failed": "Не удалось загрузить страницу плагина",
+    "unavailable": "Страница плагина недоступна",
+    "not_found": "Страница плагина не найдена",
+    "not_found_desc": "Эта страница плагина не объявлена в текущем списке плагинов бэкенда.",
+    "empty_src": "URL страницы плагина пуст",
+    "empty_src_desc": "Это меню плагина не предоставляет URL страницы для встраивания."
+  },
   "system_info": {
     "title": "Информация о центре управления",
     "about_title": "CLI Proxy API Management Center",
@@ -1946,6 +1964,8 @@
     "clear_login_confirm": "Очистить локальные данные входа и выйти?"
   },
   "notification": {
+    "save_failed": "Не удалось сохранить",
+    "load_failed": "Не удалось загрузить",
     "trusted_proxies_restart_required": "Настройки доверенных прокси сохранены. Перезапустите бэкенд для их применения.",
     "region_label": "Уведомления",
     "type_success": "Успешно",
@@ -2094,6 +2114,7 @@
       "new": "Создать",
       "edit": "Изменить",
       "view": "Просмотр",
+      "more": "Другие действия",
       "delete": "Удалить",
       "cancel": "Отмена",
       "save": "Сохранить",
@@ -2217,7 +2238,9 @@
       "notSet": "Не задано",
       "none": "Нет",
       "notConfigured": "Не настроено",
-      "defaultSuffix": "(по умолчанию)"
+      "defaultSuffix": "(по умолчанию)",
+      "okCount": "{{count}} успешно",
+      "failedCount": "{{count}} с ошибкой"
     },
     "detail": {
       "title": "Подробности",
@@ -2237,6 +2260,9 @@
     "form": {
       "createEyebrow": "Создать",
       "editEyebrow": "Изменить",
+      "sheetDescriptionCreate": "Добавьте учётные данные, параметры подключения и модели для {{provider}}.",
+      "sheetDescriptionEdit": "Измените учётные данные, параметры подключения и модели для {{provider}}.",
+      "sheetDescriptionDetail": "Конфигурация, учётные данные и состояние недавних запросов {{provider}}.",
       "name": "Название",
       "apiKey": "API-ключ",
       "apiKeyCreatePlaceholder": "Введите API-ключ",

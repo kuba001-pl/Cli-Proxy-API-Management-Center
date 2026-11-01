@@ -30,7 +30,10 @@ export interface LoginFormProps {
   rememberPassword: boolean;
   loading: boolean;
   success?: boolean;
+  /** Localized failure summary; empty when there is no error. */
   error: string;
+  /** Backend status/detail shown muted under the summary, e.g. `401 · invalid management key`. */
+  errorDetail?: string;
   onApiBaseChange: (value: string) => void;
   onEditingBaseChange: (value: boolean) => void;
   onManagementKeyChange: (value: string) => void;
@@ -49,6 +52,7 @@ export function LoginForm({
   loading,
   success = false,
   error,
+  errorDetail,
   onApiBaseChange,
   onEditingBaseChange,
   onManagementKeyChange,
@@ -191,10 +195,18 @@ export function LoginForm({
 
       <div className={styles.actions} data-stagger>
         {error && (
-          <p id={errorId} className={styles.error} role="alert" title={error}>
-            <IconAlertTriangle size={14} aria-hidden="true" />
-            <span>{error}</span>
-          </p>
+          <div id={errorId} className={styles.error} role="alert">
+            <IconAlertTriangle size={16} aria-hidden="true" />
+            <div className={styles.errorBody}>
+              <p className={styles.errorSummary}>{error}</p>
+              {errorDetail && (
+                <p className={styles.errorDetail}>
+                  <span className={styles.errorDetailLabel}>{t('login.error_backend_detail')}</span>{' '}
+                  <span className={styles.mono}>{errorDetail}</span>
+                </p>
+              )}
+            </div>
+          </div>
         )}
         <button
           type="submit"

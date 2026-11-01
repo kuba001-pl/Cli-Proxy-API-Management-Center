@@ -35,8 +35,9 @@ describe('auth file privacy display', () => {
       account: 'private-api-key',
     };
     const display = authFileDisplayIdentity(apiFile, true);
-    expect(display.primary).toBe(`provider-${PRIVACY_MASK}`);
-    expect(display.fullName).toBe(`provider-${PRIVACY_MASK}.json`);
+    // `provider-` is not a recognized structural prefix, so the whole stem is concealed.
+    expect(display.primary).toBe(PRIVACY_MASK);
+    expect(display.fullName).toBe(`${PRIVACY_MASK}.json`);
     expect(authFilePrivacyIdentities(apiFile)).toContain('private-api-key');
     expect(authFileDisplayIdentity(apiFile, false).primary).toBe('provider-private-api-key');
   });
@@ -46,6 +47,35 @@ describe('auth file privacy display', () => {
     const display = authFileDisplayIdentity(unknown, true);
     expect(display.primary).toBe(PRIVACY_MASK);
     expect(display.fullName).toBe(`${PRIVACY_MASK}.json`);
+  });
+
+  test('masks the filename identity even when metadata does not match the filename', () => {
+    const mismatchedEmail: AuthFileItem = { name: 'alice.json', email: 'alice@example.com' };
+    const emailDisplay = authFileDisplayIdentity(mismatchedEmail, true);
+    expect(emailDisplay.primary).toBe(PRIVACY_MASK);
+    expect(emailDisplay.fullName).toBe(`${PRIVACY_MASK}.json`);
+    expect(emailDisplay.secondary).toBe(`${PRIVACY_MASK}.json`);
+    expect(JSON.stringify(emailDisplay)).not.toContain('alice');
+
+    const mismatchedAccount: AuthFileItem = {
+      name: 'codex-alice.json',
+      account: 'sk-example-fixture',
+    };
+    const accountDisplay = authFileDisplayIdentity(mismatchedAccount, true);
+    expect(accountDisplay.primary).toBe(`codex-${PRIVACY_MASK}`);
+    expect(accountDisplay.fullName).toBe(`codex-${PRIVACY_MASK}.json`);
+    expect(authFilesDisplayText('Deleted codex-alice.json', [mismatchedAccount], true)).toBe(
+      `Deleted codex-${PRIVACY_MASK}.json`
+    );
+
+    const hashed: AuthFileItem = {
+      name: 'claude-5aebc0bd-bob-max.json',
+      email: 'someone@example.com',
+    };
+    expect(authFileDisplayIdentity(hashed, true).fullName).toBe(
+      `claude-5aebc0bd-${PRIVACY_MASK}-max.json`
+    );
+    expect(authFileDisplayIdentity(hashed, false).fullName).toBe(hashed.name);
   });
 
   test('search continues to match real identities while their display is masked', () => {

@@ -3,9 +3,8 @@
 
 .statusBar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) max-content;
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
-  gap: 6px;
   width: 100%;
   max-width: 100%;
 }
@@ -91,30 +90,6 @@
   }
 }
 
-.statusTooltipLeft {
-  left: 0;
-  transform: translateX(0);
-
-  &::after,
-  &::before {
-    left: 8px;
-    transform: none;
-  }
-}
-
-.statusTooltipRight {
-  left: auto;
-  right: 0;
-  transform: translateX(0);
-
-  &::after,
-  &::before {
-    left: auto;
-    right: 8px;
-    transform: none;
-  }
-}
-
 .tooltipTime {
   color: var(--text-secondary);
   display: block;
@@ -140,26 +115,9 @@
   margin-left: 2px;
 }
 
+// The row summary line carries the counts and each block's tooltip carries its rate.
 .statusRate {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-width: 28px;
-  font-size: 10px;
-  line-height: 16px;
-  white-space: nowrap;
-  color: var(--text-secondary);
-  font-variant-numeric: tabular-nums;
-}
-
-.statusRateHigh {
-  color: var(--text-secondary);
-}
-.statusRateMedium {
-  color: var(--status-warning);
-}
-.statusRateLow {
-  color: var(--status-danger);
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

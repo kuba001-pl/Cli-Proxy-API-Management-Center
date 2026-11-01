@@ -31,7 +31,7 @@ import {
   type ResolvedTheme,
 } from '@/features/authFiles/constants';
 import { authFileDisplayIdentity, authFilePrivacyIdentities } from '../privacy';
-import { privacyText } from '@/utils/privacy';
+import { privacyIdentity, privacyText } from '@/utils/privacy';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { useQuotaStore } from '@/stores';
 import { QUOTA_ADAPTERS } from '@/features/quota/providers';
@@ -123,11 +123,8 @@ export function AuthFileCard(props: AuthFileCardProps) {
 
   const priorityValue = Number.isSafeInteger(file.priority) ? file.priority : undefined;
   const weightValue = Number.isSafeInteger(file.weight) ? file.weight : undefined;
-  const noteValue = privacyText(
-    privacy,
-    typeof file.note === 'string' ? file.note.trim() : '',
-    identities
-  );
+  // Notes are free-form account labels (e.g. "Primary Max account"): mask them as a whole.
+  const noteValue = privacyIdentity(privacy, typeof file.note === 'string' ? file.note.trim() : '');
   // Lead with account identity and use the file name as secondary text.
   const identity = authFileDisplayIdentity(file, privacy);
   const quota = useQuotaStore((state) =>

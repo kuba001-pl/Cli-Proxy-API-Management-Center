@@ -245,8 +245,6 @@
   gap: $spacing-sm;
   margin: 0;
   padding: $spacing-2xl $spacing-md;
-  border: 1px dashed var(--border-color);
-  border-radius: $radius-md;
   color: var(--text-tertiary);
   text-align: center;
   font-size: 13px;
@@ -274,8 +272,7 @@
 .mappingsBody {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
-  padding: $spacing-md;
+  padding: 0 $spacing-md;
 }
 
 .mappingRow {
@@ -283,10 +280,12 @@
   grid-template-columns: 24px minmax(0, 1fr) auto;
   align-items: center;
   gap: $spacing-md;
-  padding: $spacing-md;
-  border: 1px solid var(--border-color);
-  border-radius: $radius-md;
-  background: var(--bg-secondary);
+  padding: $spacing-md 0;
+
+  // Rows are separated by hairlines inside the editor card, not framed as nested cards.
+  & + & {
+    border-top: 1px solid var(--border-subtle);
+  }
 
   @include mobile {
     grid-template-columns: 20px minmax(0, 1fr);

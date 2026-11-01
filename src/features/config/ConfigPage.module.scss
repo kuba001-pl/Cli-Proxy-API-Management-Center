@@ -14,6 +14,11 @@
   );
 }
 
+/* Source mode sizes its editor to the viewport; only the floating save bar needs a reserve. */
+.pageSource {
+  padding-bottom: calc(var(--config-action-bar-height, 0px) + env(safe-area-inset-bottom, 0px));
+}
+
 /* 工具栏行：模式相关搜索（字段搜索 / 源码搜索）+ 右端的模式切换 */
 .toolbar {
   display: flex;

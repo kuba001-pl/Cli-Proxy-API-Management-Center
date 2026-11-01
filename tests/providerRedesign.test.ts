@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { afterEach, describe, expect, test } from 'bun:test';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { createElement } from 'react';
@@ -151,9 +152,19 @@ describe('provider redesign', () => {
     const html = table();
     expect(html).toContain('Enabled');
     expect(html).toContain('type="checkbox"');
-    for (const label of ['View', 'Edit', 'Delete', 'Disable']) {
+    for (const label of ['Edit', 'More actions', 'Disable']) {
       expect(html).toContain(`aria-label="${label}"`);
     }
+    // View/Delete live in the accessible overflow menu (Figma: edit + ellipsis).
+    expect(html).toContain('aria-haspopup="menu"');
+    expect(html).toContain('aria-expanded="false"');
+    const tableSource = readFileSync(
+      'src/features/providers/components/ProviderResourceTable.tsx',
+      'utf8'
+    );
+    expect(tableSource).toContain("label: t('providersPage.actions.view')");
+    expect(tableSource).toContain("label: t('providersPage.actions.delete')");
+    expect(tableSource).toContain('onSelect: () => onDelete(resource)');
     expect(html).toContain(resource.apiKeyPreview!);
     expect(html).not.toContain('sk-example-fixture');
   });

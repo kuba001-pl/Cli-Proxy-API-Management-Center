@@ -991,6 +991,7 @@
     "loading": "Đang tải log...",
     "load_error": "Không thể tải log",
     "clear_confirm": "Bạn có chắc muốn xóa toàn bộ log? Thao tác này không thể hoàn tác!",
+    "clear_confirm_title": "Xóa log",
     "clear_success": "Đã xóa log thành công",
     "download_success": "Đã tải log xuống thành công",
     "auto_refresh": "Tự động làm mới",
@@ -1573,7 +1574,8 @@
     "sort_label": "Sắp xếp",
     "sort_default": "Mặc định",
     "sort_soonest": "Sớm khôi phục nhất",
-    "meta_credentials": "{{count}} credential",
+    "meta_credentials_one": "{{count}} thông tin xác thực",
+    "meta_credentials_other": "{{count}} thông tin xác thực",
     "meta_loaded": "{{count}} đã tải",
     "meta_attention": "{{count}} cần chú ý",
     "empty_title": "Không có credential hỗ trợ quota",
@@ -1611,7 +1613,8 @@
     "search_placeholder": "Tìm theo tên file hoặc email",
     "search_empty_title": "Không có tài khoản phù hợp",
     "search_empty_desc": "Hãy thử tên file hoặc email khác, hoặc xóa tìm kiếm.",
-    "search_clear": "Xóa tìm kiếm"
+    "search_clear": "Xóa tìm kiếm",
+    "retry": "Thử lại"
   },
   "routing": {
     "title": "Định tuyến",
@@ -1904,6 +1907,8 @@
     "clear_login_confirm": "Xóa dữ liệu đăng nhập cục bộ và đăng xuất ngay?"
   },
   "notification": {
+    "save_failed": "Lưu thất bại",
+    "load_failed": "Tải thất bại",
     "request_log_updated": "Đã cập nhật cài đặt ghi log yêu cầu",
     "login_storage_cleared": "Đã xóa dữ liệu đăng nhập cục bộ",
     "data_refreshed": "Đã làm mới dữ liệu thành công",
@@ -1968,6 +1973,7 @@
       "new": "Mới",
       "edit": "Chỉnh sửa",
       "view": "Xem",
+      "more": "Thao tác khác",
       "delete": "Xóa",
       "cancel": "Hủy",
       "save": "Lưu",
@@ -2095,7 +2101,9 @@
       "notSet": "Chưa đặt",
       "none": "Không",
       "notConfigured": "Chưa cấu hình",
-      "defaultSuffix": "(mặc định)"
+      "defaultSuffix": "(mặc định)",
+      "okCount": "{{count}} thành công",
+      "failedCount": "{{count}} thất bại"
     },
     "detail": {
       "title": "Chi tiết",
@@ -2115,6 +2123,9 @@
     "form": {
       "createEyebrow": "Mới",
       "editEyebrow": "Chỉnh sửa",
+      "sheetDescriptionCreate": "Thêm thông tin xác thực, cài đặt kết nối và mô hình cho {{provider}}.",
+      "sheetDescriptionEdit": "Cập nhật thông tin xác thực, cài đặt kết nối và mô hình cho {{provider}}.",
+      "sheetDescriptionDetail": "Cấu hình, thông tin xác thực và tình trạng yêu cầu gần đây của {{provider}}.",
       "name": "Tên",
       "apiKey": "API key",
       "apiKeyCreatePlaceholder": "Nhập API key",

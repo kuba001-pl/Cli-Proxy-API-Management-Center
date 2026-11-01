@@ -231,7 +231,7 @@ export function ApiKeyEntriesEditor({
                 <div className={styles.field}>
                   <label className={styles.label}>{t('providersPage.form.proxyUrl')}</label>
                   <input
-                    className={styles.input}
+                    className={`${styles.input} ${styles.inputMono}`}
                     value={entry.proxyUrl}
                     onChange={(e) => onUpdate(idx, { proxyUrl: e.target.value })}
                     disabled={mutating}

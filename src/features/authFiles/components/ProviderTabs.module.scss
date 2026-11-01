@@ -117,13 +117,9 @@
   font-variant-numeric: tabular-nums;
   line-height: 1.6;
   color: var(--text-tertiary);
-  padding: 0 6px;
-  border-radius: $radius-full;
-  background: color-mix(in srgb, var(--text-primary) 6%, transparent);
-
+  // Plain count: the active tab surface is the only fill (no nested pill).
   .tabActive & {
-    color: var(--text-primary);
-    background: color-mix(in srgb, var(--text-primary) 10%, transparent);
+    color: var(--text-secondary);
   }
 }
 
@@ -156,9 +152,6 @@
   background: var(--bg-active);
 }
 .tabCount {
-  background: none;
-  padding: 0;
-  color: var(--text-tertiary);
   font-size: 11px;
 }
 .tabGlyph {

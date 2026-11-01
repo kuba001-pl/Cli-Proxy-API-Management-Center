@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { Select, type SelectOption } from '@/components/ui/Select';
 import { ToggleSwitch } from '@/components/ui/ToggleSwitch';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { configFieldDomId } from '../../searchIndex';
 import { resolveRowSpans } from './rowSpans';
 import { DirtyFieldIndicator } from './DirtyFieldIndicator';
@@ -170,6 +171,7 @@ export function TextSetting({
   min,
   max,
   autoComplete,
+  privacySensitive = false,
   ...copy
 }: SettingCopy &
   NativeInputProps & {
@@ -180,8 +182,15 @@ export function TextSetting({
     size?: ControlSize;
     /** 输入框内右侧的状态标记（如 keepalive 为 0 时的「已禁用」）。 */
     adornment?: ReactNode;
+    /**
+     * The value may carry personal data (home-dir usernames, URL userinfo, emails). With
+     * privacy mode on, the input renders concealed (password type, no reveal); the real
+     * value stays in state and keeps flowing through onChange unchanged.
+     */
+    privacySensitive?: boolean;
   }) {
   const ids = useSettingIds(copy.fieldId);
+  const conceal = usePrivacyStore((state) => privacySensitive && state.enabled);
   return (
     <SettingRow
       {...copy}
@@ -194,12 +203,12 @@ export function TextSetting({
           <input
             id={ids.controlId}
             className={cx('input', adornment ? styles.inputWithAdornment : undefined)}
-            type={type}
+            type={conceal ? 'password' : type}
             value={value}
             placeholder={placeholder}
             min={min}
             max={max}
-            autoComplete={autoComplete}
+            autoComplete={conceal ? 'off' : autoComplete}
             spellCheck={false}
             disabled={disabled}
             aria-invalid={Boolean(copy.error)}

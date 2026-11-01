@@ -1,21 +1,28 @@
+/* Shared by Config and Routing (see FloatingSaveBar.tsx). */
 .container {
+  --save-bar-max: calc(100vw - var(--sidebar-active-width, 0px) - 48px);
+
   position: fixed;
   bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   left: var(--content-center-x, 50%);
   transform: translateX(-50%);
+  box-sizing: border-box;
   width: max-content;
-  max-width: calc(100vw - var(--sidebar-active-width, 0px) - 48px);
+  /* config.png: 514px wide, but never wider than the content column (sidebar expanded). */
+  min-width: min(514px, var(--save-bar-max));
+  max-width: var(--save-bar-max);
   z-index: $z-dropdown;
   animation: config-save-in var(--dur-hover) var(--ease-out-strong) both;
 }
 
 .bar {
   box-sizing: border-box;
-  min-width: 514px;
+  width: 100%;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 12px 24px;
   padding: 10px;
   border: 1px solid var(--border-default);
   border-radius: 10px;
@@ -59,6 +66,8 @@
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
+  /* When the column is too narrow the actions wrap below the status, right-aligned. */
+  margin-left: auto;
 
   :global(.btn) {
     font-size: 13px;
@@ -75,13 +84,12 @@
 
 @media (max-width: 768px) {
   .container {
+    --save-bar-max: calc(100vw - 32px);
+
     bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-    max-width: calc(100vw - 32px);
   }
 
   .bar {
-    min-width: 0;
-    flex-wrap: wrap;
     gap: 12px;
   }
 

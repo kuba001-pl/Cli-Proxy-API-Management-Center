@@ -163,9 +163,12 @@ export function QuotaTimeline({
     <section className={styles.timeline}>
       <header className={styles.head}>
         <div>
-          <h2 className={styles.title}>
-            {t('quota_management.windows_title', { defaultValue: 'Quota windows' })}
-          </h2>
+          {/* Collapsible: the <summary> already carries the section title. */}
+          {!collapsible && (
+            <h2 className={styles.title}>
+              {t('quota_management.windows_title', { defaultValue: 'Quota windows' })}
+            </h2>
+          )}
           <p className={styles.range}>
             {formatDay(span.startMs)} – {formatDay(span.endMs - 1)}
             {' · '}

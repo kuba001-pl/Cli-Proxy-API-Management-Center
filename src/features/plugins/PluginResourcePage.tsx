@@ -7,7 +7,7 @@ import { pluginsApi } from '@/services/api';
 import { useAuthStore } from '@/stores';
 import { getErrorMessage, isRecord } from '@/utils/helpers';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
-import { privacyDisplayText } from '@/features/config/privacy';
+import { privacyText } from '@/utils/privacy';
 import type { PluginListResponse } from '@/types';
 import {
   collectPluginResourceEntries,
@@ -100,7 +100,7 @@ export function PluginResourcePage() {
         <div className={styles.stateShell}>
           <EmptyState
             title={t('plugin_resource.unavailable')}
-            description={privacyDisplayText(privacyEnabled, error)}
+            description={privacyText(privacyEnabled, error)}
           />
         </div>
       ) : !resource ? (

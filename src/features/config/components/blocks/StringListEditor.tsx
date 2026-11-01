@@ -10,12 +10,15 @@ export const StringListEditor = memo(function StringListEditor({
   disabled,
   placeholder,
   inputAriaLabel,
+  privacySensitive = false,
   onChange,
 }: {
   value: string[];
   disabled?: boolean;
   placeholder?: string;
   inputAriaLabel?: string;
+  /** Items may carry personal data (e.g. URL userinfo): conceal them in privacy mode. */
+  privacySensitive?: boolean;
   onChange: (next: string[]) => void;
 }) {
   const { t } = useTranslation();
@@ -51,6 +54,7 @@ export const StringListEditor = memo(function StringListEditor({
             value={item}
             onChange={(nextValue) => updateItem(index, nextValue)}
             disabled={disabled}
+            privacySensitive={privacySensitive}
           />
           <Button variant="ghost" size="sm" onClick={() => removeItem(index)} disabled={disabled}>
             {t('config_management.visual.common.delete')}

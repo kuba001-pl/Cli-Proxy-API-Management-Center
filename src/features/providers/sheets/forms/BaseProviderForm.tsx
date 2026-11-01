@@ -582,7 +582,7 @@ export function BaseProviderForm({
             </label>
             <input
               id={`${fid}-baseUrl`}
-              className={styles.input}
+              className={`${styles.input} ${styles.inputMono}`}
               value={form.baseUrl}
               onChange={(e) => updateField('baseUrl', e.target.value)}
               placeholder="https://api.example.com"
@@ -598,7 +598,7 @@ export function BaseProviderForm({
             </label>
             <input
               id={`${fid}-proxy`}
-              className={styles.input}
+              className={`${styles.input} ${styles.inputMono}`}
               value={form.proxyUrl}
               onChange={(e) => updateField('proxyUrl', e.target.value)}
               placeholder="http://127.0.0.1:7890"
@@ -801,7 +801,7 @@ export function BaseProviderForm({
                 style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: 8 }}
               >
                 <input
-                  className={styles.input}
+                  className={`${styles.input} ${styles.inputMono}`}
                   placeholder="X-Custom-Header"
                   value={entry.key}
                   onChange={(e) =>
@@ -813,7 +813,7 @@ export function BaseProviderForm({
                   disabled={mutating}
                 />
                 <input
-                  className={styles.input}
+                  className={`${styles.input} ${styles.inputMono}`}
                   placeholder="value"
                   value={entry.value}
                   onChange={(e) =>

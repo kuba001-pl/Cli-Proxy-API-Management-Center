@@ -39,6 +39,9 @@
 /* ---------- 卡片网格 ---------- */
 
 .listScroll {
+  // Shared by the header and every AuthFileCard row so the columns always line up.
+  --auth-table-columns: minmax(300px, 2.45fr) minmax(88px, 0.6fr) minmax(150px, 0.93fr)
+    minmax(160px, 1.04fr) 64px 24px;
   overflow-x: auto;
   border: 1px solid var(--border-default);
   border-radius: 12px;
@@ -54,15 +57,15 @@
 }
 .tableHead {
   display: grid;
-  grid-template-columns:
-    minmax(300px, 2.1fr) minmax(88px, 0.65fr) minmax(150px, 0.95fr) minmax(160px, 1.1fr)
-    64px 24px;
+  grid-template-columns: var(--auth-table-columns);
   gap: 14px;
-  padding: 10px 16px;
+  min-height: 36px;
+  padding: 8px 16px;
   align-items: center;
   background: var(--bg-raised);
   color: var(--text-tertiary);
-  font-size: 11px;
+  font-size: 12px;
+  line-height: 16px;
 }
 .accountColumn {
   display: flex;

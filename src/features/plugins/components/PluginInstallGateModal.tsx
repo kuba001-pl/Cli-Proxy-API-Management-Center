@@ -6,7 +6,7 @@ import { Modal } from '@/components/ui/Modal';
 import { IconAlertTriangle, IconExternalLink, IconPlug } from '@/components/ui/icons';
 import { useAuthStore } from '@/stores';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
-import { privacyDisplayText } from '@/features/config/privacy';
+import { privacyText } from '@/utils/privacy';
 import type { PluginStoreEntry } from '@/types';
 import {
   buildRepositoryURL,
@@ -71,7 +71,7 @@ export function PluginInstallGateModal({
   const rawSourceText = entry.sourceName || entry.sourceUrl;
   const sourceText = isDefaultPluginStoreSource(entry)
     ? t('plugin_store.cli_proxy_api_source')
-    : privacyDisplayText(privacyEnabled, rawSourceText);
+    : privacyText(privacyEnabled, rawSourceText);
   const tokenMatches = typed.trim() === token;
 
   const handleClose = () => {
@@ -141,7 +141,7 @@ export function PluginInstallGateModal({
           <p className={styles.untrustedText}>{t('plugin_store.gate_untrusted_alert')}</p>
           <dl className={styles.originGrid}>
             <dt>{t('plugin_store.gate_repository_label')}</dt>
-            <dd>{repoSlug || entry.repository || '—'}</dd>
+            <dd>{repoSlug || privacyText(privacyEnabled, entry.repository) || '—'}</dd>
             <dt>{t('plugin_store.gate_source_label')}</dt>
             <dd>{sourceText || '—'}</dd>
           </dl>

@@ -23,8 +23,8 @@
   justify-content: center;
   overflow: hidden;
   border-radius: 12px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-  background: color-mix(in srgb, var(--bg-tertiary) 60%, transparent);
+  border: 1px solid var(--border-default);
+  background: var(--bg-raised);
   color: var(--text-secondary);
 
   img {
@@ -72,7 +72,7 @@
   }
 
   &:hover {
-    color: var(--accent-color);
+    color: var(--text-primary);
     text-decoration: underline;
 
     svg {
@@ -81,7 +81,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--focus-ring-color, var(--accent-color));
+    outline: 2px solid var(--focus-ring);
     outline-offset: 3px;
     border-radius: $radius-sm;
   }

@@ -4,7 +4,6 @@ import {
   CONFIG_SECTION_IDS,
   CONFIG_TAB_IDS,
   FIELD_VALUE_KEYS,
-  SECTION_INDEX_LABELS,
 } from '@/features/config/constants';
 import {
   CONFIG_FIELD_SEARCH_INDEX,
@@ -171,13 +170,13 @@ describe('resolveDirtyTabs', () => {
 describe('Antigravity credits UI and search', () => {
   test('removes the quota tab and keeps section numbering contiguous', () => {
     expect(CONFIG_TAB_IDS).not.toContain('quota');
-    expect(CONFIG_SECTION_IDS.map((id) => SECTION_INDEX_LABELS[id])).toEqual([
-      '01',
-      '02',
-      '03',
-      '04',
-      '05',
-      '06',
+    expect([...CONFIG_SECTION_IDS]).toEqual([
+      'connectivity',
+      'network',
+      'logging',
+      'streaming',
+      'advanced',
+      'payload',
     ]);
     expect(CONFIG_FIELD_SEARCH_INDEX.some((entry) => String(entry.sectionId) === 'quota')).toBe(
       false

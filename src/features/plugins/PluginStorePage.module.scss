@@ -144,9 +144,9 @@
   align-items: center;
   gap: 10px;
   padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
-  background: color-mix(in srgb, var(--bg-secondary) 60%, transparent);
+  border-radius: $radius-md;
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
   flex-wrap: wrap;
 }
 
@@ -157,9 +157,9 @@
   align-items: center;
   gap: 6px;
   padding: 5px 12px;
-  border-radius: $radius-full;
-  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-  background: color-mix(in srgb, var(--bg-primary) 56%, transparent);
+  border-radius: $radius-sm;
+  border: 1px solid var(--border-default);
+  background: var(--bg-raised);
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
@@ -202,7 +202,7 @@
 .statusDivider {
   width: 1px;
   height: 20px;
-  background: color-mix(in srgb, var(--border-color) 60%, transparent);
+  background: var(--border-default);
   flex-shrink: 0;
 
   @include mobile {
@@ -257,8 +257,8 @@
   align-items: center;
   gap: 6px;
   padding: 5px 12px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
-  border-radius: $radius-full;
+  border: 1px solid var(--border-default);
+  border-radius: $radius-md;
   background: var(--bg-primary);
   color: var(--text-secondary);
   font-size: 12px;
@@ -289,7 +289,7 @@
   justify-content: center;
   padding: 0 5px;
   border-radius: $radius-full;
-  background: color-mix(in srgb, var(--border-color) 45%, transparent);
+  background: var(--border-default);
   color: var(--text-secondary);
   font-size: 11px;
   font-weight: 700;
@@ -314,7 +314,7 @@
   flex-direction: column;
   gap: $spacing-sm;
   padding: $spacing-md;
-  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  border: 1px solid var(--border-default);
   border-radius: $radius-lg;
   background: var(--bg-primary);
   transition:
@@ -344,9 +344,9 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-  background: color-mix(in srgb, var(--bg-tertiary) 60%, transparent);
+  border-radius: $radius-md;
+  border: 1px solid var(--border-default);
+  background: var(--bg-raised);
   color: var(--text-secondary);
   flex-shrink: 0;
 
@@ -413,7 +413,7 @@
 
 .badge {
   background: var(--bg-surface);
-  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+  border: 1px solid var(--border-default);
   color: var(--text-secondary);
 }
 
@@ -482,7 +482,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid color-mix(in srgb, var(--primary-color) 45%, transparent);
+    outline: 2px solid var(--focus-ring);
     outline-offset: 3px;
     border-radius: 4px;
   }
@@ -515,7 +515,7 @@
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--text-tertiary) 50%, transparent);
+  background: var(--text-muted);
   flex-shrink: 0;
 }
 
@@ -529,9 +529,9 @@
   display: inline-flex;
   align-items: center;
   padding: 2px 8px;
-  border-radius: $radius-full;
+  border-radius: $radius-sm;
   background: var(--bg-surface);
-  border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
+  border: 1px solid var(--border-default);
   color: var(--text-tertiary);
   font-size: 11px;
   font-weight: 600;
@@ -633,7 +633,7 @@
   min-width: 0;
   gap: 8px;
   padding: 10px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  border: 1px solid var(--border-default);
   border-radius: $radius-md;
   background: var(--bg-primary);
   cursor: pointer;
@@ -689,8 +689,8 @@
   gap: 8px;
   padding: 10px;
   border-radius: $radius-md;
-  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
-  background: color-mix(in srgb, var(--bg-secondary) 65%, transparent);
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
 
   :global(.form-group) {
     margin: 0;
@@ -769,7 +769,7 @@
   flex-direction: column;
   gap: $spacing-md;
   padding: $spacing-md;
-  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  border: 1px solid var(--border-default);
   border-radius: $radius-lg;
   background: var(--bg-primary);
 }
@@ -783,7 +783,7 @@
 .skeletonAvatar {
   width: 40px;
   height: 40px;
-  border-radius: 10px;
+  border-radius: $radius-md;
   background: var(--bg-raised);
   animation: skeletonPulse 1.35s var(--ease-out-strong) infinite alternate;
   flex-shrink: 0;

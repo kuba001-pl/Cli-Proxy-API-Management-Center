@@ -6,6 +6,7 @@ import { useRevealGroup } from '@/hooks/motion';
 import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
 import { useVisualConfig } from '@/hooks/useVisualConfig';
 import { useAuthStore, useNotificationStore, useThemeStore } from '@/stores';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import {
   CONFIG_MODE_STORAGE_KEY,
   CONFIG_SECTION_STORAGE_KEY,
@@ -26,6 +27,7 @@ import {
   resolveStatus,
 } from './uiState';
 import { findConfigFieldById } from './searchIndex';
+import { privacyConfigText, privacyDisplayText } from './privacy';
 import { shouldReloadVisualDraft, useConfigDocument } from './hooks/useConfigDocument';
 import { useFieldJump } from './hooks/useFieldJump';
 import { useSourceSearch } from './hooks/useSourceSearch';
@@ -62,6 +64,7 @@ export function ConfigPage() {
   const showNotification = useNotificationStore((state) => state.showNotification);
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
   const resolvedTheme = useThemeStore((state) => state.resolvedTheme);
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const revealRef = useRevealGroup<HTMLDivElement>();
 
   const {
@@ -298,7 +301,10 @@ export function ConfigPage() {
   };
 
   return (
-    <div className={styles.page} ref={revealRef}>
+    <div
+      className={mode === 'source' ? `${styles.page} ${styles.pageSource}` : styles.page}
+      ref={revealRef}
+    >
       <ConfigHeader
         meta={headerMeta}
         reloadDisabled={doc.loading || doc.saving}
@@ -320,12 +326,15 @@ export function ConfigPage() {
 
       {doc.error && (
         <div className="error-box" role="alert">
-          {doc.error}
+          {privacyDisplayText(privacyEnabled, doc.error)}
         </div>
       )}
       {!doc.error && visualParseError && (
         <div className="error-box" role="alert">
-          {t('config_management.visual_mode_unavailable_detail', { message: visualParseError })}
+          {t('config_management.visual_mode_unavailable_detail', {
+            // Parser errors may echo the offending YAML line, so mask with config rules.
+            message: privacyConfigText(privacyEnabled, visualParseError),
+          })}
         </div>
       )}
 
@@ -369,7 +378,7 @@ export function ConfigPage() {
 
       <FloatingSaveBar
         visible={isCurrentLayer && doc.isDirty}
-        unsavedCount={unsavedCount}
+        statusLabel={t('config_management.unsaved_changes', { count: Math.max(1, unsavedCount) })}
         statusText={
           doc.recoveryRequired
             ? t('config_management.precise_save_recovery_required')
@@ -377,11 +386,15 @@ export function ConfigPage() {
               ? t(status.labelKey)
               : undefined
         }
+        groupLabel={t('config_management.status_dirty')}
+        saveLabel={t('config_management.actions.save')}
+        discardLabel={t('config_management.actions.discard')}
         saving={doc.saving}
         saveDisabled={saveDisabled}
         discardDisabled={doc.loading || doc.saving}
         onSave={doc.handleSave}
         onDiscard={doc.handleDiscard}
+        heightVar="--config-action-bar-height"
       />
 
       <DiffModal

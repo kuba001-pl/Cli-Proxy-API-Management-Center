@@ -1,11 +1,11 @@
-import { Suspense, lazy, useMemo } from 'react';
+import { Suspense, lazy, useId, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { IconChevronDown, IconChevronUp, IconSearch } from '@/components/ui/icons';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import type { UseSourceSearchResult } from '../hooks/useSourceSearch';
-import { resolveSourceEditorView } from '../privacy';
+import { resolveSourcePreview } from '../privacy';
 import styles from './SourcePanel.module.scss';
 
 const LazyConfigSourceEditor = lazy(() => import('./ConfigSourceEditor'));
@@ -94,37 +94,55 @@ export type SourcePanelProps = {
   editable: boolean;
 };
 
-/** YAML 源码编辑面板：lazy CodeMirror（含语法高亮/折叠/内置搜索快捷键）。 */
+/**
+ * YAML 源码编辑面板：lazy CodeMirror（含语法高亮/折叠/内置搜索快捷键）。
+ * Privacy mode swaps the editor for a separate, hard read-only preview of the masked text;
+ * the editable instance and its onChange are unmounted, so masks can never reach the real
+ * document, and the pending draft (held by the page) is shown again when privacy turns off.
+ */
 export function SourcePanel({ search, value, onChange, theme, editable }: SourcePanelProps) {
   const { t } = useTranslation();
   const privacyEnabled = usePrivacyStore((state) => state.enabled);
-  const view = useMemo(
-    () => resolveSourceEditorView({ value, onChange, editable, privacyEnabled }),
-    [value, onChange, editable, privacyEnabled]
+  const preview = useMemo(
+    () => resolveSourcePreview(value, privacyEnabled),
+    [value, privacyEnabled]
   );
+  const noticeId = useId();
 
   return (
-    <>
-      {view.masked ? (
-        <p className={styles.privacyNotice} role="status">
+    <div className={styles.sourceRegion}>
+      {preview.masked ? (
+        <p id={noticeId} className={styles.privacyNotice} role="status">
           {t('config_management.privacy_source_paused')}
         </p>
       ) : null}
       <div className={styles.editorWrapper}>
         <Suspense fallback={null}>
-          <LazyConfigSourceEditor
-            // Remount when switching modes so a masked preview never shares undo history
-            // with the real document.
-            key={view.masked ? 'masked' : 'source'}
-            editorRef={search.editorRef}
-            value={view.value}
-            onChange={view.onChange}
-            theme={theme}
-            editable={view.editable}
-            placeholder={t('config_management.editor_placeholder')}
-          />
+          {preview.masked ? (
+            <LazyConfigSourceEditor
+              key="masked-preview"
+              // Search/navigation only moves the selection over what is on screen.
+              editorRef={search.editorRef}
+              value={preview.previewText}
+              theme={theme}
+              editable={false}
+              readOnly
+              ariaDescribedBy={noticeId}
+              placeholder={t('config_management.editor_placeholder')}
+            />
+          ) : (
+            <LazyConfigSourceEditor
+              key="source"
+              editorRef={search.editorRef}
+              value={value}
+              onChange={onChange}
+              theme={theme}
+              editable={editable}
+              placeholder={t('config_management.editor_placeholder')}
+            />
+          )}
         </Suspense>
       </div>
-    </>
+    </div>
   );
 }

@@ -105,4 +105,11 @@ export interface QuotaBodyProps<TState> {
   planItems?: ReactNode;
   /** Host-owned content placed right after the plan row, before usage rows. */
   afterPlan?: ReactNode;
+  /**
+   * Quota page split: `plan` renders only the plan/account summary (shown under the
+   * filename), `details` renders everything else. Omitted = the complete body (Auth Files).
+   */
+  part?: QuotaBodyPart;
 }
+
+export type QuotaBodyPart = 'plan' | 'details';

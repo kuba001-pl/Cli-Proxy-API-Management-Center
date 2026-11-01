@@ -3,9 +3,6 @@ import { FIELDS_ROOT_CLASS } from './fields/FieldPrimitives';
 import styles from './SectionCard.module.scss';
 
 export type SectionCardProps = {
-  /** 分区序号（01–07）。常用 tab 是别名视图，不传即不显示。 */
-  indexLabel?: string;
-  icon?: ReactNode;
   title: ReactNode;
   description?: ReactNode;
   /** 仅首载入场为 true（页面挂载时用 useState 捕获），tab 切换零动画不重播。 */

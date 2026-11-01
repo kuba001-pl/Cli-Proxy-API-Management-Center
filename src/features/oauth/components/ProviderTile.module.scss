@@ -32,7 +32,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  gap: 3px;
+  gap: 2px;
 }
 .main {
   padding: 0;
@@ -42,6 +42,7 @@
   color: var(--text-primary);
   font: inherit;
   font-size: 13px;
+  line-height: 18px;
   font-weight: 600;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -63,8 +64,8 @@
 }
 .caption {
   font-family: $font-mono;
-  font-size: 11px;
-  line-height: 16px;
+  font-size: 12px;
+  line-height: 18px;
   color: var(--text-tertiary);
   min-width: 0;
   display: flex;

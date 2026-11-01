@@ -49,6 +49,13 @@
 .iconFallback {
   color: var(--icon-default);
 }
+.identity {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
 .fileName {
   display: block;
   min-width: 0;
@@ -110,7 +117,7 @@
 .skeletonReset {
   display: block;
   border-radius: 3px;
-  background: var(--bg-raised);
+  background: var(--bg-active);
 }
 .skeletonLabel {
   width: 55%;
@@ -119,22 +126,20 @@
 .skeletonTrack {
   width: 100%;
   height: 5px;
-  background: var(--meter-track);
 }
 .skeletonReset {
   width: 70%;
   height: 8px;
 }
-.srOnly {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
+.loadingLabel {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 6px 8px;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--text-tertiary);
   white-space: nowrap;
-  border: 0;
 }
 .errorStrip {
   display: flex;

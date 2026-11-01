@@ -30,9 +30,7 @@
   gap: 12px;
   min-width: 0;
 
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border-subtle);
-
+  // ProviderTabs owns the single 1px separator and its spacing (B01: no second rule).
   > :first-child {
     flex: 1 1 auto;
     min-width: 0;
@@ -176,13 +174,25 @@
 }
 
 .errorBanner {
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--status-danger);
-  background: var(--bg-surface);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 118px;
+  padding: 16px 20px;
   border: 1px solid var(--border-default);
-  border-radius: 8px;
-  padding: 9px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--status-danger);
+}
+
+.errorIcon {
+  flex: none;
+}
+
+.errorText {
+  flex: 1 1 auto;
+  min-width: 0;
   overflow-wrap: anywhere;
 }
 
@@ -200,9 +210,39 @@
   padding: 28px 0 16px;
 }
 
+/* One dashed outline owns the empty state (Figma Quota · States 66:5143 / 66:5149). */
 .emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 118px;
+  padding: 24px 20px;
   border: 1px dashed var(--border-default);
   border-radius: 12px;
+  text-align: center;
+}
+
+.emptyIcon {
+  display: inline-flex;
+  color: var(--icon-default);
+}
+
+.emptyTitle {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.emptyDesc {
+  margin: 0;
+  max-width: 480px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--text-tertiary);
 }
 
 /* ---------- 分页 ---------- */
@@ -227,5 +267,11 @@
 @include mobile {
   .page {
     gap: 16px;
+  }
+}
+
+@include mobile {
+  .errorBanner {
+    flex-wrap: wrap;
   }
 }

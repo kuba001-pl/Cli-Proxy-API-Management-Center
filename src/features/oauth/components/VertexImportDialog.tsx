@@ -6,6 +6,7 @@ import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
 import { IconFileText, IconLoader2, IconUpload } from '@/components/ui/icons';
 import type { VertexImportState } from '../hooks/useVertexImport';
+import { credentialFileDisplayName } from '../privacy';
 import { DialogTitle, type DialogHeading } from './OAuthFlowDialog';
 import dialogStyles from './OAuthFlowDialog.module.scss';
 import styles from './VertexImportDialog.module.scss';
@@ -79,7 +80,12 @@ export function VertexImportDialog({
                     <dd>
                       {row.key === 'result_email'
                         ? privacyIdentity(privacy, row.value)
-                        : privacyText(privacy, row.value, [result.email])}
+                        : row.key === 'result_file'
+                          ? credentialFileDisplayName(privacy, row.value, [
+                              result.email,
+                              result.projectId,
+                            ])
+                          : privacyText(privacy, row.value, [result.email])}
                     </dd>
                   </div>
                 ))}
@@ -120,7 +126,7 @@ export function VertexImportDialog({
                 <span className={styles.dropText}>
                   <span className={vertex.file ? styles.fileName : styles.dropTitle}>
                     {vertex.file
-                      ? privacyText(privacy, vertex.file.name)
+                      ? credentialFileDisplayName(privacy, vertex.file.name)
                       : t('vertex_import.drop_hint')}
                   </span>
                   <span className={styles.dropHint} id={fileHintId}>

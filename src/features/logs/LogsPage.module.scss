@@ -10,6 +10,13 @@
   min-height: 0;
 }
 
+/* logs.png: 32px below the panel; the shared logs layout reserves 24px of it. */
+@media (min-width: 769px) {
+  .container {
+    padding-bottom: 8px;
+  }
+}
+
 .pageHeader {
   display: flex;
   align-items: center;
@@ -301,7 +308,7 @@
   position: relative;
   overflow: hidden;
   border: 1px solid var(--border-default);
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--bg-surface);
 
   > :global(.hint) {
@@ -338,7 +345,8 @@
   padding: 8px 20px;
   border-top: 1px solid var(--border-subtle);
   color: var(--text-tertiary);
-  font-size: 11px;
+  /* Caption 12/16 (logs.png footer). */
+  font-size: 12px;
   line-height: 16px;
   font-variant-numeric: tabular-nums;
 }
@@ -688,7 +696,7 @@
 .errorTableSurface {
   overflow: auto;
   border: 1px solid var(--border-default);
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--bg-surface);
 }
 
@@ -761,8 +769,11 @@
   align-items: center;
   justify-content: flex-end;
   gap: 4px;
+  /* UI actions use the app's sans stack; only names, sizes and times are monospace. */
+  font-family: $font-family;
 
   :global(.btn) {
+    font-family: $font-family;
     gap: 6px;
     color: var(--text-secondary);
     white-space: nowrap;
@@ -912,7 +923,6 @@
 
   .statusBar {
     padding: 6px 12px;
-    font-size: 10px;
   }
 
   .bufferStatus {

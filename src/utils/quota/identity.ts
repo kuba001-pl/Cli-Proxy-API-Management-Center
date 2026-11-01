@@ -1,5 +1,5 @@
 import type { AuthFileItem } from '@/types';
-import { privacyFileName, privacyIdentity } from '@/utils/privacy';
+import { credentialFileIdentity, privacyFileName, privacyIdentity } from '@/utils/privacy';
 import { normalizeRecentRequestAuthIndex } from '@/utils/recentRequests';
 import { isDevinFile, isPluginQuotaFile } from './validators';
 
@@ -41,9 +41,15 @@ export function getQuotaPrivacyDisplayName(
   }
   // `account` may be a secret (API key): use it only as a redaction target, never display it.
   const identities = [file.email, file.account, file.projectId].filter(
-    (value): value is string => typeof value === 'string'
+    (value): value is string => typeof value === 'string' && Boolean(value.trim())
   );
-  const name = privacyFileName(true, displayNameFor(file.name), identities);
+  const label = displayNameFor(file.name);
+  let name = privacyFileName(true, label, identities);
+  // Filename-only credentials (no metadata, or metadata absent from the name): the name's own
+  // identity portion is the redaction target, as on Auth Files.
+  if (name === label) {
+    name = privacyFileName(true, label, [credentialFileIdentity(file.name)]);
+  }
   if (!isDevinFile(file) && !isPluginQuotaFile(file)) return name;
   const identity = file.email?.trim() || normalizeRecentRequestAuthIndex(file.authIndex);
   return identity ? `${name} · ${privacyIdentity(true, identity)}` : name;

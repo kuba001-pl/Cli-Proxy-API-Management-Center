@@ -103,9 +103,10 @@ describe('config panel redesign', () => {
     expect(page).toContain('visible={isCurrentLayer && doc.isDirty}');
     expect(page).toContain('onSave={doc.handleSave}');
     expect(page).toContain('onDiscard={doc.handleDiscard}');
-    expect(page).toContain('unsavedCount={unsavedCount}');
-    const bar = await Bun.file('src/features/config/components/FloatingSaveBar.tsx').text();
-    expect(bar).toContain("t('config_management.unsaved_changes', { count:");
+    expect(page).toContain(
+      "t('config_management.unsaved_changes', { count: Math.max(1, unsavedCount) })"
+    );
+    expect(page).toContain('heightVar="--config-action-bar-height"');
     const style = await Bun.file(
       'src/features/config/components/FloatingSaveBar.module.scss'
     ).text();

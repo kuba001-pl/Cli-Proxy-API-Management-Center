@@ -142,12 +142,80 @@ const maskEmailText = (text: string): string =>
     return PRIVACY_MASK + extension;
   });
 
-/** Replace every identity portion of free text (file names, log lines…) with dots. */
+/** Characters that end a URL userinfo segment (`scheme://<userinfo>@host`). */
+const USERINFO_STOP = /[\s/?#@'"`<>\\]/u;
+const SCHEME_CHAR = /[A-Za-z0-9+.-]/;
+
+/**
+ * Locate the `user[:pass]` part of every `scheme://user[:pass]@host` in linear time:
+ * each `://` scans forward once to the first stop character, and the next search
+ * resumes from there, so no character is visited more than a constant number of times.
+ */
+export const findUrlUserinfoRanges = (text: string): TextRange[] => {
+  const ranges: TextRange[] = [];
+  let sep = text.indexOf('://');
+  while (sep !== -1) {
+    // A scheme is at least one character, starting with a letter: `socks5`, `https`.
+    let schemeStart = sep;
+    while (schemeStart > 0 && SCHEME_CHAR.test(text[schemeStart - 1])) schemeStart -= 1;
+    while (schemeStart < sep && !/[A-Za-z]/.test(text[schemeStart])) schemeStart += 1;
+    const start = sep + 3;
+    let end = start;
+    while (end < text.length && !USERINFO_STOP.test(text[end])) end += 1;
+    if (schemeStart < sep && end > start && text[end] === '@') {
+      ranges.push({ start, end });
+    }
+    // A stop at `/` may be the start of the next `://` (`a://b://c`), so resume just before it.
+    sep = text.indexOf('://', Math.max(sep + 3, end - 1));
+  }
+  return ranges;
+};
+
+/**
+ * OS home-directory prefixes whose next segment is the local username: `/home/<u>`,
+ * `/Users/<u>`, `C:\Users\<u>` (also `C:/Users/<u>` and JSON-escaped `C:\\Users\\<u>`).
+ * The lookbehind keeps `/srv/home/x` and `https://site/home/feed` untouched. The
+ * pattern is a fixed alternation (no nested quantifiers), so matching stays linear.
+ */
+const HOME_DIR_PREFIX =
+  /(?<![\p{L}\p{N}_.~-])(?:\/home\/|\/Users\/|[A-Za-z]:(?:\\{1,2}|\/)[Uu][Ss][Ee][Rr][Ss](?:\\{1,2}|\/))/gu;
+const HOME_USER_STOP = /[\s/\\'"`<>()[\]{},;|:]/u;
+
+/** Locate the username segment of every OS home-directory path in `text`. */
+export const findHomeDirUserRanges = (text: string): TextRange[] => {
+  const ranges: TextRange[] = [];
+  HOME_DIR_PREFIX.lastIndex = 0;
+  let match: RegExpExecArray | null;
+  while ((match = HOME_DIR_PREFIX.exec(text)) !== null) {
+    const start = match.index + match[0].length;
+    let end = start;
+    while (end < text.length && !HOME_USER_STOP.test(text[end])) end += 1;
+    if (end > start) ranges.push({ start, end });
+    HOME_DIR_PREFIX.lastIndex = Math.max(end, start);
+  }
+  HOME_DIR_PREFIX.lastIndex = 0;
+  return ranges;
+};
+
+/** Mask the `user[:pass]` part of URL credentials, keeping scheme and host. */
+export const maskUrlUserinfoText = (text: string): string =>
+  replaceRanges(text, findUrlUserinfoRanges(text), () => PRIVACY_MASK);
+
+/** Mask the username segment of OS home-directory paths, keeping the rest of the path. */
+export const maskHomeDirText = (text: string): string =>
+  replaceRanges(text, findHomeDirUserRanges(text), () => PRIVACY_MASK);
+
+/**
+ * Replace every identity portion of free text (file names, log lines…) with dots:
+ * known identities, emails, URL userinfo (`scheme://user:pass@host`) and OS
+ * home-directory usernames (`/home/<u>/`, `/Users/<u>/`, `C:\Users\<u>\`).
+ */
 export const maskSensitiveText = (
   text: string | null | undefined,
   identities: Array<string | null | undefined> = []
 ): string => {
-  const knownMasked = maskKnownIdentities(text ?? '', knownEmails(identities));
+  const structural = maskHomeDirText(maskUrlUserinfoText(text ?? ''));
+  const knownMasked = maskKnownIdentities(structural, knownEmails(identities));
   return maskKnownIdentities(maskEmailText(knownMasked), identities);
 };
 
@@ -186,6 +254,35 @@ export const credentialFileIdentity = (fileName: string): string => {
   const { identity } = splitCredentialFileName(stem);
   return identity || stem;
 };
+
+const FILE_NAME_STOP = /[\s'"`<>()[\]{},;:|/\\]/u;
+
+/**
+ * Every `*.json` file name in free text (e.g. a toast naming a just-uploaded credential),
+ * found in linear time: each `.json` scans back only to the previous match or stop char.
+ */
+export const findJsonFileNames = (text: string): string[] => {
+  const names: string[] = [];
+  const lower = text.toLowerCase();
+  let floor = 0;
+  let dot = lower.indexOf('.json');
+  while (dot !== -1) {
+    const end = dot + 5;
+    const boundary = end >= text.length || !/[\p{L}\p{N}_-]/u.test(text[end]);
+    let start = dot;
+    while (start > floor && !FILE_NAME_STOP.test(text[start - 1])) start -= 1;
+    if (boundary && start < dot) {
+      names.push(text.slice(start, end));
+      floor = end;
+    }
+    dot = lower.indexOf('.json', end);
+  }
+  return names;
+};
+
+/** Identity portions of the credential file names mentioned in `text`. */
+export const credentialFileIdentitiesInText = (text: string | null | undefined): string[] =>
+  findJsonFileNames(text ?? '').map(credentialFileIdentity);
 
 /** Mask the identity portion of a credential file name, keeping prefix/hash/suffix. */
 export const maskFileName = (

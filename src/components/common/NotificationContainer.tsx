@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNotificationStore, usePrivacyStore } from '@/stores';
+import type { StoredNotification } from '@/stores/useNotificationStore';
 import { privacyText } from '@/utils/privacy';
 import { IconAlertTriangle, IconCheckCircle2, IconInfo, IconX } from '@/components/ui/icons';
 import { NOTIFICATION_DURATION_MS } from '@/utils/constants';
-import type { Notification } from '@/types';
 import { createNotificationTimer } from './notificationTimer';
 import styles from './NotificationContainer.module.scss';
 
-interface AnimatedNotification extends Notification {
+interface AnimatedNotification extends StoredNotification {
   isExiting?: boolean;
 }
 
@@ -35,7 +35,14 @@ function NotificationCard({
   const removeNotification = useNotificationStore((state) => state.removeNotification);
   const timerRef = useRef<ReturnType<typeof createNotificationTimer> | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  const { id, type, message, duration = NOTIFICATION_DURATION_MS, isExiting } = notification;
+  const {
+    id,
+    type,
+    message,
+    identities,
+    duration = NOTIFICATION_DURATION_MS,
+    isExiting,
+  } = notification;
   // Mask at render time so toasts already on screen follow privacy toggles; the store keeps raw text.
   const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const Icon = notificationIcons[type];
@@ -106,7 +113,7 @@ function NotificationCard({
         aria-atomic="true"
       >
         <span className={styles.srOnly}>{t(`notification.type_${type}`)}: </span>
-        {privacyText(privacyEnabled, message)}
+        {privacyText(privacyEnabled, message, identities)}
       </div>
       <button
         type="button"

@@ -1054,6 +1054,7 @@
     "loading": "正在加载日志...",
     "load_error": "加载日志失败",
     "clear_confirm": "确定要清空所有日志吗？此操作不可恢复！",
+    "clear_confirm_title": "清空日志",
     "clear_success": "日志已清空",
     "download_success": "日志下载成功",
     "auto_refresh": "自动刷新",
@@ -1615,6 +1616,7 @@
     "search_empty_title": "没有匹配的账号",
     "search_empty_desc": "请尝试其他文件名或邮箱，或清空搜索。",
     "search_clear": "清空搜索",
+    "retry": "重试",
     "title": "配额管理",
     "description": "集中查看 OAuth 额度与剩余情况",
     "refresh_all_credentials": "刷新全部凭证",
@@ -1947,6 +1949,8 @@
     "clear_login_confirm": "确认清理本地登录信息并退出登录？"
   },
   "notification": {
+    "save_failed": "保存失败",
+    "load_failed": "加载失败",
     "trusted_proxies_restart_required": "可信代理配置已保存，重启后端后生效。",
     "region_label": "通知",
     "type_success": "成功",
@@ -2095,6 +2099,7 @@
       "new": "新建",
       "edit": "编辑",
       "view": "查看",
+      "more": "更多操作",
       "delete": "删除",
       "cancel": "取消",
       "save": "保存",
@@ -2218,7 +2223,9 @@
       "notSet": "未设置",
       "none": "无",
       "notConfigured": "未配置",
-      "defaultSuffix": "(默认)"
+      "defaultSuffix": "(默认)",
+      "okCount": "{{count}} 成功",
+      "failedCount": "{{count}} 失败"
     },
     "detail": {
       "title": "详情",
@@ -2238,6 +2245,9 @@
     "form": {
       "createEyebrow": "新建",
       "editEyebrow": "编辑",
+      "sheetDescriptionCreate": "为 {{provider}} 添加凭证、连接设置和模型。",
+      "sheetDescriptionEdit": "更新 {{provider}} 的凭证、连接设置和模型。",
+      "sheetDescriptionDetail": "{{provider}} 的配置、凭证与近期请求状态。",
       "name": "名称",
       "apiKey": "API 密钥",
       "apiKeyCreatePlaceholder": "输入 API 密钥",

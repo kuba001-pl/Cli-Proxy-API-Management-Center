@@ -246,6 +246,9 @@ function ScopedApiKeysCardEditor({
           <input
             id={nameInputId}
             className="input"
+            // Key names are account labels: the list masks them, so the editor conceals them too.
+            type={privacyEnabled ? 'password' : 'text'}
+            autoComplete="off"
             value={nameValue}
             onChange={(event) => setNameValue(event.target.value)}
             placeholder={t('config_management.visual.api_keys.name_placeholder')}

@@ -443,7 +443,7 @@ export function SystemPage() {
           ) : models.length === 0 ? (
             <div className="hint">{t('system_info.models_empty')}</div>
           ) : (
-            <div className="item-list">
+            <div className={`item-list ${styles.modelGroups}`}>
               {groupedModels.map((group) => {
                 const iconSrc = getIconForCategory(group.id);
                 return (

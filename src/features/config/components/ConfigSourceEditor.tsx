@@ -16,10 +16,15 @@ import { tags } from '@lezer/highlight';
 
 type ConfigSourceEditorProps = {
   value: string;
-  onChange: (value: string) => void;
+  /** Omitted for read-only previews: such an editor can never report document changes. */
+  onChange?: (value: string) => void;
   editorRef?: Ref<ReactCodeMirrorRef>;
   theme: 'light' | 'dark';
   editable: boolean;
+  /** Hard read-only state (not just non-focusable): no command or input can change the doc. */
+  readOnly?: boolean;
+  /** Id of a notice describing the editor (e.g. the privacy read-only notice). */
+  ariaDescribedBy?: string;
   placeholder: string;
 };
 
@@ -65,10 +70,15 @@ export default function ConfigSourceEditor({
   editorRef,
   theme,
   editable,
+  readOnly = false,
+  ariaDescribedBy,
   placeholder,
 }: ConfigSourceEditorProps) {
   const extensions = useMemo(
     () => [
+      ...(ariaDescribedBy
+        ? [EditorView.contentAttributes.of({ 'aria-describedby': ariaDescribedBy })]
+        : []),
       yaml(),
       syntaxHighlighting(yamlHighlightStyle),
       scalarHighlighter,
@@ -76,17 +86,18 @@ export default function ConfigSourceEditor({
       highlightSelectionMatches(),
       keymap.of(searchKeymap),
     ],
-    []
+    [ariaDescribedBy]
   );
 
   return (
     <CodeMirror
       ref={editorRef}
       value={value}
-      onChange={onChange}
+      onChange={readOnly ? undefined : onChange}
       extensions={extensions}
       theme={theme === 'dark' ? darkBase : lightBase}
-      editable={editable}
+      editable={readOnly ? false : editable}
+      readOnly={readOnly}
       placeholder={placeholder}
       height="100%"
       style={{ height: '100%' }}

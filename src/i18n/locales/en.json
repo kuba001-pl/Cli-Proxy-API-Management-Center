@@ -1055,6 +1055,7 @@
     "loading": "Loading logs...",
     "load_error": "Failed to load logs",
     "clear_confirm": "Are you sure you want to clear all logs? This action cannot be undone!",
+    "clear_confirm_title": "Clear Logs",
     "clear_success": "Logs cleared successfully",
     "download_success": "Logs downloaded successfully",
     "auto_refresh": "Auto Refresh",
@@ -1616,13 +1617,15 @@
     "search_empty_title": "No matching accounts",
     "search_empty_desc": "Try another filename or email, or clear the search.",
     "search_clear": "Clear search",
+    "retry": "Retry",
     "title": "Quota Management",
     "description": "Monitor OAuth quota status for Antigravity, Codex, Claude, Kimi, and xAI credentials.",
     "refresh_all_credentials": "Refresh all credentials",
     "sort_label": "Sort",
     "sort_default": "Default",
     "sort_soonest": "Soonest recovery",
-    "meta_credentials": "{{count}} credentials",
+    "meta_credentials_one": "{{count}} credential",
+    "meta_credentials_other": "{{count}} credentials",
     "meta_loaded": "{{count}} loaded",
     "meta_attention": "{{count}} need attention",
     "empty_title": "No quota-capable credentials",
@@ -1948,6 +1951,8 @@
     "clear_login_confirm": "Clear local login data and sign out now?"
   },
   "notification": {
+    "save_failed": "Save failed",
+    "load_failed": "Load failed",
     "trusted_proxies_restart_required": "Trusted proxy settings saved. Restart the backend to apply them.",
     "region_label": "Notifications",
     "type_success": "Success",
@@ -2096,6 +2101,7 @@
       "new": "New",
       "edit": "Edit",
       "view": "View",
+      "more": "More actions",
       "delete": "Delete",
       "cancel": "Cancel",
       "save": "Save",
@@ -2219,7 +2225,9 @@
       "notSet": "Not set",
       "none": "None",
       "notConfigured": "Not configured",
-      "defaultSuffix": "(default)"
+      "defaultSuffix": "(default)",
+      "okCount": "{{count}} ok",
+      "failedCount": "{{count}} failed"
     },
     "detail": {
       "title": "Details",
@@ -2239,6 +2247,9 @@
     "form": {
       "createEyebrow": "New",
       "editEyebrow": "Edit",
+      "sheetDescriptionCreate": "Add credentials, connection settings and models for {{provider}}.",
+      "sheetDescriptionEdit": "Update credentials, connection settings and models for {{provider}}.",
+      "sheetDescriptionDetail": "Configuration, credentials and recent request health for {{provider}}.",
       "name": "Name",
       "apiKey": "API key",
       "apiKeyCreatePlaceholder": "Enter API key",

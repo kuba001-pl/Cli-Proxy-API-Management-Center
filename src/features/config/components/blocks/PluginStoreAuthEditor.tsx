@@ -8,6 +8,8 @@ import type {
   PluginStoreAuthType,
 } from '@/types/visualConfig';
 import { makeClientId } from '@/types/visualConfig';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyDisplayText } from '../../privacy';
 import { ExpandableInput } from './ExpandableInput';
 import styles from './Blocks.module.scss';
 
@@ -63,6 +65,7 @@ export const PluginStoreAuthEditor = memo(function PluginStoreAuthEditor({
   onChange: (next: PluginStoreAuthRule[]) => void;
 }) {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
 
   const updateRule = (id: string, patch: Partial<PluginStoreAuthRule>) => {
     onChange(value.map((rule) => (rule.id === id ? { ...rule, ...patch } : rule)));
@@ -91,7 +94,9 @@ export const PluginStoreAuthEditor = memo(function PluginStoreAuthEditor({
           <div key={rule.id} className={styles.storeAuthRule}>
             <div className={styles.storeAuthRuleHeader}>
               <strong>
-                {rule.match || t('config_management.visual.sections.system.store_auth_rule')}
+                {rule.match
+                  ? privacyDisplayText(privacyEnabled, rule.match)
+                  : t('config_management.visual.sections.system.store_auth_rule')}
               </strong>
               <Button
                 variant="ghost"
@@ -107,6 +112,7 @@ export const PluginStoreAuthEditor = memo(function PluginStoreAuthEditor({
                 <span>{t('config_management.visual.sections.system.store_auth_match')}</span>
                 <ExpandableInput
                   value={rule.match}
+                  privacySensitive
                   placeholder="https://api.github.com/repos/owner/repo/releases/"
                   disabled={disabled}
                   onChange={(match) => updateRule(rule.id, { match })}

@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { Collapsible } from '@/components/ui/Collapsible';
-import { CONFIG_TAB_ICONS, SECTION_INDEX_LABELS } from '../../constants';
 import type { ConfigSectionProps } from '../../types';
 import { SectionCard } from '../SectionCard';
 import {
@@ -15,8 +14,6 @@ import { getValidationMessage } from '../blocks/shared';
 import { StringListEditor } from '../blocks/StringListEditor';
 import { SectionDiscovery } from './SectionDiscovery';
 
-const Icon = CONFIG_TAB_ICONS.connectivity;
-
 /** 01 接入与认证：服务地址、端口、认证目录、API 密钥 + TLS / 远程管理折叠组。 */
 export function SectionConnectivity({
   values,
@@ -30,8 +27,6 @@ export function SectionConnectivity({
 
   return (
     <SectionCard
-      indexLabel={SECTION_INDEX_LABELS.connectivity}
-      icon={<Icon size={16} />}
       title={t('config_management.visual.sections.connectivity.title')}
       description={t('config_management.visual.sections.connectivity.description')}
       animateIn={animateIn}
@@ -41,6 +36,7 @@ export function SectionConnectivity({
         <PortField {...fieldProps} error={getValidationMessage(t, validationErrors?.port)} />
         <TextSetting
           fieldId="authDir"
+          privacySensitive
           size="lg"
           label={t('config_management.visual.sections.auth.auth_dir')}
           description={t('config_management.visual.sections.auth.auth_dir_hint')}
@@ -99,6 +95,7 @@ export function SectionConnectivity({
             <>
               <TextSetting
                 fieldId="tlsCert"
+                privacySensitive
                 size="lg"
                 label={t('config_management.visual.sections.tls.cert')}
                 placeholder="/path/to/cert.pem"
@@ -108,6 +105,7 @@ export function SectionConnectivity({
               />
               <TextSetting
                 fieldId="tlsKey"
+                privacySensitive
                 size="lg"
                 label={t('config_management.visual.sections.tls.key')}
                 placeholder="/path/to/key.pem"
@@ -166,6 +164,7 @@ export function SectionConnectivity({
             />
             <TextSetting
               fieldId="rmPanelRepo"
+              privacySensitive
               size="lg"
               label={t('config_management.visual.sections.remote.panel_repo')}
               placeholder="https://github.com/router-for-me/Cli-Proxy-API-Management-Center"

@@ -93,7 +93,7 @@ function SiteEntry({
                 {site.statusLabel}
               </span>
             ) : (
-              <span className={styles.domain}>{site.domain}</span>
+              site.domain
             )}
           </span>
         </span>
@@ -104,8 +104,8 @@ function SiteEntry({
           rel="noopener noreferrer"
           aria-label={`${signUpLabel} · ${site.name}`}
         >
+          <IconExternalLink size={14} aria-hidden="true" />
           {signUpLabel}
-          <IconExternalLink size={12} aria-hidden="true" />
         </a>
         <span className={styles.trail} aria-hidden="true">
           <IconPlus size={15} />

@@ -5,7 +5,7 @@ import { Chunk } from '@codemirror/merge';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
-import { privacyConfigText } from '../privacy';
+import { privacyConfigLines } from '../privacy';
 import styles from './DiffModal.module.scss';
 
 type DiffModalProps = {
@@ -216,6 +216,23 @@ export function DiffModal({
     () => computeUnifiedDiff(original, modified),
     [original, modified]
   );
+  // Mask whole documents (not single lines) so block scalars keep their YAML context; the
+  // diff itself is still computed on the raw text and only the rendered line text changes.
+  const maskedOriginal = useMemo(
+    () => (privacyEnabled ? privacyConfigLines(true, original) : null),
+    [original, privacyEnabled]
+  );
+  const maskedModified = useMemo(
+    () => (privacyEnabled ? privacyConfigLines(true, modified) : null),
+    [modified, privacyEnabled]
+  );
+  const displayText = (line: UnifiedLine): string => {
+    if (line.type !== 'deletion' && line.newNum !== null && maskedModified) {
+      return maskedModified[line.newNum - 1] ?? '';
+    }
+    if (line.oldNum !== null && maskedOriginal) return maskedOriginal[line.oldNum - 1] ?? '';
+    return line.text;
+  };
 
   return (
     <Modal
@@ -298,9 +315,7 @@ export function DiffModal({
                       <span className={styles.linePrefix}>
                         {line.type === 'deletion' ? '-' : line.type === 'addition' ? '+' : ' '}
                       </span>
-                      <code className={styles.lineText}>
-                        {privacyConfigText(privacyEnabled, line.text) || ' '}
-                      </code>
+                      <code className={styles.lineText}>{displayText(line) || ' '}</code>
                     </div>
                   ))}
                 </div>

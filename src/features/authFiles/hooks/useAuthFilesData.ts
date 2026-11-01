@@ -1,5 +1,5 @@
-import { usePrivacyStore } from '@/stores/usePrivacyStore';
-import { authFilesDisplayText } from '../privacy';
+import { credentialFileIdentitiesInText } from '@/utils/privacy';
+import { authFilePrivacyIdentities } from '../privacy';
 import { useCallback, useEffect, useRef, useState, type ChangeEvent, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { apiClient, authFilesApi } from '@/services/api';
@@ -81,31 +81,31 @@ export function useAuthFilesData(options?: UseAuthFilesDataOptions): UseAuthFile
   const { t } = useTranslation();
   const { showNotification: notify, showConfirmation: confirm } = useNotificationStore();
   const privacyFiles = useRef<AuthFileItem[]>([]);
+  // Messages stay raw; this redaction context lets the toast/confirmation renderers mask them
+  // with the privacy state current at render time (including names not yet in the list).
+  const privacyContext = useCallback(
+    (text: string) => ({
+      identities: [
+        ...privacyFiles.current.flatMap(authFilePrivacyIdentities),
+        ...credentialFileIdentitiesInText(text),
+      ],
+    }),
+    []
+  );
   const showNotification = useCallback(
-    (...args: Parameters<typeof notify>) => {
-      notify(
-        authFilesDisplayText(args[0], privacyFiles.current, usePrivacyStore.getState().enabled),
-        args[1],
-        args[2]
-      );
+    (message: string, type?: Parameters<typeof notify>[1], duration?: number) => {
+      notify(message, type, duration, privacyContext(message));
     },
-    [notify]
+    [notify, privacyContext]
   );
   const showConfirmation = useCallback(
     (options: Parameters<typeof confirm>[0]) => {
-      confirm({
-        ...options,
-        message:
-          typeof options.message === 'string'
-            ? authFilesDisplayText(
-                options.message,
-                privacyFiles.current,
-                usePrivacyStore.getState().enabled
-              )
-            : options.message,
-      });
+      const text = [options.title, options.message]
+        .filter((value) => typeof value === 'string')
+        .join(' ');
+      confirm({ ...options, ...privacyContext(text) });
     },
-    [confirm]
+    [confirm, privacyContext]
   );
   const onFilesMutated = options?.onFilesMutated;
 

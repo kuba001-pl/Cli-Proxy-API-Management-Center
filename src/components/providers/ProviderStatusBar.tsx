@@ -96,13 +96,15 @@ export function ProviderStatusBar({ statusData, styles: stylesProp }: ProviderSt
   const [tooltipAnchor, setTooltipAnchor] = useState<HTMLElement | null>(null);
 
   const hasData = statusData.totalSuccess + statusData.totalFailure > 0;
-  const rateClass = !hasData
-    ? ''
-    : statusData.successRate >= 90
-      ? s.statusRateHigh
-      : statusData.successRate >= 50
-        ? s.statusRateMedium
-        : s.statusRateLow;
+  // Consumers that hide the inline rate may omit the tone classes.
+  const rateClass =
+    (!hasData
+      ? ''
+      : statusData.successRate >= 90
+        ? s.statusRateHigh
+        : statusData.successRate >= 50
+          ? s.statusRateMedium
+          : s.statusRateLow) ?? '';
 
   // 点击外部关闭 tooltip（移动端）
   useEffect(() => {
@@ -189,7 +191,7 @@ export function ProviderStatusBar({ statusData, styles: stylesProp }: ProviderSt
           );
         })}
       </div>
-      <span className={`${s.statusRate} ${rateClass}`}>
+      <span className={`${s.statusRate ?? ''} ${rateClass}`.trim()}>
         {hasData ? formatSuccessRate(statusData.successRate) : '--'}
       </span>
     </div>

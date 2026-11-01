@@ -53,44 +53,41 @@
 .aboutInfoGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: $spacing-md;
+  column-gap: $spacing-lg;
 
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
   }
 }
 
+// The about card already frames these: tiles are unframed rows split by one hairline.
 .infoTile {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-height: 120px;
-  padding: $spacing-md $spacing-lg;
-  border-radius: $radius-lg;
-  border: 1px solid var(--border-color);
-  background: var(--bg-surface);
+  min-height: 104px;
+  padding: $spacing-md 0;
+  border: 0;
+  border-top: 1px solid var(--border-subtle);
+  border-radius: 0;
+  background: transparent;
   text-align: left;
 }
 
 .tapTile {
-  border: 1px solid var(--border-color);
-  background: var(--bg-surface);
   color: inherit;
-  padding: $spacing-md $spacing-lg;
+  font: inherit;
   cursor: pointer;
-  transition:
-    transform var(--dur-hover) var(--ease-out-strong),
-    border-color var(--dur-hover) var(--ease-out-strong),
-    box-shadow var(--dur-hover) var(--ease-out-strong);
+  transition: color var(--dur-hover) var(--ease-out-strong);
 
-  &:hover {
-    transform: translateY(-1px);
-    border-color: var(--primary-color);
-    box-shadow: var(--shadow);
+  &:hover .tileLabel {
+    color: var(--text-primary);
   }
 
-  &:active {
-    transform: translateY(0);
+  &:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+    border-radius: $radius-sm;
   }
 }
 
@@ -115,7 +112,8 @@
 }
 
 .tileValue {
-  font-size: 22px;
+  font-family: $font-mono;
+  font-size: 20px;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.25;
@@ -219,11 +217,25 @@
   display: inline-flex;
   align-items: center;
   gap: $spacing-xs;
-  padding: 4px 10px;
-  border-radius: $radius-full;
-  border: 1px solid var(--border-color);
-  background-color: var(--bg-secondary);
+  padding: 2px 8px;
+  border-radius: $radius-sm;
+  border: 1px solid var(--border-default);
+  background-color: var(--bg-raised);
   font-family: $font-mono;
+  font-size: 12px;
+}
+
+// Model groups sit inside the section card: unframed rows split by a hairline.
+.modelGroups {
+  gap: 0;
+
+  > :global(.item-row) {
+    padding: $spacing-md 0;
+    border: 0;
+    border-top: 1px solid var(--border-subtle);
+    border-radius: 0;
+    background: transparent;
+  }
 }
 
 .modelName {
@@ -277,23 +289,21 @@
   display: flex;
   align-items: center;
   gap: $spacing-md;
-  padding: $spacing-md $spacing-lg;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: $radius-lg;
+  padding: $spacing-sm;
+  background-color: transparent;
+  border: 0;
+  border-radius: $radius-md;
   text-decoration: none;
   color: inherit;
-  transition: all var(--dur-hover) var(--ease-out-strong);
+  transition: background-color var(--dur-hover) var(--ease-out-strong);
 
   &:hover {
-    background-color: var(--bg-hover);
-    border-color: var(--primary-color);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
+    background-color: var(--bg-raised);
   }
 
-  &:active {
-    transform: translateY(0);
+  &:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
   }
 }
 
@@ -301,9 +311,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: $radius-md;
+  border: 1px solid var(--border-default);
   background-color: var(--bg-raised);
   color: var(--text-secondary);
   flex-shrink: 0;
@@ -372,8 +383,5 @@
   .tapTile,
   .linkCard {
     transition: none;
-    &:hover {
-      transform: none;
-    }
   }
 }

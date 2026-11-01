@@ -9,18 +9,21 @@ import {
 } from '@/utils/privacy';
 import { deriveAuthFileIdentity } from './identity';
 
-/** Account may contain an API key: use it only as a redaction target, never as display text. */
+/**
+ * Redaction targets for one credential. Account may contain an API key: use it only as a
+ * redaction target, never as display text. The filename's own identity portion (everything
+ * between a recognized provider/hash prefix and plan suffix, or the whole stem) is always a
+ * target too: uploaded filenames need not contain the email/account the metadata reports.
+ */
 export function authFilePrivacyIdentities(file: AuthFileItem): string[] {
   const identity = deriveAuthFileIdentity(file);
-  const identities = [
+  const fileIdentity = identity.fullName ? credentialFileIdentity(identity.fullName) : '';
+  return [
     file.email,
     file.account,
     identity.kind === 'projectId' ? identity.primary : null,
+    fileIdentity,
   ].filter((value): value is string => typeof value === 'string' && Boolean(value.trim()));
-  // A filename-only credential: conceal everything between the recognized provider/hash
-  // prefix and plan suffix (or the whole stem when nothing is recognizable).
-  if (identities.length > 0 || !identity.primary) return identities;
-  return [credentialFileIdentity(identity.primary)].filter(Boolean);
 }
 
 export function authFileDisplayIdentity(file: AuthFileItem, enabled: boolean) {

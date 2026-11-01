@@ -34,6 +34,11 @@ describe('auth file card presentation contract', () => {
     expect(header).toContain('!isRuntimeOnly &&');
   });
 
+  test('masks free-form account notes as a whole in privacy mode', () => {
+    expect(source).toMatch(/const noteValue = privacyIdentity\(privacy,/);
+    expect(source).toContain('title={noteValue}');
+  });
+
   test('dims disabled content while keeping the re-enable control usable', () => {
     expect(source).toContain("file.disabled === true ? styles.cardDisabled : ''");
     expect(styles).toContain('.cardDisabled .identity');

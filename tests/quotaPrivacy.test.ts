@@ -28,9 +28,11 @@ describe('quota privacy display identity', () => {
 
   test('masks Devin email and auth-index display suffixes completely', () => {
     const devin = { ...file, name: 'devin-shared.json', type: 'devin', authIndex: 'identity-123' };
-    expect(getQuotaPrivacyDisplayName(devin, true)).toBe(`devin-shared.json · ${PRIVACY_MASK}`);
+    // The filename carries no metadata identity, so its own stem is the redaction target
+    // (same projection as Auth Files).
+    expect(getQuotaPrivacyDisplayName(devin, true)).toBe(`${PRIVACY_MASK}.json · ${PRIVACY_MASK}`);
     expect(getQuotaPrivacyDisplayName({ ...devin, email: undefined }, true)).toBe(
-      `devin-shared.json · ${PRIVACY_MASK}`
+      `${PRIVACY_MASK}.json · ${PRIVACY_MASK}`
     );
     expect(getQuotaPrivacyDisplayName(devin, false)).toBe(
       'devin-shared.json · person@example.test'
@@ -53,8 +55,21 @@ describe('quota privacy display identity', () => {
 
   test('never reads the credential-bearing account field into a label', () => {
     const credential = { name: 'credential.json', type: 'devin', account: 'secret-api-key' };
-    expect(getQuotaPrivacyDisplayName(credential, true)).toBe('credential.json');
+    const masked = getQuotaPrivacyDisplayName(credential, true);
+    expect(masked).not.toContain('secret-api-key');
+    expect(masked).toBe(`${PRIVACY_MASK}.json`);
     expect(getQuotaPrivacyDisplayName(credential, false)).toBe('credential.json');
+  });
+
+  test('masks filename-only credentials without metadata (C02)', () => {
+    const codex = { name: 'codex-dbffca66-alice-plus.json', type: 'codex' };
+    expect(getQuotaPrivacyDisplayName(codex, true)).toBe(
+      `codex-dbffca66-${PRIVACY_MASK}-plus.json`
+    );
+    expect(getQuotaPrivacyDisplayName(codex, false)).toBe('codex-dbffca66-alice-plus.json');
+    // Metadata that does not appear in the name still falls back to the filename identity.
+    const uploaded = { name: 'claude-bob.json', type: 'claude', email: 'other@example.test' };
+    expect(getQuotaPrivacyDisplayName(uploaded, true)).toBe(`claude-${PRIVACY_MASK}.json`);
   });
 
   test('uses account only as a redaction target in labels and tooltips', () => {

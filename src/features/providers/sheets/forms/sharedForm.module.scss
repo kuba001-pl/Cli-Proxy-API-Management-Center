@@ -59,7 +59,7 @@
 .input,
 .textarea {
   width: 100%;
-  height: 34px;
+  height: 36px;
   padding: 8px 12px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-default);
@@ -74,9 +74,13 @@
   }
 
   &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
     border-color: var(--border-strong);
-    outline: 2px solid var(--border-strong);
-    outline-offset: 1px;
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
   }
 
   &:disabled {
@@ -638,9 +642,13 @@
   }
 
   &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
     border-color: var(--border-strong);
-    outline: 2px solid var(--border-strong);
-    outline-offset: 1px;
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
   }
 }
 
@@ -786,6 +794,14 @@
 .passwordInput {
   @extend .input;
   padding-right: 36px;
+  font-family: $font-mono;
+  font-size: 12.5px;
+}
+
+// URLs, proxy addresses and header names/values use the mono scale (brief typography).
+.inputMono {
+  font-family: $font-mono;
+  font-size: 12.5px;
 }
 
 .passwordToggle {

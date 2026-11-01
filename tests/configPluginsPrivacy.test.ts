@@ -7,11 +7,10 @@ import i18n from '@/i18n';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { PRIVACY_MASK } from '@/utils/privacy';
 import {
-  hasUrlUserinfo,
   maskUrlUserinfo,
   privacyConfigText,
   privacyDisplayText,
-  resolveSourceEditorView,
+  resolveSourcePreview,
 } from '@/features/config/privacy';
 import { CodexLiveICEServersEditor } from '@/features/config/components/blocks/CodexLiveICEServersEditor';
 import { ProxyUrlField } from '@/features/config/components/fields/sharedFields';
@@ -69,34 +68,15 @@ describe('config/plugins privacy display helpers', () => {
     expect(author).toContain(PRIVACY_MASK);
     const url = maskUrlUserinfo('https://bob:pw@store.example.com/index.json');
     expect(url).toBe(`https://${PRIVACY_MASK}@store.example.com/index.json`);
-    expect(hasUrlUserinfo('https://bob:pw@store.example.com')).toBe(true);
-    expect(hasUrlUserinfo('https://store.example.com')).toBe(false);
   });
 });
 
 describe('config source editor privacy mode', () => {
-  test('shows a read-only masked preview without touching the real document', () => {
-    const changes: string[] = [];
-    const onChange = (value: string) => changes.push(value);
-    const view = resolveSourceEditorView({
-      value: YAML,
-      onChange,
-      editable: true,
-      privacyEnabled: true,
-    });
-    expect(view.masked).toBe(true);
-    expect(view.editable).toBe(false);
-    expect(view.value).not.toContain('turn-user');
-    view.onChange('edited masked text');
-    expect(changes).toEqual([]);
-
-    const restored = resolveSourceEditorView({
-      value: YAML,
-      onChange,
-      editable: true,
-      privacyEnabled: false,
-    });
-    expect(restored).toEqual({ value: YAML, onChange, editable: true, masked: false });
+  test('privacy yields a separate masked preview and never a replacement document', () => {
+    const preview = resolveSourcePreview(YAML, true);
+    expect(preview.masked).toBe(true);
+    if (preview.masked) expect(preview.previewText).not.toContain('turn-user');
+    expect(resolveSourcePreview(YAML, false)).toEqual({ masked: false });
   });
 
   test('every locale has a real translation for the paused-editing notice', () => {
@@ -144,18 +124,31 @@ describe('config visual fields privacy mode', () => {
 describe('privacy wiring in config, plugins and OAuth editor pages', () => {
   test('diff modal masks displayed line text only', () => {
     const diff = source('src/features/config/components/DiffModal.tsx');
-    expect(diff).toContain('privacyConfigText(privacyEnabled, line.text)');
+    // Whole documents are masked so multi-line YAML scalars keep their context.
+    expect(diff).toContain('privacyConfigLines(true, original)');
+    expect(diff).toContain('privacyConfigLines(true, modified)');
+    expect(diff).not.toContain('privacyConfigText(privacyEnabled, line.text)');
     expect(diff).toContain('computeUnifiedDiff(original, modified)');
   });
 
   test('plugin metadata and errors are masked reactively', () => {
     const plugins = source('src/features/plugins/PluginsPage.tsx');
-    expect(plugins).toContain('privacyDisplayText(privacyEnabled, plugin.metadata?.author)');
-    expect(plugins).toContain('privacyDisplayText(privacyEnabled, plugin.path)');
-    expect(plugins).toContain('privacyDisplayText(privacyEnabled, error)');
+    expect(plugins).toContain('privacyText(privacyEnabled, plugin.metadata?.author)');
+    expect(plugins).toContain('privacyText(privacyEnabled, plugin.path)');
+    expect(plugins).toContain('privacyText(privacyEnabled, error)');
+    expect(plugins).toContain('privacyText(privacyEnabled, field.description)');
     const store = source('src/features/plugins/PluginStorePage.tsx');
-    expect(store).toContain('privacyDisplayText(privacyEnabled, entry.author)');
-    expect(store).toContain('privacyDisplayText(privacyEnabled, error.message)');
+    expect(store).toContain('privacyText(privacyEnabled, entry.author)');
+    expect(store).toContain('privacyText(privacyEnabled, error.message)');
+    // C08: store source warnings.
+    expect(store).toContain('privacyText(privacyEnabled, sourceLabel)');
+    expect(store).toContain('privacyText(privacyEnabled, sourceError.message)');
+    // C06: the global plugin directory, text and native tooltip.
+    for (const page of [plugins, store]) {
+      expect(page).toContain("privacyText(privacyEnabled, data?.pluginsDir || 'plugins')");
+      expect(page).toContain('title={pluginsDirLabel}');
+      expect(page).not.toContain('title={data.pluginsDir');
+    }
   });
 
   test('OAuth editor initial-load errors are masked at render', () => {

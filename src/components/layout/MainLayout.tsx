@@ -12,6 +12,7 @@ import {
   type SyntheticEvent,
 } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { resolveNavTarget } from './navTarget';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { PageTransition } from '@/components/common/PageTransition';
@@ -835,7 +836,7 @@ export function MainLayout() {
     return (
       <NavLink
         key={item.path}
-        to={item.path}
+        to={resolveNavTarget(item.path, location.pathname)}
         className={({ isActive }) => `${className} ${isActive ? 'active' : ''}`}
         onClick={() => {
           focusedRailItemRef.current = null;

@@ -618,7 +618,7 @@ function SponsorKeyEntryCard({
             </label>
             <input
               id={`${formId}-group-${index}-proxy`}
-              className={styles.input}
+              className={`${styles.input} ${styles.inputMono}`}
               value={entry.proxyUrl}
               onChange={(event) => updateEntry({ proxyUrl: event.target.value })}
               placeholder="http://127.0.0.1:7890"

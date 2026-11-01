@@ -12,16 +12,18 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { useTranslation } from 'react-i18next';
 import { authFilesApi } from '@/services/api';
 import { Button } from '@/components/ui/Button';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { IconSearch, IconX } from '@/components/ui/icons';
+import { IconAlertTriangle, IconInbox, IconSearch, IconX } from '@/components/ui/icons';
 import { Select } from '@/components/ui/Select';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { useNow } from '@/hooks/useNow';
 import { useRevealGroup } from '@/hooks/motion';
 import { useAuthStore, useQuotaStore, useThemeStore } from '@/stores';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyText } from '@/utils/privacy';
 import type { AuthFileItem, ResolvedTheme } from '@/types';
 import { getQuotaCacheKey } from '@/utils/quota/identity';
+import { quotaListErrorIdentities } from './privacy';
 import { ProviderTabs } from '@/features/authFiles/components/ProviderTabs';
 import { QuotaProviderHeading, QuotaSummary, UpcomingResets } from './components/QuotaOverview';
 import { QuotaHeader } from './components/QuotaHeader';
@@ -322,7 +324,12 @@ export function QuotaPage() {
 
   /* ---------- 渲染 ---------- */
 
-  const isEmpty = !loading && filteredEntries.length === 0;
+  // A failed list read proves nothing about emptiness: show only the error view.
+  const listFailed = !loading && Boolean(error);
+  const isEmpty = !loading && !error && filteredEntries.length === 0;
+  const searching = Boolean(search.trim());
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
+  const errorText = privacyText(privacyEnabled, error, quotaListErrorIdentities(files));
 
   return (
     <div className={styles.page} ref={revealRef}>
@@ -333,6 +340,7 @@ export function QuotaPage() {
         refreshing={loading || batchLoading}
         disableControls={disableControls}
         onRefreshAll={handleRefreshAll}
+        countsUnavailable={!loading && Boolean(error)}
       />
 
       <section className={styles.workbench}>
@@ -385,9 +393,18 @@ export function QuotaPage() {
           </div>
         </div>
 
-        {error && (
+        {listFailed && (
           <div className={styles.errorBanner} role="alert">
-            {error}
+            <IconAlertTriangle size={16} aria-hidden="true" className={styles.errorIcon} />
+            <span className={styles.errorText}>{errorText}</span>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => void loadFiles()}
+              disabled={disableControls}
+            >
+              {t('quota_management.retry')}
+            </Button>
           </div>
         )}
 
@@ -395,41 +412,35 @@ export function QuotaPage() {
           <QuotaSummary entries={pageItems} quotaFor={getQuota} resolvedTheme={resolvedTheme} />
         )}
 
-        {loading ? (
+        {listFailed ? null : loading ? (
           <div className={styles.grid} aria-hidden="true">
             {Array.from({ length: SKELETON_CARD_COUNT }, (_, index) => (
               <Skeleton key={index} height={84} rounded={0} />
             ))}
           </div>
         ) : isEmpty ? (
-          <div className={styles.emptyState}>
-            <EmptyState
-              title={
-                search.trim()
-                  ? t('quota_management.search_empty_title')
-                  : tab === 'all'
-                    ? t('quota_management.empty_title')
-                    : t(`${QUOTA_ADAPTERS[tab].i18nPrefix}.empty_title`)
-              }
-              description={
-                search.trim()
-                  ? t('quota_management.search_empty_desc')
-                  : tab === 'all'
-                    ? t('quota_management.empty_desc')
-                    : t(`${QUOTA_ADAPTERS[tab].i18nPrefix}.empty_desc`)
-              }
-              action={
-                search.trim() ? (
-                  <Button variant="secondary" size="sm" onClick={() => handleSearchChange('')}>
-                    {t('quota_management.search_clear')}
-                  </Button>
-                ) : tab === 'all' ? undefined : (
-                  <Button variant="secondary" size="sm" onClick={() => handleTabChange('all')}>
-                    {t('auth_files.filter_all')}
-                  </Button>
-                )
-              }
-            />
+          <div className={styles.emptyState} role="status">
+            <span className={styles.emptyIcon} aria-hidden="true">
+              {searching ? <IconSearch size={16} /> : <IconInbox size={16} />}
+            </span>
+            <p className={styles.emptyTitle}>
+              {searching
+                ? t('quota_management.search_empty_title')
+                : tab === 'all'
+                  ? t('quota_management.empty_title')
+                  : t(`${QUOTA_ADAPTERS[tab].i18nPrefix}.empty_title`)}
+            </p>
+            {searching ? (
+              <Button variant="ghost" size="sm" onClick={() => handleSearchChange('')}>
+                {t('quota_management.search_clear')}
+              </Button>
+            ) : tab === 'all' ? (
+              <p className={styles.emptyDesc}>{t('quota_management.empty_desc')}</p>
+            ) : (
+              <Button variant="ghost" size="sm" onClick={() => handleTabChange('all')}>
+                {t('auth_files.filter_all')}
+              </Button>
+            )}
           </div>
         ) : (
           <div className={styles.grid}>
@@ -460,7 +471,7 @@ export function QuotaPage() {
           </div>
         )}
 
-        {!loading && filteredEntries.length > QUOTA_PAGE_SIZE && (
+        {!loading && !listFailed && filteredEntries.length > QUOTA_PAGE_SIZE && (
           <div className={styles.pagination}>
             <Button
               variant="secondary"
@@ -488,14 +499,18 @@ export function QuotaPage() {
           </div>
         )}
 
-        <UpcomingResets entries={pageItems} quotaFor={getQuota} resolvedTheme={resolvedTheme} />
-        <QuotaTimeline
-          entries={pageItems}
-          quotaFor={getQuota}
-          displayNameFor={displayNameFor}
-          resolvedTheme={resolvedTheme}
-          collapsible
-        />
+        {!listFailed && (
+          <>
+            <UpcomingResets entries={pageItems} quotaFor={getQuota} resolvedTheme={resolvedTheme} />
+            <QuotaTimeline
+              entries={pageItems}
+              quotaFor={getQuota}
+              displayNameFor={displayNameFor}
+              resolvedTheme={resolvedTheme}
+              collapsible
+            />
+          </>
+        )}
       </section>
     </div>
   );

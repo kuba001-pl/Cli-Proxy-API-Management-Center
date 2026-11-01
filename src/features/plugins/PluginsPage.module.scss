@@ -62,9 +62,9 @@
   align-items: center;
   gap: 10px;
   padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
-  background: color-mix(in srgb, var(--bg-secondary) 60%, transparent);
+  border-radius: $radius-md;
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
   flex-wrap: wrap;
 }
 
@@ -75,9 +75,9 @@
   align-items: center;
   gap: 6px;
   padding: 5px 12px;
-  border-radius: $radius-full;
-  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-  background: color-mix(in srgb, var(--bg-primary) 56%, transparent);
+  border-radius: $radius-sm;
+  border: 1px solid var(--border-default);
+  background: var(--bg-raised);
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
@@ -120,7 +120,7 @@
 .statusDivider {
   width: 1px;
   height: 20px;
-  background: color-mix(in srgb, var(--border-color) 60%, transparent);
+  background: var(--border-default);
   flex-shrink: 0;
 
   @include mobile {
@@ -167,10 +167,10 @@
   display: flex;
   flex-direction: column;
   gap: 1px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  border: 1px solid var(--border-default);
   border-radius: $radius-lg;
   overflow: hidden;
-  background: color-mix(in srgb, var(--border-color) 30%, transparent);
+  background: var(--border-subtle);
 }
 
 // ─── Plugin Row ─────────────────────────────────────────
@@ -203,9 +203,9 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-  background: color-mix(in srgb, var(--bg-tertiary) 60%, transparent);
+  border-radius: $radius-md;
+  border: 1px solid var(--border-default);
+  background: var(--bg-raised);
   color: var(--text-secondary);
   flex-shrink: 0;
 
@@ -231,11 +231,15 @@
 
 .pluginName {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: $spacing-sm;
+  gap: 6px $spacing-sm;
   min-width: 0;
 
+  // The name keeps its full width; badges wrap below it instead of squeezing it.
   h2 {
+    flex: 0 1 auto;
+    max-width: 100%;
     min-width: 0;
     margin: 0;
     color: var(--text-primary);
@@ -287,7 +291,7 @@
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--text-tertiary) 50%, transparent);
+  background: var(--text-muted);
   flex-shrink: 0;
 }
 
@@ -315,7 +319,7 @@
 
 .badge {
   background: var(--bg-surface);
-  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+  border: 1px solid var(--border-default);
   color: var(--text-secondary);
 }
 
@@ -333,7 +337,7 @@
 
 .badgeMuted {
   background: var(--bg-surface);
-  border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
+  border: 1px solid var(--border-default);
   color: var(--text-tertiary);
 }
 
@@ -404,7 +408,7 @@
 .skeletonAvatar {
   width: 40px;
   height: 40px;
-  border-radius: 10px;
+  border-radius: $radius-md;
   background: var(--bg-raised);
   animation: skeletonPulse 1.35s var(--ease-out-strong) infinite alternate;
   flex-shrink: 0;
@@ -473,7 +477,7 @@
   padding: $spacing-md;
   border: 1px solid var(--border-color);
   border-radius: $radius-md;
-  background: color-mix(in srgb, var(--bg-secondary) 72%, transparent);
+  background: var(--bg-surface);
 }
 
 .fieldText {
@@ -522,9 +526,9 @@
   line-height: 1.5;
 
   &:focus {
-    border-color: var(--primary-color);
+    border-color: var(--text-secondary);
     outline: none;
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 18%, transparent);
+    box-shadow: 0 0 0 2px var(--border-strong);
   }
 }
 
@@ -541,7 +545,7 @@
   padding: $spacing-md;
   border: 1px dashed var(--border-color);
   border-radius: $radius-md;
-  background: color-mix(in srgb, var(--bg-secondary) 70%, transparent);
+  background: var(--bg-surface);
   color: var(--text-secondary);
   font-size: 14px;
 }

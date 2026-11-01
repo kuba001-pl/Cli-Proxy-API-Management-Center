@@ -36,7 +36,12 @@
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 2px var(--border-strong);
+  }
+
+  // Keyboard focus uses the shared, contrast-checked ring like every other control.
+  &:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
   }
 
   &[aria-expanded='true'] {
@@ -45,11 +50,12 @@
   }
 }
 
+// Toolbar selects sit on a raised surface (Figma "All levels"); form selects stay app-colored.
 .triggerSm {
   height: 32px;
   padding: 0 10px;
+  background-color: var(--bg-raised);
   font-size: 13px;
-  box-shadow: none;
 }
 
 .triggerText {

@@ -249,20 +249,14 @@ export function ProviderSheet({
             : t('providersPage.form.editEyebrow')
       }
       title={titleText}
-      description={t('providersPage.table.description', {
-        route:
-          state.brand === 'openaiCompatibility'
-            ? '/ai-providers/openai'
-            : state.brand === 'apikeyFun'
-              ? '/quick-start'
-              : state.brand === 'fennoAI'
-                ? '/ai-providers/fennoai'
-                : state.brand === 'qiniuCloud'
-                  ? '/ai-providers/qiniu'
-                  : state.brand === 'kimi'
-                    ? '/ai-providers/kimi'
-                    : `/ai-providers/${state.brand}`,
-      })}
+      description={t(
+        state.mode === 'detail'
+          ? 'providersPage.form.sheetDescriptionDetail'
+          : state.mode === 'create'
+            ? 'providersPage.form.sheetDescriptionCreate'
+            : 'providersPage.form.sheetDescriptionEdit',
+        { provider: t(`providersPage.providerNames.${state.brand}`) }
+      )}
       footer={footer}
       closeDisabled={submitting}
       confirmClose={confirmDiscardIfDirty}

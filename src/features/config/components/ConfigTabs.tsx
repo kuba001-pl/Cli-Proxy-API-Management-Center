@@ -95,7 +95,7 @@ export function ConfigTabs({
             onClick={() => onChange(id)}
             onKeyDown={handleKeyDown}
           >
-            <span className={styles.tabLabel}>{tabLabel}</span>
+            {tabLabel}
             {errorCount > 0 ? (
               <span className={styles.tabBadge} aria-hidden="true">
                 {errorCount}

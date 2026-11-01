@@ -194,10 +194,9 @@
   grid-template-columns: repeat(var(--quota-columns, 3), minmax(0, 1fr));
   gap: 16px 24px;
 
+  // Groups stack inside the row without their own rules: one divider per row only.
   & + & {
-    margin-top: 3px;
-    padding-top: 9px;
-    border-top: 1px solid var(--border-subtle);
+    margin-top: 4px;
   }
 }
 
@@ -300,18 +299,23 @@
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 2px $spacing-sm;
-  padding: 6px 8px;
-  border: 1px solid var(--border-subtle);
-  border-radius: $radius-sm;
-  background-color: var(--bg-surface);
+  // Plain list rows inside the quota row (no card-in-card outline).
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border-subtle);
   font-size: 12px;
   line-height: 1.35;
   min-width: 0;
+  max-width: 420px;
+
+  &:last-child {
+    border-bottom: 0;
+  }
 }
 
 .codexResetCreditRowSoon {
-  border-color: var(--border-default);
-  background-color: var(--bg-surface);
+  .codexResetCreditLabel {
+    color: var(--text-secondary);
+  }
 }
 
 .codexResetCreditLabel {
@@ -334,10 +338,6 @@
   font-size: 12px;
   line-height: 1.4;
   color: var(--status-warning);
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-default);
-  border-radius: $radius-sm;
-  padding: $spacing-xs $spacing-sm;
 }
 
 .codexPlanSeparator {
@@ -352,4 +352,47 @@
   color: var(--text-primary);
   white-space: nowrap;
   min-width: 0;
+}
+
+/* ---------- Identity column plan summary (Quota page split) ----------
+ * The provider's plan row renders under the filename as compact caption text:
+ * "Pro · Extra usage disabled · 1 resets remaining". */
+
+.planSlot {
+  min-width: 0;
+
+  .codexPlan {
+    display: block;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--text-tertiary);
+  }
+
+  .codexPlanItem {
+    display: inline;
+  }
+
+  .codexPlanItem + .codexPlanItem::before {
+    content: '\00a0\00b7\00a0';
+    color: var(--text-muted);
+  }
+
+  .codexPlanLabel {
+    margin-right: 4px;
+  }
+
+  .codexPlanValue,
+  .premiumPlanValue,
+  .elitePlanValue,
+  .quotaAmount {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 500;
+    color: var(--text-secondary);
+    white-space: normal;
+  }
+
+  .quotaResetRelative::before {
+    margin: 0 2px;
+  }
 }

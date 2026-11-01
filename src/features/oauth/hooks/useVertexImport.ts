@@ -1,5 +1,4 @@
-import { usePrivacyStore } from '@/stores/usePrivacyStore';
-import { privacyText } from '@/utils/privacy';
+import { credentialFileIdentitiesInText } from '@/utils/privacy';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNotificationStore } from '@/stores';
@@ -34,7 +33,8 @@ export function useVertexImport(options: {
   const { t } = useTranslation();
   const { showNotification: notifyUser } = useNotificationStore();
   const showNotification = (message: string, type: Parameters<typeof notifyUser>[1]) => {
-    notifyUser(privacyText(usePrivacyStore.getState().enabled, message), type);
+    // Raw message + redaction context: the toast masks at render time with current privacy.
+    notifyUser(message, type, undefined, { identities: credentialFileIdentitiesInText(message) });
   };
   const [vertex, setVertex] = useState<VertexImportState>({ location: '', loading: false });
 

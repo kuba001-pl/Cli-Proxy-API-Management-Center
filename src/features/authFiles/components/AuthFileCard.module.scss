@@ -14,17 +14,28 @@
 .cardDisabled .lowest {
   opacity: 0.68;
 }
+.cardEnter {
+  animation: auth-card-enter var(--dur-hover) var(--ease-out-strong) both;
+  animation-delay: var(--card-delay, 0ms);
+}
+@keyframes auth-card-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+// Columns are shared with the table header through `--auth-table-columns` (AuthFilesPage).
 .head {
   display: grid;
-  grid-template-columns:
-    minmax(300px, 2.1fr) minmax(88px, 0.65fr) minmax(150px, 0.95fr) minmax(160px, 1.1fr)
-    64px 24px;
+  grid-template-columns: var(--auth-table-columns);
   gap: 14px;
   align-items: center;
-  padding: 14px 16px;
+  padding: 12px 16px;
 }
 .cardCompact .head {
-  padding-block: 9px;
+  padding-block: 8px;
 }
 .rowLead {
   display: flex;
@@ -75,7 +86,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 3px 8px;
+  gap: 2px 8px;
 }
 .account {
   margin: 0;
@@ -91,8 +102,8 @@
   order: 3;
   width: 100%;
   font-family: $font-mono;
-  font-size: 11px;
-  line-height: 16px;
+  font-size: 12px;
+  line-height: 18px;
   color: var(--text-tertiary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -107,7 +118,8 @@
 .muted,
 .healthCounts {
   color: var(--text-tertiary);
-  font-size: 11px;
+  font-size: 12px;
+  line-height: 16px;
 }
 .health {
   min-width: 0;
@@ -125,7 +137,8 @@
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  font-size: 11px;
+  font-size: 12px;
+  line-height: 16px;
   color: var(--text-secondary);
   margin-bottom: 6px;
 }
@@ -185,28 +198,16 @@
 }
 .metaRow {
   display: flex;
-  gap: 8px;
+  gap: 20px;
   flex-wrap: wrap;
   font-family: $font-mono;
   font-size: 11.5px;
   color: var(--text-secondary);
 }
-.metaPriority,
-.metaWeight {
-  display: inline-flex;
-  gap: 4px;
-}
 .metaMetricLabel,
-.metaDivider,
 .siwcExpires,
 .runtimeLabel {
   color: var(--text-tertiary);
-}
-.siwcRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
 }
 .actions,
 .actionsMain,
@@ -225,62 +226,40 @@
   align-items: center;
   gap: 8px;
 }
-
 .statusBlocks {
   display: flex;
   gap: 2px;
   flex: 1;
   min-width: 0;
 }
-
 .statusBlockWrapper {
   position: relative;
   flex: 1 1 0;
   min-width: 3px;
 }
-
 .statusBlock {
-  height: 14px;
-  border-radius: 2px;
+  height: 10px;
+  border-radius: 1px;
 }
-
 .statusBlockIdle {
-  background: color-mix(in srgb, var(--text-quaternary) 26%, transparent);
+  background: var(--bg-active);
 }
-
+.statusBlockSuccess {
+  background: var(--text-tertiary);
+}
+.statusBlockFailure {
+  background: var(--status-danger);
+}
 .statusBlockActive .statusBlock {
   outline: 1px solid var(--text-secondary);
   outline-offset: 1px;
 }
-
+// The row already shows success/failure counts below the bar.
 .statusRate {
-  font-family: $font-mono;
-  font-size: 11.5px;
-  font-weight: 650;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-quaternary);
-  min-width: 40px;
-  text-align: right;
+  display: none;
 }
-
-.statusRateHigh {
-  color: var(--viz-success);
-}
-
-.statusRateMedium {
-  color: var(--quota-medium-color);
-}
-
-.statusRateLow {
-  color: var(--viz-failure);
-}
-
+// Portaled and positioned inline by ProviderStatusBar; this only styles the surface.
 .statusTooltip {
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 20;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -295,46 +274,24 @@
   font-size: 11px;
   line-height: 1.5;
 }
-
 .tooltipTime {
   color: var(--text-tertiary);
   letter-spacing: 0.03em;
 }
-
 .tooltipStats {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
   color: var(--text-secondary);
 }
-
 .tooltipSuccess {
   color: var(--viz-success);
 }
-
 .tooltipFailure {
   color: var(--viz-failure);
 }
-
 .tooltipRate {
   color: var(--text-secondary);
-}
-
-.statusBlock {
-  height: 10px;
-  border-radius: 1px;
-}
-.statusRate {
-  display: none;
-}
-.statusBlockIdle {
-  background: var(--bg-active);
-}
-.statusBlockSuccess {
-  background: var(--text-tertiary);
-}
-.statusBlockFailure {
-  background: var(--status-danger);
 }
 @media (max-width: 700px) {
   .details {
@@ -342,6 +299,9 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .cardEnter {
+    animation: none;
+  }
   .expand svg {
     transition: none;
   }
@@ -352,6 +312,9 @@
   grid-template-columns: minmax(0, 1.5fr) minmax(240px, 1fr);
   gap: 24px;
   align-items: start;
+}
+.quotaDetail {
+  min-width: 0;
 }
 .fileDetail {
   display: flex;
@@ -364,12 +327,9 @@
   flex-direction: column;
   gap: 5px;
 }
-.metaRow {
-  gap: 20px;
-}
 .metaMetricLabel {
-  font-family: inherit;
-  font-size: 11px;
+  font-family: $font-family;
+  font-size: 12px;
 }
 .actionsMain {
   flex: 1;

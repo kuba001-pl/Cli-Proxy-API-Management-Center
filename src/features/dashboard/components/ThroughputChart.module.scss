@@ -4,23 +4,25 @@
   --chart-height: 200px;
   --bar-max-width: 34px;
 
-  position: relative;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
+  gap: $spacing-sm;
 }
 
 /* ---------- 图例 ---------- */
 
 .legend {
+  // Anchored to the traffic panel (positioned ancestor) so it shares the overline's
+  // baseline row instead of a chart-relative negative offset.
   position: absolute;
-  right: 0;
-  top: -70px;
+  right: 24px;
+  top: 24px;
   display: flex;
   flex-wrap: wrap;
-  gap: $spacing-lg;
+  gap: $spacing-md;
   font-size: 13px;
+  line-height: 18px;
   color: var(--text-secondary);
 }
 
@@ -37,8 +39,8 @@
 }
 
 .legendSwatch {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 2px;
   flex: none;
 }
@@ -271,14 +273,6 @@
   }
 }
 
-.tooltipRate {
-  margin-top: 2px;
-  padding-top: 4px;
-  border-top: 1px solid var(--border-color);
-  color: var(--text-tertiary);
-  font-variant-numeric: tabular-nums;
-}
-
 /* ---------- 横轴 ---------- */
 
 .xAxis {
@@ -305,7 +299,7 @@
 // A single divider, not a second card: override the shared Collapsible surface
 // (element-qualified so it wins regardless of stylesheet order).
 details.tableToggle {
-  margin-top: 4px;
+  margin-top: 12px;
   border: 0;
   border-top: 1px solid var(--border-subtle);
   border-radius: 0;

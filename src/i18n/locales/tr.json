@@ -1055,6 +1055,7 @@
     "loading": "Günlükler Yükleniyor...",
     "load_error": "Günlükler Yüklenemedi",
     "clear_confirm": "Tüm Günlükleri Temizlemek İstediğinden Emin Misin? Bu Eylem Geri Alınamaz!",
+    "clear_confirm_title": "Günlükleri Temizle",
     "clear_success": "Günlükler Başarıyla Temizlendi",
     "download_success": "Günlükler Başarıyla İndirildi",
     "auto_refresh": "Otomatik Yenile",
@@ -1616,13 +1617,15 @@
     "search_empty_title": "Eşleşen Hesap Yok",
     "search_empty_desc": "Başka Bir Dosya Adı veya E-posta Dene ya da Aramayı Temizle.",
     "search_clear": "Aramayı Temizle",
+    "retry": "Yeniden dene",
     "title": "Kota Yönetimi",
     "description": "Antigravity, Codex, Claude, Kimi ve xAI Kimlik Bilgileri için OAuth Kota Durumunu İzle.",
     "refresh_all_credentials": "Tüm Kimlik Bilgilerini Yenile",
     "sort_label": "Sırala",
     "sort_default": "Varsayılan",
     "sort_soonest": "En Yakın Toparlanma",
-    "meta_credentials": "{{count}} Kimlik Bilgisi",
+    "meta_credentials_one": "{{count}} Kimlik Bilgisi",
+    "meta_credentials_other": "{{count}} Kimlik Bilgisi",
     "meta_loaded": "{{count}} Yüklendi",
     "meta_attention": "{{count}} İlgi Gerekiyor",
     "empty_title": "Kota Yeteneği Olan Kimlik Bilgisi Yok",
@@ -1948,6 +1951,8 @@
     "clear_login_confirm": "Yerel Giriş Verisi Temizlensin ve Oturum Şimdi Kapatılsın Mı?"
   },
   "notification": {
+    "save_failed": "Kaydedilemedi",
+    "load_failed": "Yüklenemedi",
     "trusted_proxies_restart_required": "Güvenilen Proxy Ayarları Kaydedildi. Uygulamak için Arka Ucu Yeniden Başlat.",
     "region_label": "Bildirimler",
     "type_success": "Başarılı",
@@ -2096,6 +2101,7 @@
       "new": "Yeni",
       "edit": "Düzenle",
       "view": "Gör",
+      "more": "Diğer işlemler",
       "delete": "Sil",
       "cancel": "İptal",
       "save": "Kaydet",
@@ -2219,7 +2225,9 @@
       "notSet": "Ayarlanmadı",
       "none": "Yok",
       "notConfigured": "Yapılandırılmadı",
-      "defaultSuffix": "(Varsayılan)"
+      "defaultSuffix": "(Varsayılan)",
+      "okCount": "{{count}} başarılı",
+      "failedCount": "{{count}} başarısız"
     },
     "detail": {
       "title": "Ayrıntılar",
@@ -2239,6 +2247,9 @@
     "form": {
       "createEyebrow": "Yeni",
       "editEyebrow": "Düzenle",
+      "sheetDescriptionCreate": "{{provider}} için kimlik bilgileri, bağlantı ayarları ve modeller ekleyin.",
+      "sheetDescriptionEdit": "{{provider}} için kimlik bilgilerini, bağlantı ayarlarını ve modelleri güncelleyin.",
+      "sheetDescriptionDetail": "{{provider}} yapılandırması, kimlik bilgileri ve son istek durumu.",
       "name": "Ad",
       "apiKey": "API Anahtarı",
       "apiKeyCreatePlaceholder": "API Anahtarını Gir",

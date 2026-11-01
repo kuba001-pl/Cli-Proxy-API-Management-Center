@@ -66,39 +66,56 @@
 
 /* ---------- 编辑器面板 ---------- */
 
-.privacyNotice {
-  margin: 0 0 8px;
-  padding: 8px 12px;
-  border: 1px solid var(--warning-border);
-  border-radius: 8px;
-  background: var(--warning-bg);
-  color: var(--warning-text);
-  font-size: 12.5px;
-  line-height: 18px;
-}
-
-/* Fills the viewport below the page header (header ≈ 148px + bottom gutter 32px). */
-.editorWrapper {
+/*
+ * Fills the viewport below the page header (header ≈ 148px + bottom gutter 32px). The
+ * privacy notice shares this height, so the editor shrinks instead of overflowing.
+ */
+.sourceRegion {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   width: 100%;
-  flex: 0 0 auto;
+  min-width: 0;
   height: max(420px, calc(100vh - 180px));
-  border: 1px solid var(--border-default);
-  border-radius: 10px;
-  overflow: hidden;
-  background: var(--bg-surface);
 
   @supports (height: 100dvh) {
     height: max(420px, calc(100dvh - 180px));
   }
+}
+
+.privacyNotice {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 7px 12px;
+  border: 1px solid var(--warning-border);
+  border-radius: 8px;
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.editorWrapper {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-surface);
 
   :global {
     .cm-editor {
       height: 100%;
       font-size: 12.5px;
-      line-height: 22px;
       color: var(--text-primary);
       font-family: $font-mono;
       background: transparent;
+    }
+
+    /* CodeMirror's base theme sets line-height on .cm-scroller; out-rank it there. */
+    .cm-editor .cm-scroller {
+      line-height: 22px;
     }
 
     .cm-scroller {
@@ -185,7 +202,7 @@
     order: -1;
   }
 
-  .editorWrapper {
+  .sourceRegion {
     height: max(360px, calc(100dvh - 260px));
   }
 }

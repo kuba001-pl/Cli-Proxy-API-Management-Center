@@ -85,6 +85,15 @@ describe('LoginForm', () => {
     expect(markup).toContain('HTTP 401: bad key');
   });
 
+  test('splits the summary from the muted backend detail in one inline alert', () => {
+    const markup = render({ error: 'Authentication failed', errorDetail: '401 · invalid key' });
+    expect(markup.match(/role="alert"/g)).toHaveLength(1);
+    expect(markup).toContain('Authentication failed');
+    expect(markup).toContain(i18n.t('login.error_backend_detail'));
+    expect(markup).toContain('401 · invalid key');
+    expect(render({ error: 'Required' })).not.toContain(i18n.t('login.error_backend_detail'));
+  });
+
   test('locks the submit button while connecting', () => {
     const markup = render({ loading: true });
     expect(markup).toContain('aria-busy="true"');
