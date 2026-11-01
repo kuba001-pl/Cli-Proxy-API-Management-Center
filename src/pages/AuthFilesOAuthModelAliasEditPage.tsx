@@ -268,10 +268,7 @@ export function AuthFilesOAuthModelAliasEditPage() {
           return;
         }
 
-        const errorMessage = privacyText(
-          usePrivacyStore.getState().enabled,
-          err instanceof Error ? err.message : ''
-        );
+        const errorMessage = err instanceof Error ? err.message : '';
         showNotification(`${t('notification.load_failed')}: ${errorMessage}`, 'error');
       })
       .finally(() => {
@@ -383,10 +380,7 @@ export function AuthFilesOAuthModelAliasEditPage() {
       allowNextNavigation();
       handleBack();
     } catch (err: unknown) {
-      const errorMessage = privacyText(
-        usePrivacyStore.getState().enabled,
-        err instanceof Error ? err.message : ''
-      );
+      const errorMessage = err instanceof Error ? err.message : '';
       showNotification(`${t('oauth_model_alias.save_failed')}: ${errorMessage}`, 'error');
     } finally {
       setSaving(false);

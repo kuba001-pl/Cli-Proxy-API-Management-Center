@@ -11,9 +11,6 @@ import { useTranslation } from 'react-i18next';
 import { AutocompleteInput } from '@/components/ui/AutocompleteInput';
 import { Button } from '@/components/ui/Button';
 import { IconRefreshCw } from '@/components/ui/icons';
-import { usePrivacyStore } from '@/stores/usePrivacyStore';
-import { privacyText } from '@/utils/privacy';
-import { routingMemberDisplay } from './privacy';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
@@ -80,7 +77,6 @@ export function RoutingPage() {
     cooldownClock.getSnapshot
   );
   const revealRef = useRevealGroup<HTMLDivElement>();
-  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const pageTransitionLayer = usePageTransitionLayer();
   // A page sliding out must not leave its portalled save bar behind.
   const isCurrentLayer = pageTransitionLayer ? pageTransitionLayer.isCurrentLayer : true;
@@ -283,26 +279,22 @@ export function RoutingPage() {
     const failedKey = result.failed.key;
     const failedMember = members.get(failedKey);
     const name =
-      failedKey === 'config'
-        ? t('routing.config_target')
-        : failedMember
-          ? routingMemberDisplay(failedMember, privacyEnabled).name
-          : privacyText(privacyEnabled, failedKey);
+      failedKey === 'config' ? t('routing.config_target') : (failedMember?.name ?? failedKey);
+    // Store the raw message plus credential identities; the toast masks at render time.
+    const identities = (board?.members ?? [])
+      .filter((member) => member.kind === 'credential')
+      .map((member) => member.name);
+    if (failedMember?.kind === 'credential') identities.push(failedMember.name);
     showNotification(
       t('routing.save_partial', {
         name,
-        message: privacyText(
-          privacyEnabled,
-          getErrorMessage(result.failed.error, t('common.unknown_error')),
-          board?.members
-            .filter((member) => member.kind === 'credential')
-            .map((member) => member.name)
-        ),
+        message: getErrorMessage(result.failed.error, t('common.unknown_error')),
         applied: result.applied.length,
         skipped: result.notAttempted.length,
       }),
       'error',
-      10_000
+      10_000,
+      { identities }
     );
   };
 

@@ -44,10 +44,8 @@ export function AuthFileQuotaSection(props: AuthFileQuotaSectionProps) {
   const notify = useNotificationStore((state) => state.showNotification);
   const showNotification = useCallback(
     (message: string, type: Parameters<typeof notify>[1]) => {
-      notify(
-        privacyText(usePrivacyStore.getState().enabled, message, authFilePrivacyIdentities(file)),
-        type
-      );
+      // Store the raw message plus identities; the toast masks reactively at render time.
+      notify(message, type, undefined, { identities: authFilePrivacyIdentities(file) });
     },
     [file, notify]
   );
@@ -135,11 +133,8 @@ export function AuthFileQuotaSection(props: AuthFileQuotaSectionProps) {
 
     showConfirmation({
       title: t('codex_quota.reset_confirm_title'),
-      message: privacyText(
-        usePrivacyStore.getState().enabled,
-        t('codex_quota.reset_confirm_message', { name: file.name }),
-        authFilePrivacyIdentities(file)
-      ),
+      message: t('codex_quota.reset_confirm_message', { name: file.name }),
+      identities: authFilePrivacyIdentities(file),
       confirmText: t('codex_quota.reset_confirm_button'),
       variant: 'primary',
       onConfirm: async () => {

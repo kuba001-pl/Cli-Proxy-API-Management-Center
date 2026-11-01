@@ -4,7 +4,6 @@ import { usePageTransitionLayer } from '@/components/common/PageTransitionLayer'
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useAuthStore, useNotificationStore } from '@/stores';
-import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { getProviderDisplayName } from './privacy';
 import { useProviderRecentRequests } from '@/components/providers/hooks/useProviderRecentRequests';
 import {
@@ -100,7 +99,6 @@ const getResourceRecentSuccess = (
 
 export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPageProps = {}) {
   const { t, i18n } = useTranslation();
-  const privacyEnabled = usePrivacyStore((s) => s.enabled);
   const connectionStatus = useAuthStore((s) => s.connectionStatus);
   const { showNotification, showConfirmation } = useNotificationStore();
 
@@ -314,7 +312,8 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
 
   const handleDelete = useCallback(
     (resource: ProviderResource) => {
-      const name = getProviderDisplayName(resource, privacyEnabled);
+      // Raw name: ConfirmationModal masks the message at render time with current privacy.
+      const name = getProviderDisplayName(resource, false);
       showConfirmation({
         title: t('providersPage.delete.title'),
         message: t('providersPage.delete.confirm', { name }),
@@ -335,7 +334,7 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
         },
       });
     },
-    [privacyEnabled, showConfirmation, showNotification, t, workbench]
+    [showConfirmation, showNotification, t, workbench]
   );
 
   const handleToggleDisabled = useCallback(
