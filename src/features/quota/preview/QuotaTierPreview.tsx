@@ -225,8 +225,7 @@ const buildAccounts = (): MockAccount[] => [
     quota: { status: 'error', windows: [], error: 'HTTP 401' } as CodexQuotaState,
   },
   {
-    // Idle card: the plan comes from the auth file itself, so the suite shows
-    // before any quota is read.
+    // Idle card: no plan styling until quota data arrives.
     entry: {
       type: 'codex',
       file: file('codex-pro500-idle.json', 'codex', { plan_type: 'promax' }),

@@ -10,11 +10,6 @@
   border-bottom: 1px solid var(--border-subtle);
   background: var(--bg-app);
 }
-// Tiers remain in the semantic data attribute; all plans share the same neutral surface.
-.premium,
-.flagship {
-  color: var(--text-primary);
-}
 .cardEnter {
   animation: quota-card-enter var(--dur-hover) var(--ease-out-strong) both;
   animation-delay: var(--card-delay, 0ms);
