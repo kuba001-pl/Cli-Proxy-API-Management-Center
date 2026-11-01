@@ -882,7 +882,9 @@ export function LogsPage() {
                               )}
 
                               {line.message && (
-                                <span className={styles.message}>{display.message}</span>
+                                <span className={styles.message} title={display.message}>
+                                  {display.message}
+                                </span>
                               )}
                               {line.source && (
                                 <span className={styles.source} title={display.source}>
@@ -890,7 +892,11 @@ export function LogsPage() {
                                 </span>
                               )}
 
-                              {line.ip && <span className={styles.pill}>{display.ip}</span>}
+                              {line.ip && (
+                                <span className={styles.pill} title={display.ip}>
+                                  {display.ip}
+                                </span>
+                              )}
                               {line.requestId && (
                                 <button
                                   type="button"

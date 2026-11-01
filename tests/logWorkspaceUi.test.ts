@@ -50,7 +50,14 @@ describe('log workspace layout contract', () => {
     const copy = styles.match(/^\.copyButton:global\(\.btn\) \{([^}]+)\}/m)?.[1] ?? '';
     expect(copy).toContain('position: sticky');
     expect(page).toContain("useLocalStorage('logsPage.wrapLogs', false)");
-    expect(styles).toContain('width: max-content');
+    // Rows fit the viewer instead of growing to max-content, so the request ID never clips.
+    expect(styles).not.toContain('width: max-content');
+    const list = styles.match(/^\.logList \{([^}]+)\}/m)?.[1] ?? '';
+    expect(list).toContain('width: 100%');
+    const shrinkable = styles.match(/^\.source,\n\.pill \{([^}]+)\}/m)?.[1] ?? '';
+    expect(shrinkable).toContain('min-width: 0');
+    expect(page).toContain('title={display.source}');
+    expect(page).toContain('title={display.ip}');
     expect(styles).toContain('flex-wrap: nowrap');
     expect(styles).toContain('.logRow:focus-within .copyButton');
     expect(page).toContain("aria-label={t('logs.copy_line')}");

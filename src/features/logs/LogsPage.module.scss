@@ -416,8 +416,8 @@
 
 .logList {
   padding-block: 8px;
-  width: max-content;
-  min-width: 100%;
+  // Rows fit the viewer: source/IP/message absorb the squeeze so the request ID stays pinned.
+  width: 100%;
 }
 
 .rawLog,
@@ -497,6 +497,14 @@
   color: var(--text-tertiary);
 }
 
+// Secondary metadata gives way first; the full value stays in the title tooltip.
+.source,
+.pill {
+  flex: 0 1 auto;
+  min-width: 0;
+  @include text-ellipsis;
+}
+
 .latency {
   justify-content: flex-end;
   width: 56px;
@@ -505,7 +513,11 @@
 .source {
   color: var(--text-muted);
   max-width: 180px;
-  @include text-ellipsis;
+}
+
+.pill {
+  display: block;
+  max-width: 140px;
 }
 
 .requestIdBadge {
@@ -567,14 +579,18 @@
 }
 
 .path {
+  flex: none;
   color: var(--text-primary);
   overflow-wrap: anywhere;
 }
 
 .message {
+  flex: 0 1 auto;
   color: var(--text-secondary);
   overflow-wrap: anywhere;
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .copyButton:global(.btn) {
@@ -612,6 +628,14 @@
   .path,
   .message {
     max-width: 100%;
+  }
+
+  .path {
+    flex: 0 1 auto;
+  }
+
+  .message {
+    overflow: visible;
   }
 
   .rawLog {
