@@ -27,7 +27,7 @@ import {
   resolveStatus,
 } from './uiState';
 import { findConfigFieldById } from './searchIndex';
-import { privacyConfigText, privacyDisplayText } from './privacy';
+import { configDocumentIdentities, privacyConfigText, privacyDisplayText } from './privacy';
 import { shouldReloadVisualDraft, useConfigDocument } from './hooks/useConfigDocument';
 import { useFieldJump } from './hooks/useFieldJump';
 import { useSourceSearch } from './hooks/useSourceSearch';
@@ -111,6 +111,13 @@ export function ConfigPage() {
   });
   const sourceSearch = useSourceSearch();
 
+  // Parser excerpts can show a block-scalar body without its `username: |` header, so the
+  // identities come from the complete raw document. Masking stays at the display boundary.
+  const parseErrorIdentities = useMemo(
+    () => (visualParseError ? configDocumentIdentities(doc.content) : []),
+    [doc.content, visualParseError]
+  );
+
   const disableControls = connectionStatus !== 'connected';
   const hasVisualModeError = !!visualParseError;
   const hasVisualValidationErrors =
@@ -141,9 +148,11 @@ export function ConfigPage() {
     localStorage.setItem(CONFIG_MODE_STORAGE_KEY, 'source');
     showNotification(
       t('config_management.visual_mode_unavailable_detail', { message: visualParseError }),
-      'error'
+      'error',
+      undefined,
+      { identities: parseErrorIdentities }
     );
-  }, [mode, showNotification, t, visualParseError]);
+  }, [mode, parseErrorIdentities, showNotification, t, visualParseError]);
 
   // 可视化 ↔ 源码切换的 dirty 交接：
   // → 源码：物化可视化脏字段供查看，但不把同步动作记作用户源码编辑；
@@ -169,7 +178,9 @@ export function ConfigPage() {
         if (!result.ok) {
           showNotification(
             t('config_management.visual_mode_unavailable_detail', { message: result.error }),
-            'error'
+            'error',
+            undefined,
+            { identities: configDocumentIdentities(doc.content) }
           );
           return;
         }
@@ -332,8 +343,8 @@ export function ConfigPage() {
       {!doc.error && visualParseError && (
         <div className="error-box" role="alert">
           {t('config_management.visual_mode_unavailable_detail', {
-            // Parser errors may echo the offending YAML line, so mask with config rules.
-            message: privacyConfigText(privacyEnabled, visualParseError),
+            // Parser errors echo YAML lines: config rules plus whole-document identities.
+            message: privacyConfigText(privacyEnabled, visualParseError, parseErrorIdentities),
           })}
         </div>
       )}

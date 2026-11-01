@@ -21,7 +21,7 @@ export type VaultHeaderProps = {
 
 /**
  * 凭证库头部：eyebrow（▍游标前缀）+ 标题 + mono 遥测 meta 行 + 动作区。
- * meta 行同时承载 VaultPulse 的文字等价信息（谱条本身 aria-hidden）。
+ * meta 行以 mono 文本承载凭证库遥测信息。
  */
 export function VaultHeader(props: VaultHeaderProps) {
   const {

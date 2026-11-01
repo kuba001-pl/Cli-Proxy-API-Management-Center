@@ -354,7 +354,7 @@ export function useAuthFilesData(options?: UseAuthFilesDataOptions): UseAuthFile
   const handleDelete = useCallback(
     (name: string) => {
       showConfirmation({
-        title: t('auth_files.delete_title', { defaultValue: 'Delete File' }),
+        title: t('auth_files.delete_title'),
         message: `${t('auth_files.delete_confirm')} "${name}" ?`,
         variant: 'danger',
         confirmText: t('common.confirm'),
@@ -406,7 +406,7 @@ export function useAuthFilesData(options?: UseAuthFilesDataOptions): UseAuthFile
       }
 
       showConfirmation({
-        title: t('auth_files.delete_all_title', { defaultValue: 'Delete All Files' }),
+        title: t('auth_files.delete_all_title'),
         message: confirmMessage,
         variant: 'danger',
         confirmText: t('common.confirm'),

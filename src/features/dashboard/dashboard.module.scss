@@ -187,9 +187,22 @@
     border-radius: 0;
     background: transparent;
   }
+  // Figma 36:1855 / 65:3949: eyebrow → title → helper on a 4px rhythm.
   .sectionHead {
+    gap: 4px;
     padding-right: 200px;
     margin-bottom: 16px;
+  }
+  // The dark reference (36:1859) hides the helper sentence; keep it for screen readers.
+  [data-theme='dark'] & .sectionDescription {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }
 .section {

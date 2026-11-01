@@ -1,8 +1,9 @@
 @use '../../../styles/variables' as *;
+// Figma 46:2761: 58px header (34px title, meta line at y40 on an 18px line).
 .header {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   min-width: 0;
 }
 .title {
@@ -21,7 +22,7 @@
   gap: 8px;
   font-family: $font-mono;
   font-size: 12px;
-  line-height: 16px;
+  line-height: 18px;
   color: var(--text-tertiary);
 }
 .metaDot {

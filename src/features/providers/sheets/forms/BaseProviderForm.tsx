@@ -38,6 +38,7 @@ import { ModelDiscoveryPanel } from './ModelDiscoveryPanel';
 import { ConnectivityStatusIcon } from './ConnectivityStatusIcon';
 import { ApiKeyEntriesEditor } from './ApiKeyEntriesEditor';
 import { ModelEntriesEditor } from './ModelEntriesEditor';
+import { concealInputProps } from './privacyConceal';
 import styles from './sharedForm.module.scss';
 import { MAX_CREDENTIAL_WEIGHT } from '@/utils/credentialWeight';
 import { readRuntimePolicy, validateRuntimePolicy } from '../../runtimePolicy';
@@ -582,6 +583,7 @@ export function BaseProviderForm({
             </label>
             <input
               id={`${fid}-baseUrl`}
+              {...concealInputProps(privacyEnabled)}
               className={`${styles.input} ${styles.inputMono}`}
               value={form.baseUrl}
               onChange={(e) => updateField('baseUrl', e.target.value)}
@@ -598,6 +600,7 @@ export function BaseProviderForm({
             </label>
             <input
               id={`${fid}-proxy`}
+              {...concealInputProps(privacyEnabled)}
               className={`${styles.input} ${styles.inputMono}`}
               value={form.proxyUrl}
               onChange={(e) => updateField('proxyUrl', e.target.value)}
@@ -615,6 +618,7 @@ export function BaseProviderForm({
               </label>
               <input
                 id={`${fid}-prefix`}
+                {...concealInputProps(privacyEnabled)}
                 className={styles.input}
                 value={form.prefix}
                 onChange={(e) => updateField('prefix', e.target.value)}
@@ -813,6 +817,7 @@ export function BaseProviderForm({
                   disabled={mutating}
                 />
                 <input
+                  {...concealInputProps(privacyEnabled)}
                   className={`${styles.input} ${styles.inputMono}`}
                   placeholder="value"
                   value={entry.value}

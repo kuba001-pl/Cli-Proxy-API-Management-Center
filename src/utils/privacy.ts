@@ -89,9 +89,6 @@ export const isEmail = (value: string | null | undefined): boolean => {
   return ranges.length === 1 && ranges[0].start === 0 && ranges[0].end === trimmed.length;
 };
 
-/** Whether `text` contains at least one email token. */
-export const containsEmail = (text: string): boolean => findEmailRanges(text).length > 0;
-
 const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
 
 /** Mask a personal identifier (email, username, account label) completely. */
@@ -220,7 +217,7 @@ export const maskSensitiveText = (
 };
 
 const PROVIDER_PREFIX =
-  /^(?:antigravity|claude|codex|gemini|qwen|iflow|kimi|copilot|github-copilot|openai|vertex)-/i;
+  /^(?:antigravity|claude|codex|devin|gemini|qwen|iflow|kimi|copilot|github-copilot|openai|vertex)-/i;
 const HASH_SEGMENT = /^[a-f0-9]{6,16}-/i;
 const PLAN_SUFFIX =
   /-(?:plus|pro|max|team|free|business|enterprise|edu|ultra|premium|standard|k12)$/i;

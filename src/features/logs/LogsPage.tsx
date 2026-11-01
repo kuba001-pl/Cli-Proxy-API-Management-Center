@@ -188,14 +188,13 @@ export function LogsPage() {
       showNotification(t('logs.error_log_download_success'), 'success');
     } catch (err: unknown) {
       if (!requests.session.isCurrent(session)) return;
-      // Read privacy at action time: backend messages can echo identities from the file name.
-      const message = privacyLogText(usePrivacyStore.getState().enabled, getErrorMessage(err), [
-        ...logIdentities(getErrorMessage(err)),
-        ...logIdentities(name),
-      ]);
+      // Store the raw message plus log identities; the toast masks reactively at render time.
+      const message = getErrorMessage(err);
       showNotification(
         `${t('notification.download_failed')}${message ? `: ${message}` : ''}`,
-        'error'
+        'error',
+        undefined,
+        { identities: [...logIdentities(message), ...logIdentities(name)] }
       );
     }
   };
@@ -401,11 +400,13 @@ export function LogsPage() {
       showNotification(t('logs.request_log_download_success'), 'success');
     } catch (err: unknown) {
       if (!requests.session.isCurrent(session)) return;
-      // Read privacy at action time: backend messages can echo identities.
-      const message = privacyLogText(usePrivacyStore.getState().enabled, getErrorMessage(err));
+      // Store the raw message plus log identities; the toast masks reactively at render time.
+      const message = getErrorMessage(err);
       showNotification(
         `${t('notification.download_failed')}${message ? `: ${message}` : ''}`,
-        'error'
+        'error',
+        undefined,
+        { identities: logIdentities(message) }
       );
     } finally {
       if (requests.session.isCurrent(session)) setRequestLogDownloading(false);

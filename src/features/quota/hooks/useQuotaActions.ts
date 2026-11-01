@@ -13,9 +13,8 @@ import {
 } from '@/stores';
 import type { AuthFileItem } from '@/types';
 import { getStatusFromError } from '@/utils/quota';
-import { usePrivacyStore } from '@/stores/usePrivacyStore';
-import { privacyText } from '@/utils/privacy';
 import { getQuotaCacheKey, getQuotaPrivacyDisplayName } from '@/utils/quota/identity';
+import { quotaNotificationPrivacy } from '../privacy';
 import { enrichQuotaInBackground } from '../quotaEnrichment';
 import { getQuotaMap, getQuotaSetter, type QuotaAdapter, type QuotaCardState } from '../providers';
 
@@ -53,9 +52,11 @@ export function useQuotaActions(disableControls: boolean) {
           void enrichQuotaInBackground(adapter, file, data, successState, t);
           showNotification(
             t('auth_files.quota_refresh_success', {
-              name: getQuotaPrivacyDisplayName(file, usePrivacyStore.getState().enabled),
+              name: getQuotaPrivacyDisplayName(file, false),
             }),
-            'success'
+            'success',
+            undefined,
+            quotaNotificationPrivacy(file)
           );
         });
       } catch (err: unknown) {
@@ -68,13 +69,12 @@ export function useQuotaActions(disableControls: boolean) {
           }));
           showNotification(
             t('auth_files.quota_refresh_failed', {
-              name: getQuotaPrivacyDisplayName(file, usePrivacyStore.getState().enabled),
-              message: privacyText(usePrivacyStore.getState().enabled, message, [
-                file.email,
-                file.projectId,
-              ]),
+              name: getQuotaPrivacyDisplayName(file, false),
+              message,
             }),
-            'error'
+            'error',
+            undefined,
+            quotaNotificationPrivacy(file)
           );
         });
       }
@@ -94,8 +94,9 @@ export function useQuotaActions(disableControls: boolean) {
       showConfirmation({
         title: t('codex_quota.reset_confirm_title'),
         message: t('codex_quota.reset_confirm_message', {
-          name: getQuotaPrivacyDisplayName(file, usePrivacyStore.getState().enabled),
+          name: getQuotaPrivacyDisplayName(file, false),
         }),
+        ...quotaNotificationPrivacy(file),
         confirmText: t('codex_quota.reset_confirm_button'),
         variant: 'primary',
         onConfirm: async () => {
@@ -111,9 +112,11 @@ export function useQuotaActions(disableControls: boolean) {
               }));
               showNotification(
                 t('codex_quota.reset_success', {
-                  name: getQuotaPrivacyDisplayName(file, usePrivacyStore.getState().enabled),
+                  name: getQuotaPrivacyDisplayName(file, false),
                 }),
-                'success'
+                'success',
+                undefined,
+                quotaNotificationPrivacy(file)
               );
             });
           } catch (err: unknown) {
@@ -121,13 +124,12 @@ export function useQuotaActions(disableControls: boolean) {
             commitIfQuotaCacheCurrent(cacheGeneration, () => {
               showNotification(
                 t('codex_quota.reset_failed', {
-                  name: getQuotaPrivacyDisplayName(file, usePrivacyStore.getState().enabled),
-                  message: privacyText(usePrivacyStore.getState().enabled, message, [
-                    file.email,
-                    file.projectId,
-                  ]),
+                  name: getQuotaPrivacyDisplayName(file, false),
+                  message,
                 }),
-                'error'
+                'error',
+                undefined,
+                quotaNotificationPrivacy(file)
               );
             });
           } finally {

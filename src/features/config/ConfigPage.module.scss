@@ -14,8 +14,10 @@
   );
 }
 
-/* Source mode sizes its editor to the viewport; only the floating save bar needs a reserve. */
+/* Source mode fills the remaining viewport height (the editor region flexes into it); only
+ * the floating save bar needs a reserve. */
 .pageSource {
+  flex: 1 1 auto;
   padding-bottom: calc(var(--config-action-bar-height, 0px) + env(safe-area-inset-bottom, 0px));
 }
 

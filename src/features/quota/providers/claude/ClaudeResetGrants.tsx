@@ -1,4 +1,3 @@
-import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { getQuotaPrivacyDisplayName } from '@/utils/quota/identity';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +17,7 @@ import {
   ResetGrantPreflightError,
   resetGrantFailureMessageKey,
 } from './resetGrantOperations';
+import { quotaNotificationPrivacy } from '../../privacy';
 import { selectResetGrant } from './selectResetGrant';
 import { readResetGrantsForCard, scheduleResetGrantRead } from './resetGrantReads';
 
@@ -91,8 +91,9 @@ export function useClaudeResetGrants(
     showConfirmation({
       title: t('claude_reset.title'),
       message: t(pending ? 'claude_reset.retry_confirm' : 'claude_reset.confirm_text', {
-        name: getQuotaPrivacyDisplayName(file, usePrivacyStore.getState().enabled),
+        name: getQuotaPrivacyDisplayName(file, false),
       }),
+      ...quotaNotificationPrivacy(file),
       confirmText: t(pending ? 'claude_reset.retry' : 'claude_reset.confirm'),
       variant: 'primary',
       onConfirm: async () => {
@@ -106,13 +107,15 @@ export function useClaudeResetGrants(
           showNotification(
             answer.code === 'cooldown_clear_failed'
               ? t('auth_files.cooldown_reset_failed', {
-                  name: getQuotaPrivacyDisplayName(file, usePrivacyStore.getState().enabled),
+                  name: getQuotaPrivacyDisplayName(file, false),
                   message: t('common.unknown_error'),
                 })
               : t(`claude_reset.${answer.unresolved ? 'unknown' : answer.code}`),
             !answer.unresolved && (answer.code === 'reset' || answer.code === 'already_used')
               ? 'success'
-              : 'error'
+              : 'error',
+            undefined,
+            quotaNotificationPrivacy(file)
           );
         } catch (error: unknown) {
           if (!current()) return;

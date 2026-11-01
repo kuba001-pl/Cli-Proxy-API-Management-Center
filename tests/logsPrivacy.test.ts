@@ -2,11 +2,12 @@ import { describe, expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import {
   createLogDisplayCache,
+  logIdentities,
   privacyLogFileName,
   privacyLogText,
 } from '../src/features/logs/model/logPrivacy';
 import type { LogEntry } from '../src/features/logs/model/logSelectors';
-import { PRIVACY_MASK } from '../src/utils/privacy';
+import { PRIVACY_MASK, privacyText } from '../src/utils/privacy';
 
 describe('logs display privacy', () => {
   test('masks emails, labelled usernames and quoted account labels in free text', () => {
@@ -32,6 +33,15 @@ describe('logs display privacy', () => {
     expect(privacyLogText(true, 'retry credential alice@example.test.json')).toBe(
       `retry credential ${PRIVACY_MASK}.json`
     );
+  });
+
+  test('masks usernames in standalone credential-named error log files (C09)', () => {
+    expect(privacyLogFileName(true, 'codex-alice.log')).toBe(`codex-${PRIVACY_MASK}.log`);
+    expect(privacyLogFileName(true, 'claude-5aebc0bd-alice-plus.json')).toBe(
+      `claude-5aebc0bd-${PRIVACY_MASK}-plus.json`
+    );
+    expect(privacyLogFileName(true, 'codex-alice.txt')).not.toContain('alice');
+    expect(privacyLogFileName(false, 'codex-alice.log')).toBe('codex-alice.log');
   });
 
   test('keeps provider, hash and plan segments of credential file names in log lines', () => {
@@ -93,14 +103,19 @@ describe('logs display privacy', () => {
     expect(performance.now() - started).toBeLessThan(500);
   });
 
-  test('download-error toasts mask backend messages with the current privacy state', () => {
+  test('download-error toasts store raw messages plus log identities (C11)', () => {
     const source = readFileSync(
       new URL('../src/features/logs/LogsPage.tsx', import.meta.url),
       'utf8'
     );
     const handler = source.slice(source.indexOf('const downloadErrorLog'));
-    expect(handler.slice(0, handler.indexOf('const openErrorLog'))).toContain(
-      'privacyLogText(usePrivacyStore.getState().enabled, getErrorMessage(err)'
-    );
+    const body = handler.slice(0, handler.indexOf('const openErrorLog'));
+    expect(body).toContain('...logIdentities(name)');
+    expect(source).not.toContain('privacyLogText(usePrivacyStore.getState().enabled');
+    // The stored context lets the generic toast renderer redact the username later.
+    const message = 'cannot read codex-alice.log for username=alice';
+    const identities = [...logIdentities(message), ...logIdentities('codex-alice.log')];
+    const masked = privacyText(true, message, identities);
+    expect(masked).not.toContain('alice');
   });
 });

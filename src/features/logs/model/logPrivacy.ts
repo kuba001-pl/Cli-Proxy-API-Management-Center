@@ -112,7 +112,11 @@ export function privacyLogFileName(enabled: boolean, name: string): string {
   if (!enabled) return name;
   const extension = name.match(/\.(?:log|json|txt)$/i)?.[0] ?? '';
   const stem = extension ? name.slice(0, -extension.length) : name;
-  return privacyLogText(true, privacyFileName(true, stem, logIdentities(stem))) + extension;
+  // Derive identities from the complete name: the credential-token finder needs the extension,
+  // and the bare stem (`codex-alice`) is itself a credential name.
+  const stemIdentity = credentialIdentity(stem);
+  const identities = [...logIdentities(name), ...(stemIdentity ? [stemIdentity] : [])];
+  return privacyLogText(true, privacyFileName(true, stem, identities), identities) + extension;
 }
 
 /** Parsed entries are stable across polls. Weak keys release evicted/session rows. */

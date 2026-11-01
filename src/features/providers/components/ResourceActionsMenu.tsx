@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type FocusEvent,
   type KeyboardEvent,
   type ReactNode,
 } from 'react';
@@ -13,8 +14,16 @@ import { createPortal } from 'react-dom';
 import { IconEllipsis } from '@/components/ui/icons';
 import { resolveDropdownStyle } from '@/components/ui/selectPosition';
 import styles from './ResourceActionsMenu.module.scss';
+import {
+  resolveInitialFocusIndex,
+  resolveMenuKey,
+  resolveTriggerKey,
+  type MenuFocusTarget,
+  type MenuKeyAction,
+} from './resourceActionsMenuKeys';
 
 const MENU_MIN_WIDTH = 150;
+const HIDDEN_STYLE: CSSProperties = { position: 'fixed', visibility: 'hidden' };
 
 export interface ResourceActionsMenuItem {
   key: string;
@@ -30,20 +39,34 @@ interface ResourceActionsMenuProps {
   items: ResourceActionsMenuItem[];
 }
 
+const enabledItems = (menu: HTMLElement | null): HTMLButtonElement[] =>
+  Array.from(menu?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]:not(:disabled)') ?? []);
+
 /**
- * Row overflow menu (Figma: edit + ellipsis). Portaled with fixed positioning so the
- * horizontally scrolling table cannot clip it; keyboard: arrows/Home/End move, Escape closes.
+ * Row overflow menu (Figma: edit + ellipsis), WAI-ARIA menu-button pattern. Portaled with
+ * fixed positioning so the horizontally scrolling table cannot clip it. Trigger:
+ * Enter/Space/ArrowDown open on the first item, ArrowUp on the last. Menu: arrows/Home/End
+ * move, Escape closes and restores focus to the trigger, Tab closes and moves on.
  */
 export function ResourceActionsMenu({ label, items }: ResourceActionsMenuProps) {
   const [open, setOpen] = useState(false);
-  const [style, setStyle] = useState<CSSProperties>({ visibility: 'hidden' });
+  // null until the fixed position has been measured; the menu stays hidden until then.
+  const [placement, setPlacement] = useState<CSSProperties | null>(null);
+  const focusTargetRef = useRef<MenuFocusTarget>('first');
   const menuId = useId();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const positioned = placement !== null;
+
+  const openMenu = useCallback((focus: MenuFocusTarget) => {
+    focusTargetRef.current = focus;
+    setOpen(true);
+  }, []);
 
   const close = useCallback((restoreFocus: boolean) => {
-    setOpen(false);
     if (restoreFocus) buttonRef.current?.focus();
+    setOpen(false);
+    setPlacement(null);
   }, []);
 
   useLayoutEffect(() => {
@@ -57,7 +80,7 @@ export function ResourceActionsMenu({ label, items }: ResourceActionsMenuProps) 
         window.innerHeight,
         MENU_MIN_WIDTH
       );
-      setStyle({ ...next, width: MENU_MIN_WIDTH, maxHeight: undefined });
+      setPlacement({ ...next, width: MENU_MIN_WIDTH, maxHeight: undefined });
     };
     update();
     window.addEventListener('resize', update);
@@ -68,9 +91,18 @@ export function ResourceActionsMenu({ label, items }: ResourceActionsMenuProps) 
     };
   }, [open]);
 
+  // Move focus only once the visible position has committed (a hidden element cannot
+  // take focus), so this depends on `positioned`, not just `open`.
+  useLayoutEffect(() => {
+    if (!open || !positioned) return;
+    const buttons = enabledItems(menuRef.current);
+    const index = resolveInitialFocusIndex(focusTargetRef.current, buttons.length);
+    if (index >= 0) buttons[index].focus();
+    else menuRef.current?.focus();
+  }, [open, positioned]);
+
   useEffect(() => {
     if (!open) return;
-    menuRef.current?.querySelector<HTMLButtonElement>('button:not(:disabled)')?.focus();
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target as Node;
       if (menuRef.current?.contains(target) || buttonRef.current?.contains(target)) return;
@@ -80,25 +112,40 @@ export function ResourceActionsMenu({ label, items }: ResourceActionsMenuProps) 
     return () => document.removeEventListener('pointerdown', onPointerDown);
   }, [open, close]);
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Escape' || event.key === 'Tab') {
-      event.preventDefault();
-      close(true);
-      return;
+  const applyAction = (event: KeyboardEvent<HTMLElement>, action: MenuKeyAction | null) => {
+    if (!action) return;
+    if (action.preventDefault) event.preventDefault();
+    event.stopPropagation();
+    if (action.type === 'open') {
+      if (open) {
+        const buttons = enabledItems(menuRef.current);
+        const index = resolveInitialFocusIndex(action.focus, buttons.length);
+        if (index >= 0) buttons[index].focus();
+      } else {
+        openMenu(action.focus);
+      }
+    } else if (action.type === 'focus') {
+      enabledItems(menuRef.current)[action.index]?.focus();
+    } else {
+      close(action.restoreFocus);
     }
-    const buttons = Array.from(
-      menuRef.current?.querySelectorAll<HTMLButtonElement>('button:not(:disabled)') ?? []
-    );
-    if (buttons.length === 0) return;
+  };
+
+  const handleTriggerKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    applyAction(event, resolveTriggerKey(event.key, open));
+  };
+
+  const handleMenuKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const buttons = enabledItems(menuRef.current);
     const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
-    let next = -1;
-    if (event.key === 'ArrowDown') next = (index + 1) % buttons.length;
-    else if (event.key === 'ArrowUp') next = (index - 1 + buttons.length) % buttons.length;
-    else if (event.key === 'Home') next = 0;
-    else if (event.key === 'End') next = buttons.length - 1;
-    if (next < 0) return;
-    event.preventDefault();
-    buttons[next].focus();
+    applyAction(event, resolveMenuKey(event.key, index, buttons.length));
+  };
+
+  const handleMenuBlur = (event: FocusEvent<HTMLDivElement>) => {
+    const next = event.relatedTarget as Node | null;
+    if (!next) return;
+    if (menuRef.current?.contains(next) || buttonRef.current?.contains(next)) return;
+    close(false);
   };
 
   return (
@@ -112,9 +159,11 @@ export function ResourceActionsMenu({ label, items }: ResourceActionsMenuProps) 
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
+        onKeyDown={handleTriggerKeyDown}
         onClick={(event) => {
           event.stopPropagation();
-          setOpen((value) => !value);
+          if (open) close(false);
+          else openMenu('first');
         }}
       >
         <IconEllipsis size={16} />
@@ -126,9 +175,11 @@ export function ResourceActionsMenu({ label, items }: ResourceActionsMenuProps) 
               id={menuId}
               role="menu"
               aria-label={label}
+              tabIndex={-1}
               className={styles.menu}
-              style={style}
-              onKeyDown={handleKeyDown}
+              style={placement ?? HIDDEN_STYLE}
+              onKeyDown={handleMenuKeyDown}
+              onBlur={handleMenuBlur}
               onClick={(event) => event.stopPropagation()}
             >
               {items.map((item) => (
@@ -136,6 +187,7 @@ export function ResourceActionsMenu({ label, items }: ResourceActionsMenuProps) 
                   key={item.key}
                   type="button"
                   role="menuitem"
+                  tabIndex={-1}
                   className={`${styles.item} ${item.danger ? styles.itemDanger : ''}`.trim()}
                   disabled={item.disabled}
                   onClick={() => {

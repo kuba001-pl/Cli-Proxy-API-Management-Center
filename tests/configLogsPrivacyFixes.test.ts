@@ -6,7 +6,12 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { PRIVACY_MASK } from '@/utils/privacy';
-import { privacyConfigLines, privacyConfigText } from '@/features/config/privacy';
+import {
+  configDocumentIdentities,
+  privacyConfigLines,
+  privacyConfigText,
+} from '@/features/config/privacy';
+import { parseAllDocuments, parseDocument } from 'yaml';
 import { privacyLogText } from '@/features/logs/model/logPrivacy';
 import { ExpandableInput } from '@/features/config/components/blocks/ExpandableInput';
 import { SectionConnectivity } from '@/features/config/components/sections/SectionConnectivity';
@@ -46,6 +51,26 @@ describe('config YAML privacy covers every scalar style (C10)', () => {
       expect(masked.split('\n')).toHaveLength(yaml.split('\n').length);
     });
   }
+
+  test('masks every line of valid multi-line plain, quoted and flow scalars (C10)', () => {
+    const docs = [
+      'username: alice\n  smith\nport: 1',
+      'username: "alice\n  smith"\nport: 1',
+      "username: 'alice\n  smith'\nport: 1",
+      'x: {username: "alice\n  smith", port: 1}',
+      'x: [{username: alice\n  smith}]\nport: 1',
+    ];
+    for (const yaml of docs) {
+      const parsed = parseDocument(yaml);
+      expect(parsed.errors).toHaveLength(0);
+      expect(JSON.stringify(parsed.toJS())).toContain('alice smith');
+      const masked = privacyConfigText(true, yaml);
+      expect(masked).not.toContain('alice');
+      expect(masked).not.toContain('smith');
+      expect(masked).toContain('port: 1');
+      expect(masked.split('\n')).toHaveLength(yaml.split('\n').length);
+    }
+  });
 
   test('keeps non-identity siblings, nested keys and comments readable', () => {
     const yaml = 'account:\n  id: 7\n  email: alice@example.test\nport: 8317\nlogin: x # note';
@@ -155,11 +180,40 @@ describe('log credential file names without email syntax (C09)', () => {
   });
 });
 
+describe('YAML parser diagnostics are redacted with whole-document context (C12)', () => {
+  test('a duplicate-key excerpt that omits the username header stays masked', () => {
+    const yaml = 'username: |\n  alice\nusername: |\n  bob\n';
+    const [document] = parseAllDocuments(yaml) as ReturnType<typeof parseDocument>[];
+    const message = document.errors[0].message;
+    expect(message).toContain('  alice');
+    // Without document context the excerpt leaks the first block-scalar body.
+    expect(privacyConfigText(true, message)).toContain('alice');
+    const masked = privacyConfigText(true, message, configDocumentIdentities(yaml));
+    expect(masked).not.toContain('alice');
+    expect(masked).toContain('Map keys must be unique');
+    expect(privacyConfigText(false, message, configDocumentIdentities(yaml))).toBe(message);
+  });
+
+  test('collects identity values from parsed and line-rule spans, not unrelated keys', () => {
+    const identities = configDocumentIdentities(
+      'username: alice\n  smith\nemail: "bob@example.test"\nport: 8317\nhost: example.test'
+    );
+    expect(identities).toEqual(expect.arrayContaining(['alice smith', 'alice', 'smith']));
+    expect(identities).toContain('bob@example.test');
+    expect(identities).not.toContain('8317');
+    expect(identities).not.toContain('example.test');
+  });
+});
+
 describe('config, routing and logs polish contracts', () => {
   test('config load and YAML parse errors are masked at render (C12)', () => {
     const page = source('src/features/config/ConfigPage.tsx');
     expect(page).toContain('privacyDisplayText(privacyEnabled, doc.error)');
-    expect(page).toContain('privacyConfigText(privacyEnabled, visualParseError)');
+    expect(page).toContain(
+      'privacyConfigText(privacyEnabled, visualParseError, parseErrorIdentities)'
+    );
+    expect(page).toContain('configDocumentIdentities(doc.content)');
+    expect(page).toContain('{ identities: parseErrorIdentities }');
   });
 
   test('save bar fits the content column at the desktop boundary (C14)', () => {

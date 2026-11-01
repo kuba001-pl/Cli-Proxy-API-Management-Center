@@ -67,20 +67,20 @@
 /* ---------- 编辑器面板 ---------- */
 
 /*
- * Fills the viewport below the page header (header ≈ 148px + bottom gutter 32px). The
- * privacy notice shares this height, so the editor shrinks instead of overflowing.
+ * Takes whatever height the page leaves below the (possibly wrapping) header via flex, so no
+ * chrome height is assumed. A zero flex basis keeps CodeMirror's content height from pushing
+ * the page taller; the privacy notice shares this region, so the editor shrinks instead.
  */
 .sourceRegion {
   display: flex;
+  flex: 1 1 0;
   flex-direction: column;
   gap: 8px;
   width: 100%;
   min-width: 0;
-  height: max(420px, calc(100vh - 180px));
-
-  @supports (height: 100dvh) {
-    height: max(420px, calc(100dvh - 180px));
-  }
+  min-height: 420px;
+  /* Figma 68:5779 leaves a 32px bottom gutter; the shell reserves 40px. */
+  margin-bottom: -8px;
 }
 
 .privacyNotice {
@@ -203,6 +203,7 @@
   }
 
   .sourceRegion {
-    height: max(360px, calc(100dvh - 260px));
+    min-height: 360px;
+    margin-bottom: 0;
   }
 }
