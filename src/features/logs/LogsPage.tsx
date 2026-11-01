@@ -13,6 +13,8 @@ import {
   IconCode,
   IconDownload,
   IconEye,
+  IconFileText,
+  IconExternalLink,
   IconEyeOff,
   IconMaximize2,
   IconMinimize2,
@@ -25,7 +27,7 @@ import {
 } from '@/components/ui/icons';
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { useAuthStore, useConfigStore, useNotificationStore } from '@/stores';
+import { useAuthStore, useConfigStore, useNotificationStore, usePrivacyStore } from '@/stores';
 import { logsApi, responseDataToText, type ErrorLogFile } from '@/services/api/logs';
 import { INITIAL_VISIBLE_LINES } from './model/logBuffer';
 import { useLogStream } from './hooks/useLogStream';
@@ -38,6 +40,7 @@ import {
   filterLogEntries,
 } from '@/features/logs/model/logSelectors';
 import { Select } from '@/components/ui/Select';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { formatUnixTimestamp } from '@/utils/format';
 import { MANAGEMENT_API_PREFIX } from '@/utils/constants';
 import { HTTP_METHODS, STATUS_GROUPS, type LogState } from './model/logTypes';
@@ -46,6 +49,12 @@ import { errorLogViewerReducer } from './model/errorLogViewer';
 import { shouldExitLogFullscreen } from './model/logFullscreen';
 import { useLogFilters } from './hooks/useLogFilters';
 import { isNearBottom, useLogScroller } from './hooks/useLogScroller';
+import {
+  createLogDisplayCache,
+  logIdentities,
+  privacyLogFileName,
+  privacyLogText,
+} from './model/logPrivacy';
 import styles from './LogsPage.module.scss';
 
 const INITIAL_DISPLAY_LINES = INITIAL_VISIBLE_LINES;
@@ -55,6 +64,8 @@ type TabType = 'logs' | 'errors';
 export function LogsPage() {
   const { t } = useTranslation();
   const { showNotification } = useNotificationStore();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
+  const [displayLogLine] = useState(createLogDisplayCache);
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
   const apiBase = useAuthStore((state) => state.apiBase);
   const managementKey = useAuthStore((state) => state.managementKey);
@@ -72,12 +83,31 @@ export function LogsPage() {
   const [wrapLogs, setWrapLogs] = useLocalStorage('logsPage.wrapLogs', false);
   const [structuredFiltersExpanded, setStructuredFiltersExpanded] = useState(false);
   const [errorLogs, setErrorLogs] = useState<ErrorLogFile[]>([]);
+  const errorLogNames = useMemo(
+    () =>
+      new Map(errorLogs.map((item) => [item.name, privacyLogFileName(privacyEnabled, item.name)])),
+    [errorLogs, privacyEnabled]
+  );
   const [loadingErrors, setLoadingErrors] = useState(false);
   const [errorLogsError, setErrorLogsError] = useState('');
   const [errorLogViewer, dispatchErrorLogViewer] = useReducer(errorLogViewerReducer, {
     status: 'closed',
   });
   const selectedErrorLog = errorLogViewer.status === 'closed' ? null : errorLogViewer.item;
+  const errorLogDisplay = useMemo(
+    () => ({
+      name: selectedErrorLog ? privacyLogFileName(privacyEnabled, selectedErrorLog.name) : '',
+      content: privacyLogText(
+        privacyEnabled,
+        errorLogViewer.status === 'ready' ? errorLogViewer.text : ''
+      ),
+      error: privacyLogText(
+        privacyEnabled,
+        errorLogViewer.status === 'error' ? errorLogViewer.message : ''
+      ),
+    }),
+    [errorLogViewer, selectedErrorLog, privacyEnabled]
+  );
   const [viewerRequestId, setViewerRequestId] = useState<string | null>(null);
   const [requestLogDownloading, setRequestLogDownloading] = useState(false);
   const [fullscreenLogs, setFullscreenLogs] = useState(false);
@@ -158,10 +188,13 @@ export function LogsPage() {
       showNotification(t('logs.error_log_download_success'), 'success');
     } catch (err: unknown) {
       if (!requests.session.isCurrent(session)) return;
+      // Store the raw message plus log identities; the toast masks reactively at render time.
       const message = getErrorMessage(err);
       showNotification(
         `${t('notification.download_failed')}${message ? `: ${message}` : ''}`,
-        'error'
+        'error',
+        undefined,
+        { identities: [...logIdentities(message), ...logIdentities(name)] }
       );
     }
   };
@@ -367,10 +400,13 @@ export function LogsPage() {
       showNotification(t('logs.request_log_download_success'), 'success');
     } catch (err: unknown) {
       if (!requests.session.isCurrent(session)) return;
+      // Store the raw message plus log identities; the toast masks reactively at render time.
       const message = getErrorMessage(err);
       showNotification(
         `${t('notification.download_failed')}${message ? `: ${message}` : ''}`,
-        'error'
+        'error',
+        undefined,
+        { identities: logIdentities(message) }
       );
     } finally {
       if (requests.session.isCurrent(session)) setRequestLogDownloading(false);
@@ -400,28 +436,23 @@ export function LogsPage() {
   return (
     <div className={styles.container}>
       <header className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>{t('logs.title')}</h1>
-        <div className={styles.tabBar} role="group" aria-label={t('logs.title')}>
-          <button
-            type="button"
-            className={`${styles.tabItem} ${activeTab === 'logs' ? styles.tabActive : ''}`}
-            aria-pressed={activeTab === 'logs'}
-            onClick={() => setActiveTab('logs')}
-          >
-            {t('logs.log_content')}
-          </button>
-          <button
-            type="button"
-            className={`${styles.tabItem} ${activeTab === 'errors' ? styles.tabActive : ''}`}
-            aria-pressed={activeTab === 'errors'}
-            onClick={() => {
-              setFullscreenLogs(false);
-              setActiveTab('errors');
-            }}
-          >
-            {t('logs.error_logs_modal_title')}
-          </button>
+        <div className={styles.heading}>
+          <h1 className={styles.pageTitle}>{t('logs.title')}</h1>
+          <p className={styles.pageCaption}>{t('logs.caption')}</p>
         </div>
+        <SegmentedControl<TabType>
+          className={styles.tabBar}
+          ariaLabel={t('logs.title')}
+          value={activeTab}
+          onChange={(tab) => {
+            if (tab === 'errors') setFullscreenLogs(false);
+            setActiveTab(tab);
+          }}
+          options={[
+            { value: 'logs', label: t('logs.log_content') },
+            { value: 'errors', label: t('logs.error_logs_modal_title') },
+          ]}
+        />
       </header>
 
       <div className={styles.content}>
@@ -442,60 +473,9 @@ export function LogsPage() {
             )}
             {error && (
               <div className="error-box" role="alert">
-                {error}
+                {privacyLogText(privacyEnabled, error)}
               </div>
             )}
-            <footer className={styles.statusBar}>
-              <div
-                className={styles.readStatus}
-                role="status"
-                data-live={autoRefresh && !disableControls}
-              >
-                <span className={styles.statusDot} aria-hidden="true" />
-                {t(
-                  catchingUp && autoRefresh
-                    ? 'logs.read_status_catching_up'
-                    : autoRefresh
-                      ? 'logs.read_status_live'
-                      : 'logs.read_status_paused'
-                )}
-                {lastUpdated && (
-                  <>
-                    {' '}
-                    · {t('logs.last_updated', { time: new Date(lastUpdated).toLocaleTimeString() })}
-                  </>
-                )}
-              </div>
-              <div className={styles.bufferStatus}>
-                {t('logs.buffer_scope', {
-                  count: logBuffer.buffer.length,
-                  matched: filteredLines.length,
-                })}
-              </div>
-            </footer>
-            <div className={styles.notices}>
-              {wasReset && (
-                <div className="hint" role="status">
-                  {t('logs.cursor_reset_notice')}
-                </div>
-              )}
-              {historyEvicted && (
-                <div className="hint" role="status">
-                  {t('logs.history_evicted')}
-                </div>
-              )}
-            </div>
-            {!isFollowing && (
-              <Button
-                className={styles.followButton}
-                variant="secondary"
-                size="sm"
-                onClick={resumeFollowing}
-              >
-                {t('logs.resume_following', { count: pendingLines })}
-              </Button>
-            )}
-
             <div className={styles.filters}>
               <div className={styles.searchWrapper}>
                 <Input
@@ -504,6 +484,7 @@ export function LogsPage() {
                   placeholder={t('logs.search_placeholder')}
                   aria-label={t('logs.search_placeholder')}
                   className={styles.searchInput}
+                  leftElement={<IconSearch size={16} className={styles.searchIcon} />}
                   rightElement={
                     searchQuery ? (
                       <button
@@ -515,9 +496,7 @@ export function LogsPage() {
                       >
                         <IconX size={16} />
                       </button>
-                    ) : (
-                      <IconSearch size={16} className={styles.searchIcon} />
-                    )
+                    ) : undefined
                   }
                 />
               </div>
@@ -527,6 +506,7 @@ export function LogsPage() {
                 fullWidth={false}
                 value={levelFilter}
                 onChange={setLevelFilter}
+                size="sm"
                 ariaLabel={t('logs.level_filter')}
                 options={[
                   { value: '', label: t('logs.all_levels') },
@@ -544,6 +524,7 @@ export function LogsPage() {
                   className={styles.filterPanelToggle}
                   onClick={() => setStructuredFiltersExpanded((prev) => !prev)}
                   aria-haspopup="dialog"
+                  aria-expanded={structuredFiltersExpanded}
                   aria-label={t('logs.filter_panel_title')}
                   title={t('logs.filter_panel_title')}
                 >
@@ -630,9 +611,9 @@ export function LogsPage() {
                               className={`${styles.filterChip} ${active ? styles.filterChipActive : ''}`}
                               onClick={() => filters.togglePathFilter(path)}
                               aria-pressed={active}
-                              title={path}
+                              title={privacyLogText(privacyEnabled, path)}
                             >
-                              {path} ({count})
+                              {privacyLogText(privacyEnabled, path)} ({count})
                             </button>
                           );
                         })
@@ -752,6 +733,29 @@ export function LogsPage() {
             </div>
 
             <div className={styles.viewerArea}>
+              <div className={styles.notices}>
+                {wasReset && (
+                  <div className="hint" role="status">
+                    {t('logs.cursor_reset_notice')}
+                  </div>
+                )}
+                {historyEvicted && (
+                  <div className="hint" role="status">
+                    {t('logs.history_evicted')}
+                  </div>
+                )}
+              </div>
+              {!isFollowing && (
+                <Button
+                  className={styles.followButton}
+                  variant="secondary"
+                  size="sm"
+                  onClick={resumeFollowing}
+                >
+                  {t('logs.resume_following', { count: pendingLines })}
+                </Button>
+              )}
+
               {loading && logBuffer.buffer.length === 0 ? (
                 <div className="hint">{t('logs.loading')}</div>
               ) : logBuffer.buffer.length > 0 && filteredLines.length > 0 ? (
@@ -798,13 +802,14 @@ export function LogsPage() {
                     <pre className={styles.rawLog} spellCheck={false}>
                       {parsedVisibleLines.map((line) => (
                         <span key={line.id} data-log-id={line.id} style={{ display: 'block' }}>
-                          {line.raw || '\u00a0'}
+                          {displayLogLine(line, privacyEnabled).raw || '\u00a0'}
                         </span>
                       ))}
                     </pre>
                   ) : (
                     <div className={styles.logList}>
                       {parsedVisibleLines.map((line) => {
+                        const display = displayLogLine(line, privacyEnabled);
                         const rowClassNames = [styles.logRow];
                         if (line.level === 'warn') rowClassNames.push(styles.rowWarn);
                         if (line.level === 'error' || line.level === 'fatal')
@@ -822,7 +827,7 @@ export function LogsPage() {
                             })}
                           >
                             <div className={styles.timestamp}>{line.timestamp || ''}</div>
-                            <div className={styles.rowMain}>
+                            <div className={styles.level}>
                               {line.level && (
                                 <span
                                   className={[
@@ -841,30 +846,8 @@ export function LogsPage() {
                                   {line.level.toUpperCase()}
                                 </span>
                               )}
-
-                              {line.source && (
-                                <span className={styles.source} title={line.source}>
-                                  {line.source}
-                                </span>
-                              )}
-
-                              {line.requestId && (
-                                <button
-                                  type="button"
-                                  className={[styles.badge, styles.requestIdBadge].join(' ')}
-                                  title={t('logs.view_request', { id: line.requestId })}
-                                  aria-label={t('logs.view_request', { id: line.requestId })}
-                                  onClick={() =>
-                                    void openErrorLog(
-                                      { name: `request-${line.requestId}.log` },
-                                      line.requestId
-                                    )
-                                  }
-                                >
-                                  {line.requestId}
-                                </button>
-                              )}
-
+                            </div>
+                            <div className={styles.rowMain}>
                               {typeof line.statusCode === 'number' && (
                                 <span
                                   className={[
@@ -883,8 +866,9 @@ export function LogsPage() {
                                 </span>
                               )}
 
-                              {line.latency && <span className={styles.pill}>{line.latency}</span>}
-                              {line.ip && <span className={styles.pill}>{line.ip}</span>}
+                              {line.latency && (
+                                <span className={styles.latency}>{line.latency}</span>
+                              )}
 
                               {line.method && (
                                 <span className={[styles.badge, styles.methodBadge].join(' ')}>
@@ -893,14 +877,45 @@ export function LogsPage() {
                               )}
 
                               {line.path && (
-                                <span className={styles.path} title={line.path}>
-                                  {line.path}
+                                <span className={styles.path} title={display.path}>
+                                  {display.path}
                                 </span>
                               )}
 
                               {line.message && (
-                                <span className={styles.message}>{line.message}</span>
+                                <span className={styles.message} title={display.message}>
+                                  {display.message}
+                                </span>
                               )}
+                              {line.source && (
+                                <span className={styles.source} title={display.source}>
+                                  {display.source}
+                                </span>
+                              )}
+
+                              {line.ip && (
+                                <span className={styles.pill} title={display.ip}>
+                                  {display.ip}
+                                </span>
+                              )}
+                              {line.requestId && (
+                                <button
+                                  type="button"
+                                  className={[styles.badge, styles.requestIdBadge].join(' ')}
+                                  title={t('logs.view_request', { id: display.requestId })}
+                                  aria-label={t('logs.view_request', { id: display.requestId })}
+                                  onClick={() =>
+                                    void openErrorLog(
+                                      { name: `request-${line.requestId}.log` },
+                                      line.requestId
+                                    )
+                                  }
+                                >
+                                  {display.requestId}
+                                  <IconExternalLink size={12} />
+                                </button>
+                              )}
+
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -939,92 +954,150 @@ export function LogsPage() {
               ) : (
                 <EmptyState title={t('logs.empty_title')} description={t('logs.empty_desc')} />
               )}
+              <footer className={styles.statusBar}>
+                <div
+                  className={styles.readStatus}
+                  role="status"
+                  data-live={autoRefresh && !disableControls}
+                >
+                  <span className={styles.statusDot} aria-hidden="true" />
+                  {t(
+                    catchingUp && autoRefresh
+                      ? 'logs.read_status_catching_up'
+                      : autoRefresh
+                        ? 'logs.read_status_live'
+                        : 'logs.read_status_paused'
+                  )}
+                  {lastUpdated && (
+                    <>
+                      {' '}
+                      ·{' '}
+                      {t('logs.last_updated', { time: new Date(lastUpdated).toLocaleTimeString() })}
+                    </>
+                  )}
+                </div>
+                <div className={styles.bufferStatus}>
+                  {t('logs.buffer_scope', {
+                    count: logBuffer.buffer.length,
+                    matched: filteredLines.length,
+                  })}
+                </div>
+              </footer>
             </div>
           </Card>
         )}
 
         {activeTab === 'errors' && (
-          <Card
-            className={styles.errorCard}
-            title={t('logs.error_logs_modal_title')}
-            extra={
+          <section className={styles.errorCard} aria-label={t('logs.error_logs_modal_title')}>
+            <div className={styles.errorToolbar}>
+              <p className={styles.errorDescription}>{t('logs.error_logs_description')}</p>
               <Button
-                variant="secondary"
+                variant="ghost"
                 size="sm"
                 onClick={loadErrorLogs}
                 loading={loadingErrors}
                 disabled={disableControls}
+                className={styles.actionButton}
+                title={t('common.refresh')}
+                aria-label={t('common.refresh')}
               >
-                {t('common.refresh')}
+                <IconRefreshCw size={16} />
               </Button>
-            }
-          >
-            <div className={styles.errorBody}>
-              <div className="hint">{t('logs.error_logs_description')}</div>
-
-              {requestLogEnabled && (
-                <div>
-                  <div className="status-badge warning">
-                    {t('logs.error_logs_request_log_enabled')}
-                  </div>
-                </div>
-              )}
-
-              {errorLogsError && <div className="error-box">{errorLogsError}</div>}
-
-              <div className={styles.errorPanel}>
-                {loadingErrors ? (
-                  <div className="hint">{t('common.loading')}</div>
-                ) : errorLogs.length === 0 ? (
-                  <div className="hint">{t('logs.error_logs_empty')}</div>
-                ) : (
-                  <div className="item-list">
-                    {errorLogs.map((item) => (
-                      <div key={item.name} className="item-row">
-                        <div className="item-meta">
-                          <div className="item-title">{item.name}</div>
-                          <div className="item-subtitle">
-                            {item.size ? `${(item.size / 1024).toFixed(1)} KB` : ''}{' '}
-                            {item.modified ? formatUnixTimestamp(item.modified) : ''}
-                          </div>
-                        </div>
-                        <div className="item-actions">
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => {
-                              void openErrorLog(item);
-                            }}
-                            disabled={disableControls}
-                          >
-                            <span className={styles.buttonContent}>
-                              <IconEye size={16} />
-                              {t('logs.error_logs_open')}
+            </div>
+            {requestLogEnabled && (
+              <div className={styles.archiveNotice} role="status">
+                {t('logs.error_logs_request_log_enabled')}
+              </div>
+            )}
+            {errorLogsError && (
+              <div className="error-box" role="alert">
+                {privacyLogText(privacyEnabled, errorLogsError)}
+              </div>
+            )}
+            <div className={styles.errorPanel} aria-busy={loadingErrors}>
+              <div className={styles.errorTableSurface}>
+                <table className={styles.errorTable}>
+                  <thead>
+                    <tr>
+                      <th scope="col">{t('logs.error_logs_file')}</th>
+                      <th scope="col" className={styles.fileSize}>
+                        {t('logs.error_logs_size')}
+                      </th>
+                      <th scope="col">{t('logs.error_logs_modified')}</th>
+                      <th scope="col">
+                        <span className={styles.srOnly}>{t('logs.error_logs_actions')}</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loadingErrors ? (
+                      <tr>
+                        <td colSpan={4} className={styles.tableEmpty} role="status">
+                          {t('common.loading')}
+                        </td>
+                      </tr>
+                    ) : errorLogs.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className={styles.tableEmpty}>
+                          <EmptyState title={t('logs.error_logs_empty')} />
+                        </td>
+                      </tr>
+                    ) : (
+                      errorLogs.map((item) => (
+                        <tr key={item.name}>
+                          <td className={styles.fileName}>
+                            <span className={styles.fileNameContent}>
+                              <IconFileText size={16} aria-hidden="true" />
+                              <span title={errorLogNames.get(item.name)}>
+                                {errorLogNames.get(item.name)}
+                              </span>
                             </span>
-                          </Button>
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => downloadErrorLog(item.name)}
-                            disabled={disableControls}
-                          >
-                            {t('logs.error_logs_download')}
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                          </td>
+                          <td className={styles.fileSize}>
+                            {typeof item.size === 'number'
+                              ? `${(item.size / 1024).toFixed(1)} KB`
+                              : '—'}
+                          </td>
+                          <td className={styles.fileModified}>
+                            {item.modified ? formatUnixTimestamp(item.modified) : '—'}
+                          </td>
+                          <td>
+                            <div className={styles.fileActions}>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => void openErrorLog(item)}
+                                disabled={disableControls}
+                              >
+                                <IconEye size={16} />
+                                {t('logs.error_logs_open')}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => downloadErrorLog(item.name)}
+                                disabled={disableControls}
+                              >
+                                <IconDownload size={16} />
+                                {t('logs.error_logs_download')}
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
-          </Card>
+          </section>
         )}
       </div>
 
       <Modal
         open={errorLogViewer.status !== 'closed'}
         onClose={closeErrorLogViewer}
-        title={selectedErrorLog?.name ?? t('logs.error_log_view_title')}
+        title={errorLogDisplay.name || t('logs.error_log_view_title')}
         width={960}
         footer={
           <>
@@ -1067,13 +1140,13 @@ export function LogsPage() {
             </div>
           )}
           {errorLogViewer.status === 'error' && (
-            <div className="error-box">{errorLogViewer.message}</div>
+            <div className="error-box">{errorLogDisplay.error}</div>
           )}
           {errorLogViewer.status === 'loading' && <div className="hint">{t('common.loading')}</div>}
           {errorLogViewer.status === 'ready' &&
             (errorLogViewer.text ? (
               <pre className={styles.errorLogContent} spellCheck={false}>
-                {errorLogViewer.text}
+                {errorLogDisplay.content}
               </pre>
             ) : (
               <div className="hint">{t('logs.error_log_empty_content')}</div>

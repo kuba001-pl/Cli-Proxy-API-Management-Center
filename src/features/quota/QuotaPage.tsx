@@ -8,21 +8,24 @@
  * - useHeaderRefresh 单槽位：本页唯一注册者，全局刷新 = 重取文件列表。
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { authFilesApi } from '@/services/api';
 import { Button } from '@/components/ui/Button';
-import { EmptyState } from '@/components/ui/EmptyState';
-import { IconSearch, IconX } from '@/components/ui/icons';
+import { IconAlertTriangle, IconInbox, IconSearch, IconX } from '@/components/ui/icons';
 import { Select } from '@/components/ui/Select';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { useNow } from '@/hooks/useNow';
 import { useRevealGroup } from '@/hooks/motion';
 import { useAuthStore, useQuotaStore, useThemeStore } from '@/stores';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyText } from '@/utils/privacy';
 import type { AuthFileItem, ResolvedTheme } from '@/types';
 import { getQuotaCacheKey } from '@/utils/quota/identity';
+import { quotaListErrorIdentities } from './privacy';
 import { ProviderTabs } from '@/features/authFiles/components/ProviderTabs';
+import { QuotaProviderHeading, QuotaSummary, UpcomingResets } from './components/QuotaOverview';
 import { QuotaHeader } from './components/QuotaHeader';
 import { QuotaCard } from './components/QuotaCard';
 import { QuotaTimeline } from './components/QuotaTimeline';
@@ -321,7 +324,12 @@ export function QuotaPage() {
 
   /* ---------- 渲染 ---------- */
 
-  const isEmpty = !loading && filteredEntries.length === 0;
+  // A failed list read proves nothing about emptiness: show only the error view.
+  const listFailed = !loading && Boolean(error);
+  const isEmpty = !loading && !error && filteredEntries.length === 0;
+  const searching = Boolean(search.trim());
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
+  const errorText = privacyText(privacyEnabled, error, quotaListErrorIdentities(files));
 
   return (
     <div className={styles.page} ref={revealRef}>
@@ -332,6 +340,7 @@ export function QuotaPage() {
         refreshing={loading || batchLoading}
         disableControls={disableControls}
         onRefreshAll={handleRefreshAll}
+        countsUnavailable={!loading && Boolean(error)}
       />
 
       <section className={styles.workbench}>
@@ -384,65 +393,85 @@ export function QuotaPage() {
           </div>
         </div>
 
-        {error && (
+        {listFailed && (
           <div className={styles.errorBanner} role="alert">
-            {error}
+            <IconAlertTriangle size={16} aria-hidden="true" className={styles.errorIcon} />
+            <span className={styles.errorText}>{errorText}</span>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => void loadFiles()}
+              disabled={disableControls}
+            >
+              {t('quota_management.retry')}
+            </Button>
           </div>
         )}
 
-        {loading ? (
+        {!loading && !error && (
+          <QuotaSummary entries={pageItems} quotaFor={getQuota} resolvedTheme={resolvedTheme} />
+        )}
+
+        {listFailed ? null : loading ? (
           <div className={styles.grid} aria-hidden="true">
             {Array.from({ length: SKELETON_CARD_COUNT }, (_, index) => (
-              <Skeleton key={index} height={168} rounded={14} />
+              <Skeleton key={index} height={84} rounded={0} />
             ))}
           </div>
         ) : isEmpty ? (
-          <EmptyState
-            title={
-              search.trim()
+          <div className={styles.emptyState} role="status">
+            <span className={styles.emptyIcon} aria-hidden="true">
+              {searching ? <IconSearch size={16} /> : <IconInbox size={16} />}
+            </span>
+            <p className={styles.emptyTitle}>
+              {searching
                 ? t('quota_management.search_empty_title')
                 : tab === 'all'
                   ? t('quota_management.empty_title')
-                  : t(`${QUOTA_ADAPTERS[tab].i18nPrefix}.empty_title`)
-            }
-            description={
-              search.trim()
-                ? t('quota_management.search_empty_desc')
-                : tab === 'all'
-                  ? t('quota_management.empty_desc')
-                  : t(`${QUOTA_ADAPTERS[tab].i18nPrefix}.empty_desc`)
-            }
-            action={
-              search.trim() ? (
-                <Button variant="secondary" size="sm" onClick={() => handleSearchChange('')}>
-                  {t('quota_management.search_clear')}
-                </Button>
-              ) : tab === 'all' ? undefined : (
-                <Button variant="secondary" size="sm" onClick={() => handleTabChange('all')}>
-                  {t('auth_files.filter_all')}
-                </Button>
-              )
-            }
-          />
+                  : t(`${QUOTA_ADAPTERS[tab].i18nPrefix}.empty_title`)}
+            </p>
+            {searching ? (
+              <Button variant="ghost" size="sm" onClick={() => handleSearchChange('')}>
+                {t('quota_management.search_clear')}
+              </Button>
+            ) : tab === 'all' ? (
+              <p className={styles.emptyDesc}>{t('quota_management.empty_desc')}</p>
+            ) : (
+              <Button variant="ghost" size="sm" onClick={() => handleTabChange('all')}>
+                {t('auth_files.filter_all')}
+              </Button>
+            )}
+          </div>
         ) : (
           <div className={styles.grid}>
             {pageItems.map((entry, index) => (
-              <QuotaCard
-                key={`${entry.type}:${getQuotaCacheKey(entry.file)}`}
-                entry={entry}
-                quota={getQuota(entry)}
-                resolvedTheme={resolvedTheme}
-                canRefresh={canUseActions && !entry.file.disabled}
-                resetting={resettingQuotaName === getQuotaCacheKey(entry.file)}
-                entranceDelayMs={cardEntranceDelay(index)}
-                onRefresh={() => void refreshQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
-                onReset={() => resetQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
-              />
+              <Fragment key={`${entry.type}:${getQuotaCacheKey(entry.file)}`}>
+                {(index === 0 || pageItems[index - 1].type !== entry.type) && (
+                  <div className={styles.providerHeading}>
+                    <QuotaProviderHeading
+                      type={entry.type}
+                      resolvedTheme={resolvedTheme}
+                      count={pageItems.filter((item) => item.type === entry.type).length}
+                    />
+                  </div>
+                )}
+                <QuotaCard
+                  key={`${entry.type}:${getQuotaCacheKey(entry.file)}`}
+                  entry={entry}
+                  quota={getQuota(entry)}
+                  resolvedTheme={resolvedTheme}
+                  canRefresh={canUseActions && !entry.file.disabled}
+                  resetting={resettingQuotaName === getQuotaCacheKey(entry.file)}
+                  entranceDelayMs={cardEntranceDelay(index)}
+                  onRefresh={() => void refreshQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
+                  onReset={() => resetQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
+                />
+              </Fragment>
             ))}
           </div>
         )}
 
-        {!loading && filteredEntries.length > QUOTA_PAGE_SIZE && (
+        {!loading && !listFailed && filteredEntries.length > QUOTA_PAGE_SIZE && (
           <div className={styles.pagination}>
             <Button
               variant="secondary"
@@ -470,13 +499,18 @@ export function QuotaPage() {
           </div>
         )}
 
-        {/* 时间线只比较当前页凭证，避免大量凭证一次性生成无界泳道。 */}
-        <QuotaTimeline
-          entries={pageItems}
-          quotaFor={getQuota}
-          displayNameFor={displayNameFor}
-          resolvedTheme={resolvedTheme}
-        />
+        {!listFailed && (
+          <>
+            <UpcomingResets entries={pageItems} quotaFor={getQuota} resolvedTheme={resolvedTheme} />
+            <QuotaTimeline
+              entries={pageItems}
+              quotaFor={getQuota}
+              displayNameFor={displayNameFor}
+              resolvedTheme={resolvedTheme}
+              collapsible
+            />
+          </>
+        )}
       </section>
     </div>
   );

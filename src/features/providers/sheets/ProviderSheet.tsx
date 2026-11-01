@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/Button';
 import { useCallback, useEffect, useId, useImperativeHandle, useState, type Ref } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Sheet } from '@/components/ui/Sheet';
@@ -175,14 +176,18 @@ export function ProviderSheet({
     state.mode === 'detail' ? (
       state.resource ? (
         <>
-          <button
+          <Button
+            size="sm"
+            variant="ghost"
             type="button"
             className={`${styles.footerBtn} ${styles.footerBtnGhost}`}
             onClick={onClose}
           >
             {t('providersPage.actions.cancel')}
-          </button>
-          <button
+          </Button>
+          <Button
+            size="sm"
+            variant="primary"
             type="button"
             className={`${styles.footerBtn} ${styles.footerBtnPrimary}`}
             onClick={onSwitchToEdit}
@@ -190,28 +195,34 @@ export function ProviderSheet({
           >
             <IconPencil size={14} />
             {t('providersPage.actions.edit')}
-          </button>
+          </Button>
         </>
       ) : (
-        <button
+        <Button
+          size="sm"
+          variant="primary"
           type="button"
           className={`${styles.footerBtn} ${styles.footerBtnPrimary}`}
           onClick={onClose}
         >
           {t('providersPage.actions.cancel')}
-        </button>
+        </Button>
       )
     ) : (
       <>
-        <button
+        <Button
+          size="sm"
+          variant="ghost"
           type="button"
           className={`${styles.footerBtn} ${styles.footerBtnGhost}`}
           onClick={handleCancelClick}
           disabled={submitting}
         >
           {t('providersPage.actions.cancel')}
-        </button>
-        <button
+        </Button>
+        <Button
+          size="sm"
+          variant="primary"
           type="submit"
           form={formId}
           className={`${styles.footerBtn} ${styles.footerBtnPrimary}`}
@@ -221,7 +232,7 @@ export function ProviderSheet({
           {state.mode === 'create'
             ? t('providersPage.actions.create')
             : t('providersPage.actions.save')}
-        </button>
+        </Button>
       </>
     );
 
@@ -238,20 +249,14 @@ export function ProviderSheet({
             : t('providersPage.form.editEyebrow')
       }
       title={titleText}
-      description={t('providersPage.table.description', {
-        route:
-          state.brand === 'openaiCompatibility'
-            ? '/ai-providers/openai'
-            : state.brand === 'apikeyFun'
-              ? '/quick-start'
-              : state.brand === 'fennoAI'
-                ? '/ai-providers/fennoai'
-                : state.brand === 'qiniuCloud'
-                  ? '/ai-providers/qiniu'
-                  : state.brand === 'kimi'
-                    ? '/ai-providers/kimi'
-                    : `/ai-providers/${state.brand}`,
-      })}
+      description={t(
+        state.mode === 'detail'
+          ? 'providersPage.form.sheetDescriptionDetail'
+          : state.mode === 'create'
+            ? 'providersPage.form.sheetDescriptionCreate'
+            : 'providersPage.form.sheetDescriptionEdit',
+        { provider: t(`providersPage.providerNames.${state.brand}`) }
+      )}
       footer={footer}
       closeDisabled={submitting}
       confirmClose={confirmDiscardIfDirty}

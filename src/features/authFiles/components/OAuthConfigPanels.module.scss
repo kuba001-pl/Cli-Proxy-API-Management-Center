@@ -9,10 +9,11 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: clamp(16px, 2vw, 20px);
-  border-radius: 16px;
+  padding: 20px;
+  border-radius: 12px;
   border: 1px solid var(--border-color);
-  background: color-mix(in srgb, var(--bg-primary) 82%, transparent);
+  background: var(--bg-surface);
+  border-color: var(--border-default);
 }
 
 .panelHead {
@@ -25,10 +26,11 @@
 
 .panelTitle {
   margin: 0;
-  font-size: 15px;
-  font-weight: 650;
+  font-size: 14px;
+  font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--text-primary);
+  line-height: 20px;
 }
 
 .panelExtra {
@@ -43,18 +45,6 @@
   flex-direction: column;
   gap: 8px;
   min-width: 0;
-}
-
-/* ---------- 视图切换（列表/图谱） ---------- */
-
-.viewModeSwitch {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 2px;
-  border-radius: $radius-md;
-  border: 1px solid var(--border-color);
-  background: var(--bg-secondary);
 }
 
 /* ---------- provider 行 ---------- */
@@ -165,4 +155,17 @@
   .panel :global(.btn:active:not(:disabled)) {
     transform: none;
   }
+}
+
+.panelBody > :global(.empty-state) {
+  border: 1px dashed var(--border-subtle);
+  border-radius: 8px;
+  padding: 20px 16px;
+}
+
+.panelBody :global(.empty-title) {
+  color: var(--text-tertiary);
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 400;
 }

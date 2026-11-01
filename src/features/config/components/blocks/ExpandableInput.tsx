@@ -1,5 +1,6 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import styles from './Blocks.module.scss';
 
 /** Minimum character count before the expand/collapse toggle appears. */
@@ -12,6 +13,7 @@ export function ExpandableInput({
   ariaLabel,
   disabled,
   className,
+  privacySensitive = false,
   onChange,
 }: {
   value: string;
@@ -19,10 +21,17 @@ export function ExpandableInput({
   ariaLabel?: string;
   disabled?: boolean;
   className?: string;
+  /**
+   * The value may carry personal data. In privacy mode it renders as a single-line
+   * password input (no expand, no reveal); the real value is still edited in place.
+   */
+  privacySensitive?: boolean;
   onChange: (nextValue: string) => void;
 }) {
   const { t } = useTranslation();
-  const [collapsed, setCollapsed] = useState(true);
+  const conceal = usePrivacyStore((state) => privacySensitive && state.enabled);
+  const [collapsedState, setCollapsed] = useState(true);
+  const collapsed = collapsedState || conceal;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const autoResize = useCallback((el: HTMLTextAreaElement) => {
@@ -52,13 +61,15 @@ export function ExpandableInput({
       <div className={styles.expandableInputWrapper}>
         <input
           className={`input ${className ?? ''}`}
+          type={conceal ? 'password' : 'text'}
+          autoComplete={conceal ? 'off' : undefined}
           placeholder={placeholder}
           aria-label={ariaLabel}
           value={value}
           onChange={(e) => onChange(e.target.value.replace(/[\r\n]/g, ''))}
           disabled={disabled}
         />
-        {value.length > EXPAND_THRESHOLD && (
+        {!conceal && value.length > EXPAND_THRESHOLD && (
           <button
             type="button"
             className={styles.expandableToggle}

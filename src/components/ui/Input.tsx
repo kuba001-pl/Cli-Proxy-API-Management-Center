@@ -4,14 +4,19 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   hint?: ReactNode;
   error?: string;
+  /** Decorative leading slot (e.g. a search glyph); rendered non-interactive. */
+  leftElement?: ReactNode;
   rightElement?: ReactNode;
+  mono?: boolean;
 }
 
 export function Input({
   label,
   hint,
   error,
+  leftElement,
   rightElement,
+  mono = false,
   className = '',
   id,
   ...rest
@@ -27,9 +32,16 @@ export function Input({
     <div className="form-group">
       {label && <label htmlFor={inputId}>{label}</label>}
       <div style={{ position: 'relative' }}>
+        {leftElement && (
+          <span className="input-leading" aria-hidden="true">
+            {leftElement}
+          </span>
+        )}
         <input
           id={inputId}
-          className={`input ${className}`.trim()}
+          className={['input', mono && 'input-mono', leftElement && 'input-has-leading', className]
+            .filter(Boolean)
+            .join(' ')}
           aria-invalid={Boolean(error) || rest['aria-invalid']}
           aria-describedby={describedBy}
           {...rest}

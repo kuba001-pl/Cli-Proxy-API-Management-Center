@@ -32,7 +32,10 @@ import { OAuthExcludedCard } from '@/features/authFiles/components/OAuthExcluded
 import { OAuthModelAliasCard } from '@/features/authFiles/components/OAuthModelAliasCard';
 import { ProviderTabs } from '@/features/authFiles/components/ProviderTabs';
 import { VaultHeader } from '@/features/authFiles/components/VaultHeader';
-import { VaultPulse } from '@/features/authFiles/components/VaultPulse';
+import { SelectionCheckbox } from '@/components/ui/SelectionCheckbox';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyFileName, privacyText } from '@/utils/privacy';
+import { authFilePrivacyIdentities } from './privacy';
 import { invalidateAuthFileDerivedCaches } from '@/features/authFiles/cacheInvalidation';
 import {
   buildWildcardSearch,
@@ -79,6 +82,7 @@ const normalizePersistedStatusFilterMode = (value: unknown): AuthFilesStatusFilt
 
 export function AuthFilesPage() {
   const { t } = useTranslation();
+  const privacy = usePrivacyStore((state) => state.enabled);
   const showNotification = useNotificationStore((state) => state.showNotification);
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
   const resolvedTheme: ResolvedTheme = useThemeStore((state) => state.resolvedTheme);
@@ -600,7 +604,11 @@ export function AuthFilesPage() {
         credentialRefreshDisabled={Object.keys(manualRefreshing).length > 0}
         onRefreshCredentials={handleRefreshAllCredentials}
       />
-      <AuthFileRefreshResults results={refreshResults} onClose={closeRefreshResults} />
+      <AuthFileRefreshResults
+        files={files}
+        results={refreshResults}
+        onClose={closeRefreshResults}
+      />
       <input
         ref={fileInputRef}
         type="file"
@@ -609,8 +617,6 @@ export function AuthFilesPage() {
         style={{ display: 'none' }}
         onChange={handleFileChange}
       />
-
-      <VaultPulse files={files} statusBarCache={statusBarCache} />
 
       <section className={styles.workbench} aria-label={t('auth_files.title_section')}>
         <ProviderTabs
@@ -660,14 +666,14 @@ export function AuthFilesPage() {
 
         {error && (
           <div className={styles.errorBanner} role="alert">
-            {error}
+            {privacyText(privacy, error, files.flatMap(authFilePrivacyIdentities))}
           </div>
         )}
 
         {loading ? (
           <div className={gridClasses} aria-hidden="true">
             {Array.from({ length: SKELETON_CARD_COUNT }, (_, index) => (
-              <Skeleton key={index} height={206} rounded={14} />
+              <Skeleton key={index} height={64} rounded={0} />
             ))}
           </div>
         ) : isFirstRunEmpty ? (
@@ -700,32 +706,57 @@ export function AuthFilesPage() {
             }
           />
         ) : (
-          <div className={gridClasses}>
-            {pageItems.map((file, index) => (
-              <AuthFileCard
-                key={getQuotaCacheKey(file)}
-                file={file}
-                compact={compactMode}
-                selected={selectedFiles.has(file.name)}
-                resolvedTheme={resolvedTheme}
-                disableControls={disableControls}
-                deleting={deleting}
-                statusUpdating={statusUpdating}
-                manualRefreshing={manualRefreshing}
-                cooldownResetting={cooldownResetting}
-                quotaFilterType={activeQuotaFilter}
-                statusBarCache={statusBarCache}
-                entranceDelayMs={cardEntranceDelay(index)}
-                onShowModels={showModels}
-                onDownload={handleDownload}
-                onManualRefresh={handleManualRefresh}
-                onCooldownReset={handleCooldownReset}
-                onOpenPrefixProxyEditor={openPrefixProxyEditor}
-                onDelete={handleDelete}
-                onToggleStatus={handleStatusToggle}
-                onToggleSelect={toggleSelect}
-              />
-            ))}
+          <div className={styles.listScroll}>
+            <div className={gridClasses}>
+              <div className={styles.tableHead}>
+                <div className={styles.accountColumn}>
+                  <SelectionCheckbox
+                    checked={
+                      selectablePageItems.length > 0 &&
+                      selectablePageItems.every((file) => selectedFiles.has(file.name))
+                    }
+                    onChange={() =>
+                      selectablePageItems.every((file) => selectedFiles.has(file.name))
+                        ? selectablePageItems.forEach((file) => toggleSelect(file.name))
+                        : selectAllVisible(pageItems)
+                    }
+                    ariaLabel={t('auth_files.batch_select_page')}
+                    disabled={disableControls || selectablePageItems.length === 0}
+                  />
+                  <span>{t('auth_files.account_column')}</span>
+                </div>
+                <span>{t('auth_files.plan_column')}</span>
+                <span>{t('auth_files.recent_requests_column')}</span>
+                <span>{t('auth_files.lowest_quota_column')}</span>
+                <span>{t('auth_files.status_toggle_label')}</span>
+                <span />
+              </div>
+              {pageItems.map((file, index) => (
+                <AuthFileCard
+                  key={getQuotaCacheKey(file)}
+                  file={file}
+                  compact={compactMode}
+                  selected={selectedFiles.has(file.name)}
+                  resolvedTheme={resolvedTheme}
+                  disableControls={disableControls}
+                  deleting={deleting}
+                  statusUpdating={statusUpdating}
+                  manualRefreshing={manualRefreshing}
+                  cooldownResetting={cooldownResetting}
+                  quotaFilterType={activeQuotaFilter}
+                  statusBarCache={statusBarCache}
+                  entranceDelayMs={cardEntranceDelay(index)}
+                  onShowModels={showModels}
+                  onDownload={handleDownload}
+                  onManualRefresh={handleManualRefresh}
+                  onCooldownReset={handleCooldownReset}
+                  onOpenPrefixProxyEditor={openPrefixProxyEditor}
+                  onDelete={handleDelete}
+                  onToggleStatus={handleStatusToggle}
+                  onToggleSelect={toggleSelect}
+                />
+              ))}
+            </div>
           </div>
         )}
 
@@ -790,7 +821,11 @@ export function AuthFilesPage() {
 
       <AuthFileModelsModal
         open={modelsModalOpen}
-        fileName={modelsFileName}
+        fileName={privacyFileName(
+          privacy,
+          modelsFileName,
+          files.filter((file) => file.name === modelsFileName).flatMap(authFilePrivacyIdentities)
+        )}
         fileType={modelsFileType}
         loading={modelsLoading}
         error={modelsError}
@@ -803,6 +838,9 @@ export function AuthFilesPage() {
       <AuthFileDetailsSheet
         disableControls={disableControls}
         editor={prefixProxyEditor}
+        privacyIdentities={files
+          .filter((file) => file.name === prefixProxyEditor?.fileName)
+          .flatMap(authFilePrivacyIdentities)}
         updatedText={prefixProxyUpdatedText}
         dirty={prefixProxyDirty}
         onClose={closePrefixProxyEditor}

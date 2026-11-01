@@ -1,47 +1,7 @@
-$field-height: 44px;
-$field-radius: 10px;
-
-@keyframes fieldRise {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 8px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes fieldFade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 .form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-
-  > [data-stagger] {
-    animation: fieldRise 420ms var(--ease-out-strong) both;
-  }
-
-  @for $i from 1 through 4 {
-    > [data-stagger]:nth-child(#{$i}) {
-      animation-delay: #{180 + $i * 50}ms;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    > [data-stagger] {
-      animation-name: fieldFade;
-      animation-duration: 200ms;
-    }
-  }
+  gap: 24px;
 }
 
 .field {
@@ -50,102 +10,59 @@ $field-radius: 10px;
   gap: 8px;
 }
 
-.labelRow {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-}
-
 .label {
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 1.4;
   color: var(--text-secondary);
-}
-
-.textButton {
-  appearance: none;
-  border: 0;
-  background: none;
-  padding: 0;
-  font: inherit;
   font-size: 13px;
-  font-weight: 500;
-  line-height: 1.4;
-  color: var(--text-primary);
-  opacity: 0.7;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: opacity var(--dur-hover) ease;
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      opacity: 1;
-    }
-  }
-
-  &:focus-visible {
-    opacity: 1;
-    outline: 2px solid var(--login-outline);
-    outline-offset: 3px;
-  }
-  &:disabled {
-    opacity: 0.3;
-    cursor: default;
-  }
+  font-weight: 600;
+  line-height: 18px;
 }
 
 .input,
 .readout {
   width: 100%;
-  height: $field-height;
-  padding: 0 14px;
-  border-radius: $field-radius;
-  border: 1px solid var(--border-color);
-  background: var(--login-field-bg);
+  height: 36px;
+  padding: 0 12px 0 36px;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: var(--bg-app);
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .input {
-  transition:
-    border-color var(--dur-hover) ease,
-    background-color var(--dur-hover) ease,
-    box-shadow var(--dur-hover) ease;
+  transition: border-color var(--dur-hover) var(--ease-out-strong);
 
   &::placeholder {
     color: var(--text-tertiary);
   }
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      border-color: var(--border-hover);
-    }
+  &:hover {
+    border-color: var(--border-strong);
   }
 
-  &:focus {
-    outline: none;
-    border-color: var(--login-focus-border);
-    background: var(--login-field-bg-focus);
-    box-shadow: 0 0 0 4px var(--login-focus-ring);
+  &:focus-visible {
+    outline: 2px solid var(--text-secondary);
+    outline-offset: 2px;
   }
 
   &[aria-invalid='true'] {
-    border-color: color-mix(in srgb, var(--login-error) 55%, transparent);
+    border-color: var(--status-danger);
   }
 }
 
 .readout {
   display: flex;
   align-items: center;
-  border-color: transparent;
-  background: var(--login-readout-bg);
-  color: var(--text-secondary);
+  height: 40px;
+  background: var(--bg-surface);
+
+  &[data-custom='true'] {
+    color: var(--text-tertiary);
+    border-color: var(--border-subtle);
+  }
 }
 
 .readoutText {
-  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -153,53 +70,126 @@ $field-radius: 10px;
 
 .mono {
   font-family: $font-mono;
-  font-size: 13px;
+  font-size: 12.5px;
 }
 
 .inputWrap {
   position: relative;
 }
 
+.fieldIcon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  display: flex;
+  color: var(--icon-default);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
 .inputWithAction {
-  padding-right: 48px;
+  padding-right: 40px;
 }
 
 .iconButton {
   position: absolute;
   top: 50%;
-  right: 6px;
-  width: 32px;
-  height: 32px;
+  right: 4px;
   display: grid;
   place-items: center;
+  width: 30px;
+  height: 28px;
   padding: 0;
   border: 0;
-  border-radius: 8px;
+  border-radius: 6px;
   background: transparent;
-  color: var(--text-tertiary);
+  color: var(--icon-default);
   cursor: pointer;
   transform: translateY(-50%);
-  transition:
-    color var(--dur-hover) ease,
-    background-color var(--dur-hover) ease,
-    transform var(--dur-press) var(--ease-out-strong);
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      color: var(--text-primary);
-      background: var(--login-hover-bg);
-    }
+  &:hover {
+    background: var(--bg-active);
+    color: var(--icon-active);
   }
+}
 
-  &:active {
-    transform: translateY(-50%) scale(0.92);
-  }
+.customConnection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 56px;
+  padding: 4px 0 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 
-  &:focus-visible {
-    color: var(--text-primary);
-    outline: 2px solid var(--login-outline);
-    outline-offset: 0;
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
   }
+}
+
+.switchTrack {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 18px;
+  padding: 2px;
+  border: 1px solid var(--border-default);
+  border-radius: 20px;
+  background: var(--bg-active);
+
+  &::after {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+    content: '';
+    transition: transform var(--dur-press) var(--ease-out-strong);
+  }
+}
+
+.customConnection[aria-checked='true'] .switchTrack {
+  background: var(--button-primary-bg);
+  border-color: var(--button-primary-bg);
+
+  &::after {
+    background: var(--button-primary-fg);
+    transform: translateX(12px);
+  }
+}
+
+.connectionCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.connectionLabel {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 18px;
+}
+
+.hint {
+  color: var(--text-tertiary);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .options {
@@ -208,52 +198,36 @@ $field-radius: 10px;
 }
 
 .checkboxLabel {
-  font-size: 13px;
-  font-weight: 500;
   color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 400;
 }
 
 .actions {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-top: 4px;
+  gap: 24px;
 }
 
 .submit {
-  width: 100%;
-  height: $field-height;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  width: 100%;
+  height: 40px;
   border: 0;
-  border-radius: $field-radius;
-  background: var(--login-submit-bg);
-  color: var(--login-submit-fg);
+  border-radius: 8px;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-fg);
   font: inherit;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.01em;
   cursor: pointer;
-  transition:
-    transform var(--dur-press) var(--ease-out-strong),
-    background-color var(--dur-hover) ease,
-    opacity var(--dur-hover) ease;
+  transition: opacity var(--dur-hover) var(--ease-out-strong);
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover:not(:disabled) {
-      background: var(--login-submit-hover);
-    }
-  }
-
-  &:active:not(:disabled) {
-    transform: scale(0.98);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--login-outline);
-    outline-offset: 3px;
+  &:hover:not(:disabled) {
+    opacity: 0.9;
   }
 
   &:disabled {
@@ -267,25 +241,12 @@ $field-radius: 10px;
   }
 }
 
-@keyframes submitContentIn {
-  from {
-    opacity: 0;
-    filter: blur(2px);
-    transform: translate3d(0, 2px, 0);
-  }
-  to {
-    opacity: 1;
-    filter: blur(0);
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes checkDraw {
-  from {
-    stroke-dashoffset: 24;
-  }
-  to {
-    stroke-dashoffset: 0;
+.submit,
+.iconButton,
+.customConnection {
+  &:focus-visible {
+    outline: 2px solid var(--text-secondary);
+    outline-offset: 3px;
   }
 }
 
@@ -294,66 +255,65 @@ $field-radius: 10px;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  animation: submitContentIn 200ms var(--ease-out-strong);
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: fieldFade 150ms ease;
-  }
 }
 
 .successIcon {
   stroke-width: 2.4;
-
-  path,
-  polyline {
-    stroke-dasharray: 24;
-    animation: checkDraw 280ms var(--ease-out-strong) 40ms both;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    path,
-    polyline {
-      animation: none;
-      stroke-dasharray: none;
-    }
-  }
-}
-
-@keyframes errorIn {
-  from {
-    opacity: 0;
-    transform: translate3d(0, -4px, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
 }
 
 .error {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--login-error);
-  animation: errorIn 200ms var(--ease-out-strong);
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--status-danger) 40%, var(--border-subtle));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--status-danger) 7%, var(--bg-app));
+  color: var(--status-danger);
+  overflow-wrap: anywhere;
 
   svg {
     flex-shrink: 0;
-    margin-top: 3px;
+    margin-top: 1px;
   }
+}
 
-  span {
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    overflow-wrap: anywhere;
+.errorBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.errorSummary,
+.errorDetail {
+  margin: 0;
+}
+
+.errorSummary {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+.errorDetail {
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 16px;
+
+  .mono {
+    font-size: 12px;
   }
+}
 
-  @media (prefers-reduced-motion: reduce) {
-    animation: fieldFade 200ms ease;
+.errorDetailLabel {
+  color: var(--text-tertiary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .input,
+  .submit,
+  .switchTrack::after {
+    transition: none;
   }
 }

@@ -122,11 +122,7 @@ export function ConfigSearch({ disabled = false, onJump }: ConfigSearchProps) {
             handleResultJump(searchResults[effectiveActiveIndex] ?? searchResults[0]);
           }
         }}
-        rightElement={
-          <span className={styles.searchIcon} aria-hidden="true">
-            <IconSearch size={16} />
-          </span>
-        }
+        leftElement={<IconSearch className={styles.searchIcon} size={16} />}
       />
       {isResultsOpen ? (
         <div

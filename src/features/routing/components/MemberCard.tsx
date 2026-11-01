@@ -6,7 +6,9 @@ import type { ProviderBrand } from '@/features/providers/types';
 import { getAuthFileIcon } from '@/features/authFiles/constants';
 import type { ResolvedTheme } from '@/types';
 import type { RouteMember, RoutingMember, RoutingStrategy } from '@/types/routing';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { formatRoutingDuration } from '../format';
+import { routingMemberDisplay } from '../privacy';
 import styles from './MemberCard.module.scss';
 
 const FAMILY_BRANDS: Record<string, ProviderBrand> = {
@@ -59,6 +61,8 @@ export function MemberCard({
   onEditWeights,
 }: MemberCardProps) {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
+  const display = routingMemberDisplay(member, privacyEnabled);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -162,8 +166,8 @@ export function MemberCard({
     .join(' ');
 
   const tooltip = [
-    member.name,
-    member.detail,
+    display.name,
+    display.detail,
     state === 'ineligible' ? t('routing.state_ineligible') : '',
     showNoRuntimeState ? t('routing.no_runtime_state') : '',
   ]
@@ -194,7 +198,7 @@ export function MemberCard({
         <button
           type="button"
           className={styles.handle}
-          aria-label={t('routing.drag_handle', { name: member.name })}
+          aria-label={t('routing.drag_handle', { name: display.name })}
           onKeyDown={handleHandleKeyDown}
         >
           <IconGripVertical size={14} />
@@ -202,24 +206,30 @@ export function MemberCard({
       )}
 
       <span className={styles.icon} aria-hidden="true">
-        {icon ? <img src={icon} alt="" /> : <span>{member.name.charAt(0).toUpperCase()}</span>}
+        {icon ? <img src={icon} alt="" /> : <span>{display.name.charAt(0).toUpperCase()}</span>}
       </span>
 
       <span className={styles.body}>
-        <span className={styles.name}>{member.name}</span>
-        <span className={styles.kind}>
-          {kindLabel}
-          {showWeight ? (
-            <span className={styles.weight}>
-              {' · '}
-              {t('routing.weight_badge', { weight: singleWeight })}
-            </span>
-          ) : null}
-        </span>
+        <span className={styles.name}>{display.name}</span>
+        {display.detail ? <span className={styles.detail}>{display.detail}</span> : null}
+      </span>
+      <span className={styles.kind}>
+        {kindLabel}
+        {showWeight ? (
+          <span className={styles.weight}>
+            {' · '}
+            {t('routing.weight_badge', { weight: singleWeight })}
+          </span>
+        ) : null}
       </span>
 
       {route?.share !== null && route?.share !== undefined ? (
-        <span className={styles.share}>{t('routing.share', { share: route.share })}</span>
+        <span className={styles.share}>
+          <span>{t('routing.share', { share: route.share })}</span>
+          <span className={styles.meter} aria-hidden="true">
+            <span style={{ width: `${route.share}%` }} />
+          </span>
+        </span>
       ) : null}
       {chip ? <span className={styles.chip}>{chip}</span> : null}
 
@@ -228,7 +238,7 @@ export function MemberCard({
           ref={menuButtonRef}
           type="button"
           className={styles.menuButton}
-          aria-label={t('routing.member_actions', { name: member.name })}
+          aria-label={t('routing.member_actions', { name: display.name })}
           aria-haspopup="menu"
           aria-expanded={menuOpen}
           aria-controls={menuOpen ? menuId : undefined}

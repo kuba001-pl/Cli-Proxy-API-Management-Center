@@ -1,3 +1,4 @@
+import { credentialFileIdentitiesInText } from '@/utils/privacy';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore, useNotificationStore } from '@/stores';
@@ -79,7 +80,11 @@ export function usePluginOAuthProviders(apiBase: string) {
  */
 export function useOAuthFlows({ providerCards, isFocused }: UseOAuthFlowsOptions) {
   const { t } = useTranslation();
-  const { showNotification } = useNotificationStore();
+  const { showNotification: notifyUser } = useNotificationStore();
+  const showNotification = (message: string, type: Parameters<typeof notifyUser>[1]) => {
+    // Raw message + redaction context: the toast masks at render time with current privacy.
+    notifyUser(message, type, undefined, { identities: credentialFileIdentitiesInText(message) });
+  };
   const [states, setStates] = useState<Record<string, ProviderFlowState>>({});
   /** 本次会话新增的凭证数（含 Vertex 导入），换连接时归零。 */
   const [addedCount, setAddedCount] = useState(0);

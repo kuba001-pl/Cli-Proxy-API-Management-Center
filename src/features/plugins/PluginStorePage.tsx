@@ -21,6 +21,8 @@ import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { pluginStoreApi } from '@/services/api';
 import { useAuthStore, useConfigStore, useNotificationStore } from '@/stores';
 import { getErrorMessage, isRecord } from '@/utils/helpers';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyText } from '@/utils/privacy';
 import type { PluginStoreEntry, PluginStoreResponse } from '@/types';
 import {
   buildRepositoryURL,
@@ -461,6 +463,7 @@ function PluginInstallOptionsModal({
 
 export function PluginStorePage() {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const navigate = useNavigate();
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
   const apiBase = useAuthStore((state) => state.apiBase);
@@ -804,8 +807,15 @@ export function PluginStorePage() {
     const sourceName = isDefaultPluginStoreSource(entry)
       ? t('plugin_store.cli_proxy_api_source')
       : entry.sourceName;
-    const sourceText = sourceName ? t('plugin_store.source_name', { source: sourceName }) : '';
-    const metaItems = [versionText, sourceText, entry.author, entry.license].filter(Boolean);
+    const sourceText = sourceName
+      ? t('plugin_store.source_name', { source: privacyText(privacyEnabled, sourceName) })
+      : '';
+    const metaItems = [
+      versionText,
+      sourceText,
+      privacyText(privacyEnabled, entry.author),
+      entry.license,
+    ].filter(Boolean);
     const isInstalling = installingKey === entryKey;
     const hasPendingInstall = Boolean(installingKey);
     const missingAuth = entry.authRequired && !entry.authConfigured;
@@ -871,7 +881,7 @@ export function PluginStorePage() {
                 isDescriptionExpanded ? styles.cardDescExpanded : ''
               }`}
             >
-              {entry.description}
+              {privacyText(privacyEnabled, entry.description)}
             </p>
             {isDescriptionOverflowing ? (
               <button
@@ -983,6 +993,9 @@ export function PluginStorePage() {
     );
   };
 
+  // Display-only: the directory reveals the OS username under /home, /Users or C:\Users.
+  const pluginsDirLabel = privacyText(privacyEnabled, data?.pluginsDir || 'plugins');
+
   return (
     <div className={styles.page}>
       {/* ── Page Header ── */}
@@ -1003,7 +1016,7 @@ export function PluginStorePage() {
       {/* ── Alerts ── */}
       {error ? (
         <div className={styles.errorBox}>
-          <span>{error.message}</span>
+          <span>{privacyText(privacyEnabled, error.message)}</span>
           {error.kind !== 'unsupported' ? (
             <Button variant="secondary" size="sm" onClick={loadStore} disabled={loading}>
               {t('plugin_store.retry')}
@@ -1021,8 +1034,10 @@ export function PluginStorePage() {
                 sourceError.sourceName || sourceError.sourceUrl || sourceError.sourceId;
               return (
                 <li key={`${sourceError.sourceId}-${sourceError.sourceUrl}-${index}`}>
-                  <span>{sourceLabel}</span>
-                  {sourceError.message ? <small>{sourceError.message}</small> : null}
+                  <span>{privacyText(privacyEnabled, sourceLabel)}</span>
+                  {sourceError.message ? (
+                    <small>{privacyText(privacyEnabled, sourceError.message)}</small>
+                  ) : null}
                 </li>
               );
             })}
@@ -1063,9 +1078,9 @@ export function PluginStorePage() {
             <span className={styles.statusLabel}>{t('plugin_store.plugins_dir')}</span>
             <span
               className={`${styles.statusValue} ${styles.statusPathValue}`}
-              title={data.pluginsDir || 'plugins'}
+              title={pluginsDirLabel}
             >
-              {data.pluginsDir || 'plugins'}
+              {pluginsDirLabel}
             </span>
           </div>
 
@@ -1086,7 +1101,7 @@ export function PluginStorePage() {
           onChange={(event) => setFilter(event.target.value)}
           placeholder={t('plugin_store.search_placeholder')}
           aria-label={t('plugin_store.search_label')}
-          rightElement={<IconSearch size={16} />}
+          leftElement={<IconSearch size={16} />}
         />
         <Button
           variant="secondary"

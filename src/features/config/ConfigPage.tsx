@@ -2,11 +2,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePageTransitionLayer } from '@/components/common/PageTransitionLayer';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useRevealGroup } from '@/hooks/motion';
 import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
 import { useVisualConfig } from '@/hooks/useVisualConfig';
 import { useAuthStore, useNotificationStore, useThemeStore } from '@/stores';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import {
   CONFIG_MODE_STORAGE_KEY,
   CONFIG_SECTION_STORAGE_KEY,
@@ -27,10 +27,12 @@ import {
   resolveStatus,
 } from './uiState';
 import { findConfigFieldById } from './searchIndex';
+import { configDocumentIdentities, privacyConfigText, privacyDisplayText } from './privacy';
 import { shouldReloadVisualDraft, useConfigDocument } from './hooks/useConfigDocument';
 import { useFieldJump } from './hooks/useFieldJump';
 import { useSourceSearch } from './hooks/useSourceSearch';
 import { ConfigHeader } from './components/ConfigHeader';
+import { ConfigDirtyFieldsContext } from './components/fields/dirtyFieldsContext';
 import { ConfigSearch } from './components/ConfigSearch';
 import { ConfigTabs } from './components/ConfigTabs';
 import { DiffModal } from './components/DiffModal';
@@ -62,7 +64,7 @@ export function ConfigPage() {
   const showNotification = useNotificationStore((state) => state.showNotification);
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
   const resolvedTheme = useThemeStore((state) => state.resolvedTheme);
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const revealRef = useRevealGroup<HTMLDivElement>();
 
   const {
@@ -109,6 +111,13 @@ export function ConfigPage() {
   });
   const sourceSearch = useSourceSearch();
 
+  // Parser excerpts can show a block-scalar body without its `username: |` header, so the
+  // identities come from the complete raw document. Masking stays at the display boundary.
+  const parseErrorIdentities = useMemo(
+    () => (visualParseError ? configDocumentIdentities(doc.content) : []),
+    [doc.content, visualParseError]
+  );
+
   const disableControls = connectionStatus !== 'connected';
   const hasVisualModeError = !!visualParseError;
   const hasVisualValidationErrors =
@@ -139,9 +148,11 @@ export function ConfigPage() {
     localStorage.setItem(CONFIG_MODE_STORAGE_KEY, 'source');
     showNotification(
       t('config_management.visual_mode_unavailable_detail', { message: visualParseError }),
-      'error'
+      'error',
+      undefined,
+      { identities: parseErrorIdentities }
     );
-  }, [mode, showNotification, t, visualParseError]);
+  }, [mode, parseErrorIdentities, showNotification, t, visualParseError]);
 
   // 可视化 ↔ 源码切换的 dirty 交接：
   // → 源码：物化可视化脏字段供查看，但不把同步动作记作用户源码编辑；
@@ -167,7 +178,9 @@ export function ConfigPage() {
         if (!result.ok) {
           showNotification(
             t('config_management.visual_mode_unavailable_detail', { message: result.error }),
-            'error'
+            'error',
+            undefined,
+            { identities: configDocumentIdentities(doc.content) }
           );
           return;
         }
@@ -253,6 +266,8 @@ export function ConfigPage() {
     sourceDirty: doc.sourceDirty,
     errorCount: mode === 'visual' ? totalErrors : 0,
   });
+  // Source edits form one pending document; visual edits retain their field-level count.
+  const unsavedCount = doc.sourceDirty ? 1 : visualDirtyFields.size;
 
   const saveDisabled =
     disableControls ||
@@ -297,37 +312,48 @@ export function ConfigPage() {
   };
 
   return (
-    <div className={styles.page} ref={revealRef}>
+    <div
+      className={mode === 'source' ? `${styles.page} ${styles.pageSource}` : styles.page}
+      ref={revealRef}
+    >
       <ConfigHeader
         meta={headerMeta}
         reloadDisabled={doc.loading || doc.saving}
         reloading={doc.loading}
         onReload={doc.handleReload}
+        leadingActions={
+          mode === 'source' ? (
+            <SourceSearchBar search={sourceSearch} disabled={disableControls || doc.loading} />
+          ) : undefined
+        }
+        extraActions={
+          <ModeSwitch
+            mode={mode}
+            disabled={doc.saving || doc.loading || doc.diffModalOpen || doc.recoveryRequired}
+            onChange={handleModeChange}
+          />
+        }
       />
 
       {doc.error && (
         <div className="error-box" role="alert">
-          {doc.error}
+          {privacyDisplayText(privacyEnabled, doc.error)}
         </div>
       )}
       {!doc.error && visualParseError && (
         <div className="error-box" role="alert">
-          {t('config_management.visual_mode_unavailable_detail', { message: visualParseError })}
+          {t('config_management.visual_mode_unavailable_detail', {
+            // Parser errors echo YAML lines: config rules plus whole-document identities.
+            message: privacyConfigText(privacyEnabled, visualParseError, parseErrorIdentities),
+          })}
         </div>
       )}
 
-      <div className={styles.toolbar} data-reveal>
-        {mode === 'visual' ? (
+      {mode === 'visual' ? (
+        <div className={styles.toolbar} data-reveal>
           <ConfigSearch disabled={disableControls || doc.loading} onJump={jumpToField} />
-        ) : (
-          <SourceSearchBar search={sourceSearch} disabled={disableControls || doc.loading} />
-        )}
-        <ModeSwitch
-          mode={mode}
-          disabled={doc.saving || doc.loading || doc.diffModalOpen || doc.recoveryRequired}
-          onChange={handleModeChange}
-        />
-      </div>
+        </div>
+      ) : null}
 
       {mode === 'visual' ? (
         <>
@@ -346,7 +372,9 @@ export function ConfigPage() {
             id={configPanelDomId(activeSection)}
             aria-labelledby={configTabDomId(activeSection)}
           >
-            {renderActiveSection()}
+            <ConfigDirtyFieldsContext value={visualDirtyFields}>
+              {renderActiveSection()}
+            </ConfigDirtyFieldsContext>
           </div>
         </>
       ) : (
@@ -361,19 +389,23 @@ export function ConfigPage() {
 
       <FloatingSaveBar
         visible={isCurrentLayer && doc.isDirty}
-        statusText={t(
+        statusLabel={t('config_management.unsaved_changes', { count: Math.max(1, unsavedCount) })}
+        statusText={
           doc.recoveryRequired
-            ? 'config_management.precise_save_recovery_required'
-            : isMobile
-              ? status.shortLabelKey
-              : status.labelKey
-        )}
-        statusTone={status.tone}
+            ? t('config_management.precise_save_recovery_required')
+            : status.key !== 'dirty'
+              ? t(status.labelKey)
+              : undefined
+        }
+        groupLabel={t('config_management.status_dirty')}
+        saveLabel={t('config_management.actions.save')}
+        discardLabel={t('config_management.actions.discard')}
         saving={doc.saving}
         saveDisabled={saveDisabled}
         discardDisabled={doc.loading || doc.saving}
         onSave={doc.handleSave}
         onDiscard={doc.handleDiscard}
+        heightVar="--config-action-bar-height"
       />
 
       <DiffModal

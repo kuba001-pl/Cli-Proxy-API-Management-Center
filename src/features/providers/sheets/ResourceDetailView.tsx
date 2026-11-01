@@ -1,3 +1,5 @@
+import { privacyText } from '@/utils/privacy';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { useTranslation } from 'react-i18next';
 import { Collapsible } from '@/components/ui/Collapsible';
 import { IconCheck, IconX } from '@/components/ui/icons';
@@ -11,6 +13,7 @@ import {
   sponsorProtocolUrl,
 } from '../sponsorDefinitions';
 import type { ProviderResource, SponsorProviderRaw } from '../types';
+import { getProviderDisplayName } from '../privacy';
 import styles from './forms/sharedForm.module.scss';
 
 interface ResourceDetailViewProps {
@@ -26,6 +29,7 @@ const sponsorProtocolEntryKey = (protocol: string): string => {
 
 export function ResourceDetailView({ resource, usageByProvider }: ResourceDetailViewProps) {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((s) => s.enabled);
 
   if (isMultiProtocolSponsorBrand(resource.brand)) {
     const definition = getSponsorProviderDefinition(resource.brand);
@@ -60,7 +64,9 @@ export function ResourceDetailView({ resource, usageByProvider }: ResourceDetail
     return (
       <div>
         <div className={styles.detailHeader}>
-          <div className={styles.sectionTitle}>{resource.name ?? resource.identifier}</div>
+          <div className={styles.sectionTitle}>
+            {getProviderDisplayName(resource, privacyEnabled)}
+          </div>
           <p className={styles.sectionDesc}>
             {t('providersPage.sponsor.detailHint', { provider: definition.displayName })}
           </p>
@@ -123,14 +129,16 @@ export function ResourceDetailView({ resource, usageByProvider }: ResourceDetail
   return (
     <div>
       <div className={styles.detailHeader}>
-        <div className={styles.sectionTitle}>{resource.name ?? resource.identifier}</div>
+        <div className={styles.sectionTitle}>
+          {getProviderDisplayName(resource, privacyEnabled)}
+        </div>
       </div>
 
       <dl className={styles.dl}>
         {primary.map(([key, value]) => (
           <div key={key}>
             <dt className={styles.dt}>{t(`providersPage.detail.fields.${key}`)}</dt>
-            <dd className={styles.dd}>{value}</dd>
+            <dd className={styles.dd}>{privacyText(privacyEnabled, value)}</dd>
           </div>
         ))}
       </dl>
@@ -155,7 +163,9 @@ export function ResourceDetailView({ resource, usageByProvider }: ResourceDetail
                   <span className={styles.apiKeyEntryIndex}>{entryIndex + 1}</span>
                   <span className={styles.apiKeyEntryKey}>{maskApiKey(entry.apiKey)}</span>
                   {entry.proxyUrl ? (
-                    <span className={styles.apiKeyEntryProxy}>{entry.proxyUrl}</span>
+                    <span className={styles.apiKeyEntryProxy}>
+                      {privacyText(privacyEnabled, entry.proxyUrl)}
+                    </span>
                   ) : null}
                   <div className={styles.apiKeyEntryStats}>
                     <span className={`${styles.apiKeyEntryStat} ${styles.apiKeyEntryStatSuccess}`}>
@@ -178,7 +188,7 @@ export function ResourceDetailView({ resource, usageByProvider }: ResourceDetail
             {metadata.map(([key, value]) => (
               <div key={key}>
                 <dt className={styles.dt}>{t(`providersPage.detail.fields.${key}`)}</dt>
-                <dd className={styles.dd}>{value}</dd>
+                <dd className={styles.dd}>{privacyText(privacyEnabled, value)}</dd>
               </div>
             ))}
           </dl>

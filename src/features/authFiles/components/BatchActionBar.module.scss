@@ -1,6 +1,6 @@
 @use '../../../styles/mixins' as *;
 
-/* 悬浮批量操作条：底部居中的玻璃工具栏（--content-center-x 对齐内容列中心） */
+/* Selected credential actions stay visible at the bottom of the workspace. */
 
 .container {
   position: fixed;
@@ -20,12 +20,10 @@
   flex-wrap: wrap;
   gap: 8px 16px;
   padding: 10px 14px;
-  border-radius: 16px;
-  --glass-blur: 14px;
-  border: 1px solid var(--glass-border);
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-backdrop-filter);
-  box-shadow: var(--shadow-lg);
+  border-radius: 10px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-raised);
+  box-shadow: none;
 }
 
 .left,

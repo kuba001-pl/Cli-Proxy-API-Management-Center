@@ -1,5 +1,7 @@
 import { useEffect, useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyIdentity } from '@/utils/privacy';
 import {
   IconDownload,
   IconEye,
@@ -36,6 +38,7 @@ import { ModelDiscoveryPanel } from './ModelDiscoveryPanel';
 import { ConnectivityStatusIcon } from './ConnectivityStatusIcon';
 import { ApiKeyEntriesEditor } from './ApiKeyEntriesEditor';
 import { ModelEntriesEditor } from './ModelEntriesEditor';
+import { concealInputProps } from './privacyConceal';
 import styles from './sharedForm.module.scss';
 import { MAX_CREDENTIAL_WEIGHT } from '@/utils/credentialWeight';
 import { readRuntimePolicy, validateRuntimePolicy } from '../../runtimePolicy';
@@ -229,6 +232,7 @@ export function BaseProviderForm({
   onDirtyChange,
 }: BaseProviderFormProps) {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((s) => s.enabled);
   const descriptor = PROVIDER_DESCRIPTORS[brand];
   const fid = useId();
   const [form, setForm] = useState<ProviderEntryFormInput>(() =>
@@ -502,13 +506,22 @@ export function BaseProviderForm({
             <label className={styles.label} htmlFor={`${fid}-name`}>
               {t('providersPage.form.name')}
             </label>
-            <input
-              id={`${fid}-name`}
-              className={styles.input}
-              value={form.name}
-              onChange={(e) => updateField('name', e.target.value)}
-              disabled={mutating}
-            />
+            <div className={styles.identityField}>
+              <input
+                id={`${fid}-name`}
+                type={privacyEnabled ? 'password' : 'text'}
+                autoComplete="off"
+                className={`${styles.input} ${privacyEnabled ? styles.identityInputPrivate : ''}`}
+                value={form.name}
+                onChange={(e) => updateField('name', e.target.value)}
+                disabled={mutating}
+              />
+              {privacyEnabled ? (
+                <span className={styles.identityMask} aria-hidden="true">
+                  {privacyIdentity(privacyEnabled, form.name)}
+                </span>
+              ) : null}
+            </div>
           </div>
         ) : null}
 
@@ -570,7 +583,8 @@ export function BaseProviderForm({
             </label>
             <input
               id={`${fid}-baseUrl`}
-              className={styles.input}
+              {...concealInputProps(privacyEnabled)}
+              className={`${styles.input} ${styles.inputMono}`}
               value={form.baseUrl}
               onChange={(e) => updateField('baseUrl', e.target.value)}
               placeholder="https://api.example.com"
@@ -586,7 +600,8 @@ export function BaseProviderForm({
             </label>
             <input
               id={`${fid}-proxy`}
-              className={styles.input}
+              {...concealInputProps(privacyEnabled)}
+              className={`${styles.input} ${styles.inputMono}`}
               value={form.proxyUrl}
               onChange={(e) => updateField('proxyUrl', e.target.value)}
               placeholder="http://127.0.0.1:7890"
@@ -603,6 +618,7 @@ export function BaseProviderForm({
               </label>
               <input
                 id={`${fid}-prefix`}
+                {...concealInputProps(privacyEnabled)}
                 className={styles.input}
                 value={form.prefix}
                 onChange={(e) => updateField('prefix', e.target.value)}
@@ -789,7 +805,7 @@ export function BaseProviderForm({
                 style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: 8 }}
               >
                 <input
-                  className={styles.input}
+                  className={`${styles.input} ${styles.inputMono}`}
                   placeholder="X-Custom-Header"
                   value={entry.key}
                   onChange={(e) =>
@@ -801,7 +817,8 @@ export function BaseProviderForm({
                   disabled={mutating}
                 />
                 <input
-                  className={styles.input}
+                  {...concealInputProps(privacyEnabled)}
+                  className={`${styles.input} ${styles.inputMono}`}
                   placeholder="value"
                   value={entry.value}
                   onChange={(e) =>

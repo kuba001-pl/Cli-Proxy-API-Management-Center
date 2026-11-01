@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { routingMemberDisplay, routingWeightLabel } from '../privacy';
 import { Modal } from '@/components/ui/Modal';
 import type { RoutingMember, RoutingStrategy } from '@/types/routing';
 import { ROUTING_WEIGHT_MAX, clampWeight } from '../logic';
@@ -28,6 +30,7 @@ export function WeightDialog({
   onClose,
 }: WeightDialogProps) {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const [values, setValues] = useState<string[]>(() =>
     (member?.weights ?? []).map((_, index) => toText(weights[index]))
   );
@@ -46,11 +49,11 @@ export function WeightDialog({
     <Modal
       open={open}
       onClose={onClose}
-      title={t('routing.weight_title', { name: member.name })}
+      title={t('routing.weight_title', { name: routingMemberDisplay(member, privacyEnabled).name })}
       width={440}
       footer={
         <>
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="ghost" onClick={onClose}>
             {t('common.cancel')}
           </Button>
           <Button onClick={apply}>{t('routing.weight_apply')}</Button>
@@ -64,7 +67,9 @@ export function WeightDialog({
       <div className={styles.weightList}>
         {member.weights.map((slot, index) => (
           <label key={slot.index} className={styles.weightRow}>
-            <span className={styles.weightLabel}>{slot.label}</span>
+            <span className={styles.weightLabel}>
+              {routingWeightLabel(member, slot.label, privacyEnabled)}
+            </span>
             <input
               type="number"
               inputMode="numeric"

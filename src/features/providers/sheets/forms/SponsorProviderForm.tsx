@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { Collapsible } from '@/components/ui/Collapsible';
 import { Select } from '@/components/ui/Select';
 import {
@@ -43,6 +44,7 @@ import { ModelDiscoveryPanel } from './ModelDiscoveryPanel';
 import { ModelEntriesEditor } from './ModelEntriesEditor';
 import { useModelDiscovery, type UseModelDiscoveryResult } from './useModelDiscovery';
 import { useSponsorUsageCheck, type SponsorUsageMessages } from './useSponsorUsageCheck';
+import { concealInputProps } from './privacyConceal';
 import styles from './sharedForm.module.scss';
 import { readRuntimePolicy, validateRuntimePolicy } from '../../runtimePolicy';
 import { readModelOptions, validateModelOptions } from '../../modelOptions';
@@ -314,6 +316,7 @@ function SponsorKeyEntryCard({
   onRemove,
 }: SponsorKeyEntryCardProps) {
   const { t, i18n } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const [showApiKey, setShowApiKey] = useState(false);
   const [expanded, setExpanded] = useState(
     () => mode === 'create' || !entry.existingApiKey?.trim()
@@ -618,7 +621,8 @@ function SponsorKeyEntryCard({
             </label>
             <input
               id={`${formId}-group-${index}-proxy`}
-              className={styles.input}
+              {...concealInputProps(privacyEnabled)}
+              className={`${styles.input} ${styles.inputMono}`}
               value={entry.proxyUrl}
               onChange={(event) => updateEntry({ proxyUrl: event.target.value })}
               placeholder="http://127.0.0.1:7890"
@@ -633,6 +637,7 @@ function SponsorKeyEntryCard({
               </label>
               <input
                 id={`${formId}-group-${index}-prefix`}
+                {...concealInputProps(privacyEnabled)}
                 className={styles.input}
                 value={entry.prefix}
                 onChange={(event) => updateEntry({ prefix: event.target.value })}

@@ -1,3 +1,6 @@
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyFileName, privacyText } from '@/utils/privacy';
+import { authFileJsonIdentities, authFileJsonPreview } from '../privacy';
 import { useCallback, useMemo, type MouseEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Trans, useTranslation } from 'react-i18next';
@@ -38,6 +41,7 @@ const DERIVED_INFO_KEYS = [
 
 export type AuthFileDetailsSheetProps = {
   disableControls: boolean;
+  privacyIdentities?: string[];
   editor: PrefixProxyEditorState | null;
   updatedText: string;
   dirty: boolean;
@@ -53,6 +57,7 @@ export type AuthFileDetailsSheetProps = {
  */
 export function AuthFileDetailsSheet(props: AuthFileDetailsSheetProps) {
   const { t } = useTranslation();
+  const privacy = usePrivacyStore((state) => state.enabled);
   const navigate = useNavigate();
   const { disableControls, editor, updatedText, dirty, onClose, onCopyText, onSave, onChange } =
     props;
@@ -91,16 +96,10 @@ export function AuthFileDetailsSheet(props: AuthFileDetailsSheetProps) {
     [confirmClose, editor?.saving, navigate]
   );
 
-  const formatJsonText = (text: string) => {
-    if (!text) return '';
-    try {
-      return JSON.stringify(JSON.parse(text), null, 2);
-    } catch {
-      return text;
-    }
-  };
-  const previewText = formatJsonText(updatedText);
-  const invalidContentPreview = editor?.invalidContentPreview ?? '';
+  const identities = [...(props.privacyIdentities ?? []), ...authFileJsonIdentities(editor?.json)];
+  // Redact the parsed object, not escaped JSON text: `DOMAIN\\alice` must not slip through.
+  const previewText = authFileJsonPreview(updatedText, identities, privacy);
+  const invalidContentPreview = privacyText(privacy, editor?.invalidContentPreview, identities);
   const fileInfoText = editor?.fileInfoText ?? '';
   const displayInfoText = useMemo(() => {
     if (!fileInfoText) return '';
@@ -127,7 +126,7 @@ export function AuthFileDetailsSheet(props: AuthFileDetailsSheetProps) {
       size="md"
       closeDisabled={editor?.saving === true}
       eyebrow={t('auth_files.prefix_proxy_button')}
-      title={editor?.fileName ?? ''}
+      title={privacyFileName(privacy, editor?.fileName, identities)}
       footer={
         <>
           <Button
@@ -174,10 +173,17 @@ export function AuthFileDetailsSheet(props: AuthFileDetailsSheetProps) {
             </div>
           ) : (
             <>
-              {editor.error && <div className={styles.error}>{editor.error}</div>}
+              {editor.error && (
+                <div className={styles.error}>{privacyText(privacy, editor.error, identities)}</div>
+              )}
               <div className={styles.jsonWrapper}>
                 <label className={styles.label}>{t('auth_files.prefix_proxy_info_label')}</label>
-                <textarea className={styles.textarea} rows={8} readOnly value={displayInfoText} />
+                <textarea
+                  className={styles.textarea}
+                  rows={8}
+                  readOnly
+                  value={privacyText(privacy, displayInfoText, identities)}
+                />
               </div>
               <div className={styles.jsonWrapper}>
                 <label className={styles.label}>
@@ -196,12 +202,14 @@ export function AuthFileDetailsSheet(props: AuthFileDetailsSheetProps) {
                   <Input
                     label={t('auth_files.prefix_label')}
                     value={editor.prefix}
+                    type={privacy ? 'password' : 'text'}
                     disabled={disableControls || editor.saving || !editor.json}
                     onChange={(e) => onChange('prefix', e.target.value)}
                   />
                   <Input
                     label={t('auth_files.proxy_url_label')}
                     value={editor.proxyUrl}
+                    type={privacy ? 'password' : 'text'}
                     placeholder={t('auth_files.proxy_url_placeholder')}
                     disabled={disableControls || editor.saving || !editor.json}
                     onChange={(e) => onChange('proxyUrl', e.target.value)}
@@ -296,6 +304,7 @@ export function AuthFileDetailsSheet(props: AuthFileDetailsSheetProps) {
                     <textarea
                       className={`input ${editor.headersError ? styles.textareaInvalid : ''}`}
                       value={editor.headersText}
+                      data-private={privacy || undefined}
                       placeholder={t('auth_files.headers_placeholder')}
                       rows={4}
                       aria-invalid={Boolean(editor.headersError)}
@@ -313,6 +322,7 @@ export function AuthFileDetailsSheet(props: AuthFileDetailsSheetProps) {
                   <Input
                     label={t('auth_files.note_label')}
                     value={editor.note}
+                    type={privacy ? 'password' : 'text'}
                     placeholder={t('auth_files.note_placeholder')}
                     hint={t('auth_files.note_hint')}
                     disabled={disableControls || editor.saving || !editor.json}

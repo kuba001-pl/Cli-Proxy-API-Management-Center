@@ -1,13 +1,7 @@
 import { useEffect, useRef, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { prefersReducedMotion } from '@/hooks/motion';
-import {
-  CONFIG_TAB_ICONS,
-  CONFIG_TAB_IDS,
-  configPanelDomId,
-  configTabDomId,
-  type ConfigTabId,
-} from '../constants';
+import { CONFIG_TAB_IDS, configPanelDomId, configTabDomId, type ConfigTabId } from '../constants';
 import styles from './ConfigTabs.module.scss';
 
 export type ConfigTabsProps = {
@@ -71,7 +65,6 @@ export function ConfigTabs({
       ref={listRef}
     >
       {CONFIG_TAB_IDS.map((id) => {
-        const Icon = CONFIG_TAB_ICONS[id];
         const isActive = active === id;
         const errorCount = errorCounts[id] ?? 0;
         const isDirty = dirtyTabs.has(id);
@@ -102,8 +95,7 @@ export function ConfigTabs({
             onClick={() => onChange(id)}
             onKeyDown={handleKeyDown}
           >
-            <Icon size={15} className={styles.tabGlyph} />
-            <span className={styles.tabLabel}>{tabLabel}</span>
+            {tabLabel}
             {errorCount > 0 ? (
               <span className={styles.tabBadge} aria-hidden="true">
                 {errorCount}

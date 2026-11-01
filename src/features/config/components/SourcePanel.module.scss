@@ -5,10 +5,9 @@
 .searchBar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex: 1 1 240px;
+  gap: 4px;
+  width: 300px;
   min-width: 0;
-  max-width: 560px;
 }
 
 .searchInputWrapper {
@@ -24,116 +23,133 @@
   }
 }
 
-.searchInput {
-  height: 38px !important;
-  border-radius: 10px !important;
-  font-size: 13px !important;
-  padding-right: 128px !important;
+.searchInput:global(.input) {
+  height: 32px;
+  padding-block: 0;
+  padding-right: 64px;
+  border-radius: 6px;
+  font-size: 13px;
 }
 
-.searchRight {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.searchIcon {
+  color: var(--icon-default);
 }
 
 .searchCount {
   display: inline-flex;
   align-items: center;
-  min-height: 26px;
-  padding: 0 8px;
-  border-radius: $radius-full;
-  color: var(--text-secondary);
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 4px;
+  color: var(--text-tertiary);
   font-family: $font-mono;
-  font-size: 11.5px;
-  font-weight: 650;
+  font-size: 11px;
   font-variant-numeric: tabular-nums;
-  background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+  background: var(--bg-raised);
   pointer-events: none;
   white-space: nowrap;
 }
 
-.searchButton {
-  @include button-reset;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: $radius-full;
-  border: 1px solid var(--text-primary);
-  background: var(--text-primary);
-  color: var(--bg-secondary);
-  transition:
-    transform var(--dur-press, 160ms) var(--ease-out-strong, ease-out),
-    background-color $transition-fast,
-    border-color $transition-fast,
-    opacity $transition-fast;
-
-  &:active:not(:disabled) {
-    transform: scale(0.94);
-  }
-
-  &:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .searchButton:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--text-primary) 86%, var(--bg-secondary));
-    border-color: transparent;
-  }
-}
-
 .searchActions {
   display: flex;
-  gap: 6px;
+  gap: 2px;
   flex-shrink: 0;
 
   button {
-    min-width: 38px;
-    width: 38px;
-    height: 38px;
+    min-width: 28px;
+    width: 28px;
+    height: 28px;
     padding: 0 !important;
-    border-radius: 10px;
+    border-radius: 6px;
   }
 }
 
 /* ---------- 编辑器面板 ---------- */
 
+/*
+ * Takes whatever height the page leaves below the (possibly wrapping) header via flex, so no
+ * chrome height is assumed. A zero flex basis keeps CodeMirror's content height from pushing
+ * the page taller; the privacy notice shares this region, so the editor shrinks instead.
+ */
+.sourceRegion {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  min-height: 420px;
+  /* Figma 68:5779 leaves a 32px bottom gutter; the shell reserves 40px. */
+  margin-bottom: -8px;
+}
+
+.privacyNotice {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 7px 12px;
+  border: 1px solid var(--warning-border);
+  border-radius: 8px;
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  font-size: 12px;
+  line-height: 16px;
+}
+
 .editorWrapper {
   width: 100%;
-  flex: 0 0 auto;
-  height: clamp(500px, 70vh, 1040px);
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
+  flex: 1 1 auto;
+  min-height: 0;
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
   overflow: hidden;
-  background: var(--bg-primary);
-
-  @supports (height: 100dvh) {
-    height: clamp(500px, 70dvh, 1040px);
-  }
+  background: var(--bg-surface);
 
   :global {
     .cm-editor {
       height: 100%;
-      font-size: 13px;
+      font-size: 12.5px;
+      color: var(--text-primary);
       font-family: $font-mono;
       background: transparent;
     }
 
+    /* CodeMirror's base theme sets line-height on .cm-scroller; out-rank it there. */
+    .cm-editor .cm-scroller {
+      line-height: 22px;
+    }
+
     .cm-scroller {
+      font-family: $font-mono;
       overflow: auto;
       -webkit-overflow-scrolling: touch;
       touch-action: pan-x pan-y;
       overscroll-behavior: contain;
     }
 
+    .cm-content {
+      padding: 14px 0;
+      caret-color: var(--text-primary);
+    }
+
+    .cm-line {
+      padding: 0 16px;
+    }
+
+    .cm-cursor,
+    .cm-dropCursor {
+      border-left-color: var(--text-primary);
+    }
+
+    .cm-selectionBackground,
+    .cm-editor.cm-focused .cm-selectionBackground,
+    .cm-content ::selection {
+      background: color-mix(in srgb, var(--info-color) 28%, transparent) !important;
+    }
+
     .cm-gutters {
-      border-right: 1px solid var(--border-color);
-      background: color-mix(in srgb, var(--bg-secondary) 86%, transparent);
+      border-right: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      color: var(--text-muted);
     }
 
     .cm-lineNumbers .cm-gutterElement {
@@ -142,60 +158,52 @@
       color: var(--text-muted);
     }
 
+    .cm-foldGutter .cm-gutterElement {
+      color: var(--text-muted);
+    }
+
+    .cm-yamlScalar,
+    .cm-yamlScalar span {
+      color: var(--status-warning);
+    }
+
+    .cm-panels {
+      background: var(--bg-raised);
+      color: var(--text-primary);
+      border-color: var(--border-default);
+    }
+
     .cm-activeLine,
     .cm-activeLineGutter {
       background: color-mix(in srgb, var(--text-primary) 5%, transparent);
     }
 
     .cm-selectionMatch {
-      background: rgba(224, 170, 20, 0.24);
+      background: color-mix(in srgb, var(--status-warning) 24%, transparent);
     }
 
     .cm-searchMatch {
-      background: rgba(224, 170, 20, 0.32);
-      outline: 1px solid rgba(224, 170, 20, 0.48);
+      background: color-mix(in srgb, var(--status-warning) 32%, transparent);
+      outline: 1px solid var(--status-warning);
     }
 
     .cm-searchMatch-selected {
-      background: rgba(198, 87, 70, 0.32);
+      background: color-mix(in srgb, var(--status-warning) 48%, transparent);
     }
   }
 }
 
 /* ---------- 响应式 ---------- */
 
-@include mobile {
+@media (max-width: 768px) {
   .searchBar {
-    flex-basis: 100%;
-    max-width: none;
-    flex-wrap: wrap;
+    flex: 1 1 100%;
+    width: auto;
+    order: -1;
   }
 
-  .searchActions {
-    justify-content: stretch;
-    flex: 1;
-
-    button {
-      flex: 1;
-      width: auto;
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .searchInput {
-    padding-right: 108px !important;
-  }
-}
-
-/* ---------- 无障碍 ---------- */
-
-@media (prefers-reduced-motion: reduce) {
-  .searchButton {
-    transition: none;
-  }
-
-  .searchButton:active:not(:disabled) {
-    transform: none;
+  .sourceRegion {
+    min-height: 360px;
+    margin-bottom: 0;
   }
 }

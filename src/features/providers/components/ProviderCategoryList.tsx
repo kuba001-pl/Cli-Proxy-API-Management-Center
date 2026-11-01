@@ -31,16 +31,9 @@ export function ProviderCategoryList({ groups, activeBrand, onSelect }: Provider
         const total = group.resources.length;
         const activeCount = group.resources.filter((r) => !r.disabled).length;
         const logo = PROVIDER_LOGOS[group.id];
-        const itemClass = [
-          styles.item,
-          active ? styles.active : '',
-          group.id === 'kimi' ? styles.itemKimi : '',
-        ]
-          .filter(Boolean)
-          .join(' ');
+        const itemClass = [styles.item, active ? styles.active : ''].filter(Boolean).join(' ');
         const logoClassName = [
           styles.logo,
-          logo?.transparent ? styles.logoTransparent : '',
           logo?.themeSurface ? styles.logoThemeSurface : '',
           logo?.darkSrc ? styles.logoThemeLight : '',
           logo?.invertOnDark ? styles.logoInvertOnDark : '',
@@ -49,7 +42,6 @@ export function ProviderCategoryList({ groups, activeBrand, onSelect }: Provider
           .join(' ');
         const darkLogoClassName = [
           styles.logo,
-          logo?.transparent ? styles.logoTransparent : '',
           logo?.themeSurface ? styles.logoThemeSurface : '',
           styles.logoThemeDark,
         ]
@@ -90,16 +82,7 @@ export function ProviderCategoryList({ groups, activeBrand, onSelect }: Provider
                 </span>
               </span>
             </span>
-            <span
-              className={[
-                styles.badge,
-                total === 0 ? (group.id === 'kimi' ? styles.badgeKimi : styles.badgeAmber) : '',
-              ]
-                .filter(Boolean)
-                .join(' ')}
-            >
-              {total}
-            </span>
+            <span className={styles.badge}>{total}</span>
           </button>
         );
       })}

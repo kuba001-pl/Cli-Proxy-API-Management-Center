@@ -2,17 +2,13 @@ import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
+import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ToggleSwitch } from '@/components/ui/ToggleSwitch';
 import { IconSearch, IconSlidersHorizontal, IconTrash2 } from '@/components/ui/icons';
-import {
-  MAX_CARD_PAGE_SIZE,
-  MIN_CARD_PAGE_SIZE,
-} from '@/features/authFiles/constants';
-import type {
-  AuthFilesSortMode,
-  AuthFilesStatusFilterMode,
-} from '@/features/authFiles/uiState';
+import { MAX_CARD_PAGE_SIZE, MIN_CARD_PAGE_SIZE } from '@/features/authFiles/constants';
+import type { AuthFilesSortMode, AuthFilesStatusFilterMode } from '@/features/authFiles/uiState';
 import styles from './AuthFilesToolbar.module.scss';
 
 export type AuthFilesToolbarProps = {
@@ -93,33 +89,16 @@ export function AuthFilesToolbar(props: AuthFilesToolbarProps) {
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder={t('auth_files.search_placeholder')}
           aria-label={t('auth_files.search_label')}
-          rightElement={<IconSearch className={styles.searchIcon} size={16} />}
+          leftElement={<IconSearch className={styles.searchIcon} size={16} />}
         />
       </div>
 
-      <div
-        className={styles.segmented}
-        role="group"
-        aria-label={t('auth_files.problem_filter_label')}
-      >
-        {statusFilterOptions.map((option) => {
-          const isActive = statusFilterMode === option.value;
-          const isProblem = option.value === 'problem';
-          return (
-            <button
-              key={option.value}
-              type="button"
-              className={`${styles.segment} ${isActive ? styles.segmentActive : ''} ${
-                isProblem ? styles.segmentProblem : ''
-              }`}
-              aria-pressed={isActive}
-              onClick={() => onStatusFilterChange(option.value)}
-            >
-              {option.label}
-            </button>
-          );
-        })}
-      </div>
+      <SegmentedControl
+        value={statusFilterMode}
+        options={statusFilterOptions}
+        onChange={onStatusFilterChange}
+        ariaLabel={t('auth_files.problem_filter_label')}
+      />
 
       <div className={styles.sort}>
         <Select
@@ -138,7 +117,7 @@ export function AuthFilesToolbar(props: AuthFilesToolbarProps) {
           aria-expanded={displaySettingsOpen}
           aria-controls="auth-files-display-settings"
           title={t('auth_files.display_options_label')}
-        onClick={() => setDisplaySettingsOpen((open) => !open)}
+          onClick={() => setDisplaySettingsOpen((open) => !open)}
         >
           <IconSlidersHorizontal size={15} />
           <span>{t('auth_files.display_options_label')}</span>
@@ -177,15 +156,16 @@ export function AuthFilesToolbar(props: AuthFilesToolbarProps) {
         )}
       </div>
 
-      <button
-        type="button"
+      <Button
+        variant="danger"
+        size="sm"
         className={styles.deleteAction}
         onClick={onDelete}
         disabled={deleteDisabled}
       >
         {deleteLoading ? <LoadingSpinner size={13} /> : <IconTrash2 size={14} />}
         {deleteLabel}
-      </button>
+      </Button>
     </div>
   );
 }

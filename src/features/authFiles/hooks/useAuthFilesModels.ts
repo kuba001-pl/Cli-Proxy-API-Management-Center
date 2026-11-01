@@ -22,6 +22,7 @@ export type UseAuthFilesModelsResult = {
 
 export function useAuthFilesModels(): UseAuthFilesModelsResult {
   const { t } = useTranslation();
+  // Messages stay raw; NotificationContainer masks them at render time.
   const showNotification = useNotificationStore((state) => state.showNotification);
 
   const [modelsModalOpen, setModelsModalOpen] = useState(false);

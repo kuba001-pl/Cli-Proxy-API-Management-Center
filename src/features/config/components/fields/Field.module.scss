@@ -18,15 +18,16 @@
     letter-spacing: 0.02em;
   }
 
-  /* 设置行与区块编辑器里的输入框同一副几何：36px 高、8px 圆角、纸色底。 */
+  /* Compact controls share the neutral app surface. */
   :global(.input) {
-    min-height: 36px;
-    padding: 7px 11px;
-    border-radius: 8px;
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
+    min-height: 32px;
+    padding: 5px 11px;
+    border-radius: 6px;
+    background: var(--bg-app);
+    border-color: var(--border-default);
     box-shadow: none;
-    font-size: 13.5px;
+    font-size: 12.5px;
+    font-family: $font-mono;
     transition:
       border-color var(--dur-hover, 200ms) var(--ease-out-strong, ease-out),
       background-color var(--dur-hover, 200ms) var(--ease-out-strong, ease-out),
@@ -48,6 +49,11 @@
     cursor: not-allowed;
   }
 
+  :global(input.input) {
+    height: 32px;
+    padding-block: 0;
+  }
+
   :global(textarea.input) {
     min-height: 112px;
   }
@@ -59,11 +65,11 @@
   }
 
   :global(.error-box) {
-    border-radius: 8px;
+    border-radius: 6px;
   }
 }
 
-/* ---------- 设置组：组标题 + 圆角列表容器 ---------- */
+/* ---------- Full-width settings, one row per setting ---------- */
 
 /* 组本身是容器查询的宿主：列数与行内堆叠都看「这一组有多宽」，
    而不是视口——侧栏收起、折叠组缩进都会自然生效。 */
@@ -71,7 +77,7 @@
   container: setting-list / inline-size;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0;
   min-width: 0;
 }
 
@@ -79,7 +85,7 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
-  padding: 0 2px;
+  padding: 16px 0 8px;
 }
 
 .groupTitle {
@@ -102,17 +108,10 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   min-width: 0;
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--bg-secondary) 55%, transparent);
-  /* 裁掉分隔线越界的部分 + 圆角；下拉菜单走 portal，不受影响。 */
-  overflow: hidden;
-}
-
-@container setting-list (min-width: 880px) {
-  .list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
 }
 
 /* ---------- 设置行 ---------- */
@@ -125,27 +124,25 @@
   align-items: center;
   gap: 10px 24px;
   min-width: 0;
-  min-height: 64px;
-  padding: 14px 18px;
+  /* config.png: 15px + 32px control + 14px (incl. 1px divider) = 61px for plain input rows. */
+  min-height: 61px;
+  padding: 14px 0;
   box-sizing: border-box;
-  /* 发丝分隔线：向右、向下各投 1px，越出列表的部分被 overflow 裁掉，只剩行间与列间的线。 */
-  box-shadow:
-    1px 0 0 var(--border-color),
-    0 1px 0 var(--border-color);
+  border-bottom: 1px solid var(--border-subtle);
   scroll-margin-top: calc(var(--header-height, 64px) + 16px);
 }
 
 /* 控件槽宽度分三档；百分比兜底保证标题列永远有一半以上的位置。 */
 .size_sm {
-  --setting-control: min(136px, 42%);
+  --setting-control: min(120px, 42%);
 }
 
 .size_md {
-  --setting-control: min(280px, 50%);
+  --setting-control: min(260px, 50%);
 }
 
 .size_lg {
-  --setting-control: min(420px, 58%);
+  --setting-control: min(340px, 58%);
 }
 
 .rowWide {
@@ -162,7 +159,7 @@
 /* 自带标题区的区块单元格（API 密钥等）。 */
 .rowCell {
   display: block;
-  padding: 16px 18px;
+  padding: 14px 0;
 }
 
 .rowCopy {
@@ -174,7 +171,7 @@
 
 .rowLabel {
   color: var(--text-primary);
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
   line-height: 1.4;
   overflow-wrap: anywhere;
@@ -187,9 +184,9 @@
 
 .rowDescription {
   max-width: 72ch;
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
   font-size: 12px;
-  line-height: 1.55;
+  line-height: 16px;
   overflow-wrap: anywhere;
 }
 
@@ -216,14 +213,14 @@
   display: block;
 }
 
-/* 下拉触发器对齐输入框几何（Select 自带 40px + 投影，这里收成同一套）。 */
+/* Select controls align with the compact text inputs. */
 .selectControl > button[aria-haspopup='listbox'] {
-  height: 36px;
+  height: 32px;
   padding: 0 11px;
-  border-radius: 8px;
-  background: var(--bg-secondary);
+  border-radius: 6px;
+  background: var(--bg-app);
   box-shadow: none;
-  font-size: 13.5px;
+  font-size: 13px;
   transition: border-color var(--dur-hover, 200ms) var(--ease-out-strong, ease-out);
 
   &:focus-visible,
@@ -260,8 +257,11 @@
   border-radius: 6px;
   background: var(--bg-primary);
   color: var(--text-secondary);
+  max-width: calc(100% - 44px);
+  overflow: hidden;
   font-size: 11px;
   font-weight: 600;
+  text-overflow: ellipsis;
   white-space: nowrap;
   pointer-events: none;
 }
@@ -269,7 +269,7 @@
 /* 窄组（手机、深层折叠）：输入行改为上下堆叠，开关始终留在右侧。 */
 @container setting-list (max-width: 520px) {
   .row {
-    padding: 12px 14px;
+    padding: 14px 0;
   }
 
   .row:not(.rowToggle) {
@@ -278,7 +278,7 @@
   }
 
   .rowCell {
-    padding: 14px;
+    padding: 14px 0;
   }
 }
 
@@ -289,11 +289,9 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 1px 5px;
-  border: 1px solid var(--amber-30);
-  border-radius: 5px;
-  background: var(--amber-10);
-  color: var(--amber-text);
+  padding: 0 2px;
+  border-radius: 3px;
+  color: var(--text-secondary);
   font-weight: 600;
   text-decoration: none;
   vertical-align: baseline;
@@ -306,7 +304,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .fieldSponsorLink:hover {
-    background: var(--amber-30);
+    background: var(--bg-active);
   }
 }
 
@@ -401,4 +399,14 @@
     outline: 2px solid color-mix(in srgb, var(--text-primary) 32%, transparent);
     outline-offset: -2px;
   }
+}
+
+.dirtyDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: var(--status-warning);
+  vertical-align: middle;
 }

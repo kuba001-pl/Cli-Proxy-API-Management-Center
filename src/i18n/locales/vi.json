@@ -65,6 +65,7 @@
     "subtitle": "Trung tâm Quản lý"
   },
   "login": {
+    "subtitle": "Kết nối với CLI Proxy API v8 trở lên",
     "connection_current": "URL hiện tại",
     "connection_edit": "Thay đổi",
     "connection_done": "Xong",
@@ -93,6 +94,10 @@
     "error_legacy_backend": "Backend này chấp nhận Management API v0 nhưng không cung cấp v8. Vui lòng nâng cấp CLIProxyAPI lên v8 hoặc mới hơn để sử dụng trang quản lý này."
   },
   "header": {
+    "privacy_mode_on": "Đã bật chế độ riêng tư",
+    "privacy_mode_off": "Đã tắt chế độ riêng tư",
+    "hide_personal_data": "Ẩn dữ liệu cá nhân",
+    "show_personal_data": "Hiện dữ liệu cá nhân",
     "refresh_all": "Làm mới tất cả",
     "logout": "Đăng xuất"
   },
@@ -101,7 +106,7 @@
   },
   "nav": {
     "dashboard": "Bảng điều khiển",
-    "quick_start": "Bắt đầu nhanh",
+    "quick_start": "Thiết lập nhanh",
     "ai_providers": "AI Provider",
     "auth_files": "File xác thực",
     "oauth": "Đăng nhập OAuth",
@@ -222,6 +227,10 @@
     "routing_strategy_fill_first": "fill-first (ưu tiên lấp đầy)"
   },
   "auth_files": {
+    "account_column": "Tài khoản",
+    "plan_column": "Gói",
+    "recent_requests_column": "Yêu cầu gần đây",
+    "lowest_quota_column": "Hạn mức thấp nhất",
     "title": "Quản lý File xác thực",
     "meta_total": "{{count}} credential",
     "meta_active": "{{count}} đang hoạt động",
@@ -320,6 +329,8 @@
     "status_disabled_success": "\"{{name}}\" đã được tắt",
     "batch_status_success": "Đã cập nhật thành công {{count}} file",
     "batch_status_partial": "{{success}} đã cập nhật, {{failed}} thất bại",
+    "delete_title": "Xóa file",
+    "delete_all_title": "Xóa tất cả file",
     "batch_delete_title": "Xóa các file đã chọn",
     "batch_delete_confirm": "Bạn có chắc muốn xóa {{count}} file?",
     "batch_selected": "Đã chọn {{count}}",
@@ -664,6 +675,7 @@
     "save_failed": "Không thể cập nhật vô hiệu hóa model",
     "delete": "Xóa Provider",
     "delete_confirm": "Xóa vô hiệu hóa model của {{provider}}?",
+    "delete_title": "Xóa vô hiệu hóa model",
     "delete_success": "Đã xóa vô hiệu hóa model của provider",
     "delete_failed": "Không thể xóa vô hiệu hóa model",
     "no_models": "Chưa cấu hình model bị vô hiệu hóa nào",
@@ -729,6 +741,7 @@
     "save_failed": "Không thể cập nhật bí danh model",
     "delete": "Xóa Provider",
     "delete_confirm": "Xóa bí danh model của {{provider}}?",
+    "delete_title": "Xóa bí danh model",
     "delete_link_title": "Bỏ liên kết ánh xạ",
     "delete_link_confirm": "Bỏ liên kết ánh xạ từ <code>{{sourceModel}}</code> ({{provider}}) sang bí danh <code>{{alias}}</code>?",
     "delete_alias_title": "Xóa bí danh",
@@ -944,6 +957,9 @@
     "no_requests": "Không có yêu cầu"
   },
   "logs": {
+    "caption": "Luồng trực tiếp · nhật ký ứng dụng và yêu cầu",
+    "error_logs_file": "Tệp",
+    "error_logs_actions": "Thao tác với tệp",
     "title": "Trình xem Log",
     "refresh_button": "Làm mới Log",
     "clear_button": "Xóa Log",
@@ -979,6 +995,7 @@
     "loading": "Đang tải log...",
     "load_error": "Không thể tải log",
     "clear_confirm": "Bạn có chắc muốn xóa toàn bộ log? Thao tác này không thể hoàn tác!",
+    "clear_confirm_title": "Xóa log",
     "clear_success": "Đã xóa log thành công",
     "download_success": "Đã tải log xuống thành công",
     "auto_refresh": "Tự động làm mới",
@@ -1037,6 +1054,8 @@
     "meta_dirty_source": "Chỉnh sửa nguồn chưa lưu",
     "meta_errors": "{{count}} lỗi xác thực",
     "meta_synced": "Đã đồng bộ",
+    "unsaved_changes_one": "{{count}} thay đổi chưa lưu",
+    "unsaved_changes_other": "{{count}} thay đổi chưa lưu",
     "actions": {
       "discard": "Hủy thay đổi",
       "save": "Lưu thay đổi"
@@ -1070,6 +1089,7 @@
     "visual_mode_save_blocked": "Không thể lưu từ chế độ trực quan cho đến khi sửa cú pháp YAML",
     "visual_mode_latest_yaml_invalid": "Cấu hình máy chủ mới nhất chứa YAML không hợp lệ. Hãy xem lại ở chế độ mã nguồn trước khi lưu thay đổi trực quan: {{message}}",
     "editor_placeholder": "key: value",
+    "privacy_source_paused": "Chế độ riêng tư đang bật — tạm dừng chỉnh sửa mã nguồn. Tắt chế độ riêng tư để chỉnh sửa.",
     "search_placeholder": "Tìm cấu hình...",
     "search_button": "Tìm",
     "search_no_results": "Không có kết quả",
@@ -1095,12 +1115,12 @@
           "description": "Địa chỉ máy chủ, cổng, thư mục xác thực và API key"
         },
         "logging": {
-          "title": "Ghi log & Chẩn đoán",
+          "title": "Nhật ký",
           "description": "Debug, xuất log và thống kê sử dụng"
         },
         "advanced": {
           "antigravity_credits": "Dùng credit Antigravity",
-          "title": "Nâng cao & Thử nghiệm",
+          "title": "Nâng cao",
           "description": "Giả mạo header, cache chữ ký, nguồn plugin và các cài đặt ít thay đổi khác",
           "plugins_title": "Plugin",
           "signature_title": "Chữ ký Antigravity",
@@ -1213,7 +1233,7 @@
           "beta_features": "Tính năng Beta"
         },
         "network": {
-          "title": "Cấu hình mạng",
+          "title": "Mạng",
           "description": "Cài đặt proxy, thử lại và định tuyến",
           "proxy_url": "URL Proxy",
           "request_retry": "Số lần thử lại yêu cầu",
@@ -1249,7 +1269,7 @@
           "max_retry_interval_hint": "Đặt thành 0 hoặc số nguyên âm để bỏ qua thời gian chờ cooldown giữa các lượt thử lại."
         },
         "streaming": {
-          "title": "Cấu hình Streaming",
+          "title": "Streaming",
           "description": "Cài đặt keepalive và thử lại bootstrap",
           "keepalive_seconds": "Số giây Keepalive",
           "keepalive_hint": "Đặt 0 hoặc để trống để tắt keepalive",
@@ -1260,7 +1280,7 @@
           "disabled": "Đã tắt"
         },
         "payload": {
-          "title": "Cấu hình Payload",
+          "title": "Payload",
           "description": "Giá trị mặc định, quy tắc JSON thô, quy tắc ghi đè và quy tắc lọc",
           "default_rules": "Quy tắc mặc định",
           "default_rules_desc": "Dùng các giá trị mặc định này khi tham số không được chỉ định trong yêu cầu",
@@ -1544,13 +1564,22 @@
     "precise_save_recovery_required": "Không thể đọc lại kết quả lưu. Đã tạm dừng chỉnh sửa. Lưu lại để khôi phục mốc cơ sở của bản nháp, hoặc tải lại cấu hình."
   },
   "quota_management": {
+    "summary_label": "Hạn mức theo nhà cung cấp",
+    "lowest": "còn lại ít nhất",
+    "upcoming_title": "Lần đặt lại sắp tới",
+    "upcoming_description": "Thời điểm khôi phục từng cửa sổ hạn mức, sớm nhất trước",
+    "upcoming_filter": "Lọc cửa sổ đặt lại",
+    "upcoming_empty": "Không có lần đặt lại sắp tới cho cửa sổ này.",
+    "upcoming_show_all": "Hiển thị tất cả {{count}} lần đặt lại",
+    "upcoming_show_less": "Thu gọn danh sách đặt lại",
     "title": "Quản lý Quota",
     "description": "Theo dõi trạng thái quota OAuth của credential Antigravity, Codex, Claude, Kimi và xAI.",
     "refresh_all_credentials": "Làm mới mọi credential",
     "sort_label": "Sắp xếp",
     "sort_default": "Mặc định",
     "sort_soonest": "Sớm khôi phục nhất",
-    "meta_credentials": "{{count}} credential",
+    "meta_credentials_one": "{{count}} thông tin xác thực",
+    "meta_credentials_other": "{{count}} thông tin xác thực",
     "meta_loaded": "{{count}} đã tải",
     "meta_attention": "{{count}} cần chú ý",
     "empty_title": "Không có credential hỗ trợ quota",
@@ -1588,10 +1617,12 @@
     "search_placeholder": "Tìm theo tên file hoặc email",
     "search_empty_title": "Không có tài khoản phù hợp",
     "search_empty_desc": "Hãy thử tên file hoặc email khác, hoặc xóa tìm kiếm.",
-    "search_clear": "Xóa tìm kiếm"
+    "search_clear": "Xóa tìm kiếm",
+    "retry": "Thử lại"
   },
   "routing": {
     "title": "Định tuyến",
+    "summary": "Thành viên {{members}} · Tầng {{tiers}}",
     "refresh": "Làm mới",
     "refresh_discards": "Làm mới sẽ bỏ cách sắp xếp chưa lưu.",
     "loading": "Đang tải định tuyến…",
@@ -1660,9 +1691,11 @@
     "max_retry_credentials_desc": "Số tối đa thử mỗi vòng; 0 là thử tất cả.",
     "unlimited": "Không giới hạn",
     "dirty_region": "Thay đổi định tuyến chưa lưu",
-    "dirty_count": "Thay đổi chưa lưu: {{count}}",
-    "discard": "Bỏ",
-    "save": "Lưu",
+    "dirty_count": "{{count}} thay đổi chưa lưu",
+    "dirty_count_one": "{{count}} thay đổi chưa lưu",
+    "dirty_count_other": "{{count}} thay đổi chưa lưu",
+    "discard": "Bỏ thay đổi",
+    "save": "Lưu thay đổi",
     "review_title": "Lưu thay đổi định tuyến",
     "review_hint": "Thông tin xác thực OAuth được ghi lần lượt; phần còn lại ghi vào cấu hình trong một lần.",
     "confirm_save": "Lưu thay đổi",
@@ -1878,6 +1911,8 @@
     "clear_login_confirm": "Xóa dữ liệu đăng nhập cục bộ và đăng xuất ngay?"
   },
   "notification": {
+    "save_failed": "Lưu thất bại",
+    "load_failed": "Tải thất bại",
     "request_log_updated": "Đã cập nhật cài đặt ghi log yêu cầu",
     "login_storage_cleared": "Đã xóa dữ liệu đăng nhập cục bộ",
     "data_refreshed": "Đã làm mới dữ liệu thành công",
@@ -1942,6 +1977,7 @@
       "new": "Mới",
       "edit": "Chỉnh sửa",
       "view": "Xem",
+      "more": "Thao tác khác",
       "delete": "Xóa",
       "cancel": "Hủy",
       "save": "Lưu",
@@ -2069,7 +2105,9 @@
       "notSet": "Chưa đặt",
       "none": "Không",
       "notConfigured": "Chưa cấu hình",
-      "defaultSuffix": "(mặc định)"
+      "defaultSuffix": "(mặc định)",
+      "okCount": "{{count}} thành công",
+      "failedCount": "{{count}} thất bại"
     },
     "detail": {
       "title": "Chi tiết",
@@ -2089,6 +2127,9 @@
     "form": {
       "createEyebrow": "Mới",
       "editEyebrow": "Chỉnh sửa",
+      "sheetDescriptionCreate": "Thêm thông tin xác thực, cài đặt kết nối và mô hình cho {{provider}}.",
+      "sheetDescriptionEdit": "Cập nhật thông tin xác thực, cài đặt kết nối và mô hình cho {{provider}}.",
+      "sheetDescriptionDetail": "Cấu hình, thông tin xác thực và tình trạng yêu cầu gần đây của {{provider}}.",
       "name": "Tên",
       "apiKey": "API key",
       "apiKeyCreatePlaceholder": "Nhập API key",

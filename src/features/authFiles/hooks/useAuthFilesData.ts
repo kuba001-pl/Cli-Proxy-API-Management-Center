@@ -1,3 +1,5 @@
+import { credentialFileIdentitiesInText } from '@/utils/privacy';
+import { authFilePrivacyIdentities } from '../privacy';
 import { useCallback, useEffect, useRef, useState, type ChangeEvent, type RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { apiClient, authFilesApi } from '@/services/api';
@@ -77,10 +79,40 @@ export type UseAuthFilesDataResult = {
 
 export function useAuthFilesData(options?: UseAuthFilesDataOptions): UseAuthFilesDataResult {
   const { t } = useTranslation();
-  const { showNotification, showConfirmation } = useNotificationStore();
+  const { showNotification: notify, showConfirmation: confirm } = useNotificationStore();
+  const privacyFiles = useRef<AuthFileItem[]>([]);
+  // Messages stay raw; this redaction context lets the toast/confirmation renderers mask them
+  // with the privacy state current at render time (including names not yet in the list).
+  const privacyContext = useCallback(
+    (text: string) => ({
+      identities: [
+        ...privacyFiles.current.flatMap(authFilePrivacyIdentities),
+        ...credentialFileIdentitiesInText(text),
+      ],
+    }),
+    []
+  );
+  const showNotification = useCallback(
+    (message: string, type?: Parameters<typeof notify>[1], duration?: number) => {
+      notify(message, type, duration, privacyContext(message));
+    },
+    [notify, privacyContext]
+  );
+  const showConfirmation = useCallback(
+    (options: Parameters<typeof confirm>[0]) => {
+      const text = [options.title, options.message]
+        .filter((value) => typeof value === 'string')
+        .join(' ');
+      confirm({ ...options, ...privacyContext(text) });
+    },
+    [confirm, privacyContext]
+  );
   const onFilesMutated = options?.onFilesMutated;
 
   const [files, setFiles] = useState<AuthFileItem[]>([]);
+  useEffect(() => {
+    privacyFiles.current = files;
+  }, [files]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
@@ -322,7 +354,7 @@ export function useAuthFilesData(options?: UseAuthFilesDataOptions): UseAuthFile
   const handleDelete = useCallback(
     (name: string) => {
       showConfirmation({
-        title: t('auth_files.delete_title', { defaultValue: 'Delete File' }),
+        title: t('auth_files.delete_title'),
         message: `${t('auth_files.delete_confirm')} "${name}" ?`,
         variant: 'danger',
         confirmText: t('common.confirm'),
@@ -374,7 +406,7 @@ export function useAuthFilesData(options?: UseAuthFilesDataOptions): UseAuthFile
       }
 
       showConfirmation({
-        title: t('auth_files.delete_all_title', { defaultValue: 'Delete All Files' }),
+        title: t('auth_files.delete_all_title'),
         message: confirmMessage,
         variant: 'danger',
         confirmText: t('common.confirm'),

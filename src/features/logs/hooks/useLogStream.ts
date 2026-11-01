@@ -166,7 +166,7 @@ export function useLogStream({ active, isFollowing, onFollow }: LogStreamOptions
     }
     const session = requests.session.capture();
     showConfirmation({
-      title: t('logs.clear_confirm_title', { defaultValue: 'Clear Logs' }),
+      title: t('logs.clear_confirm_title'),
       message: t('logs.clear_application_confirm'),
       variant: 'danger',
       confirmText: t('common.confirm'),

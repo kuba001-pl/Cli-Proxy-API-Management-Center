@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import {
   IconChevronDown,
   IconEye,
@@ -9,10 +10,12 @@ import {
   IconX,
 } from '@/components/ui/icons';
 import { maskApiKey } from '@/utils/format';
+import { privacyText } from '@/utils/privacy';
 import { MAX_CREDENTIAL_WEIGHT } from '@/utils/credentialWeight';
 import type { ApiKeyEntryInput } from '../../types';
 import type { ConnectivityState, ConnectivityStatus } from './useConnectivityTest';
 import { ConnectivityStatusIcon } from './ConnectivityStatusIcon';
+import { concealInputProps } from './privacyConceal';
 import styles from './sharedForm.module.scss';
 
 const COLLAPSED_LIMIT = 10;
@@ -49,6 +52,7 @@ export function ApiKeyEntriesEditor({
   onTestAll,
 }: ApiKeyEntriesEditorProps) {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const [expandedIdx, setExpandedIdx] = useState<number | null>(() =>
     entries.length === 1 && isBlankEntry(entries[0]) ? 0 : null
   );
@@ -133,7 +137,10 @@ export function ApiKeyEntriesEditor({
                 <span>{t('providersPage.form.apiKeyEntry', { index: idx + 1 })}</span>
                 <span className={styles.entrySummary}>
                   {entry.proxyUrl.trim() ? (
-                    <span className={styles.entryBadge} title={entry.proxyUrl}>
+                    <span
+                      className={styles.entryBadge}
+                      title={privacyText(privacyEnabled, entry.proxyUrl)}
+                    >
                       {t('providersPage.form.proxyBadge')}
                     </span>
                   ) : null}
@@ -231,7 +238,8 @@ export function ApiKeyEntriesEditor({
                 <div className={styles.field}>
                   <label className={styles.label}>{t('providersPage.form.proxyUrl')}</label>
                   <input
-                    className={styles.input}
+                    {...concealInputProps(privacyEnabled)}
+                    className={`${styles.input} ${styles.inputMono}`}
                     value={entry.proxyUrl}
                     onChange={(e) => onUpdate(idx, { proxyUrl: e.target.value })}
                     disabled={mutating}

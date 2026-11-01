@@ -5,13 +5,20 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
   width: 100%;
   min-width: 0;
   /* 悬浮保存栏出现时由 --config-action-bar-height 撑出底部留白 */
   padding-bottom: calc(
-    var(--config-action-bar-height, 0px) + 16px + env(safe-area-inset-bottom, 0px)
+    var(--config-action-bar-height, 0px) + 48px + env(safe-area-inset-bottom, 0px)
   );
+}
+
+/* Source mode fills the remaining viewport height (the editor region flexes into it); only
+ * the floating save bar needs a reserve. */
+.pageSource {
+  flex: 1 1 auto;
+  padding-bottom: calc(var(--config-action-bar-height, 0px) + env(safe-area-inset-bottom, 0px));
 }
 
 /* 工具栏行：模式相关搜索（字段搜索 / 源码搜索）+ 右端的模式切换 */
@@ -27,7 +34,7 @@
 .tabsRow {
   display: flex;
   min-width: 0;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .panel {

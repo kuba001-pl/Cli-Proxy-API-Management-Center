@@ -6,28 +6,25 @@
   position: relative;
   min-width: 0;
   flex: 1 1 240px;
-  max-width: 420px;
+  max-width: 340px;
 
   :global(.form-group) {
     margin-bottom: 0;
   }
 
   :global(.input) {
-    height: 38px;
-    border-radius: 10px;
+    height: 32px;
+    border-radius: 6px;
     font-size: 13px;
   }
 }
 
 .searchControl {
-  padding-right: 38px !important;
+  padding-right: 12px;
 }
 
 .searchIcon {
-  display: inline-flex;
-  align-items: center;
-  color: var(--text-tertiary);
-  pointer-events: none;
+  color: var(--icon-default);
 }
 
 .searchResults {
@@ -43,7 +40,7 @@
   overflow-y: auto;
   padding: 6px;
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 8px;
   background: var(--floating-surface, var(--bg-primary));
   box-shadow: var(
     --floating-shadow,

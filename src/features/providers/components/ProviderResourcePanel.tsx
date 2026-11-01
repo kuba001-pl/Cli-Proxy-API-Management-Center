@@ -136,13 +136,7 @@ export function ProviderResourcePanel({
             ) : registrationUrl ? (
               <>
                 <a
-                  className={[
-                    styles.sponsorLink,
-                    styles.sponsorLinkEmphasis,
-                    group.id === 'kimi' ? styles.sponsorLinkKimi : '',
-                  ]
-                    .filter(Boolean)
-                    .join(' ')}
+                  className={styles.sponsorLink}
                   href={registrationUrl}
                   target="_blank"
                   rel="noreferrer"
@@ -156,11 +150,33 @@ export function ProviderResourcePanel({
               </>
             ) : null}
           </div>
+          <dl className={styles.summary}>
+            {[
+              [
+                'keys',
+                group.resources.reduce(
+                  (sum, resource) =>
+                    sum + (resource.apiKeyEntryCount || Number(Boolean(resource.apiKey))),
+                  0
+                ),
+              ],
+              ['models', group.resources.reduce((sum, resource) => sum + resource.modelCount, 0)],
+              ['headers', group.resources.reduce((sum, resource) => sum + resource.headerCount, 0)],
+            ].map(([key, value]) => (
+              <div key={key}>
+                <dt>{t(`providersPage.table.metrics.${key}`)}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+        <div className={styles.headerToolbarRow}>
           <div className={styles.searchWrap}>
             <span className={styles.searchIcon} aria-hidden="true">
               <IconSearch size={16} />
             </span>
             <input
+              aria-label={t('providersPage.table.filterPlaceholder')}
               type="search"
               className={styles.searchInput}
               value={filter}
@@ -168,9 +184,7 @@ export function ProviderResourcePanel({
               placeholder={t('providersPage.table.filterPlaceholder')}
             />
           </div>
-        </div>
-        {toolbarControls ? (
-          <div className={styles.headerToolbarRow}>
+          {toolbarControls ? (
             <ProviderResourceToolbar
               key={group.id}
               sortBy={toolbarControls.sortBy}
@@ -181,8 +195,8 @@ export function ProviderResourcePanel({
               selectedModels={toolbarControls.selectedModels}
               onSelectedModelsChange={toolbarControls.onSelectedModelsChange}
             />
-          </div>
-        ) : null}
+          ) : null}
+        </div>
       </div>
 
       {filteredResources.length === 0 ? (
@@ -191,7 +205,7 @@ export function ProviderResourcePanel({
           <div className={styles.emptyAction}>
             {showSponsorRegistrationLink ? (
               <a
-                className={`${styles.emptyActionButton} ${styles.emptyActionButtonEmphasis}`}
+                className={styles.emptyActionButton}
                 href={APIKEY_FUN_AFFILIATE_URL}
                 target="_blank"
                 rel="noreferrer"
@@ -200,7 +214,12 @@ export function ProviderResourcePanel({
                 <span>{t('providersPage.sponsor.registerLink')}</span>
               </a>
             ) : (
-              <button type="button" className={styles.emptyActionButton} onClick={onCreate}>
+              <button
+                type="button"
+                className={styles.emptyActionButton}
+                onClick={onCreate}
+                disabled={disableMutations}
+              >
                 <IconPlus size={16} />
                 <span>{t('providersPage.actions.new')}</span>
               </button>

@@ -1,4 +1,4 @@
-import { useId, useMemo } from 'react';
+import { useMemo } from 'react';
 import { buildSmoothLinePath } from './curve';
 import styles from './Sparkline.module.scss';
 
@@ -16,12 +16,10 @@ interface SparklineProps {
 }
 
 /**
- * 极简迷你折线：2px 线 + 同色 10% 面积。
+ * 极简迷你折线：中性色 2px 线。
  * 单序列，因此不需要图例；数值由所在卡片的文本承载。
  */
 export function Sparkline({ points, color, ariaLabel, className }: SparklineProps) {
-  const gradientId = useId();
-
   const geometry = useMemo(() => {
     const values = points.filter((value) => Number.isFinite(value));
     if (values.length === 0) {
@@ -41,11 +39,7 @@ export function Sparkline({ points, color, ariaLabel, className }: SparklineProp
 
     const line = buildSmoothLinePath(coordinates, TOP_PADDING, VIEW_HEIGHT);
 
-    const first = coordinates[0];
-    const last = coordinates[coordinates.length - 1];
-    const area = `${line} L${last.x.toFixed(2)} ${VIEW_HEIGHT} L${first.x.toFixed(2)} ${VIEW_HEIGHT} Z`;
-
-    return { line, area, isFlat: max <= 0 };
+    return { line, isFlat: max <= 0 };
   }, [points]);
 
   if (!geometry) {
@@ -54,9 +48,7 @@ export function Sparkline({ points, color, ariaLabel, className }: SparklineProp
     );
   }
 
-  const strokeColor = geometry.isFlat
-    ? 'var(--text-quaternary)'
-    : (color ?? 'var(--primary-color)');
+  const strokeColor = geometry.isFlat ? 'var(--text-muted)' : (color ?? 'var(--text-secondary)');
 
   return (
     <svg
@@ -66,13 +58,6 @@ export function Sparkline({ points, color, ariaLabel, className }: SparklineProp
       role="img"
       aria-label={ariaLabel}
     >
-      <defs>
-        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={strokeColor} stopOpacity="0.16" />
-          <stop offset="100%" stopColor={strokeColor} stopOpacity="0.01" />
-        </linearGradient>
-      </defs>
-      {!geometry.isFlat && <path d={geometry.area} fill={`url(#${gradientId})`} stroke="none" />}
       <path
         d={geometry.line}
         fill="none"

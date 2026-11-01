@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { useId, useMemo, useRef, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IconChevronDown, IconChevronUp, IconSlidersHorizontal } from '@/components/ui/icons';
 import { Select } from '@/components/ui/Select';
@@ -27,6 +27,8 @@ export function ProviderResourceToolbar({
 }: ProviderResourceToolbarProps) {
   const { t } = useTranslation();
   const [filterOpen, setFilterOpen] = useState(false);
+  const filterId = useId();
+  const filterTriggerRef = useRef<HTMLButtonElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const sortOptions = useMemo(
@@ -100,9 +102,22 @@ export function ProviderResourceToolbar({
         </button>
       </div>
 
-      <div className={styles.filterGroup} ref={containerRef}>
+      <div
+        className={styles.filterGroup}
+        ref={containerRef}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape' && filterOpen) {
+            event.stopPropagation();
+            setFilterOpen(false);
+            filterTriggerRef.current?.focus();
+          }
+        }}
+      >
         <button
           type="button"
+          ref={filterTriggerRef}
+          aria-expanded={filterOpen}
+          aria-controls={filterId}
           className={styles.filterTrigger}
           onClick={() => setFilterOpen((v) => !v)}
           disabled={availableModels.length === 0}
@@ -112,7 +127,7 @@ export function ProviderResourceToolbar({
           <IconChevronDown size={12} />
         </button>
         {filterOpen ? (
-          <div className={styles.filterPanel}>
+          <div id={filterId} className={styles.filterPanel}>
             <div className={styles.filterToolbar}>
               <button
                 type="button"

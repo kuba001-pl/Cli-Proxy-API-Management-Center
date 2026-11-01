@@ -42,24 +42,26 @@ $lane-width: 210px;
 
 .nav,
 .modes {
+  // Same segmented control as Upcoming resets: one outline, filled active segment.
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  padding: 3px;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  border-radius: 999px;
+  padding: 2px;
+  border: 1px solid var(--border-default);
+  border-radius: 9px;
 
   button {
-    padding: 4px 12px;
+    height: 30px;
+    padding: 0 10px;
     font: inherit;
-    font-size: 12.5px;
-    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-tertiary);
     background: transparent;
-    border: 1px solid transparent;
-    border-radius: 999px;
+    border: 0;
+    border-radius: 7px;
     cursor: pointer;
-    transition: all $transition-fast;
+    transition: background var(--dur-hover) var(--ease-out-strong);
 
     &:hover:not(:disabled) {
       color: var(--text-primary);
@@ -71,17 +73,19 @@ $lane-width: 210px;
     }
 
     &[aria-pressed='true'] {
-      background: var(--floating-surface, var(--bg-primary));
-      border-color: var(--border-hover);
+      background: var(--bg-active);
       color: var(--text-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--text-secondary);
+      outline-offset: 2px;
     }
   }
 }
 
+// The disclosure is the only frame; the chart is a plain region inside it.
 .chart {
-  border: 1px solid var(--border-color);
-  border-radius: $radius-lg;
-  background: var(--bg-primary);
   overflow: hidden;
 }
 
@@ -99,10 +103,6 @@ $lane-width: 210px;
 .lane {
   display: grid;
   grid-template-columns: $lane-width 1fr;
-}
-
-.axis {
-  border-bottom: 1px solid var(--border-color);
 }
 
 .axisLabel {
@@ -131,12 +131,12 @@ $lane-width: 210px;
   border-left: 1px solid var(--border-color);
 
   &[data-weekend='1'] {
-    background: rgba(255, 255, 255, 0.014);
+    background: var(--bg-raised);
   }
 
   // The current day is the reference point for reading the whole chart.
   &[data-today='1'] {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--bg-active);
   }
 }
 
@@ -155,10 +155,11 @@ $lane-width: 210px;
 }
 
 .lane {
-  border-top: 1px solid var(--border-color);
+  // Each lane draws its own top rule; the axis has none, so header → first lane is 1px.
+  border-top: 1px solid var(--border-subtle);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.012);
+    background: var(--bg-raised);
   }
 }
 
@@ -197,7 +198,7 @@ $lane-width: 210px;
 .lanePeriod {
   flex: none;
   padding: 0 6px;
-  border-radius: 999px;
+  border-radius: 8px;
   font-size: 10px;
   font-weight: 600;
   color: var(--count-badge-text, var(--text-secondary));
@@ -240,7 +241,7 @@ $lane-width: 210px;
     border-left: 1px solid var(--border-color);
 
     &[data-weekend='1'] {
-      background: rgba(255, 255, 255, 0.014);
+      background: var(--bg-raised);
     }
   }
 }
@@ -264,7 +265,7 @@ $lane-width: 210px;
   display: flex;
   align-items: center;
   padding: 0 8px;
-  border-radius: 999px;
+  border-radius: 8px;
   overflow: hidden;
   font-size: 10.5px;
   white-space: nowrap;
@@ -318,7 +319,7 @@ $lane-width: 210px;
   bottom: 6px;
   width: 2px;
   transform: translateX(-50%);
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--amber-color);
   box-shadow: 0 0 0 1px var(--bg-primary);
   cursor: help;
@@ -354,26 +355,26 @@ $lane-width: 210px;
 .swatch {
   width: 22px;
   height: 10px;
-  border-radius: 999px;
+  border-radius: 8px;
 }
 
 .swatchLive {
-  background: color-mix(in srgb, var(--text-tertiary, #888) 34%, transparent);
-  border: 1px solid color-mix(in srgb, var(--text-tertiary, #888) 50%, transparent);
+  background: color-mix(in srgb, var(--text-tertiary) 34%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text-tertiary) 50%, transparent);
 }
 
 .swatchNext {
-  border: 1px dashed color-mix(in srgb, var(--text-tertiary, #888) 45%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--text-tertiary) 45%, transparent);
 }
 
 .swatchPast {
-  background: color-mix(in srgb, var(--text-tertiary, #888) 12%, transparent);
+  background: color-mix(in srgb, var(--text-tertiary) 12%, transparent);
 }
 
 .swatchCredit {
   width: 2px;
   height: 14px;
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--amber-color);
 }
 
@@ -392,5 +393,25 @@ $lane-width: 210px;
   .axis,
   .lane {
     min-width: 720px;
+  }
+}
+
+.disclosure {
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  padding: 16px 24px;
+  background: var(--bg-surface);
+  > summary {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    &:focus-visible {
+      outline: 2px solid var(--text-secondary);
+      outline-offset: 3px;
+    }
+  }
+  &[open] > summary {
+    margin-bottom: 20px;
   }
 }

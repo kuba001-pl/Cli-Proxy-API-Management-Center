@@ -1,5 +1,5 @@
 import { afterAll, afterEach, describe, expect, mock, spyOn, test } from 'bun:test';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import i18n from '../src/i18n/index';
@@ -162,7 +162,7 @@ describe('routing board rendering', () => {
   test('styles respect reduced motion and the route is registered behind navigation', () => {
     const page = readFileSync('src/features/routing/RoutingPage.module.scss', 'utf8');
     const card = readFileSync('src/features/routing/components/MemberCard.module.scss', 'utf8');
-    const bar = readFileSync('src/features/routing/components/RoutingSaveBar.module.scss', 'utf8');
+    const bar = readFileSync('src/features/config/components/FloatingSaveBar.module.scss', 'utf8');
     expect(page).toContain('@media (prefers-reduced-motion: reduce)');
     expect(card).toContain('@media (prefers-reduced-motion: reduce)');
     expect(bar).toContain('@media (prefers-reduced-motion: reduce)');
@@ -176,15 +176,27 @@ describe('routing board rendering', () => {
 });
 
 describe('routing save bar', () => {
-  test('floats over the policy column, outside the transition layer', () => {
+  test('reuses Config’s floating save bar component instead of a styled copy', () => {
     const bar = readFileSync('src/features/routing/components/RoutingSaveBar.tsx', 'utf8');
-    const policy = readFileSync('src/features/routing/components/PolicyPanel.tsx', 'utf8');
+    const shared = readFileSync('src/features/config/components/FloatingSaveBar.tsx', 'utf8');
+    const styles = readFileSync(
+      'src/features/config/components/FloatingSaveBar.module.scss',
+      'utf8'
+    );
     const page = readFileSync('src/features/routing/RoutingPage.tsx', 'utf8');
+    expect(bar).toContain("from '@/features/config/components/FloatingSaveBar'");
+    expect(bar).toContain('heightVar="--routing-action-bar-height"');
+    expect(bar).not.toContain('.module.scss');
+    expect(existsSync('src/features/routing/components/RoutingSaveBar.module.scss')).toBe(false);
     // Portalled: sticky/fixed inside the page-transition layer does not track the viewport.
-    expect(bar).toContain('createPortal(');
-    // The bar measures the column the policy panel marks.
-    expect(bar).toContain("POLICY_COLUMN_ATTR = 'data-routing-policy-column'");
-    expect(policy).toContain('data-routing-policy-column=""');
+    expect(shared).toContain('createPortal(');
+    expect(shared).toContain('if (!visible');
+    expect(shared).toContain('useActionBarHeightVar(containerRef, heightVar, visible)');
+    expect(styles).toContain('left: var(--content-center-x, 50%)');
+    expect(styles).toContain('border-radius: 10px');
+    expect(styles).toContain('-webkit-backdrop-filter: blur(12px)');
+    // Review-before-save stays: the bar's save opens the change review dialog.
+    expect(page).toContain('onSave={() => setReviewOpen(true)}');
     // A page sliding out must not leave its bar behind.
     expect(page).toContain('visible={isCurrentLayer && dirty}');
   });

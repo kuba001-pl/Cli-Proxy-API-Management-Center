@@ -231,7 +231,8 @@ export function buildHeaderMeta(input: HeaderMetaInput): HeaderMetaSegment[] {
   if (input.sourceDirty) {
     segments.push({
       key: 'dirty_source',
-      labelKey: 'config_management.meta_dirty_source',
+      labelKey: 'config_management.meta_dirty',
+      count: 1,
       tone: 'warning',
     });
   } else if (input.dirtyCount > 0) {

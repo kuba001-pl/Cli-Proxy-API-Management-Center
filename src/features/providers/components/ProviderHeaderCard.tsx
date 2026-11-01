@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
 import { IconLoader2, IconPlus, IconRefreshCw } from '@/components/ui/icons';
 import styles from './ProviderHeaderCard.module.scss';
@@ -13,7 +14,6 @@ interface ProviderHeaderCardProps {
   showNewAction?: boolean;
   showSummary?: boolean;
   newLabel?: string;
-  variant?: 'quickStart';
   onRefresh: () => void;
   onNew: () => void;
 }
@@ -29,23 +29,38 @@ export function ProviderHeaderCard({
   showNewAction = true,
   showSummary = true,
   newLabel,
-  variant,
   onRefresh,
   onNew,
 }: ProviderHeaderCardProps) {
   const { t } = useTranslation();
-  const cardClassName = [styles.card, variant === 'quickStart' ? styles.quickStartCard : '']
-    .filter(Boolean)
-    .join(' ');
+  const cardClassName = styles.card;
 
   return (
     <section className={cardClassName}>
       <div className={styles.row}>
         <div className={styles.titleArea}>
           <h1 className={styles.title}>{title ?? t('providersPage.header.title')}</h1>
+          {showSummary ? (
+            <div className={styles.chips}>
+              <span className={styles.chip}>
+                {t('providersPage.header.activeResources', {
+                  active: totalActive,
+                  total: totalResources,
+                })}
+              </span>
+              <span className={styles.chip}>
+                {t('providersPage.header.providerFamilies', { count: providerFamilies })}
+              </span>
+              <span className={styles.chip}>
+                {t('providersPage.header.updatedAt', { time: updatedAtLabel })}
+              </span>
+            </div>
+          ) : null}
         </div>
         <div className={styles.actions}>
-          <button
+          <Button
+            size="sm"
+            variant="secondary"
             type="button"
             className={`${styles.btn} ${styles.btnOutline}`}
             onClick={onRefresh}
@@ -60,9 +75,11 @@ export function ProviderHeaderCard({
             <span>
               {isFetching ? t('providersPage.actions.syncing') : t('providersPage.actions.refresh')}
             </span>
-          </button>
+          </Button>
           {showNewAction ? (
-            <button
+            <Button
+              size="sm"
+              variant="primary"
               type="button"
               className={`${styles.btn} ${styles.btnPrimary}`}
               onClick={onNew}
@@ -70,27 +87,10 @@ export function ProviderHeaderCard({
             >
               <IconPlus size={16} />
               <span>{newLabel ?? t('providersPage.actions.new')}</span>
-            </button>
+            </Button>
           ) : null}
         </div>
       </div>
-
-      {showSummary ? (
-        <div className={styles.chips}>
-          <span className={`${styles.chip} ${styles.chipPrimary}`}>
-            {t('providersPage.header.activeResources', {
-              active: totalActive,
-              total: totalResources,
-            })}
-          </span>
-          <span className={styles.chip}>
-            {t('providersPage.header.providerFamilies', { count: providerFamilies })}
-          </span>
-          <span className={styles.chip}>
-            {t('providersPage.header.updatedAt', { time: updatedAtLabel })}
-          </span>
-        </div>
-      ) : null}
     </section>
   );
 }

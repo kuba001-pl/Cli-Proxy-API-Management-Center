@@ -1,6 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyFileName } from '@/utils/privacy';
+import { routingMemberDisplay, routingWeightLabel } from '../privacy';
 import type { RoutingChange, RoutingMember } from '@/types/routing';
 import { SETTING_LABEL_KEYS, formatSettingValue, formatWeightValue } from '../format';
 import styles from '../RoutingPage.module.scss';
@@ -23,6 +26,7 @@ export function ChangeReviewDialog({
   onClose,
 }: ChangeReviewDialogProps) {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
 
   const describe = (change: RoutingChange): string => {
     if (change.kind === 'setting') {
@@ -33,12 +37,15 @@ export function ChangeReviewDialog({
       });
     }
     const member = members.get(change.memberKey);
-    let name = member?.name ?? change.memberKey;
+    let name = member
+      ? routingMemberDisplay(member, privacyEnabled).name
+      : privacyFileName(privacyEnabled, change.memberKey);
     if (change.kind === 'priority') {
       return t('routing.change_priority', { name, from: change.from, to: change.to });
     }
     if (member && member.weights.length > 1) {
-      name = `${name} · ${member.weights[change.index]?.label ?? `#${change.index + 1}`}`;
+      const label = member.weights[change.index]?.label ?? `#${change.index + 1}`;
+      name = `${name} · ${routingWeightLabel(member, label, privacyEnabled)}`;
     }
     return t('routing.change_weight', {
       name,
@@ -56,7 +63,7 @@ export function ChangeReviewDialog({
       width={560}
       footer={
         <>
-          <Button variant="secondary" onClick={onClose} disabled={saving}>
+          <Button variant="ghost" onClick={onClose} disabled={saving}>
             {t('common.cancel')}
           </Button>
           <Button onClick={onConfirm} loading={saving}>

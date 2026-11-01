@@ -25,8 +25,10 @@ import { collectQuotaRowInstants, pickUrgentRowId, resetCreditRowId } from '../.
 import { planValueClassForTier, resolveCodexCardTier } from '../../cardTier';
 import type { QuotaBodyProps } from '../../types';
 
-export function CodexQuotaBody({ quota, classes }: QuotaBodyProps<CodexQuotaState>) {
+export function CodexQuotaBody({ quota, classes, part }: QuotaBodyProps<CodexQuotaState>) {
   const { t, i18n } = useTranslation();
+  const showPlan = part !== 'details';
+  const showDetails = part !== 'plan';
   const now = useNow();
   const locale = i18n.resolvedLanguage;
   // Windows and reset credits compete for the same emphasis, but only during
@@ -77,48 +79,51 @@ export function CodexQuotaBody({ quota, classes }: QuotaBodyProps<CodexQuotaStat
 
   return (
     <>
-      {(planLabel ||
-        expiryDisplay ||
-        creditsUnlimited ||
-        creditBalance !== null ||
-        rateLimitResetCreditsAvailableCount !== null) && (
-        <div className={classes.codexPlan}>
-          {planLabel && (
-            <span className={classes.codexPlanItem}>
-              <span className={classes.codexPlanLabel}>{t('codex_quota.plan_label')}</span>
-              <span className={planValueClass}>{planLabel}</span>
-            </span>
-          )}
-          {expiryDisplay && (
-            <span className={classes.codexPlanItem}>
-              <span className={classes.codexPlanLabel}>{t('codex_quota.expires_label')}</span>
-              <span className={classes.codexPlanValue}>{expiryDisplay.absolute}</span>
-              {expiryDisplay.relative && (
-                <span className={classes.quotaResetRelative}>{expiryDisplay.relative}</span>
-              )}
-            </span>
-          )}
-          {(creditsUnlimited || creditBalance !== null) && (
-            <span className={classes.codexPlanItem}>
-              <span className={classes.codexPlanLabel}>
-                {t('codex_quota.credit_balance_label')}
+      {showPlan &&
+        (planLabel ||
+          expiryDisplay ||
+          creditsUnlimited ||
+          creditBalance !== null ||
+          rateLimitResetCreditsAvailableCount !== null) && (
+          <div className={classes.codexPlan}>
+            {planLabel && (
+              <span className={classes.codexPlanItem}>
+                <span className={classes.codexPlanLabel}>{t('codex_quota.plan_label')}</span>
+                <span className={planValueClass}>{planLabel}</span>
               </span>
-              <span className={classes.codexPlanValue}>
-                {creditsUnlimited ? t('codex_quota.credit_unlimited') : creditBalance}
+            )}
+            {expiryDisplay && (
+              <span className={classes.codexPlanItem}>
+                <span className={classes.codexPlanLabel}>{t('codex_quota.expires_label')}</span>
+                <span className={classes.codexPlanValue}>{expiryDisplay.absolute}</span>
+                {expiryDisplay.relative && (
+                  <span className={classes.quotaResetRelative}>{expiryDisplay.relative}</span>
+                )}
               </span>
-            </span>
-          )}
-          {rateLimitResetCreditsAvailableCount !== null && (
-            <span className={classes.codexPlanItem}>
-              <span className={classes.codexPlanLabel}>{t('codex_quota.reset_credits_label')}</span>
-              <span className={classes.codexPlanValue}>
-                {rateLimitResetCreditsAvailableCount.toString()}
+            )}
+            {(creditsUnlimited || creditBalance !== null) && (
+              <span className={classes.codexPlanItem}>
+                <span className={classes.codexPlanLabel}>
+                  {t('codex_quota.credit_balance_label')}
+                </span>
+                <span className={classes.codexPlanValue}>
+                  {creditsUnlimited ? t('codex_quota.credit_unlimited') : creditBalance}
+                </span>
               </span>
-            </span>
-          )}
-        </div>
-      )}
-      {rateLimitResetCredits.length > 0 ? (
+            )}
+            {rateLimitResetCreditsAvailableCount !== null && (
+              <span className={classes.codexPlanItem}>
+                <span className={classes.codexPlanLabel}>
+                  {t('codex_quota.reset_credits_label')}
+                </span>
+                <span className={classes.codexPlanValue}>
+                  {rateLimitResetCreditsAvailableCount.toString()}
+                </span>
+              </span>
+            )}
+          </div>
+        )}
+      {!showDetails ? null : rateLimitResetCredits.length > 0 ? (
         <div className={classes.codexResetCredits}>
           <div className={classes.codexResetCreditsTitle}>
             {t('codex_quota.reset_credits_expiry_label', { timezone: resolveTimeZoneLabel() })}
@@ -164,7 +169,7 @@ export function CodexQuotaBody({ quota, classes }: QuotaBodyProps<CodexQuotaStat
           })}
         </div>
       ) : null}
-      {windows.length === 0 ? (
+      {!showDetails ? null : windows.length === 0 ? (
         <div className={classes.quotaMessage}>{t('codex_quota.empty_windows')}</div>
       ) : (
         windows.map((window, index) => {

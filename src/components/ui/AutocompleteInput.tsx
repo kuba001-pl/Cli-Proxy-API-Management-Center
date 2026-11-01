@@ -180,11 +180,11 @@ export function AutocompleteInput({
               ref={dropdownRef}
               className="autocomplete-dropdown"
               style={{
-                backgroundColor: 'var(--bg-secondary)',
+                backgroundColor: 'var(--bg-surface)',
                 border: '1px solid var(--border-color)',
                 borderRadius: 'var(--radius-md)',
                 overflowY: 'auto',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                boxShadow: 'var(--shadow-lg)',
                 ...dropdownStyle,
               }}
             >
@@ -196,7 +196,7 @@ export function AutocompleteInput({
                     padding: '8px 12px',
                     cursor: 'pointer',
                     backgroundColor:
-                      index === highlightedIndex ? 'var(--bg-tertiary)' : 'transparent',
+                      index === highlightedIndex ? 'var(--bg-active)' : 'transparent',
                     color: 'var(--text-primary)',
                     display: 'flex',
                     flexDirection: 'column',

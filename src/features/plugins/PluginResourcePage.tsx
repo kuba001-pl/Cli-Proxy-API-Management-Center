@@ -6,6 +6,8 @@ import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { pluginsApi } from '@/services/api';
 import { useAuthStore } from '@/stores';
 import { getErrorMessage, isRecord } from '@/utils/helpers';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyText } from '@/utils/privacy';
 import type { PluginListResponse } from '@/types';
 import {
   collectPluginResourceEntries,
@@ -31,6 +33,7 @@ const parseMenuIndex = (value = '') => {
 
 export function PluginResourcePage() {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const params = useParams<{ pluginId: string; menuIndex: string }>();
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
   const apiBase = useAuthStore((state) => state.apiBase);
@@ -95,7 +98,10 @@ export function PluginResourcePage() {
         </div>
       ) : error ? (
         <div className={styles.stateShell}>
-          <EmptyState title={t('plugin_resource.unavailable')} description={error} />
+          <EmptyState
+            title={t('plugin_resource.unavailable')}
+            description={privacyText(privacyEnabled, error)}
+          />
         </div>
       ) : !resource ? (
         <div className={styles.stateShell}>

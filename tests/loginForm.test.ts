@@ -52,10 +52,11 @@ describe('LoginForm', () => {
     expect(markup).toContain(`>${i18n.t('login.connection_edit')}<`);
   });
 
-  test('prefers the stored/custom URL over the detected one', () => {
+  test('with the custom switch off, shows the detected URL and hides the custom one', () => {
     const markup = render({ apiBase: 'https://proxy.example.com' });
-    expect(markup).toContain('https://proxy.example.com');
-    expect(markup).not.toContain('http://localhost:8317');
+    expect(markup).toContain('http://localhost:8317');
+    expect(markup).not.toContain('https://proxy.example.com');
+    expect(markup).toContain('aria-checked="false"');
   });
 
   test('edits the URL in place with a labelled input', () => {
@@ -82,6 +83,15 @@ describe('LoginForm', () => {
     expect(markup).toContain('aria-invalid="true"');
     expect(markup).toMatch(/aria-describedby="[^"]+"/);
     expect(markup).toContain('HTTP 401: bad key');
+  });
+
+  test('splits the summary from the muted backend detail in one inline alert', () => {
+    const markup = render({ error: 'Authentication failed', errorDetail: '401 · invalid key' });
+    expect(markup.match(/role="alert"/g)).toHaveLength(1);
+    expect(markup).toContain('Authentication failed');
+    expect(markup).toContain(i18n.t('login.error_backend_detail'));
+    expect(markup).toContain('401 · invalid key');
+    expect(render({ error: 'Required' })).not.toContain(i18n.t('login.error_backend_detail'));
   });
 
   test('locks the submit button while connecting', () => {

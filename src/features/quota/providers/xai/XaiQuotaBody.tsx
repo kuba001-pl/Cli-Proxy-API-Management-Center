@@ -60,7 +60,7 @@ const resolveXaiPlanLabelKey = (monthlyLimitCents: number | null): string | null
   return null;
 };
 
-export function XaiQuotaBody({ quota, classes }: QuotaBodyProps<XaiQuotaState>) {
+export function XaiQuotaBody({ quota, classes, part }: QuotaBodyProps<XaiQuotaState>) {
   const { t, i18n } = useTranslation();
   // Ahead of the early return below — hooks cannot be conditional.
   const now = useNow();
@@ -73,7 +73,11 @@ export function XaiQuotaBody({ quota, classes }: QuotaBodyProps<XaiQuotaState>) 
   );
   const billing = quota.billing;
 
+  const showPlan = part !== 'details';
+  const showDetails = part !== 'plan';
+
   if (!billing) {
+    if (!showDetails) return null;
     return <div className={classes.quotaMessage}>{t('xai_quota.empty_data')}</div>;
   }
 
@@ -82,11 +86,13 @@ export function XaiQuotaBody({ quota, classes }: QuotaBodyProps<XaiQuotaState>) 
   if (billing.mode === 'paid-health') {
     return (
       <>
-        <div className={classes.codexPlan}>
-          <span className={classes.codexPlanLabel}>{t('xai_quota.plan_label')}</span>
-          <span className={planValueClass}>{billing.planLabel ?? t('xai_quota.plan_paid')}</span>
-        </div>
-        <div className={classes.quotaMessage}>{t('xai_quota.paid_health')}</div>
+        {showPlan && (
+          <div className={classes.codexPlan}>
+            <span className={classes.codexPlanLabel}>{t('xai_quota.plan_label')}</span>
+            <span className={planValueClass}>{billing.planLabel ?? t('xai_quota.plan_paid')}</span>
+          </div>
+        )}
+        {showDetails && <div className={classes.quotaMessage}>{t('xai_quota.paid_health')}</div>}
       </>
     );
   }
@@ -148,7 +154,7 @@ export function XaiQuotaBody({ quota, classes }: QuotaBodyProps<XaiQuotaState>) 
 
   return (
     <>
-      {(subscriptionLabel || headerReset || onDemandCap <= 0) && (
+      {showPlan && (subscriptionLabel || headerReset || onDemandCap <= 0) && (
         <div className={classes.codexPlan}>
           {subscriptionLabel && (
             <span className={classes.codexPlanItem}>
@@ -175,15 +181,17 @@ export function XaiQuotaBody({ quota, classes }: QuotaBodyProps<XaiQuotaState>) 
           )}
         </div>
       )}
-      {typeof billing.prepaidBalanceCents === 'number' && billing.prepaidBalanceCents > 0 && (
-        <div className={classes.codexPlan}>
-          <span className={classes.codexPlanLabel}>{t('xai_quota.prepaid')}</span>
-          <span className={classes.quotaAmount}>
-            {formatUsdFromCents(billing.prepaidBalanceCents)}
-          </span>
-        </div>
-      )}
-      {hasWeeklyData && (
+      {showPlan &&
+        typeof billing.prepaidBalanceCents === 'number' &&
+        billing.prepaidBalanceCents > 0 && (
+          <div className={classes.codexPlan}>
+            <span className={classes.codexPlanLabel}>{t('xai_quota.prepaid')}</span>
+            <span className={classes.quotaAmount}>
+              {formatUsdFromCents(billing.prepaidBalanceCents)}
+            </span>
+          </div>
+        )}
+      {showDetails && hasWeeklyData && (
         <div
           className={classes.quotaRow}
           title={weeklySoon ? t('quota_management.soonest_row_hint') : undefined}
@@ -206,7 +214,7 @@ export function XaiQuotaBody({ quota, classes }: QuotaBodyProps<XaiQuotaState>) 
           )}
         </div>
       )}
-      {billing.productUsage.length > 0 && (
+      {showDetails && billing.productUsage.length > 0 && (
         <div className={classes.quotaMessage}>
           <div>{t('xai_quota.usage_breakdown')}</div>
           {billing.productUsage.map((item) => (
@@ -220,7 +228,7 @@ export function XaiQuotaBody({ quota, classes }: QuotaBodyProps<XaiQuotaState>) 
           ))}
         </div>
       )}
-      {onDemandCap > 0 && (
+      {showDetails && onDemandCap > 0 && (
         <div className={classes.quotaRow}>
           <div className={classes.quotaRowHeader}>
             <span className={classes.quotaModel}>{t('xai_quota.pay_as_you_go_label')}</span>
@@ -232,7 +240,7 @@ export function XaiQuotaBody({ quota, classes }: QuotaBodyProps<XaiQuotaState>) 
           <QuotaMeter percent={onDemandRemaining} classes={classes} index={1} />
         </div>
       )}
-      {hasMonthlyData && (
+      {showDetails && hasMonthlyData && (
         <div className={classes.quotaRow}>
           <div className={classes.quotaRowHeader}>
             <span className={classes.quotaModel}>{t('xai_quota.monthly_credits')}</span>

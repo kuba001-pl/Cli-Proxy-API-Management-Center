@@ -7,7 +7,7 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   width: 100%;
   min-width: 0;
 }
@@ -17,7 +17,7 @@
 .workbench {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   min-width: 0;
 }
 
@@ -30,6 +30,7 @@
   gap: 12px;
   min-width: 0;
 
+  // ProviderTabs owns the single 1px separator and its spacing (B01: no second rule).
   > :first-child {
     flex: 1 1 auto;
     min-width: 0;
@@ -51,10 +52,10 @@
   align-items: center;
   flex: 0 1 340px;
   min-width: 0;
-  height: 36px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  background: var(--bg-secondary);
+  height: 32px;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: var(--bg-app);
   color: var(--text-secondary);
 
   &:focus-within {
@@ -121,14 +122,14 @@
 
 .sort {
   flex: 0 0 auto;
-  min-width: 148px;
+  min-width: 100px;
   max-width: 100%;
 
   button[aria-haspopup='listbox'] {
-    height: 36px;
-    border-color: transparent;
-    border-radius: 10px;
-    background: transparent;
+    height: 32px;
+    border-color: var(--border-default);
+    border-radius: 8px;
+    background: var(--bg-raised);
     box-shadow: none;
     color: var(--text-secondary);
 
@@ -164,7 +165,7 @@
 
   .clearSearch {
     width: 36px;
-    height: 36px;
+    height: 32px;
   }
 
   .sort button[aria-haspopup='listbox'] {
@@ -173,13 +174,25 @@
 }
 
 .errorBanner {
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--danger-color);
-  background: var(--bg-error-light);
-  border: 1px solid var(--warning-border);
-  border-radius: 10px;
-  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 118px;
+  padding: 16px 20px;
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--status-danger);
+}
+
+.errorIcon {
+  flex: none;
+}
+
+.errorText {
+  flex: 1 1 auto;
+  min-width: 0;
   overflow-wrap: anywhere;
 }
 
@@ -188,10 +201,48 @@
  * 与认证文件页配额模式（.gridQuota）同一档。 */
 
 .grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
-  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.providerHeading {
+  padding: 28px 0 16px;
+}
+
+/* One dashed outline owns the empty state (Figma Quota · States 66:5143 / 66:5149). */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 118px;
+  padding: 24px 20px;
+  border: 1px dashed var(--border-default);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.emptyIcon {
+  display: inline-flex;
+  color: var(--icon-default);
+}
+
+.emptyTitle {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.emptyDesc {
+  margin: 0;
+  max-width: 480px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--text-tertiary);
 }
 
 /* ---------- 分页 ---------- */
@@ -216,5 +267,11 @@
 @include mobile {
   .page {
     gap: 16px;
+  }
+}
+
+@include mobile {
+  .errorBanner {
+    flex-wrap: wrap;
   }
 }

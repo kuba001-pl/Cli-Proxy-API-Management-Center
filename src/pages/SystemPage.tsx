@@ -37,6 +37,8 @@ import iconXiaomi from '@/assets/icons/xiaomi.svg';
 import iconStepfun from '@/assets/icons/stepfun.svg';
 import iconStepfunDark from '@/assets/icons/stepfun-dark.svg';
 import styles from './SystemPage.module.scss';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyIdentity, privacyText } from '@/utils/privacy';
 
 const MODEL_CATEGORY_ICONS: Record<string, string | { light: string; dark: string }> = {
   devin: { light: iconDevinLight, dark: iconDevinDark },
@@ -85,6 +87,7 @@ export function SystemPage() {
   const { showNotification, showConfirmation } = useNotificationStore();
   const resolvedTheme = useThemeStore((state) => state.resolvedTheme);
   const auth = useAuthStore();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const config = useConfigStore((state) => state.config);
   const fetchConfig = useConfigStore((state) => state.fetchConfig);
   const clearCache = useConfigStore((state) => state.clearCache);
@@ -347,7 +350,9 @@ export function SystemPage() {
             <div className={styles.infoTile}>
               <div className={styles.tileLabel}>{t('connection.status')}</div>
               <div className={styles.tileValue}>{t(`common.${auth.connectionStatus}_status`)}</div>
-              <div className={styles.tileSub}>{auth.apiBase || '-'}</div>
+              <div className={styles.tileSub}>
+                {privacyIdentity(privacyEnabled, auth.apiBase) || '-'}
+              </div>
             </div>
           </div>
         </Card>
@@ -426,15 +431,19 @@ export function SystemPage() {
         >
           <p className={styles.sectionDescription}>{t('system_info.models_desc')}</p>
           {modelStatus && (
-            <div className={`status-badge ${modelStatus.type}`}>{modelStatus.message}</div>
+            <div className={`status-badge ${modelStatus.type}`}>
+              {privacyText(privacyEnabled, modelStatus.message)}
+            </div>
           )}
-          {modelsError && <div className="error-box">{modelsError}</div>}
+          {modelsError && (
+            <div className="error-box">{privacyText(privacyEnabled, modelsError)}</div>
+          )}
           {modelsLoading ? (
             <div className="hint">{t('common.loading')}</div>
           ) : models.length === 0 ? (
             <div className="hint">{t('system_info.models_empty')}</div>
           ) : (
-            <div className="item-list">
+            <div className={`item-list ${styles.modelGroups}`}>
               {groupedModels.map((group) => {
                 const iconSrc = getIconForCategory(group.id);
                 return (
@@ -453,10 +462,16 @@ export function SystemPage() {
                         <span
                           key={`${model.name}-${model.alias ?? 'default'}`}
                           className={styles.modelTag}
-                          title={model.description || ''}
+                          title={privacyText(privacyEnabled, model.description)}
                         >
-                          <span className={styles.modelName}>{model.name}</span>
-                          {model.alias && <span className={styles.modelAlias}>{model.alias}</span>}
+                          <span className={styles.modelName}>
+                            {privacyText(privacyEnabled, model.name)}
+                          </span>
+                          {model.alias && (
+                            <span className={styles.modelAlias}>
+                              {privacyText(privacyEnabled, model.alias)}
+                            </span>
+                          )}
                         </span>
                       ))}
                     </div>

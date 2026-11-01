@@ -1,9 +1,11 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useId, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { IconChevronDown, IconChevronUp, IconSearch } from '@/components/ui/icons';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import type { UseSourceSearchResult } from '../hooks/useSourceSearch';
+import { resolveSourcePreview } from '../privacy';
 import styles from './SourcePanel.module.scss';
 
 const LazyConfigSourceEditor = lazy(() => import('./ConfigSourceEditor'));
@@ -13,7 +15,7 @@ export type SourceSearchBarProps = {
   disabled: boolean;
 };
 
-/** 源码模式的搜索条：占据工具栏行的搜索槽位（与可视化模式的字段搜索同位置）。 */
+/** 源码模式的紧凑搜索条：放在页头操作区，编辑器紧贴页头（对应 config-source.png）。 */
 export function SourceSearchBar({ search, disabled }: SourceSearchBarProps) {
   const { t } = useTranslation();
   const {
@@ -27,6 +29,13 @@ export function SourceSearchBar({ search, disabled }: SourceSearchBarProps) {
     handleNextMatch,
   } = search;
 
+  const isCurrentQuery = Boolean(searchQuery) && lastSearchedQuery === searchQuery;
+  // Prev/next run a fresh search when the query changed since the last run, so the bar
+  // needs no separate trailing search button (Enter / Shift+Enter still work too).
+  const navDisabled = disabled || !searchQuery || (isCurrentQuery && searchResults.total === 0);
+  const handlePrev = () => (isCurrentQuery ? handlePrevMatch() : executeSearch('prev'));
+  const handleNext = () => (isCurrentQuery ? handleNextMatch() : executeSearch('next'));
+
   return (
     <div className={styles.searchBar}>
       <div className={styles.searchInputWrapper}>
@@ -35,47 +44,40 @@ export function SourceSearchBar({ search, disabled }: SourceSearchBarProps) {
           onChange={(e) => handleSearchChange(e.target.value)}
           onKeyDown={handleSearchKeyDown}
           placeholder={t('config_management.search_placeholder')}
+          aria-label={t('config_management.search_placeholder')}
           disabled={disabled}
           className={styles.searchInput}
+          leftElement={<IconSearch size={14} className={styles.searchIcon} />}
           rightElement={
-            <div className={styles.searchRight}>
-              {searchQuery && lastSearchedQuery === searchQuery && (
-                <span className={styles.searchCount}>
-                  {searchResults.total > 0
-                    ? `${searchResults.current} / ${searchResults.total}`
-                    : t('config_management.search_no_results')}
-                </span>
-              )}
-              <button
-                type="button"
-                className={styles.searchButton}
-                onClick={() => executeSearch('next')}
-                disabled={!searchQuery || disabled}
-                title={t('config_management.search_button')}
-              >
-                <IconSearch size={16} />
-              </button>
-            </div>
+            isCurrentQuery ? (
+              <span className={styles.searchCount} role="status">
+                {searchResults.total > 0
+                  ? `${searchResults.current} / ${searchResults.total}`
+                  : t('config_management.search_no_results')}
+              </span>
+            ) : undefined
           }
         />
       </div>
 
       <div className={styles.searchActions}>
         <Button
-          variant="secondary"
+          variant="ghost"
           size="sm"
-          onClick={handlePrevMatch}
-          disabled={!searchQuery || lastSearchedQuery !== searchQuery || searchResults.total === 0}
+          onClick={handlePrev}
+          disabled={navDisabled}
           title={t('config_management.search_prev')}
+          aria-label={t('config_management.search_prev')}
         >
           <IconChevronUp size={16} />
         </Button>
         <Button
-          variant="secondary"
+          variant="ghost"
           size="sm"
-          onClick={handleNextMatch}
-          disabled={!searchQuery || lastSearchedQuery !== searchQuery || searchResults.total === 0}
+          onClick={handleNext}
+          disabled={navDisabled}
           title={t('config_management.search_next')}
+          aria-label={t('config_management.search_next')}
         >
           <IconChevronDown size={16} />
         </Button>
@@ -92,22 +94,55 @@ export type SourcePanelProps = {
   editable: boolean;
 };
 
-/** YAML 源码编辑面板：lazy CodeMirror（含语法高亮/折叠/内置搜索快捷键）。 */
+/**
+ * YAML 源码编辑面板：lazy CodeMirror（含语法高亮/折叠/内置搜索快捷键）。
+ * Privacy mode swaps the editor for a separate, hard read-only preview of the masked text;
+ * the editable instance and its onChange are unmounted, so masks can never reach the real
+ * document, and the pending draft (held by the page) is shown again when privacy turns off.
+ */
 export function SourcePanel({ search, value, onChange, theme, editable }: SourcePanelProps) {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
+  const preview = useMemo(
+    () => resolveSourcePreview(value, privacyEnabled),
+    [value, privacyEnabled]
+  );
+  const noticeId = useId();
 
   return (
-    <div className={styles.editorWrapper}>
-      <Suspense fallback={null}>
-        <LazyConfigSourceEditor
-          editorRef={search.editorRef}
-          value={value}
-          onChange={onChange}
-          theme={theme}
-          editable={editable}
-          placeholder={t('config_management.editor_placeholder')}
-        />
-      </Suspense>
+    <div className={styles.sourceRegion}>
+      {preview.masked ? (
+        <p id={noticeId} className={styles.privacyNotice} role="status">
+          {t('config_management.privacy_source_paused')}
+        </p>
+      ) : null}
+      <div className={styles.editorWrapper}>
+        <Suspense fallback={null}>
+          {preview.masked ? (
+            <LazyConfigSourceEditor
+              key="masked-preview"
+              // Search/navigation only moves the selection over what is on screen.
+              editorRef={search.editorRef}
+              value={preview.previewText}
+              theme={theme}
+              editable={false}
+              readOnly
+              ariaDescribedBy={noticeId}
+              placeholder={t('config_management.editor_placeholder')}
+            />
+          ) : (
+            <LazyConfigSourceEditor
+              key="source"
+              editorRef={search.editorRef}
+              value={value}
+              onChange={onChange}
+              theme={theme}
+              editable={editable}
+              placeholder={t('config_management.editor_placeholder')}
+            />
+          )}
+        </Suspense>
+      </div>
     </div>
   );
 }

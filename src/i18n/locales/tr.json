@@ -65,6 +65,7 @@
     "subtitle": "Yönetim Merkezi"
   },
   "login": {
+    "subtitle": "CLI Proxy API v8 veya üzeri bir sürüme bağlanın",
     "connection_current": "Geçerli URL",
     "connection_edit": "Değiştir",
     "connection_done": "Tamam",
@@ -93,6 +94,10 @@
     "error_ssl": "SSL/TLS Sertifika Doğrulaması Başarısız"
   },
   "header": {
+    "privacy_mode_on": "Gizlilik modu açık",
+    "privacy_mode_off": "Gizlilik modu kapalı",
+    "hide_personal_data": "Kişisel verileri gizle",
+    "show_personal_data": "Kişisel verileri göster",
     "refresh_all": "Tümünü Yenile",
     "logout": "Çıkış"
   },
@@ -101,7 +106,7 @@
   },
   "nav": {
     "dashboard": "Pano",
-    "quick_start": "Hızlı Başlangıç",
+    "quick_start": "Hızlı Kurulum",
     "ai_providers": "AI Sağlayıcıları",
     "auth_files": "Kimlik Dosyaları",
     "oauth": "OAuth Girişi",
@@ -222,6 +227,10 @@
     "routing_strategy_fill_first": "Fill-First (Önceliklendir)"
   },
   "auth_files": {
+    "account_column": "Hesap",
+    "plan_column": "Plan",
+    "recent_requests_column": "Son istekler",
+    "lowest_quota_column": "En düşük kota",
     "title": "Kimlik Dosyası Yönetimi",
     "meta_total": "{{count}} Kimlik Bilgisi",
     "meta_active": "{{count}} Aktif",
@@ -368,6 +377,8 @@
     "status_disabled_success": "“{{name}}” Devre Dışı Bırakıldı",
     "batch_status_success": "{{count}} Dosya Başarıyla Güncellendi",
     "batch_status_partial": "{{success}} Güncellendi, {{failed}} Başarısız",
+    "delete_title": "Dosyayı Sil",
+    "delete_all_title": "Tüm Dosyaları Sil",
     "batch_delete_title": "Seçili Dosyaları Sil",
     "batch_delete_confirm": "{{count}} Dosyayı Silmek İstediğinden Emin Misin?",
     "batch_selected": "{{count}} Seçili",
@@ -710,6 +721,7 @@
     "save_failed": "Model Devre Dışı Bırakma Güncellenemedi",
     "delete": "Sağlayıcıyı Sil",
     "delete_confirm": "{{provider}} için Model Devre Dışı Bırakma Silinsin Mi?",
+    "delete_title": "Model Devre Dışı Bırakmayı Sil",
     "delete_success": "Sağlayıcı Model Devre Dışı Bırakması Kaldırıldı",
     "delete_failed": "Model Devre Dışı Bırakma Silinemedi",
     "no_models": "Yapılandırılmış Devre Dışı Model Yok",
@@ -778,6 +790,7 @@
     "save_failed": "Model Takma Adları Güncellenemedi",
     "delete": "Sağlayıcıyı Sil",
     "delete_confirm": "{{provider}} için Model Takma Adları Silinsin Mi?",
+    "delete_title": "Model Takma Adlarını Sil",
     "delete_link_title": "Eşlemeyi Kaldır",
     "delete_link_confirm": "<code>{{sourceModel}}</code> ({{provider}}) Eşlemesi <code>{{alias}}</code> Takma Adından Kaldırılsın Mı?",
     "delete_alias_title": "Takma Adı Sil",
@@ -988,6 +1001,9 @@
     "no_requests": "İstek Yok"
   },
   "logs": {
+    "caption": "Canlı akış · uygulama ve istek günlükleri",
+    "error_logs_file": "Dosya",
+    "error_logs_actions": "Dosya işlemleri",
     "preview_too_large": "Bu İstek Günlüğü 2 MiB Önizleme Sınırını Aşıyor. Görmek için İndir.",
     "read_status_live": "Sürekli Okunuyor",
     "read_status_paused": "Okuma Duraklatıldı",
@@ -1043,6 +1059,7 @@
     "loading": "Günlükler Yükleniyor...",
     "load_error": "Günlükler Yüklenemedi",
     "clear_confirm": "Tüm Günlükleri Temizlemek İstediğinden Emin Misin? Bu Eylem Geri Alınamaz!",
+    "clear_confirm_title": "Günlükleri Temizle",
     "clear_success": "Günlükler Başarıyla Temizlendi",
     "download_success": "Günlükler Başarıyla İndirildi",
     "auto_refresh": "Otomatik Yenile",
@@ -1081,6 +1098,8 @@
     "meta_dirty_source": "Kaydedilmemiş Kaynak Düzenlemeleri",
     "meta_errors": "{{count}} Doğrulama Hatası",
     "meta_synced": "Eşitlendi",
+    "unsaved_changes_one": "{{count}} Kaydedilmemiş Değişiklik",
+    "unsaved_changes_other": "{{count}} Kaydedilmemiş Değişiklik",
     "actions": {
       "discard": "Değişiklikleri At",
       "save": "Değişiklikleri Kaydet"
@@ -1118,6 +1137,7 @@
     "precise_save_recovery_required": "Kayıt Sonucu Geri Okunamadı. Düzenleme Duraklatıldı. Taslak Tabanını Kurtarmak için Yeniden Kaydet veya Yapılandırmayı Yeniden Yükle.",
     "visual_mode_latest_yaml_invalid": "En Son Sunucu Yapılandırması Geçersiz YAML İçeriyor. Görsel Değişiklikleri Kaydetmeden Önce Kaynak Modda İncele: {{message}}",
     "editor_placeholder": "key: value",
+    "privacy_source_paused": "Gizlilik modu açık — kaynak düzenleme duraklatıldı. Düzenlemek için gizlilik modunu kapatın.",
     "search_placeholder": "Yapılandırma Ara...",
     "search_button": "Ara",
     "search_no_results": "Sonuç Yok",
@@ -1303,12 +1323,12 @@
           "description": "Sunucu Adresi, Bağlantı Noktası, Kimlik Dizini ve API Anahtarları"
         },
         "logging": {
-          "title": "Günlük ve Tanılama",
+          "title": "Günlük",
           "description": "Hata Ayıklama, Günlük Çıktısı ve Kullanım İstatistikleri"
         },
         "advanced": {
           "antigravity_credits": "Antigravity Kredilerini Kullan",
-          "title": "Gelişmiş ve Deneysel",
+          "title": "Gelişmiş",
           "description": "Üst Bilgi Sahteciliği, İmza Önbelleği, Eklenti Kaynakları ve Nadiren Değişen Diğer Ayarlar",
           "plugins_title": "Eklentiler",
           "antigravity_title": "Antigravity",
@@ -1421,7 +1441,7 @@
           "beta_features": "Beta Özellikleri"
         },
         "network": {
-          "title": "Ağ Yapılandırması",
+          "title": "Ağ",
           "description": "Proxy, Yeniden Deneme ve Yönlendirme Ayarları",
           "proxy_url": "Proxy URL",
           "proxy_url_sponsor_hint": "Uygun Proxy Yok Mu?",
@@ -1457,7 +1477,7 @@
           "ws_auth_desc": "AI Studio WebSocket Bağlantıları için Kimlik Doğrulama İste (oauth.providers.aistudio.ws-auth)"
         },
         "streaming": {
-          "title": "Akış Yapılandırması",
+          "title": "Akış",
           "description": "Canlı Tutma ve Başlangıç Yeniden Deneme Ayarları",
           "keepalive_seconds": "Canlı Tutma Saniyesi",
           "keepalive_hint": "Canlı Tutmayı Kapatmak için 0, Negatif Tam Sayı Ayarla veya Boş Bırak",
@@ -1468,7 +1488,7 @@
           "disabled": "Devre Dışı"
         },
         "payload": {
-          "title": "Yük Yapılandırması",
+          "title": "Yük",
           "description": "Varsayılan Değerler, Ham JSON Kuralları, Geçersiz Kılma Kuralları ve Süzgeç Kuralları",
           "default_rules": "Varsayılan Kurallar",
           "default_rules_desc": "İstekte Parametreler Belirtilmediğinde Bu Varsayılan Değerleri Kullan",
@@ -1588,18 +1608,28 @@
     }
   },
   "quota_management": {
+    "summary_label": "Sağlayıcıya göre kotalar",
+    "lowest": "en düşük kalan",
+    "upcoming_title": "Yaklaşan sıfırlamalar",
+    "upcoming_description": "Her kota aralığının yenilenme zamanı, en yakın önce",
+    "upcoming_filter": "Sıfırlama aralıklarını filtrele",
+    "upcoming_empty": "Bu aralık için yaklaşan sıfırlama yok.",
+    "upcoming_show_all": "{{count}} sıfırlamanın tümünü göster",
+    "upcoming_show_less": "Daha az sıfırlama göster",
     "search_label": "Hesap Ara",
     "search_placeholder": "Dosya Adına veya E-postaya Göre Ara",
     "search_empty_title": "Eşleşen Hesap Yok",
     "search_empty_desc": "Başka Bir Dosya Adı veya E-posta Dene ya da Aramayı Temizle.",
     "search_clear": "Aramayı Temizle",
+    "retry": "Yeniden dene",
     "title": "Kota Yönetimi",
     "description": "Antigravity, Codex, Claude, Kimi ve xAI Kimlik Bilgileri için OAuth Kota Durumunu İzle.",
     "refresh_all_credentials": "Tüm Kimlik Bilgilerini Yenile",
     "sort_label": "Sırala",
     "sort_default": "Varsayılan",
     "sort_soonest": "En Yakın Toparlanma",
-    "meta_credentials": "{{count}} Kimlik Bilgisi",
+    "meta_credentials_one": "{{count}} Kimlik Bilgisi",
+    "meta_credentials_other": "{{count}} Kimlik Bilgisi",
     "meta_loaded": "{{count}} Yüklendi",
     "meta_attention": "{{count}} İlgi Gerekiyor",
     "empty_title": "Kota Yeteneği Olan Kimlik Bilgisi Yok",
@@ -1636,6 +1666,7 @@
   },
   "routing": {
     "title": "Yönlendirme",
+    "summary": "Üyeler {{members}} · Katmanlar {{tiers}}",
     "refresh": "Yenile",
     "refresh_discards": "Yenilemek kaydedilmemiş düzeni siler.",
     "loading": "Yönlendirme yükleniyor…",
@@ -1704,9 +1735,11 @@
     "max_retry_credentials_desc": "Tur başına denenecek en fazla kimlik; 0 hepsini dener.",
     "unlimited": "Sınırsız",
     "dirty_region": "Kaydedilmemiş yönlendirme değişiklikleri",
-    "dirty_count": "Kaydedilmemiş değişiklik: {{count}}",
-    "discard": "Vazgeç",
-    "save": "Kaydet",
+    "dirty_count": "{{count}} kaydedilmemiş değişiklik",
+    "dirty_count_one": "{{count}} kaydedilmemiş değişiklik",
+    "dirty_count_other": "{{count}} kaydedilmemiş değişiklik",
+    "discard": "Değişiklikleri iptal et",
+    "save": "Değişiklikleri kaydet",
     "review_title": "Yönlendirme değişikliklerini kaydet",
     "review_hint": "OAuth kimlikleri tek tek yazılır; geri kalan her şey yapılandırmaya tek seferde yazılır.",
     "confirm_save": "Değişiklikleri kaydet",
@@ -1922,6 +1955,8 @@
     "clear_login_confirm": "Yerel Giriş Verisi Temizlensin ve Oturum Şimdi Kapatılsın Mı?"
   },
   "notification": {
+    "save_failed": "Kaydedilemedi",
+    "load_failed": "Yüklenemedi",
     "trusted_proxies_restart_required": "Güvenilen Proxy Ayarları Kaydedildi. Uygulamak için Arka Ucu Yeniden Başlat.",
     "region_label": "Bildirimler",
     "type_success": "Başarılı",
@@ -2070,6 +2105,7 @@
       "new": "Yeni",
       "edit": "Düzenle",
       "view": "Gör",
+      "more": "Diğer işlemler",
       "delete": "Sil",
       "cancel": "İptal",
       "save": "Kaydet",
@@ -2193,7 +2229,9 @@
       "notSet": "Ayarlanmadı",
       "none": "Yok",
       "notConfigured": "Yapılandırılmadı",
-      "defaultSuffix": "(Varsayılan)"
+      "defaultSuffix": "(Varsayılan)",
+      "okCount": "{{count}} başarılı",
+      "failedCount": "{{count}} başarısız"
     },
     "detail": {
       "title": "Ayrıntılar",
@@ -2213,6 +2251,9 @@
     "form": {
       "createEyebrow": "Yeni",
       "editEyebrow": "Düzenle",
+      "sheetDescriptionCreate": "{{provider}} için kimlik bilgileri, bağlantı ayarları ve modeller ekleyin.",
+      "sheetDescriptionEdit": "{{provider}} için kimlik bilgilerini, bağlantı ayarlarını ve modelleri güncelleyin.",
+      "sheetDescriptionDetail": "{{provider}} yapılandırması, kimlik bilgileri ve son istek durumu.",
       "name": "Ad",
       "apiKey": "API Anahtarı",
       "apiKeyCreatePlaceholder": "API Anahtarını Gir",

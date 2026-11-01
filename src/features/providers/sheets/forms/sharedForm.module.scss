@@ -10,125 +10,7 @@
 }
 
 .quickStartForm {
-  gap: 20px;
-
-  .section {
-    gap: 14px;
-  }
-
-  .sectionTitle {
-    font-size: 17px;
-    font-weight: 700;
-    line-height: 1.35;
-    letter-spacing: 0;
-  }
-
-  .sectionDesc {
-    max-width: 72ch;
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--text-secondary);
-  }
-
-  .field {
-    gap: 7px;
-  }
-
-  .label {
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 1.45;
-  }
-
-  .labelHint {
-    font-size: 12px;
-    line-height: 1.6;
-    color: var(--muted-foreground);
-  }
-
-  .input,
-  .textarea,
-  .discoverySearch {
-    font-size: 14px;
-    line-height: 1.45;
-  }
-
-  .entryCard {
-    gap: 12px;
-  }
-
-  .entryCardHeader {
-    font-size: 13px;
-    line-height: 1.45;
-  }
-
-  .sponsorGroupTitle {
-    gap: 3px;
-
-    strong {
-      font-size: 14px;
-      font-weight: 650;
-      line-height: 1.4;
-    }
-  }
-
-  .sponsorUrlOptionText,
-  .checkboxText {
-    font-size: 14px;
-    line-height: 1.45;
-  }
-
-  .sponsorUrlOptionText small,
-  .checkboxText small,
-  .sponsorProtocolUrl,
-  .sponsorUsageResult,
-  .connectivityError,
-  .discoveryEmpty,
-  .discoveryItem,
-  .discoveryBatchLabel,
-  .discoveryName {
-    font-size: 12px;
-    line-height: 1.6;
-  }
-
-  .sponsorProtocolName {
-    font-size: 13px;
-    font-weight: 650;
-    line-height: 1.4;
-  }
-
-  .sponsorUsageMain {
-    line-height: 1.45;
-  }
-
-  .sponsorUsageMeta,
-  .discoveryAlias,
-  .discoveryCount,
-  .discoveryAddedTag {
-    font-size: 12px;
-    line-height: 1.55;
-  }
-
-  .connectivityBtn,
-  .discoveryApplyBtn,
-  .addBtn,
-  .removeBtn {
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 1;
-  }
-
-  .footerBtn {
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1;
-  }
-
-  details summary {
-    font-size: 14px;
-    font-weight: 650;
-    line-height: 1.45;
-  }
+  gap: 24px;
 }
 
 .section {
@@ -139,8 +21,9 @@
 }
 
 .sectionTitle {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 700;
   color: var(--text-primary);
   margin: 0;
   display: flex;
@@ -150,7 +33,7 @@
 
 .sectionDesc {
   font-size: 12px;
-  color: var(--muted-foreground);
+  color: var(--text-tertiary);
   line-height: 1.5;
   margin: 0;
 }
@@ -162,14 +45,14 @@
 }
 
 .label {
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
 .labelHint {
   font-size: 11px;
-  color: var(--muted-foreground);
+  color: var(--text-tertiary);
   font-weight: 400;
 }
 
@@ -179,8 +62,8 @@
   height: 36px;
   padding: 8px 12px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
+  background: var(--bg-app);
   color: var(--text-primary);
   font-size: 13px;
   font-family: inherit;
@@ -192,8 +75,12 @@
 
   &:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px var(--primary-10);
+  }
+
+  &:focus-visible {
+    border-color: var(--border-strong);
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
   }
 
   &:disabled {
@@ -223,8 +110,8 @@
   width: 16px;
   height: 16px;
   border-radius: 4px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
+  background: var(--bg-app);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -261,7 +148,7 @@
   color: var(--text-primary);
 
   small {
-    color: var(--muted-foreground);
+    color: var(--text-tertiary);
     font-size: 11px;
   }
 }
@@ -275,7 +162,7 @@
 
 .divider {
   border: 0;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-default);
   margin: 4px 0;
 }
 
@@ -298,7 +185,7 @@
 
 .dt {
   font-size: 11px;
-  color: var(--muted-foreground);
+  color: var(--text-tertiary);
   font-weight: 500;
 }
 
@@ -316,7 +203,7 @@
 }
 
 .entryCard {
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   padding: 12px;
   display: flex;
@@ -325,7 +212,7 @@
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
-  background: var(--bg-secondary);
+  background: var(--bg-surface);
 }
 
 .entryCardHeader {
@@ -336,7 +223,7 @@
   min-width: 0;
   font-size: 12px;
   font-weight: 500;
-  color: var(--muted-foreground);
+  color: var(--text-tertiary);
 }
 
 .entryCardToggle {
@@ -402,7 +289,7 @@
 .sponsorSummaryUrl {
   max-width: min(360px, 45vw);
   font-family: $font-mono;
-  color: var(--muted-foreground);
+  color: var(--text-tertiary);
 }
 
 .entryCardHeaderRight {
@@ -432,11 +319,11 @@
   color: var(--text-tertiary);
   cursor: pointer;
   transition:
-    background-color $transition-fast,
-    color $transition-fast;
+    background-color var(--dur-hover) var(--ease-out-strong),
+    color var(--dur-hover) var(--ease-out-strong);
 
   &:hover {
-    background: var(--bg-tertiary);
+    background: var(--bg-raised);
     color: var(--text-primary);
   }
 
@@ -447,7 +334,7 @@
 }
 
 .entryCardChevron {
-  transition: transform $transition-fast;
+  transition: transform var(--dur-hover) var(--ease-out-strong);
 }
 
 .entryCardChevronOpen {
@@ -482,13 +369,13 @@
   gap: 10px;
   min-width: 0;
   padding: 10px 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
-  background: var(--bg-secondary);
+  background: var(--bg-surface);
   cursor: pointer;
   transition:
-    border-color $transition-fast,
-    background-color $transition-fast;
+    border-color var(--dur-hover) var(--ease-out-strong),
+    background-color var(--dur-hover) var(--ease-out-strong);
 
   input {
     margin: 2px 0 0;
@@ -522,7 +409,7 @@
     font-family: $font-mono;
     font-size: 11px;
     line-height: 1.4;
-    color: var(--muted-foreground);
+    color: var(--text-tertiary);
     overflow-wrap: anywhere;
   }
 }
@@ -549,9 +436,9 @@
   flex-direction: column;
   gap: 4px;
   padding: 10px 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
-  background: var(--bg-secondary);
+  background: var(--bg-surface);
 }
 
 .sponsorProtocolName {
@@ -564,7 +451,7 @@
   font-family: $font-mono;
   font-size: 11px;
   line-height: 1.4;
-  color: var(--muted-foreground);
+  color: var(--text-tertiary);
   overflow-wrap: anywhere;
 }
 
@@ -582,9 +469,9 @@
   flex-direction: column;
   gap: 4px;
   padding: 8px 10px;
-  border: 1px solid color-mix(in srgb, var(--success-color) 34%, var(--border-color));
+  border: 1px solid color-mix(in srgb, var(--success-color) 34%, var(--border-default));
   border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--success-color) 8%, var(--bg-primary));
+  background: color-mix(in srgb, var(--success-color) 8%, var(--bg-app));
   color: var(--text-primary);
   font-size: 11px;
   line-height: 1.4;
@@ -604,7 +491,7 @@
 }
 
 .sponsorUsageMeta {
-  color: var(--muted-foreground);
+  color: var(--text-tertiary);
 }
 
 .connectivityRow {
@@ -621,15 +508,15 @@
   height: 28px;
   padding: 0 12px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
+  background: var(--bg-app);
   color: var(--text-primary);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
   transition:
-    background-color $transition-fast,
-    border-color $transition-fast;
+    background-color var(--dur-hover) var(--ease-out-strong),
+    border-color var(--dur-hover) var(--ease-out-strong);
 
   &:hover:not(:disabled) {
     border-color: var(--primary-color);
@@ -656,11 +543,11 @@
   font-weight: 500;
   cursor: pointer;
   transition:
-    background-color $transition-fast,
-    color $transition-fast;
+    background-color var(--dur-hover) var(--ease-out-strong),
+    color var(--dur-hover) var(--ease-out-strong);
 
   &:hover:not(:disabled) {
-    background: var(--bg-tertiary);
+    background: var(--bg-raised);
     color: var(--text-primary);
   }
 
@@ -712,9 +599,9 @@
   flex-direction: column;
   gap: 10px;
   padding: 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
-  background: var(--bg-secondary);
+  background: var(--bg-surface);
 }
 
 .discoveryToolbar {
@@ -735,7 +622,7 @@
   left: 10px;
   display: inline-flex;
   align-items: center;
-  color: var(--muted-foreground);
+  color: var(--text-tertiary);
   pointer-events: none;
 }
 
@@ -744,8 +631,8 @@
   height: 32px;
   padding: 6px 10px 6px 30px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
+  background: var(--bg-app);
   color: var(--text-primary);
   font-size: 12px;
   box-sizing: border-box;
@@ -756,8 +643,12 @@
 
   &:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px var(--primary-10);
+  }
+
+  &:focus-visible {
+    border-color: var(--border-strong);
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
   }
 }
 
@@ -765,10 +656,10 @@
   padding: 16px;
   text-align: center;
   font-size: 12px;
-  color: var(--muted-foreground);
-  border: 1px dashed var(--border-color);
+  color: var(--text-tertiary);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
-  background: var(--bg-primary);
+  background: var(--bg-app);
 }
 
 .discoveryBatchRow {
@@ -786,7 +677,7 @@
 
 .discoveryCount {
   font-size: 11px;
-  color: var(--muted-foreground);
+  color: var(--text-tertiary);
   font-variant-numeric: tabular-nums;
 }
 
@@ -799,9 +690,9 @@
   gap: 2px;
   max-height: 240px;
   overflow-y: auto;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
-  background: var(--bg-primary);
+  background: var(--bg-app);
 }
 
 .discoveryItem {
@@ -810,7 +701,7 @@
   justify-content: space-between;
   gap: 8px;
   padding: 8px 10px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-default);
   font-size: 12px;
   color: var(--text-primary);
 
@@ -821,7 +712,7 @@
 
 .discoveryItemExisting {
   background: var(--muted-bg);
-  color: var(--muted-foreground);
+  color: var(--text-tertiary);
 }
 
 .discoveryName {
@@ -839,17 +730,17 @@
 
 .discoveryAlias {
   font-size: 11px;
-  color: var(--muted-foreground);
+  color: var(--text-tertiary);
   word-break: break-all;
 }
 
 .discoveryAddedTag {
   font-size: 11px;
-  color: var(--muted-foreground);
+  color: var(--text-tertiary);
   padding: 2px 8px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
+  background: var(--bg-app);
 }
 
 .discoveryFooter {
@@ -867,12 +758,12 @@
   padding: 0 14px;
   border-radius: var(--radius-md);
   border: 1px solid transparent;
-  background: var(--primary-color);
-  color: var(--primary-contrast);
+  background: var(--button-primary-bg);
+  color: var(--button-primary-fg);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color $transition-fast;
+  transition: background-color var(--dur-hover) var(--ease-out-strong);
 
   &:hover:not(:disabled) {
     background: var(--primary-hover);
@@ -903,6 +794,14 @@
 .passwordInput {
   @extend .input;
   padding-right: 36px;
+  font-family: $font-mono;
+  font-size: 12.5px;
+}
+
+// URLs, proxy addresses and header names/values use the mono scale (brief typography).
+.inputMono {
+  font-family: $font-mono;
+  font-size: 12.5px;
 }
 
 .passwordToggle {
@@ -917,7 +816,7 @@
   color: var(--text-tertiary);
   cursor: pointer;
   border-radius: var(--radius-sm);
-  transition: color $transition-fast;
+  transition: color var(--dur-hover) var(--ease-out-strong);
 
   &:hover:not(:disabled) {
     color: var(--text-primary);
@@ -968,9 +867,9 @@
   flex-direction: column;
   gap: 10px;
   padding: 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
-  background: var(--bg-secondary);
+  background: var(--bg-surface);
 }
 
 .thinkingFieldset {
@@ -1003,9 +902,9 @@
   width: 100%;
   min-width: 0;
   padding: 8px 10px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
-  background: var(--bg-primary);
+  background: var(--bg-app);
   box-sizing: border-box;
 }
 
@@ -1021,15 +920,15 @@
   font-weight: 500;
 
   code {
-    color: var(--muted-foreground);
+    color: var(--text-tertiary);
     font-size: 10px;
     font-weight: 400;
   }
 }
 
 .thinkingLevelOptionSelected {
-  border-color: color-mix(in srgb, var(--primary-color) 50%, var(--border-color));
-  background: color-mix(in srgb, var(--primary-color) 8%, var(--bg-primary));
+  border-color: color-mix(in srgb, var(--primary-color) 50%, var(--border-default));
+  background: color-mix(in srgb, var(--primary-color) 8%, var(--bg-app));
 
   .thinkingLevelLabel {
     color: var(--text-primary);
@@ -1059,10 +958,10 @@
   display: inline-flex;
   align-items: center;
   padding: 1px 7px;
-  border-radius: 999px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-tertiary);
-  color: var(--muted-foreground);
+  border-radius: 4px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-raised);
+  color: var(--text-tertiary);
   font-size: 10px;
   font-weight: 500;
   white-space: nowrap;
@@ -1076,8 +975,8 @@
   gap: 6px;
   padding: 6px 12px;
   border-radius: var(--radius-md);
-  border: 1px dashed var(--border-color);
-  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
+  background: var(--bg-app);
   color: var(--text-secondary);
   cursor: pointer;
   font-size: 12px;
@@ -1117,8 +1016,8 @@
   gap: 6px;
   padding: 6px 12px;
   border-radius: var(--radius-md);
-  border: 1px dashed var(--border-color);
-  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
+  background: var(--bg-app);
   color: var(--text-secondary);
   cursor: pointer;
   font-size: 12px;
@@ -1141,7 +1040,7 @@
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color $transition-fast;
+  transition: background-color var(--dur-hover) var(--ease-out-strong);
   border: 1px solid transparent;
   background: transparent;
   color: var(--text-primary);
@@ -1157,22 +1056,22 @@
   border-color: transparent;
 
   &:hover:not(:disabled) {
-    background: var(--bg-tertiary);
+    background: var(--bg-raised);
   }
 }
 
 .footerBtnOutline {
-  border-color: var(--border-color);
-  background: var(--bg-primary);
+  border-color: var(--border-default);
+  background: var(--bg-app);
 
   &:hover:not(:disabled) {
-    background: var(--bg-tertiary);
+    background: var(--bg-raised);
   }
 }
 
 .footerBtnPrimary {
-  background: var(--primary-color);
-  color: var(--primary-contrast);
+  background: var(--button-primary-bg);
+  color: var(--button-primary-fg);
 
   &:hover:not(:disabled) {
     background: var(--primary-hover);
@@ -1208,8 +1107,8 @@
   min-width: 0;
   max-width: 100%;
   padding: 8px 12px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-secondary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
   border-radius: 8px;
   font-size: 12px;
 }
@@ -1221,15 +1120,15 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--primary-color);
-  color: var(--primary-contrast);
+  background: var(--button-primary-bg);
+  color: var(--button-primary-fg);
   font-size: 11px;
   font-weight: 600;
   flex-shrink: 0;
 }
 
 .apiKeyEntryKey {
-  font-family: 'Monaco', 'Menlo', 'Consolas', 'Ubuntu Mono', monospace;
+  font-family: $font-mono;
   font-weight: 600;
   color: var(--text-primary);
   min-width: 0;
@@ -1247,7 +1146,7 @@
   word-break: break-word;
 
   &::before {
-    content: '| Proxy: ';
+    content: '· ';
     color: var(--text-quaternary);
   }
 }
@@ -1280,4 +1179,56 @@
 .apiKeyEntryStatFailure {
   background: var(--failure-badge-bg);
   color: var(--failure-badge-text);
+}
+
+.form button:focus-visible,
+.passwordToggle:focus-visible,
+.footerBtn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.footerBtn > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (max-width: 520px) {
+  .fieldRow,
+  .dl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form *,
+  .footerBtn,
+  .passwordToggle {
+    transition: none;
+    animation: none;
+  }
+}
+
+.identityField {
+  position: relative;
+  min-width: 0;
+}
+.identityInputPrivate {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  caret-color: var(--text-primary);
+  &::selection {
+    color: transparent;
+  }
+}
+.identityMask {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-primary);
+  font-family: $font-mono;
+  font-size: 13px;
 }

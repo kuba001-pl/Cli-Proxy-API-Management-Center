@@ -7,10 +7,10 @@ $diff-line-height: 20px;
 $diff-gutter-width: 50px;
 $diff-prefix-width: 20px;
 
-// GitHub-inspired diff colors (theme-adaptive via color-mix)
-$diff-add-color: #3fb950;
-$diff-del-color: #f85149;
-$diff-hunk-color: #388bfd;
+// Semantic theme tokens: tints derive from them via color-mix, so both themes stay legible.
+$diff-add-color: var(--status-success);
+$diff-del-color: var(--status-danger);
+$diff-hunk-color: var(--info-color);
 
 .diffModal {
   :global(.modal-body) {

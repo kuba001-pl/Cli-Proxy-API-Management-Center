@@ -18,15 +18,18 @@ export function ClaudeQuotaBody({
   classes,
   planItems,
   afterPlan,
+  part,
 }: QuotaBodyProps<ClaudeQuotaState>) {
   const { t, i18n } = useTranslation();
+  const showPlan = part !== 'details';
+  const showDetails = part !== 'plan';
   const now = useNow();
   const soonestRowId = useMemo(
     () => pickUrgentRowId(collectQuotaRowInstants('claude', quota), now),
     [quota, now]
   );
-  const windows = quota.windows ?? [];
-  const extraUsage = quota.extraUsage ?? null;
+  const windows = showDetails ? (quota.windows ?? []) : [];
+  const extraUsage = showDetails ? (quota.extraUsage ?? null) : null;
   const planType = quota.planType ?? null;
   const language = i18n.resolvedLanguage;
   const formatMoney = (value: number | null, currency = 'USD', divisor = 1): string => {
@@ -53,14 +56,14 @@ export function ClaudeQuotaBody({
 
   return (
     <>
-      {quota.stale && (
+      {showDetails && quota.stale && (
         <div role="status" className={classes.codexResetCreditsError}>
           {t('claude_quota.stale_snapshot', {
             time: quota.observedAt ? new Date(quota.observedAt).toLocaleString(language) : '--',
           })}
         </div>
       )}
-      {(planType || planItems) && (
+      {showPlan && (planType || planItems) && (
         <div className={classes.codexPlan}>
           {planType && (
             <span className={classes.codexPlanItem}>
@@ -73,7 +76,7 @@ export function ClaudeQuotaBody({
           {planItems}
         </div>
       )}
-      {afterPlan}
+      {showDetails && afterPlan}
       {/* Extra usage and dollar balances share the window-row anatomy:
           label + mono telemetry header, then one mono detail line. */}
       {extraUsage && (
@@ -118,7 +121,7 @@ export function ClaudeQuotaBody({
           )}
         </div>
       )}
-      {(quota.dollarWindows ?? []).map((balance) => {
+      {(showDetails ? (quota.dollarWindows ?? []) : []).map((balance) => {
         const resetDisplay = buildResetDisplay(
           formatQuotaResetTime(balance.resetsAt ?? undefined),
           resolveResetMs([balance.resetsAt]),
@@ -158,7 +161,7 @@ export function ClaudeQuotaBody({
           </div>
         );
       })}
-      {windows.length === 0 && !extraUsage && !quota.dollarWindows?.length ? (
+      {!showDetails ? null : windows.length === 0 && !extraUsage && !quota.dollarWindows?.length ? (
         <div className={classes.quotaMessage}>{t('claude_quota.empty_windows')}</div>
       ) : (
         windows.map((window, index) => {

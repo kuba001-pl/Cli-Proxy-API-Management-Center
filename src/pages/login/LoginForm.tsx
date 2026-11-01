@@ -1,20 +1,39 @@
 import { useId, useRef, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SelectionCheckbox } from '@/components/ui/SelectionCheckbox';
-import { IconAlertTriangle, IconCheck, IconEye, IconEyeOff } from '@/components/ui/icons';
+import { IconAlertTriangle, IconCheck, IconEye, IconEyeOff, IconKey } from '@/components/ui/icons';
 import styles from './LoginForm.module.scss';
 
+const connectionIcon = (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="m10 13 4-4m-6 6-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2 2 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0" />
+  </svg>
+);
+
 export interface LoginFormProps {
-  /** 输入框中的连接地址（可能为空，此时回退到 detectedBase） */
+  /** 自定义连接地址（可能为空，此时回退到 detectedBase） */
   apiBase: string;
   detectedBase: string;
+  /** 自定义连接开关：关闭时提交使用 detectedBase，开启时使用 apiBase */
   editingBase: boolean;
   managementKey: string;
   showKey: boolean;
   rememberPassword: boolean;
   loading: boolean;
   success?: boolean;
+  /** Localized failure summary; empty when there is no error. */
   error: string;
+  /** Backend status/detail shown muted under the summary, e.g. `401 · invalid management key`. */
+  errorDetail?: string;
   onApiBaseChange: (value: string) => void;
   onEditingBaseChange: (value: boolean) => void;
   onManagementKeyChange: (value: string) => void;
@@ -33,6 +52,7 @@ export function LoginForm({
   loading,
   success = false,
   error,
+  errorDetail,
   onApiBaseChange,
   onEditingBaseChange,
   onManagementKeyChange,
@@ -45,6 +65,8 @@ export function LoginForm({
   const keyId = useId();
   const errorId = useId();
   const keyInputRef = useRef<HTMLInputElement | null>(null);
+  // 仅在用户主动打开开关时聚焦地址输入框；从已保存的自定义连接恢复时焦点仍在密钥输入框
+  const focusBaseOnMountRef = useRef(false);
   const locked = loading || success;
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -57,46 +79,70 @@ export function LoginForm({
   return (
     <form className={styles.form} onSubmit={handleSubmit} noValidate>
       <div className={styles.field} data-stagger>
-        <div className={styles.labelRow}>
-          <label className={styles.label} htmlFor={editingBase ? baseId : undefined}>
-            {editingBase ? t('login.custom_connection_label') : t('login.connection_current')}
-          </label>
-          <button
-            type="button"
-            className={styles.textButton}
-            aria-expanded={editingBase}
-            aria-controls={baseId}
-            disabled={locked}
-            onClick={() => {
-              const next = !editingBase;
-              onEditingBaseChange(next);
-              if (!next) keyInputRef.current?.focus();
-            }}
-          >
-            {editingBase ? t('login.connection_done') : t('login.connection_edit')}
-          </button>
-        </div>
-        {editingBase ? (
-          <input
-            id={baseId}
-            className={`${styles.input} ${styles.mono}`}
-            type="url"
-            inputMode="url"
-            autoFocus
-            autoComplete="url"
-            spellCheck={false}
-            placeholder={t('login.custom_connection_placeholder')}
-            readOnly={locked}
-            value={apiBase}
-            onChange={(event) => onApiBaseChange(event.target.value)}
-          />
-        ) : (
+        <span className={styles.label}>{t('login.connection_current')}</span>
+        <div className={styles.inputWrap}>
+          <span className={styles.fieldIcon} aria-hidden="true">
+            {connectionIcon}
+          </span>
           <div
-            id={baseId}
             className={`${styles.readout} ${styles.mono}`}
-            title={apiBase || detectedBase}
+            data-custom={editingBase}
+            title={detectedBase}
           >
-            <span className={styles.readoutText}>{apiBase || detectedBase}</span>
+            <span className={styles.readoutText}>{detectedBase}</span>
+          </div>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          className={styles.customConnection}
+          aria-label={t('login.custom_connection_label')}
+          aria-checked={editingBase}
+          aria-expanded={editingBase}
+          aria-controls={editingBase ? baseId : undefined}
+          disabled={locked}
+          onClick={() => {
+            const next = !editingBase;
+            focusBaseOnMountRef.current = next;
+            onEditingBaseChange(next);
+            if (!next) keyInputRef.current?.focus();
+          }}
+        >
+          <span className={styles.switchTrack} aria-hidden="true" />
+          <span className={styles.connectionCopy}>
+            <span className={styles.connectionLabel}>{t('login.custom_connection_label')}</span>
+            <span className={styles.hint}>
+              {t(editingBase ? 'login.custom_connection_hint' : 'login.connection_auto_hint')}
+            </span>
+          </span>
+          <span className={styles.srOnly}>
+            {t(editingBase ? 'login.connection_done' : 'login.connection_edit')}
+          </span>
+        </button>
+        {editingBase && (
+          <div className={styles.inputWrap}>
+            <span className={styles.fieldIcon} aria-hidden="true">
+              {connectionIcon}
+            </span>
+            <input
+              id={baseId}
+              ref={(node) => {
+                if (node && focusBaseOnMountRef.current) {
+                  focusBaseOnMountRef.current = false;
+                  node.focus();
+                }
+              }}
+              aria-label={t('login.custom_connection_label')}
+              className={`${styles.input} ${styles.mono}`}
+              type="url"
+              inputMode="url"
+              autoComplete="url"
+              spellCheck={false}
+              placeholder={t('login.custom_connection_placeholder')}
+              readOnly={locked}
+              value={apiBase}
+              onChange={(event) => onApiBaseChange(event.target.value)}
+            />
           </div>
         )}
       </div>
@@ -106,14 +152,17 @@ export function LoginForm({
           {t('login.management_key_label')}
         </label>
         <div className={styles.inputWrap}>
+          <span className={styles.fieldIcon} aria-hidden="true">
+            <IconKey size={16} />
+          </span>
           <input
             ref={keyInputRef}
             id={keyId}
-            className={`${styles.input} ${styles.inputWithAction}`}
+            className={`${styles.input} ${styles.inputWithAction} ${styles.mono}`}
             type={showKey ? 'text' : 'password'}
             name="cpa-management-key"
             autoComplete="current-password"
-            autoFocus={!editingBase}
+            autoFocus
             spellCheck={false}
             placeholder={t('login.management_key_placeholder')}
             readOnly={locked}
@@ -145,6 +194,20 @@ export function LoginForm({
       </div>
 
       <div className={styles.actions} data-stagger>
+        {error && (
+          <div id={errorId} className={styles.error} role="alert">
+            <IconAlertTriangle size={16} aria-hidden="true" />
+            <div className={styles.errorBody}>
+              <p className={styles.errorSummary}>{error}</p>
+              {errorDetail && (
+                <p className={styles.errorDetail}>
+                  <span className={styles.errorDetailLabel}>{t('login.error_backend_detail')}</span>{' '}
+                  <span className={styles.mono}>{errorDetail}</span>
+                </p>
+              )}
+            </div>
+          </div>
+        )}
         <button
           type="submit"
           className={styles.submit}
@@ -164,12 +227,6 @@ export function LoginForm({
             </span>
           )}
         </button>
-        {error && (
-          <p id={errorId} className={styles.error} role="alert" title={error}>
-            <IconAlertTriangle size={14} aria-hidden="true" />
-            <span>{error}</span>
-          </p>
-        )}
       </div>
     </form>
   );

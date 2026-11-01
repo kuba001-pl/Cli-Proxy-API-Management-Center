@@ -65,6 +65,7 @@
     "subtitle": "Management Center"
   },
   "login": {
+    "subtitle": "Connect to CLI Proxy API v8 or later",
     "connection_current": "Current URL",
     "connection_edit": "Change",
     "connection_done": "Done",
@@ -93,6 +94,10 @@
     "error_ssl": "SSL/TLS certificate verification failed"
   },
   "header": {
+    "privacy_mode_on": "Privacy mode on",
+    "privacy_mode_off": "Privacy mode off",
+    "hide_personal_data": "Hide personal data",
+    "show_personal_data": "Show personal data",
     "refresh_all": "Refresh All",
     "logout": "Logout"
   },
@@ -101,7 +106,7 @@
   },
   "nav": {
     "dashboard": "Dashboard",
-    "quick_start": "Quick Start",
+    "quick_start": "Quick Setup",
     "ai_providers": "AI Providers",
     "auth_files": "Auth Files",
     "oauth": "OAuth Login",
@@ -222,6 +227,10 @@
     "routing_strategy_fill_first": "fill-first (prioritize)"
   },
   "auth_files": {
+    "account_column": "Account",
+    "plan_column": "Plan",
+    "recent_requests_column": "Recent requests",
+    "lowest_quota_column": "Lowest quota",
     "title": "Auth Files Management",
     "meta_total": "{{count}} credentials",
     "meta_active": "{{count}} active",
@@ -368,6 +377,8 @@
     "status_disabled_success": "\"{{name}}\" disabled",
     "batch_status_success": "{{count}} files updated successfully",
     "batch_status_partial": "{{success}} updated, {{failed}} failed",
+    "delete_title": "Delete File",
+    "delete_all_title": "Delete All Files",
     "batch_delete_title": "Delete Selected Files",
     "batch_delete_confirm": "Are you sure you want to delete {{count}} files?",
     "batch_selected": "{{count}} selected",
@@ -710,6 +721,7 @@
     "save_failed": "Failed to update model disablement",
     "delete": "Delete Provider",
     "delete_confirm": "Delete model disablement for {{provider}}?",
+    "delete_title": "Delete Model Disablement",
     "delete_success": "Provider model disablement removed",
     "delete_failed": "Failed to delete model disablement",
     "no_models": "No disabled models configured",
@@ -778,6 +790,7 @@
     "save_failed": "Failed to update model aliases",
     "delete": "Delete Provider",
     "delete_confirm": "Delete model aliases for {{provider}}?",
+    "delete_title": "Delete Model Aliases",
     "delete_link_title": "Unlink mapping",
     "delete_link_confirm": "Unlink mapping from <code>{{sourceModel}}</code> ({{provider}}) to alias <code>{{alias}}</code>?",
     "delete_alias_title": "Delete Alias",
@@ -988,6 +1001,9 @@
     "no_requests": "No requests"
   },
   "logs": {
+    "caption": "Live stream · application & request logs",
+    "error_logs_file": "File",
+    "error_logs_actions": "File actions",
     "preview_too_large": "This request log exceeds the 2 MiB preview limit. Download it to view.",
     "read_status_live": "Reading continuously",
     "read_status_paused": "Reading paused",
@@ -1043,6 +1059,7 @@
     "loading": "Loading logs...",
     "load_error": "Failed to load logs",
     "clear_confirm": "Are you sure you want to clear all logs? This action cannot be undone!",
+    "clear_confirm_title": "Clear Logs",
     "clear_success": "Logs cleared successfully",
     "download_success": "Logs downloaded successfully",
     "auto_refresh": "Auto Refresh",
@@ -1081,6 +1098,8 @@
     "meta_dirty_source": "Unsaved source edits",
     "meta_errors": "{{count}} validation errors",
     "meta_synced": "In sync",
+    "unsaved_changes_one": "{{count}} unsaved change",
+    "unsaved_changes_other": "{{count}} unsaved changes",
     "actions": {
       "discard": "Discard changes",
       "save": "Save changes"
@@ -1118,6 +1137,7 @@
     "precise_save_recovery_required": "Could not read back the save result. Editing is paused. Save again to recover the draft baseline, or reload the configuration.",
     "visual_mode_latest_yaml_invalid": "The latest server configuration contains invalid YAML. Review it in source mode before saving visual changes: {{message}}",
     "editor_placeholder": "key: value",
+    "privacy_source_paused": "Privacy mode is on — source editing is paused. Turn privacy mode off to edit.",
     "search_placeholder": "Search config...",
     "search_button": "Search",
     "search_no_results": "No results",
@@ -1299,16 +1319,16 @@
           "description": "The most-used settings, backed by the same data as the full sections"
         },
         "connectivity": {
-          "title": "Access & Authentication",
+          "title": "Access & Auth",
           "description": "Server address, port, auth directory, and API keys"
         },
         "logging": {
-          "title": "Logging & Diagnostics",
+          "title": "Logging",
           "description": "Debug, log output, and usage statistics"
         },
         "advanced": {
           "antigravity_credits": "Use Antigravity Credits",
-          "title": "Advanced & Experimental",
+          "title": "Advanced",
           "description": "Header spoofing, signature cache, plugin sources, and other rarely changed settings",
           "plugins_title": "Plugins",
           "antigravity_title": "Antigravity",
@@ -1421,7 +1441,7 @@
           "beta_features": "Beta Features"
         },
         "network": {
-          "title": "Network Configuration",
+          "title": "Network",
           "description": "Proxy, retry, and routing settings",
           "proxy_url": "Proxy URL",
           "proxy_url_sponsor_hint": "No suitable proxy?",
@@ -1457,7 +1477,7 @@
           "ws_auth_desc": "Require authentication for AI Studio WebSocket connections (oauth.providers.aistudio.ws-auth)"
         },
         "streaming": {
-          "title": "Streaming Configuration",
+          "title": "Streaming",
           "description": "Keepalive and bootstrap retry settings",
           "keepalive_seconds": "Keepalive Seconds",
           "keepalive_hint": "Set to 0, a negative integer, or leave empty to disable keepalive",
@@ -1468,7 +1488,7 @@
           "disabled": "Disabled"
         },
         "payload": {
-          "title": "Payload Configuration",
+          "title": "Payload",
           "description": "Default values, raw JSON rules, override rules, and filter rules",
           "default_rules": "Default Rules",
           "default_rules_desc": "Use these default values when parameters are not specified in the request",
@@ -1588,18 +1608,28 @@
     }
   },
   "quota_management": {
+    "summary_label": "Quota by provider",
+    "lowest": "lowest",
+    "upcoming_title": "Upcoming resets",
+    "upcoming_description": "When each quota window refills, soonest first",
+    "upcoming_filter": "Filter reset windows",
+    "upcoming_empty": "No upcoming resets for this window.",
+    "upcoming_show_all": "Show all {{count}} resets",
+    "upcoming_show_less": "Show fewer resets",
     "search_label": "Search accounts",
     "search_placeholder": "Search by filename or email",
     "search_empty_title": "No matching accounts",
     "search_empty_desc": "Try another filename or email, or clear the search.",
     "search_clear": "Clear search",
+    "retry": "Retry",
     "title": "Quota Management",
     "description": "Monitor OAuth quota status for Antigravity, Codex, Claude, Kimi, and xAI credentials.",
     "refresh_all_credentials": "Refresh all credentials",
     "sort_label": "Sort",
     "sort_default": "Default",
     "sort_soonest": "Soonest recovery",
-    "meta_credentials": "{{count}} credentials",
+    "meta_credentials_one": "{{count}} credential",
+    "meta_credentials_other": "{{count}} credentials",
     "meta_loaded": "{{count}} loaded",
     "meta_attention": "{{count}} need attention",
     "empty_title": "No quota-capable credentials",
@@ -1636,6 +1666,7 @@
   },
   "routing": {
     "title": "Routing",
+    "summary": "Members {{members}} · Tiers {{tiers}}",
     "refresh": "Refresh",
     "refresh_discards": "Refreshing discards the unsaved arrangement.",
     "loading": "Loading routing…",
@@ -1704,9 +1735,11 @@
     "max_retry_credentials_desc": "Most credentials tried per round; 0 tries all.",
     "unlimited": "Unlimited",
     "dirty_region": "Unsaved routing changes",
-    "dirty_count": "Unsaved changes: {{count}}",
-    "discard": "Discard",
-    "save": "Save",
+    "dirty_count": "{{count}} unsaved changes",
+    "dirty_count_one": "{{count}} unsaved change",
+    "dirty_count_other": "{{count}} unsaved changes",
+    "discard": "Discard changes",
+    "save": "Save changes",
     "review_title": "Save routing changes",
     "review_hint": "OAuth credentials are written one by one; everything else goes to the configuration in one write.",
     "confirm_save": "Save changes",
@@ -1922,6 +1955,8 @@
     "clear_login_confirm": "Clear local login data and sign out now?"
   },
   "notification": {
+    "save_failed": "Save failed",
+    "load_failed": "Load failed",
     "trusted_proxies_restart_required": "Trusted proxy settings saved. Restart the backend to apply them.",
     "region_label": "Notifications",
     "type_success": "Success",
@@ -2070,6 +2105,7 @@
       "new": "New",
       "edit": "Edit",
       "view": "View",
+      "more": "More actions",
       "delete": "Delete",
       "cancel": "Cancel",
       "save": "Save",
@@ -2193,7 +2229,9 @@
       "notSet": "Not set",
       "none": "None",
       "notConfigured": "Not configured",
-      "defaultSuffix": "(default)"
+      "defaultSuffix": "(default)",
+      "okCount": "{{count}} ok",
+      "failedCount": "{{count}} failed"
     },
     "detail": {
       "title": "Details",
@@ -2213,6 +2251,9 @@
     "form": {
       "createEyebrow": "New",
       "editEyebrow": "Edit",
+      "sheetDescriptionCreate": "Add credentials, connection settings and models for {{provider}}.",
+      "sheetDescriptionEdit": "Update credentials, connection settings and models for {{provider}}.",
+      "sheetDescriptionDetail": "Configuration, credentials and recent request health for {{provider}}.",
       "name": "Name",
       "apiKey": "API key",
       "apiKeyCreatePlaceholder": "Enter API key",

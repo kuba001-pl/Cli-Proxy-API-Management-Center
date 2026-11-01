@@ -1,13 +1,16 @@
 import { useTranslation } from 'react-i18next';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
-import { useNotificationStore } from '@/stores';
+import { useNotificationStore, usePrivacyStore } from '@/stores';
+import { privacyText } from '@/utils/privacy';
 
 export function ConfirmationModal() {
   const { t } = useTranslation();
   const confirmation = useNotificationStore((state) => state.confirmation);
   const hideConfirmation = useNotificationStore((state) => state.hideConfirmation);
   const setConfirmationLoading = useNotificationStore((state) => state.setConfirmationLoading);
+  // Mask at render time: the stored message stays raw and follows later privacy toggles.
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
 
   const { isOpen, isLoading, options } = confirmation;
 
@@ -23,6 +26,7 @@ export function ConfirmationModal() {
     confirmText,
     cancelText,
     variant = 'primary',
+    identities,
   } = options;
 
   const handleConfirm = async () => {
@@ -50,9 +54,14 @@ export function ConfirmationModal() {
   };
 
   return (
-    <Modal open={isOpen} onClose={handleCancel} title={title} closeDisabled={isLoading}>
+    <Modal
+      open={isOpen}
+      onClose={handleCancel}
+      title={title === undefined ? title : privacyText(privacyEnabled, title, identities)}
+      closeDisabled={isLoading}
+    >
       {typeof message === 'string' ? (
-        <p style={{ margin: '1rem 0' }}>{message}</p>
+        <p style={{ margin: '1rem 0' }}>{privacyText(privacyEnabled, message, identities)}</p>
       ) : (
         <div style={{ margin: '1rem 0' }}>{message}</div>
       )}

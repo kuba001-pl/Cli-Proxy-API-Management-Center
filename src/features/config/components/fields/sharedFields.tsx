@@ -66,6 +66,9 @@ export function ProxyUrlField({ values, disabled, onChange, wide }: SharedFieldP
   return (
     <TextSetting
       fieldId="proxyUrl"
+      // Proxy URLs may embed user:pass@ credentials; privacy mode conceals the field.
+      privacySensitive
+      autoComplete="off"
       wide={wide}
       size="lg"
       label={t('config_management.visual.sections.network.proxy_url')}

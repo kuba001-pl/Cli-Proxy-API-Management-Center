@@ -155,14 +155,7 @@
 .skeletonRow {
   display: block;
   height: 52px;
-  background: linear-gradient(
-    90deg,
-    var(--bg-secondary) 0%,
-    color-mix(in srgb, var(--bg-tertiary) 50%, var(--bg-secondary)) 50%,
-    var(--bg-secondary) 100%
-  );
-  background-size: 200% 100%;
-  animation: siwc-skeleton 1.2s linear infinite;
+  background: var(--bg-raised);
 
   & + & {
     border-top: 1px solid var(--border-color);

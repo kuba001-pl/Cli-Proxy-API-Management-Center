@@ -65,6 +65,7 @@
     "subtitle": "管理中心"
   },
   "login": {
+    "subtitle": "連線至 CLI Proxy API v8 或更新版本",
     "connection_current": "目前位址",
     "connection_edit": "變更",
     "connection_done": "完成",
@@ -93,6 +94,10 @@
     "error_ssl": "SSL/TLS 憑證驗證失敗"
   },
   "header": {
+    "privacy_mode_on": "隱私模式已開啟",
+    "privacy_mode_off": "隱私模式已關閉",
+    "hide_personal_data": "隱藏個人資訊",
+    "show_personal_data": "顯示個人資訊",
     "refresh_all": "全部重新整理",
     "logout": "登出"
   },
@@ -101,7 +106,7 @@
   },
   "nav": {
     "dashboard": "儀表板",
-    "quick_start": "快速開始",
+    "quick_start": "快速設定",
     "ai_providers": "AI 供應商",
     "auth_files": "驗證檔案",
     "oauth": "OAuth 登入",
@@ -222,6 +227,10 @@
     "routing_strategy_fill_first": "fill-first（優先填充）"
   },
   "auth_files": {
+    "account_column": "帳號",
+    "plan_column": "方案",
+    "recent_requests_column": "最近請求",
+    "lowest_quota_column": "最低配額",
     "title": "驗證檔案管理",
     "meta_total": "{{count}} 個憑證",
     "meta_active": "{{count}} 個啟用",
@@ -366,6 +375,8 @@
     "status_disabled_success": "已停用「{{name}}」",
     "batch_status_success": "已成功更新 {{count}} 個檔案",
     "batch_status_partial": "成功 {{success}} 個，失敗 {{failed}} 個",
+    "delete_title": "刪除檔案",
+    "delete_all_title": "刪除全部檔案",
     "batch_delete_title": "刪除已選檔案",
     "batch_delete_confirm": "確定要刪除 {{count}} 個檔案嗎？",
     "batch_selected": "已選 {{count}} 項",
@@ -709,6 +720,7 @@
     "save_failed": "更新模型停用失敗",
     "delete": "刪除供應商",
     "delete_confirm": "確定要刪除 {{provider}} 的模型停用嗎？",
+    "delete_title": "刪除模型停用",
     "delete_success": "已刪除該供應商的模型停用",
     "delete_failed": "刪除模型停用失敗",
     "no_models": "未設定停用模型",
@@ -777,6 +789,7 @@
     "save_failed": "更新模型別名失敗",
     "delete": "刪除供應商",
     "delete_confirm": "確定要刪除 {{provider}} 的模型別名嗎？",
+    "delete_title": "刪除模型別名",
     "delete_link_title": "取消連結",
     "delete_link_confirm": "確定取消 <code>{{sourceModel}}</code>（{{provider}}）到別名 <code>{{alias}}</code> 的映射？",
     "delete_alias_title": "刪除別名",
@@ -1015,6 +1028,9 @@
     "no_requests": "無請求"
   },
   "logs": {
+    "caption": "即時記錄 · 應用程式與請求記錄",
+    "error_logs_file": "檔案",
+    "error_logs_actions": "檔案操作",
     "preview_too_large": "封包超過 2 MiB 預覽限制，請下載查看",
     "read_status_live": "持續讀取",
     "read_status_paused": "讀取已暫停",
@@ -1070,6 +1086,7 @@
     "loading": "正在載入記錄...",
     "load_error": "載入記錄失敗",
     "clear_confirm": "確定要清空所有記錄嗎？此操作無法還原！",
+    "clear_confirm_title": "清空記錄",
     "clear_success": "記錄已清空",
     "download_success": "記錄下載成功",
     "auto_refresh": "自動重新整理",
@@ -1108,6 +1125,8 @@
     "meta_dirty_source": "原始碼有未儲存修改",
     "meta_errors": "{{count}} 項驗證錯誤",
     "meta_synced": "已同步",
+    "unsaved_changes_one": "{{count}} 項未儲存的變更",
+    "unsaved_changes_other": "{{count}} 項未儲存的變更",
     "actions": {
       "discard": "放棄變更",
       "save": "儲存變更"
@@ -1145,6 +1164,7 @@
     "precise_save_recovery_required": "無法回讀儲存結果，已暫停編輯。請再次儲存以恢復草稿基準，或重新載入設定。",
     "visual_mode_latest_yaml_invalid": "伺服器最新設定包含無效 YAML，請先切回原始碼模式檢查後再儲存視覺化修改：{{message}}",
     "editor_placeholder": "key: value",
+    "privacy_source_paused": "隱私模式已開啟，原始碼編輯已暫停。關閉隱私模式後即可編輯。",
     "search_placeholder": "搜尋設定內容...",
     "search_button": "搜尋",
     "search_no_results": "無結果",
@@ -1330,12 +1350,12 @@
           "description": "服務位址、連接埠、認證目錄與 API 金鑰"
         },
         "logging": {
-          "title": "日誌與診斷",
+          "title": "日誌",
           "description": "除錯、日誌輸出與使用統計"
         },
         "advanced": {
           "antigravity_credits": "使用Antigravity Credits",
-          "title": "進階與實驗",
+          "title": "進階",
           "description": "請求標頭偽裝、簽章快取、外掛來源等不常修改的設定",
           "plugins_title": "外掛",
           "antigravity_title": "Antigravity",
@@ -1448,7 +1468,7 @@
           "beta_features": "Beta Features"
         },
         "network": {
-          "title": "網路設定",
+          "title": "網路",
           "description": "代理、重試和路由設定",
           "proxy_url": "代理 URL",
           "proxy_url_sponsor_hint": "沒有合適的代理？",
@@ -1484,7 +1504,7 @@
           "ws_auth_desc": "啟用 AI Studio WebSocket 連線驗證（oauth.providers.aistudio.ws-auth）"
         },
         "streaming": {
-          "title": "串流傳輸設定",
+          "title": "串流傳輸",
           "description": "Keepalive 與 bootstrap 重試設定",
           "keepalive_seconds": "Keepalive 秒數",
           "keepalive_hint": "設定為 0、負整數或留空表示停用 keepalive",
@@ -1495,7 +1515,7 @@
           "disabled": "已停用"
         },
         "payload": {
-          "title": "Payload 設定",
+          "title": "Payload",
           "description": "預設值、原始 JSON 規則、覆寫規則與篩選規則",
           "default_rules": "預設規則",
           "default_rules_desc": "當請求中未指定參數時，使用這些預設值",
@@ -1615,11 +1635,20 @@
     }
   },
   "quota_management": {
+    "summary_label": "各提供者配額",
+    "lowest": "最低剩餘",
+    "upcoming_title": "即將重設",
+    "upcoming_description": "各配額視窗的恢復時間，按先後順序排列",
+    "upcoming_filter": "篩選重設視窗",
+    "upcoming_empty": "此視窗暫無即將發生的重設。",
+    "upcoming_show_all": "顯示全部 {{count}} 次重設",
+    "upcoming_show_less": "收合重設清單",
     "search_label": "搜尋帳號",
     "search_placeholder": "依檔案名稱或電子郵件搜尋",
     "search_empty_title": "沒有符合的帳號",
     "search_empty_desc": "請嘗試其他檔案名稱或電子郵件，或清除搜尋。",
     "search_clear": "清除搜尋",
+    "retry": "重試",
     "title": "配額管理",
     "description": "集中查看 OAuth 配額與剩餘情況",
     "refresh_all_credentials": "重新整理全部憑證",
@@ -1663,6 +1692,7 @@
   },
   "routing": {
     "title": "路由編排",
+    "summary": "成員 {{members}} · 層級 {{tiers}}",
     "refresh": "重新整理",
     "refresh_discards": "重新整理會捨棄未儲存的路由調整。",
     "loading": "正在讀取路由…",
@@ -1732,8 +1762,10 @@
     "unlimited": "不限",
     "dirty_region": "未儲存的路由變更",
     "dirty_count": "{{count}} 項變更未儲存",
-    "discard": "捨棄",
-    "save": "儲存",
+    "dirty_count_one": "{{count}} 項變更未儲存",
+    "dirty_count_other": "{{count}} 項變更未儲存",
+    "discard": "捨棄變更",
+    "save": "儲存變更",
     "review_title": "確認儲存路由變更",
     "review_hint": "OAuth 憑證逐一寫入，其餘變更一次寫入設定。",
     "confirm_save": "確認儲存",
@@ -1949,6 +1981,8 @@
     "clear_login_confirm": "確認清理本地登入資訊並登出？"
   },
   "notification": {
+    "save_failed": "儲存失敗",
+    "load_failed": "載入失敗",
     "trusted_proxies_restart_required": "可信任代理設定已儲存，重新啟動後端後生效。",
     "region_label": "通知",
     "type_success": "成功",
@@ -2097,6 +2131,7 @@
       "new": "新增",
       "edit": "編輯",
       "view": "檢視",
+      "more": "更多操作",
       "delete": "刪除",
       "cancel": "取消",
       "save": "儲存",
@@ -2220,7 +2255,9 @@
       "notSet": "未設定",
       "none": "無",
       "notConfigured": "未設定",
-      "defaultSuffix": "(預設)"
+      "defaultSuffix": "(預設)",
+      "okCount": "{{count}} 成功",
+      "failedCount": "{{count}} 失敗"
     },
     "detail": {
       "title": "詳情",
@@ -2240,6 +2277,9 @@
     "form": {
       "createEyebrow": "新增",
       "editEyebrow": "編輯",
+      "sheetDescriptionCreate": "為 {{provider}} 新增憑證、連線設定與模型。",
+      "sheetDescriptionEdit": "更新 {{provider}} 的憑證、連線設定與模型。",
+      "sheetDescriptionDetail": "{{provider}} 的設定、憑證與近期請求狀態。",
       "name": "名稱",
       "apiKey": "API 金鑰",
       "apiKeyCreatePlaceholder": "輸入 API 金鑰",

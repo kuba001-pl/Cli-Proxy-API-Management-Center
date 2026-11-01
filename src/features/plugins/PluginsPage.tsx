@@ -20,6 +20,8 @@ import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { pluginsApi, pluginStoreApi } from '@/services/api';
 import { useAuthStore, useConfigStore, useNotificationStore } from '@/stores';
 import { getErrorMessage, isRecord } from '@/utils/helpers';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyText } from '@/utils/privacy';
 import type {
   PluginConfigField,
   PluginListEntry,
@@ -63,6 +65,7 @@ const hasRestartRequiredError = (error: unknown) =>
 
 export function PluginsPage() {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const navigate = useNavigate();
   const connectionStatus = useAuthStore((state) => state.connectionStatus);
   const apiBase = useAuthStore((state) => state.apiBase);
@@ -414,7 +417,9 @@ export function PluginsPage() {
           <div className={styles.fieldText}>
             <div className={styles.fieldLabel}>{field.name}</div>
             {field.description ? (
-              <div className={styles.fieldDescription}>{field.description}</div>
+              <div className={styles.fieldDescription}>
+                {privacyText(privacyEnabled, field.description)}
+              </div>
             ) : null}
           </div>
           <ToggleSwitch
@@ -444,7 +449,9 @@ export function PluginsPage() {
             }
             placeholder={t('plugin_management.select_placeholder')}
           />
-          {field.description ? <div className={styles.fieldHint}>{field.description}</div> : null}
+          {field.description ? (
+            <div className={styles.fieldHint}>{privacyText(privacyEnabled, field.description)}</div>
+          ) : null}
           {errorText ? <div className={styles.fieldError}>{errorText}</div> : null}
         </div>
       );
@@ -462,7 +469,9 @@ export function PluginsPage() {
             placeholder={fieldType === 'array' ? '[]' : '{}'}
             spellCheck={false}
           />
-          {field.description ? <div className={styles.fieldHint}>{field.description}</div> : null}
+          {field.description ? (
+            <div className={styles.fieldHint}>{privacyText(privacyEnabled, field.description)}</div>
+          ) : null}
           {errorText ? <div className={styles.fieldError}>{errorText}</div> : null}
         </div>
       );
@@ -476,13 +485,16 @@ export function PluginsPage() {
         value={textValue}
         onChange={handleFieldTextChange(field.name)}
         inputMode={fieldType === 'integer' || fieldType === 'number' ? 'decimal' : undefined}
-        hint={field.description || undefined}
+        hint={privacyText(privacyEnabled, field.description) || undefined}
         error={errorText || undefined}
       />
     );
   };
 
   const savingConfig = Boolean(editingPlugin && mutatingID === editingPlugin.id);
+
+  // Display-only: the directory reveals the OS username under /home, /Users or C:\Users.
+  const pluginsDirLabel = privacyText(privacyEnabled, data?.pluginsDir || 'plugins');
 
   return (
     <div className={styles.page}>
@@ -493,7 +505,7 @@ export function PluginsPage() {
       </div>
 
       {/* ── Alerts ── */}
-      {error ? <div className={styles.errorBox}>{error}</div> : null}
+      {error ? <div className={styles.errorBox}>{privacyText(privacyEnabled, error)}</div> : null}
 
       {data && !data.pluginsEnabled ? (
         <div className={styles.warningBox}>{t('plugin_management.global_disabled_hint')}</div>
@@ -522,9 +534,9 @@ export function PluginsPage() {
             <span className={styles.statusLabel}>{t('plugin_management.plugins_dir')}</span>
             <span
               className={`${styles.statusValue} ${styles.statusPathValue}`}
-              title={data.pluginsDir || 'plugins'}
+              title={pluginsDirLabel}
             >
-              {data.pluginsDir || 'plugins'}
+              {pluginsDirLabel}
             </span>
           </div>
 
@@ -554,7 +566,7 @@ export function PluginsPage() {
           onChange={(event) => setFilter(event.target.value)}
           placeholder={t('plugin_management.search_placeholder')}
           aria-label={t('plugin_management.search_label')}
-          rightElement={<IconSearch size={16} />}
+          leftElement={<IconSearch size={16} />}
         />
         <Button
           variant="secondary"
@@ -605,7 +617,8 @@ export function PluginsPage() {
             const deletingPlugin = deletingID === plugin.id;
             const actionBusy = Boolean(mutatingID || openingConfigID || deletingID);
             const version = plugin.metadata?.version;
-            const author = plugin.metadata?.author;
+            const author = privacyText(privacyEnabled, plugin.metadata?.author);
+            const pluginPath = privacyText(privacyEnabled, plugin.path);
 
             return (
               <article key={plugin.id} className={styles.pluginRow}>
@@ -617,7 +630,7 @@ export function PluginsPage() {
                 {/* Info */}
                 <div className={styles.pluginInfo}>
                   <div className={styles.pluginName}>
-                    <h2>{getPluginTitle(plugin)}</h2>
+                    <h2 title={getPluginTitle(plugin)}>{getPluginTitle(plugin)}</h2>
                     <div className={styles.badgeRow}>
                       <span
                         className={
@@ -663,9 +676,9 @@ export function PluginsPage() {
                       {plugin.path ? (
                         <span
                           className={`${styles.metaItem} ${styles.metaPath}`}
-                          title={plugin.path}
+                          title={pluginPath}
                         >
-                          {plugin.path}
+                          {pluginPath}
                         </span>
                       ) : null}
                     </div>

@@ -10,6 +10,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import { useTranslation } from 'react-i18next';
 import { AutocompleteInput } from '@/components/ui/AutocompleteInput';
 import { Button } from '@/components/ui/Button';
+import { IconRefreshCw } from '@/components/ui/icons';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
@@ -76,7 +77,6 @@ export function RoutingPage() {
     cooldownClock.getSnapshot
   );
   const revealRef = useRevealGroup<HTMLDivElement>();
-  const layoutRef = useRef<HTMLDivElement>(null);
   const pageTransitionLayer = usePageTransitionLayer();
   // A page sliding out must not leave its portalled save bar behind.
   const isCurrentLayer = pageTransitionLayer ? pageTransitionLayer.isCurrentLayer : true;
@@ -277,10 +277,14 @@ export function RoutingPage() {
       return;
     }
     const failedKey = result.failed.key;
+    const failedMember = members.get(failedKey);
     const name =
-      failedKey === 'config'
-        ? t('routing.config_target')
-        : (members.get(failedKey)?.name ?? failedKey);
+      failedKey === 'config' ? t('routing.config_target') : (failedMember?.name ?? failedKey);
+    // Store the raw message plus credential identities; the toast masks at render time.
+    const identities = (board?.members ?? [])
+      .filter((member) => member.kind === 'credential')
+      .map((member) => member.name);
+    if (failedMember?.kind === 'credential') identities.push(failedMember.name);
     showNotification(
       t('routing.save_partial', {
         name,
@@ -289,7 +293,8 @@ export function RoutingPage() {
         skipped: result.notAttempted.length,
       }),
       'error',
-      10_000
+      10_000,
+      { identities }
     );
   };
 
@@ -311,6 +316,9 @@ export function RoutingPage() {
 
   const entryControl = (
     <div className={styles.modelPicker}>
+      <label className={styles.srOnly} htmlFor="routing-model-preview">
+        {t('routing.model_placeholder')}
+      </label>
       <AutocompleteInput
         value={model}
         onChange={setModel}
@@ -355,7 +363,7 @@ export function RoutingPage() {
       return <EmptyState title={t('routing.empty_title')} description={t('routing.empty_desc')} />;
     }
     return (
-      <div className={styles.layout} ref={layoutRef}>
+      <div className={styles.layout}>
         <section className={styles.board} aria-label={t('routing.title')}>
           <TierLadder
             members={members}
@@ -382,9 +390,26 @@ export function RoutingPage() {
   return (
     <div className={styles.page} ref={revealRef}>
       <header className={styles.header}>
-        <h1 className={styles.title} data-reveal>
-          {t('routing.title')}
-        </h1>
+        <div className={styles.headerCopy} data-reveal>
+          <h1 className={styles.title}>{t('routing.title')}</h1>
+          <p className={styles.summary}>
+            {t('routing.summary', {
+              members: board?.members.length ?? 0,
+              tiers: draft?.tiers.length ?? 0,
+            })}
+          </p>
+        </div>
+        <div className={styles.headerActions}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => void refresh()}
+            disabled={!connected || loading || saving}
+          >
+            <IconRefreshCw size={14} />
+            {t('routing.refresh')}
+          </Button>
+        </div>
       </header>
 
       {renderBody()}
@@ -396,7 +421,6 @@ export function RoutingPage() {
         saveDisabled={!connected}
         onSave={() => setReviewOpen(true)}
         onDiscard={discard}
-        layoutRef={layoutRef}
       />
 
       {plan ? (

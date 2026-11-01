@@ -488,6 +488,7 @@ export function useAuthFilesPrefixProxyEditor(
   const editorConnectionRef = useRef(apiClient.getConnectionRevision());
   const editorRequestRef = useRef(0);
   const { t } = useTranslation();
+  // Messages stay raw; NotificationContainer masks them at render time.
   const showNotification = useNotificationStore((state) => state.showNotification);
 
   const [prefixProxyEditor, setPrefixProxyEditor] = useState<PrefixProxyEditorState | null>(null);

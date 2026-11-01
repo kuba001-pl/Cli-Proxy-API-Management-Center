@@ -23,8 +23,8 @@
   justify-content: center;
   overflow: hidden;
   border-radius: 12px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-  background: color-mix(in srgb, var(--bg-tertiary) 60%, transparent);
+  border: 1px solid var(--border-default);
+  background: var(--bg-raised);
   color: var(--text-secondary);
 
   img {
@@ -72,7 +72,7 @@
   }
 
   &:hover {
-    color: var(--accent-color);
+    color: var(--text-primary);
     text-decoration: underline;
 
     svg {
@@ -81,7 +81,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--focus-ring-color, var(--accent-color));
+    outline: 2px solid var(--focus-ring);
     outline-offset: 3px;
     border-radius: $radius-sm;
   }
@@ -102,8 +102,8 @@
   margin-top: $spacing-lg;
   padding: 12px 14px;
   border-radius: $radius-md;
-  border: 1px solid color-mix(in srgb, var(--quota-medium-color, #e0aa14) 45%, var(--border-color));
-  background: color-mix(in srgb, var(--quota-medium-color, #e0aa14) 16%, var(--bg-secondary));
+  border: 1px solid color-mix(in srgb, var(--quota-medium-color) 45%, var(--border-color));
+  background: color-mix(in srgb, var(--quota-medium-color) 16%, var(--bg-secondary));
   color: var(--text-primary);
   font-weight: 600;
   font-size: 14px;
@@ -111,7 +111,7 @@
 
   svg {
     flex-shrink: 0;
-    color: var(--quota-medium-color, #e0aa14);
+    color: var(--quota-medium-color);
   }
 }
 
@@ -148,8 +148,8 @@
   margin-top: $spacing-lg;
   padding: 12px 14px;
   border-radius: $radius-md;
-  border: 1px solid rgba($warning-color, 0.35);
-  background: rgba($warning-color, 0.1);
+  border: 1px solid color-mix(in srgb, var(--status-warning) 35%, transparent);
+  background: color-mix(in srgb, var(--status-warning) 10%, transparent);
 }
 
 .untrustedText {

@@ -1,9 +1,12 @@
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyIdentity, privacyText } from '@/utils/privacy';
 import { useId, useRef, useState, type DragEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
 import { IconFileText, IconLoader2, IconUpload } from '@/components/ui/icons';
 import type { VertexImportState } from '../hooks/useVertexImport';
+import { credentialFileDisplayName } from '../privacy';
 import { DialogTitle, type DialogHeading } from './OAuthFlowDialog';
 import dialogStyles from './OAuthFlowDialog.module.scss';
 import styles from './VertexImportDialog.module.scss';
@@ -32,6 +35,7 @@ export function VertexImportDialog({
   onClose,
 }: VertexImportDialogProps) {
   const { t } = useTranslation();
+  const privacy = usePrivacyStore((state) => state.enabled);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const fileHintId = useId();
   const [dragging, setDragging] = useState(false);
@@ -73,7 +77,16 @@ export function VertexImportDialog({
                 {resultRows.map((row) => (
                   <div className={styles.fact} key={row.key}>
                     <dt>{t(`vertex_import.${row.key}`)}</dt>
-                    <dd>{row.value}</dd>
+                    <dd>
+                      {row.key === 'result_email'
+                        ? privacyIdentity(privacy, row.value)
+                        : row.key === 'result_file'
+                          ? credentialFileDisplayName(privacy, row.value, [
+                              result.email,
+                              result.projectId,
+                            ])
+                          : privacyText(privacy, row.value, [result.email])}
+                    </dd>
                   </div>
                 ))}
               </dl>
@@ -112,7 +125,9 @@ export function VertexImportDialog({
                 </span>
                 <span className={styles.dropText}>
                   <span className={vertex.file ? styles.fileName : styles.dropTitle}>
-                    {vertex.file ? vertex.file.name : t('vertex_import.drop_hint')}
+                    {vertex.file
+                      ? credentialFileDisplayName(privacy, vertex.file.name)
+                      : t('vertex_import.drop_hint')}
                   </span>
                   <span className={styles.dropHint} id={fileHintId}>
                     {vertex.file ? t('vertex_import.choose_file') : t('vertex_import.file_hint')}
@@ -144,7 +159,7 @@ export function VertexImportDialog({
 
             {vertex.error && (
               <div className={dialogStyles.alert} role="alert">
-                {vertex.error}
+                {privacyText(privacy, vertex.error)}
               </div>
             )}
 

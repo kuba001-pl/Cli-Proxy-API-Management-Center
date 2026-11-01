@@ -65,6 +65,7 @@
     "subtitle": "管理中心"
   },
   "login": {
+    "subtitle": "连接到 CLI Proxy API v8 或更高版本",
     "connection_current": "当前地址",
     "connection_edit": "更改",
     "connection_done": "完成",
@@ -93,6 +94,10 @@
     "error_ssl": "SSL/TLS 证书验证失败"
   },
   "header": {
+    "privacy_mode_on": "隐私模式已开启",
+    "privacy_mode_off": "隐私模式已关闭",
+    "hide_personal_data": "隐藏个人信息",
+    "show_personal_data": "显示个人信息",
     "refresh_all": "刷新全部",
     "logout": "登出"
   },
@@ -101,7 +106,7 @@
   },
   "nav": {
     "dashboard": "仪表盘",
-    "quick_start": "快速开始",
+    "quick_start": "快速设置",
     "ai_providers": "AI 提供商",
     "auth_files": "认证文件",
     "oauth": "OAuth 登录",
@@ -222,6 +227,10 @@
     "routing_strategy_fill_first": "fill-first (优先填充)"
   },
   "auth_files": {
+    "account_column": "账号",
+    "plan_column": "套餐",
+    "recent_requests_column": "最近请求",
+    "lowest_quota_column": "最低配额",
     "title": "认证文件管理",
     "meta_total": "{{count}} 个凭证",
     "meta_active": "{{count}} 个启用",
@@ -366,6 +375,8 @@
     "status_disabled_success": "已停用 \"{{name}}\"",
     "batch_status_success": "已成功更新 {{count}} 个文件",
     "batch_status_partial": "成功 {{success}} 个，失败 {{failed}} 个",
+    "delete_title": "删除文件",
+    "delete_all_title": "删除全部文件",
     "batch_delete_title": "删除选中文件",
     "batch_delete_confirm": "确定要删除 {{count}} 个文件吗？",
     "batch_selected": "已选 {{count}} 项",
@@ -709,6 +720,7 @@
     "save_failed": "更新模型禁用失败",
     "delete": "删除提供商",
     "delete_confirm": "确定要删除 {{provider}} 的模型禁用吗？",
+    "delete_title": "删除模型禁用",
     "delete_success": "已删除该提供商的模型禁用",
     "delete_failed": "删除模型禁用失败",
     "no_models": "未配置禁用模型",
@@ -777,6 +789,7 @@
     "save_failed": "更新模型别名失败",
     "delete": "删除提供商",
     "delete_confirm": "确定要删除 {{provider}} 的模型别名吗？",
+    "delete_title": "删除模型别名",
     "delete_link_title": "取消链接",
     "delete_link_confirm": "确定取消 <code>{{sourceModel}}</code>（{{provider}}）到别名 <code>{{alias}}</code> 的映射？",
     "delete_alias_title": "删除别名",
@@ -987,6 +1000,9 @@
     "no_requests": "无请求"
   },
   "logs": {
+    "caption": "实时日志 · 应用与请求日志",
+    "error_logs_file": "文件",
+    "error_logs_actions": "文件操作",
     "preview_too_large": "报文超过 2 MiB 预览限制，请下载查看",
     "read_status_live": "持续读取",
     "read_status_paused": "读取已暂停",
@@ -1042,6 +1058,7 @@
     "loading": "正在加载日志...",
     "load_error": "加载日志失败",
     "clear_confirm": "确定要清空所有日志吗？此操作不可恢复！",
+    "clear_confirm_title": "清空日志",
     "clear_success": "日志已清空",
     "download_success": "日志下载成功",
     "auto_refresh": "自动刷新",
@@ -1080,6 +1097,8 @@
     "meta_dirty_source": "源码有未保存修改",
     "meta_errors": "{{count}} 项校验错误",
     "meta_synced": "已同步",
+    "unsaved_changes_one": "{{count}} 项未保存的更改",
+    "unsaved_changes_other": "{{count}} 项未保存的更改",
     "actions": {
       "discard": "放弃更改",
       "save": "保存更改"
@@ -1117,6 +1136,7 @@
     "precise_save_recovery_required": "无法回读保存结果，已暂停编辑。请再次保存以恢复草稿基线，或重新加载配置。",
     "visual_mode_latest_yaml_invalid": "服务端最新配置包含无效 YAML，请先切回源码模式检查后再保存可视化修改：{{message}}",
     "editor_placeholder": "key: value",
+    "privacy_source_paused": "隐私模式已开启，源码编辑已暂停。关闭隐私模式后即可编辑。",
     "search_placeholder": "搜索配置内容...",
     "search_button": "搜索",
     "search_no_results": "无结果",
@@ -1302,12 +1322,12 @@
           "description": "服务地址、端口、认证目录与 API 密钥"
         },
         "logging": {
-          "title": "日志与诊断",
+          "title": "日志",
           "description": "调试、日志输出与使用统计"
         },
         "advanced": {
           "antigravity_credits": "使用Antigravity Credits",
-          "title": "高级与实验",
+          "title": "高级",
           "description": "请求头伪装、签名缓存、插件源等不常修改的设置",
           "plugins_title": "插件",
           "antigravity_title": "Antigravity",
@@ -1420,7 +1440,7 @@
           "beta_features": "Beta Features"
         },
         "network": {
-          "title": "网络配置",
+          "title": "网络",
           "description": "代理、重试和路由设置",
           "proxy_url": "代理 URL",
           "proxy_url_sponsor_hint": "没有合适的代理？",
@@ -1456,7 +1476,7 @@
           "ws_auth_desc": "启用 AI Studio WebSocket 连接认证（oauth.providers.aistudio.ws-auth）"
         },
         "streaming": {
-          "title": "流式传输配置",
+          "title": "流式传输",
           "description": "Keepalive 与 bootstrap 重试设置",
           "keepalive_seconds": "Keepalive 秒数",
           "keepalive_hint": "设置为 0、负整数或留空表示禁用 keepalive",
@@ -1467,7 +1487,7 @@
           "disabled": "已禁用"
         },
         "payload": {
-          "title": "Payload 配置",
+          "title": "Payload",
           "description": "默认值、原始 JSON 规则、覆盖规则与过滤规则",
           "default_rules": "默认规则",
           "default_rules_desc": "当请求中未指定参数时，使用这些默认值",
@@ -1587,11 +1607,20 @@
     }
   },
   "quota_management": {
+    "summary_label": "各提供商配额",
+    "lowest": "最低剩余",
+    "upcoming_title": "即将重置",
+    "upcoming_description": "各配额窗口的恢复时间，按先后顺序排列",
+    "upcoming_filter": "筛选重置窗口",
+    "upcoming_empty": "此窗口暂无即将发生的重置。",
+    "upcoming_show_all": "显示全部 {{count}} 次重置",
+    "upcoming_show_less": "收起重置列表",
     "search_label": "搜索账号",
     "search_placeholder": "按文件名或邮箱搜索",
     "search_empty_title": "没有匹配的账号",
     "search_empty_desc": "请尝试其他文件名或邮箱，或清空搜索。",
     "search_clear": "清空搜索",
+    "retry": "重试",
     "title": "配额管理",
     "description": "集中查看 OAuth 额度与剩余情况",
     "refresh_all_credentials": "刷新全部凭证",
@@ -1635,6 +1664,7 @@
   },
   "routing": {
     "title": "路由编排",
+    "summary": "成员 {{members}} · 层级 {{tiers}}",
     "refresh": "刷新",
     "refresh_discards": "刷新会丢弃未保存的路由调整。",
     "loading": "正在读取路由…",
@@ -1704,8 +1734,10 @@
     "unlimited": "不限",
     "dirty_region": "未保存的路由改动",
     "dirty_count": "{{count}} 项改动未保存",
-    "discard": "放弃",
-    "save": "保存",
+    "dirty_count_one": "{{count}} 项改动未保存",
+    "dirty_count_other": "{{count}} 项改动未保存",
+    "discard": "放弃改动",
+    "save": "保存改动",
     "review_title": "确认保存路由改动",
     "review_hint": "OAuth 凭证逐个写入，其余改动一次写入配置。",
     "confirm_save": "确认保存",
@@ -1921,6 +1953,8 @@
     "clear_login_confirm": "确认清理本地登录信息并退出登录？"
   },
   "notification": {
+    "save_failed": "保存失败",
+    "load_failed": "加载失败",
     "trusted_proxies_restart_required": "可信代理配置已保存，重启后端后生效。",
     "region_label": "通知",
     "type_success": "成功",
@@ -2069,6 +2103,7 @@
       "new": "新建",
       "edit": "编辑",
       "view": "查看",
+      "more": "更多操作",
       "delete": "删除",
       "cancel": "取消",
       "save": "保存",
@@ -2192,7 +2227,9 @@
       "notSet": "未设置",
       "none": "无",
       "notConfigured": "未配置",
-      "defaultSuffix": "(默认)"
+      "defaultSuffix": "(默认)",
+      "okCount": "{{count}} 成功",
+      "failedCount": "{{count}} 失败"
     },
     "detail": {
       "title": "详情",
@@ -2212,6 +2249,9 @@
     "form": {
       "createEyebrow": "新建",
       "editEyebrow": "编辑",
+      "sheetDescriptionCreate": "为 {{provider}} 添加凭证、连接设置和模型。",
+      "sheetDescriptionEdit": "更新 {{provider}} 的凭证、连接设置和模型。",
+      "sheetDescriptionDetail": "{{provider}} 的配置、凭证与近期请求状态。",
       "name": "名称",
       "apiKey": "API 密钥",
       "apiKeyCreatePlaceholder": "输入 API 密钥",

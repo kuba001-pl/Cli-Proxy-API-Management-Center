@@ -1,4 +1,5 @@
-import { useId, useRef, type KeyboardEvent } from 'react';
+import { useId } from 'react';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useTranslation } from 'react-i18next';
 import { ToggleSwitch } from '@/components/ui/ToggleSwitch';
 import { ROUTING_STRATEGIES, type RoutingSettings, type RoutingStrategy } from '@/types/routing';
@@ -42,26 +43,7 @@ function StrategyMark({ strategy }: { strategy: RoutingStrategy }) {
 export function PolicyPanel({ settings, disabled = false, onChange }: PolicyPanelProps) {
   const { t } = useTranslation();
   const id = useId();
-  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const update = (patch: Partial<RoutingSettings>) => onChange({ ...settings, ...patch });
-
-  const selectStrategy = (index: number) => {
-    const strategy =
-      ROUTING_STRATEGIES[(index + ROUTING_STRATEGIES.length) % ROUTING_STRATEGIES.length];
-    update({ strategy });
-    optionRefs.current[ROUTING_STRATEGIES.indexOf(strategy)]?.focus();
-  };
-
-  const handleStrategyKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const current = ROUTING_STRATEGIES.indexOf(settings.strategy);
-    if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
-      event.preventDefault();
-      selectStrategy(current + 1);
-    } else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
-      event.preventDefault();
-      selectStrategy(current - 1);
-    }
-  };
 
   const readCount = (value: string, max: number): number => {
     const parsed = Number.parseInt(value, 10);
@@ -70,12 +52,7 @@ export function PolicyPanel({ settings, disabled = false, onChange }: PolicyPane
   };
 
   return (
-    <aside
-      className={styles.policy}
-      aria-labelledby={`${id}-title`}
-      // The floating save bar lines up with this column (see RoutingSaveBar).
-      data-routing-policy-column=""
-    >
+    <aside className={styles.policy} aria-labelledby={`${id}-title`}>
       <div className={styles.policyHead}>
         <h2 id={`${id}-title`} className={styles.policyTitle}>
           {t('routing.policy_title')}
@@ -87,34 +64,22 @@ export function PolicyPanel({ settings, disabled = false, onChange }: PolicyPane
         <h3 id={`${id}-strategy`} className={styles.policyLabel}>
           {t('routing.strategy_label')}
         </h3>
-        <div
-          role="radiogroup"
-          aria-labelledby={`${id}-strategy`}
+        <SegmentedControl
+          value={settings.strategy}
+          onChange={(strategy) => update({ strategy })}
+          ariaLabel={t('routing.strategy_label')}
+          disabled={disabled}
           className={styles.strategyGroup}
-          onKeyDown={handleStrategyKeyDown}
-        >
-          {ROUTING_STRATEGIES.map((strategy, index) => {
-            const checked = settings.strategy === strategy;
-            return (
-              <button
-                key={strategy}
-                ref={(node) => {
-                  optionRefs.current[index] = node;
-                }}
-                type="button"
-                role="radio"
-                aria-checked={checked}
-                tabIndex={checked ? 0 : -1}
-                disabled={disabled}
-                className={checked ? styles.strategyOptionActive : styles.strategyOption}
-                onClick={() => update({ strategy })}
-              >
+          options={ROUTING_STRATEGIES.map((strategy) => ({
+            value: strategy,
+            label: (
+              <>
                 <StrategyMark strategy={strategy} />
                 {t(`routing.strategy_${strategyKey(strategy)}`)}
-              </button>
-            );
-          })}
-        </div>
+              </>
+            ),
+          }))}
+        />
         <p className={styles.policyHint}>
           {t(`routing.strategy_${strategyKey(settings.strategy)}_desc`)}
         </p>

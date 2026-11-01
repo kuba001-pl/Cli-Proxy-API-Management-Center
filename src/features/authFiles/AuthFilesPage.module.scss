@@ -21,7 +21,7 @@
 .workbench {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 20px;
   min-width: 0;
 }
 
@@ -38,22 +38,39 @@
 
 /* ---------- 卡片网格 ---------- */
 
+.listScroll {
+  // Shared by the header and every AuthFileCard row so the columns always line up.
+  --auth-table-columns: minmax(300px, 2.45fr) minmax(88px, 0.6fr) minmax(150px, 0.93fr)
+    minmax(160px, 1.04fr) 64px 24px;
+  overflow-x: auto;
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+}
 .grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
-  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
-
-.gridCompact {
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-}
-
-/* provider tab 激活（配额模式）时卡片承载配额区，需要更宽的列。
-   值与 .grid 相同但**必须保留且排在 .gridCompact 之后**：三个类同时挂在网格上，
-   同specificity 靠源序决胜，删掉这条会让「紧凑 + 配额」从 340 掉回 260。 */
+.gridCompact,
 .gridQuota {
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  grid-template-columns: none;
+}
+.tableHead {
+  display: grid;
+  grid-template-columns: var(--auth-table-columns);
+  gap: 14px;
+  min-height: 36px;
+  padding: 8px 16px;
+  align-items: center;
+  background: var(--bg-raised);
+  color: var(--text-tertiary);
+  font-size: 12px;
+  line-height: 16px;
+}
+.accountColumn {
+  display: flex;
+  align-items: center;
+  gap: 48px;
 }
 
 .emptyActions {
@@ -99,4 +116,8 @@
   .page {
     gap: 16px;
   }
+}
+
+.listScroll .grid {
+  min-width: 950px;
 }
