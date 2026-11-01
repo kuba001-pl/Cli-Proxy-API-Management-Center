@@ -134,20 +134,15 @@ export function ProviderResourcePanel({
                 <IconExternalLink className={styles.sponsorLinkIcon} size={14} />
               </a>
             ) : registrationUrl ? (
-              <>
-                <a
-                  className={styles.sponsorLink}
-                  href={registrationUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <span className={styles.sponsorLinkText}>{registrationLabel}</span>
-                  <IconExternalLink className={styles.sponsorLinkIcon} size={14} />
-                </a>
-                {group.id === 'kimi' ? (
-                  <p className={styles.kimiPromo}>{t('providersPage.sponsor.kimiPromo')}</p>
-                ) : null}
-              </>
+              <a
+                className={styles.sponsorLink}
+                href={registrationUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span className={styles.sponsorLinkText}>{registrationLabel}</span>
+                <IconExternalLink className={styles.sponsorLinkIcon} size={14} />
+              </a>
             ) : null}
           </div>
           <dl className={styles.summary}>
