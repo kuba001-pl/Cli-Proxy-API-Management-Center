@@ -23,8 +23,10 @@ body {
   font-family: $font-family;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-size: 13.5px;
+  // Base UI text: 14/20. Numbers in data views opt into tabular figures via @mixin numeric.
+  font-size: 14px;
   line-height: 20px;
+  text-rendering: optimizeLegibility;
 }
 
 #root {

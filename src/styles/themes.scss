@@ -1,73 +1,271 @@
-/** Figma neutral palette. Legacy names remain aliases for existing consumers. */
+/**
+ * Design tokens. Reference: cpamc-qa/audit2/DESIGN-SYSTEM.md.
+ *
+ * Three palettes share one structure:
+ *   - Wool Paper (default `:root`, `data-theme='light'`): warm paper neutrals.
+ *   - Pure White (`data-theme='white'`): strictly neutral greys (R = G = B).
+ *   - Dark (`data-theme='dark'`): near-black zinc.
+ *
+ * Contrast contract (measured against --bg-app, --bg-surface and --bg-raised):
+ *   - --text-primary / --text-secondary / --text-tertiary, --accent-text and --status-* >= 4.5:1.
+ *     Tertiary is for meta information (timestamps, captions, table headers) and still readable.
+ *   - --text-muted is decorative or disabled only (~2.3-3:1). Never use it for information.
+ *   - --border-control, --icon-default, --focus-ring and --accent >= 3:1 (UI components).
+ *   - Hairlines (--border-subtle/--border-default) are decorative separators only.
+ *
+ * Legacy names below the palette are aliases: many modules consume them. Retune values here,
+ * never rename them.
+ */
+
+// Theme-independent scales. Mirrored as SCSS variables in variables.scss.
+:root {
+  // Type scale: page title 26 · section 17 · body 14 · label 13 · meta 12 (never smaller).
+  --font-size-xs: 12px;
+  --font-size-sm: 13px;
+  --font-size-base: 14px;
+  --font-size-md: 15px;
+  --font-size-lg: 17px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 26px;
+  --line-height-xs: 16px;
+  --line-height-sm: 18px;
+  --line-height-base: 20px;
+  --line-height-md: 22px;
+  --line-height-lg: 24px;
+  --line-height-xl: 28px;
+  --line-height-2xl: 32px;
+
+  // Spacing scale (4/8/12/16/24/32/48).
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  // Radii.
+  --radius-xs: 4px;
+  --radius-sm: 4px;
+  --radius-control: 8px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  // Controls and readable widths.
+  --control-height: 36px;
+  --control-height-sm: 32px;
+  --hit-target: 32px;
+  --hit-target-touch: 40px;
+  --content-width-form: 880px;
+  --content-width-readable: 760px;
+
+  // Motion.
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --dur-press: 160ms;
+  --dur-hover: 200ms;
+}
+
+/* Wool Paper — warm paper neutrals. */
 :root,
-[data-theme='white'],
 [data-theme='light'] {
   color-scheme: light;
+
+  // Surface ramp: app (page + sidebar) -> surface (panels) -> raised (hover, quiet fills) -> active.
+  --bg-app: #f8f6f1;
+  --bg-surface: #f1eee7;
+  --bg-raised: #e9e5dc;
+  --bg-active: #e1dcd1;
+  // Text fields and floating surfaces sit on top of everything.
+  --bg-field: #fdfcf9;
+  --bg-floating: #fefdfb;
+  // Selected chip inside a raised track (segmented controls, tabs).
+  --bg-selected: #fdfcf9;
+
+  --text-primary: #1c1a16;
+  --text-secondary: #4d483f;
+  --text-tertiary: #5f594f;
+  --text-muted: #a8a196;
+  --text-on-accent: #ffffff;
+  --icon-default: #666055;
+  --icon-active: #1c1a16;
+
+  --border-subtle: #e7e2d8;
+  --border-default: #ddd7cb;
+  --border-strong: #cbc4b6;
+  --border-control: #8f887c;
+
+  --accent: #3a5ad1;
+  --accent-hover: #3150c2;
+  --accent-text: #3450c0;
+  --accent-subtle: color-mix(in srgb, var(--accent) 11%, transparent);
+  --accent-subtle-hover: color-mix(in srgb, var(--accent) 16%, transparent);
+  --focus-ring: #3450c0;
+
+  --status-success: #166b3c;
+  --status-warning: #80500a;
+  --status-danger: #b02b23;
+  --status-info: var(--accent-text);
+
+  --meter-track: #e4dfd5;
+  --overlay-bg: rgb(28 22 12 / 0.3);
+  --shadow: none;
+  --shadow-floating: 0 1px 2px rgb(40 30 12 / 0.06), 0 10px 28px rgb(40 30 12 / 0.12);
+  --shadow-modal: 0 2px 4px rgb(40 30 12 / 0.05), 0 24px 56px rgb(40 30 12 / 0.16);
+}
+
+/* Pure White — strictly neutral greys. */
+[data-theme='white'] {
+  color-scheme: light;
+
   --bg-app: #ffffff;
-  --bg-surface: #f8f8f9;
-  --bg-raised: #eeeef1;
-  --bg-active: #e8e8eb;
-  --border-subtle: #efeff1;
-  --border-default: #e4e4e7;
-  --border-strong: #d4d4d8;
-  // Keyboard focus outline: >= 3:1 against --bg-app and --bg-surface.
-  --focus-ring: #52525a;
-  --text-primary: #111113;
-  --text-secondary: #52525a;
-  --text-tertiary: #7a7a82;
-  --text-muted: #a8a8b0;
-  --icon-default: #71717a;
-  --icon-active: #111113;
-  --button-primary-bg: #111113;
-  --button-primary-fg: #ffffff;
-  --meter-track: #ececef;
-  --status-success: #1a9a5c;
-  --status-warning: #b7791f;
-  --status-danger: #d23b32;
-  --status-info: #3b71ca;
+  --bg-surface: #f6f6f6;
+  --bg-raised: #eeeeee;
+  --bg-active: #e5e5e5;
+  --bg-field: #ffffff;
+  --bg-floating: #ffffff;
+  --bg-selected: #ffffff;
+
+  --text-primary: #111111;
+  --text-secondary: #4a4a4a;
+  --text-tertiary: #606060;
+  --text-muted: #a3a3a3;
+  --text-on-accent: #ffffff;
+  --icon-default: #666666;
+  --icon-active: #111111;
+
+  --border-subtle: #ededed;
+  --border-default: #e2e2e2;
+  --border-strong: #cfcfcf;
+  --border-control: #8f8f8f;
+
+  --accent: #3a5ad1;
+  --accent-hover: #3150c2;
+  --accent-text: #3552c4;
+  --focus-ring: #3552c4;
+
+  --status-success: #12703f;
+  --status-warning: #86540a;
+  --status-danger: #b82c24;
+
+  --meter-track: #ebebeb;
   --overlay-bg: rgb(0 0 0 / 0.28);
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.03);
-  --shadow-lg: 0 8px 24px rgb(0 0 0 / 0.08);
+  --shadow-floating: 0 1px 2px rgb(0 0 0 / 0.05), 0 10px 28px rgb(0 0 0 / 0.1);
+  --shadow-modal: 0 2px 4px rgb(0 0 0 / 0.04), 0 24px 56px rgb(0 0 0 / 0.14);
+}
+
+/* Dark — near-black zinc; the sidebar shares --bg-app with the page. */
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg-app: #000000;
+  --bg-surface: #111113;
+  --bg-raised: #1b1b1e;
+  --bg-active: #26262a;
+  --bg-field: #0a0a0b;
+  --bg-floating: #161618;
+  --bg-selected: #2e2e33;
+
+  --text-primary: #ededef;
+  --text-secondary: #a6a6ae;
+  --text-tertiary: #8e8e97;
+  --text-muted: #58585f;
+  --text-on-accent: #ffffff;
+  --icon-default: #8e8e97;
+  --icon-active: #ededef;
+
+  --border-subtle: #1c1c20;
+  --border-default: #29292e;
+  --border-strong: #3a3a40;
+  --border-control: #636369;
+
+  --accent: #4567dd;
+  --accent-hover: #3b5bd0;
+  --accent-text: #93a9f5;
+  --accent-subtle: color-mix(in srgb, var(--accent) 16%, transparent);
+  --accent-subtle-hover: color-mix(in srgb, var(--accent) 22%, transparent);
+  --focus-ring: #93a9f5;
+
+  --status-success: #4cc38a;
+  --status-warning: #e3a33e;
+  --status-danger: #f0665e;
+
+  --meter-track: #1f1f23;
+  --overlay-bg: rgb(0 0 0 / 0.62);
+  --shadow-floating: 0 12px 32px rgb(0 0 0 / 0.55);
+  --shadow-modal: 0 24px 64px rgb(0 0 0 / 0.6);
+}
+
+/* Derived tokens and legacy aliases (computed on <html>, so they follow the active palette). */
+:root,
+[data-theme='light'],
+[data-theme='white'],
+[data-theme='dark'] {
+  // Status: text-safe foreground, subtle background, and a quiet border for alerts.
+  --status-success-bg: color-mix(in srgb, var(--status-success) 10%, var(--bg-surface));
+  --status-warning-bg: color-mix(in srgb, var(--status-warning) 10%, var(--bg-surface));
+  --status-danger-bg: color-mix(in srgb, var(--status-danger) 10%, var(--bg-surface));
+  --status-info-bg: color-mix(in srgb, var(--accent) 10%, var(--bg-surface));
+  --status-success-border: color-mix(in srgb, var(--status-success) 32%, var(--bg-surface));
+  --status-warning-border: color-mix(in srgb, var(--status-warning) 32%, var(--bg-surface));
+  --status-danger-border: color-mix(in srgb, var(--status-danger) 32%, var(--bg-surface));
+
+  // Data viz: one accent series, status series, faint grid, readable axis labels.
+  --viz-accent: var(--accent-text);
+  --viz-success: var(--status-success);
+  --viz-failure: var(--status-danger);
+  --viz-grid: var(--border-subtle);
+  --viz-axis: var(--text-tertiary);
+  // Recent-request strips: neutral healthy ticks, unmistakable failures, quiet idle slots.
+  --strip-success: color-mix(in srgb, var(--text-tertiary) 70%, var(--bg-surface));
+  --strip-failure: var(--status-danger);
+  --strip-idle: var(--bg-active);
+
+  // Floating surfaces only (menus, tooltips, popovers); modals and sheets use --shadow-modal.
+  --shadow-lg: var(--shadow-floating);
+
+  --button-primary-bg: var(--accent);
+  --button-primary-fg: var(--text-on-accent);
 
   --bg-secondary: var(--bg-app);
   --bg-primary: var(--bg-surface);
   --bg-tertiary: var(--bg-raised);
   --bg-hover: var(--bg-active);
   --bg-quinary: var(--bg-raised);
-  --bg-error-light: color-mix(in srgb, var(--status-danger) 8%, var(--bg-surface));
-  --floating-surface: var(--bg-surface);
-  --floating-shadow: var(--shadow-lg);
+  --bg-error-light: var(--status-danger-bg);
+  --floating-surface: var(--bg-floating);
+  --floating-shadow: var(--shadow-floating);
   --text-quaternary: var(--text-muted);
   --border-color: var(--border-default);
   --border-secondary: var(--border-subtle);
   --border-primary: var(--border-default);
   --border-hover: var(--border-strong);
-  --primary-color: var(--button-primary-bg);
-  --primary-hover: color-mix(in srgb, var(--button-primary-bg) 86%, var(--bg-app));
-  --primary-active: color-mix(in srgb, var(--button-primary-bg) 76%, var(--bg-app));
-  --primary-contrast: var(--button-primary-fg);
+  // --primary-color is consumed as text, outline and small fills: it is the text-safe accent.
+  --primary-color: var(--accent-text);
+  --primary-hover: color-mix(in srgb, var(--accent-text) 82%, var(--text-primary));
+  --primary-active: color-mix(in srgb, var(--accent-text) 70%, var(--text-primary));
+  --primary-contrast: var(--bg-app);
   --success-color: var(--status-success);
   --quota-medium-color: var(--status-warning);
   --warning-color: var(--status-warning);
   --error-color: var(--status-danger);
   --danger-color: var(--status-danger);
   --info-color: var(--status-info);
-  --warning-bg: color-mix(in srgb, var(--status-warning) 9%, var(--bg-surface));
-  --warning-border: color-mix(in srgb, var(--status-warning) 24%, var(--border-default));
+  --warning-bg: var(--status-warning-bg);
+  --warning-border: var(--status-warning-border);
   --warning-text: var(--status-warning);
-  --success-badge-bg: color-mix(in srgb, var(--status-success) 9%, var(--bg-surface));
+  --success-badge-bg: var(--status-success-bg);
   --success-badge-text: var(--status-success);
-  --success-badge-border: color-mix(in srgb, var(--status-success) 24%, var(--border-default));
-  --failure-badge-bg: var(--bg-error-light);
+  --success-badge-border: var(--status-success-border);
+  --failure-badge-bg: var(--status-danger-bg);
   --failure-badge-text: var(--status-danger);
-  --failure-badge-border: color-mix(in srgb, var(--status-danger) 24%, var(--border-default));
+  --failure-badge-border: var(--status-danger-border);
   --count-badge-bg: var(--bg-raised);
   --count-badge-text: var(--text-secondary);
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --primary-8: color-mix(in srgb, var(--primary-color) 8%, transparent);
-  --primary-10: color-mix(in srgb, var(--primary-color) 10%, transparent);
-  --primary-30: color-mix(in srgb, var(--primary-color) 30%, transparent);
+  --primary-8: color-mix(in srgb, var(--accent) 8%, transparent);
+  --primary-10: color-mix(in srgb, var(--accent) 10%, transparent);
+  --primary-30: color-mix(in srgb, var(--accent) 30%, transparent);
   --amber-color: var(--status-warning);
   --amber-text: var(--status-warning);
   --amber-10: color-mix(in srgb, var(--status-warning) 10%, transparent);
@@ -84,38 +282,5 @@
   --glass-bg: var(--bg-surface);
   --glass-bg-secondary: var(--bg-app);
   --glass-border: var(--border-default);
-  --viz-success: var(--status-success);
-  --viz-failure: var(--status-danger);
-  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
-  --dur-press: 160ms;
-  --dur-hover: 200ms;
   --plan-accent-text: var(--text-secondary);
-}
-
-[data-theme='dark'] {
-  color-scheme: dark;
-  --bg-app: #000000;
-  --bg-surface: #0e0e10;
-  --bg-raised: #18181b;
-  --bg-active: #232326;
-  --border-subtle: #161619;
-  --border-default: #222226;
-  --border-strong: #2e2e33;
-  --focus-ring: #a0a0a8;
-  --text-primary: #ededef;
-  --text-secondary: #a0a0a8;
-  --text-tertiary: #6c6c74;
-  --text-muted: #47474d;
-  --icon-default: #7a7a82;
-  --icon-active: #ededef;
-  --button-primary-bg: #ededef;
-  --button-primary-fg: #0a0a0b;
-  --meter-track: #1b1b1e;
-  --status-success: #4cc38a;
-  --status-warning: #e3a33e;
-  --status-danger: #e5534b;
-  --status-info: #7aa2e8;
-  --overlay-bg: rgb(0 0 0 / 0.6);
-  --shadow: none;
-  --shadow-lg: 0 8px 24px rgb(0 0 0 / 0.2);
 }

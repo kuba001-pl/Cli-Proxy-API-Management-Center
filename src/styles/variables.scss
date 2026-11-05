@@ -2,16 +2,16 @@
  * SCSS 变量定义
  */
 
-// 颜色
-$primary-color: #111113;
-$success-color: #1a9a5c;
-$warning-color: #b7791f;
-$error-color: #d23b32;
+// 颜色 (static fallbacks only; theme colours live in themes.scss as CSS custom properties)
+$primary-color: #3a5ad1;
+$success-color: #166b3c;
+$warning-color: #80500a;
+$error-color: #b02b23;
 
 // 灰阶
 $gray-400: var(--text-tertiary);
 
-// 间距
+// 间距 — legacy names map onto the 4/8/12/16/24/32/48 scale.
 $spacing-xs: 4px;
 $spacing-sm: 8px;
 $spacing-md: 16px;
@@ -19,16 +19,53 @@ $spacing-lg: 24px;
 $spacing-xl: 32px;
 $spacing-2xl: 48px;
 
+// Spacing scale (mirrors --space-* in themes.scss).
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 24px;
+$space-6: 32px;
+$space-7: 48px;
+
+// Type scale (mirrors --font-size-* / --line-height-*). Base UI text is 14px; never below 12px.
+$text-xs: 12px; // meta: timestamps, captions, table headers
+$text-sm: 13px; // labels, dense controls, secondary rows
+$text-base: 14px; // body and default control text
+$text-md: 15px; // emphasised body, card titles
+$text-lg: 17px; // section titles
+$text-xl: 20px; // sheet / modal titles
+$text-2xl: 26px; // page titles
+$leading-xs: 16px;
+$leading-sm: 18px;
+$leading-base: 20px;
+$leading-md: 22px;
+$leading-lg: 24px;
+$leading-xl: 28px;
+$leading-2xl: 32px;
+
 // 圆角
 $radius-sm: 4px;
 $radius-md: 8px;
 $radius-lg: 12px;
+$radius-xl: 16px;
 $radius-full: 9999px;
 
-// 阴影
+// Controls
+$control-height: 36px;
+$control-height-sm: 32px;
+$hit-target: 32px;
+$hit-target-touch: 40px;
+
+// Readable widths: settings forms and prose.
+$content-width-form: 880px;
+$content-width-readable: 760px;
+
+// 阴影 — in-flow surfaces carry no shadow; floating surfaces use --shadow-floating / --shadow-lg.
 $shadow-sm: var(--shadow);
-$shadow-md: var(--shadow);
+$shadow-md: var(--shadow-floating);
 $shadow-lg: var(--shadow-lg);
+$shadow-modal: var(--shadow-modal);
 
 // 过渡
 $transition-fast: var(--dur-press) var(--ease-out-strong);

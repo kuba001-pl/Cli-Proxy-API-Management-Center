@@ -23,20 +23,27 @@
   position: absolute;
 }
 
+/* Off: a >= 3:1 control outline with a readable thumb. On: the accent track — unmistakably on. */
 .track {
-  width: 30px;
-  height: 18px;
-  background: var(--bg-active);
-  border: 1px solid var(--border-strong);
+  width: 34px;
+  height: 20px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-control);
   flex-shrink: 0;
   border-radius: $radius-full;
   position: relative;
-  transition: background-color var(--dur-hover, 200ms) var(--ease-out-strong, ease-out);
+  transition:
+    background-color var(--dur-hover) var(--ease-out-strong),
+    border-color var(--dur-hover) var(--ease-out-strong);
+}
+
+.root:hover input:not(:disabled):not(:checked) + .track {
+  border-color: var(--text-tertiary);
 }
 
 /* 隐藏的原生 checkbox 仍是焦点载体：键盘聚焦时把焦点环画到轨道上。 */
 .root input:focus-visible + .track {
-  outline: 2px solid var(--text-primary);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -48,28 +55,45 @@
   position: absolute;
   top: 2px;
   left: 2px;
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   background: var(--text-tertiary);
   border-radius: $radius-full;
   box-shadow: none;
-  transition: transform var(--dur-hover, 200ms) var(--ease-out-strong, ease-out);
+  transition:
+    transform var(--dur-hover) var(--ease-out-strong),
+    background-color var(--dur-hover) var(--ease-out-strong);
 }
 
-/* On-state stays clearly on, but a mid-tone track keeps rows of switches from out-shouting their data. */
 .root input:checked + .track {
-  background: var(--text-secondary);
-  border-color: var(--text-secondary);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.root:hover input:checked:not(:disabled) + .track {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
 .root input:checked + .track .thumb {
-  background: var(--bg-app);
-  transform: translateX(12px);
+  background: var(--text-on-accent);
+  transform: translateX(14px);
 }
 
 .label {
   color: var(--text-primary);
-  font-weight: 600;
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  font-weight: 500;
+}
+
+/* Touch layouts: grow the target to 40px without changing the visible track. */
+@media (max-width: $breakpoint-mobile) {
+  .track::before {
+    content: '';
+    position: absolute;
+    inset: -11px -4px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

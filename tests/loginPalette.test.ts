@@ -71,16 +71,13 @@ describe('login palette', () => {
     });
   }
 
-  test('the transition veil matches the login background in every theme', () => {
-    expect(veil).toContain(`background: ${light['login-bg']};`);
-    expect(veil).toMatch(
-      /html\[data-theme='white'\] \.login-reveal-veil \{\s*background: #ffffff;/
-    );
-    expect(veil).toMatch(
-      new RegExp(
-        `html\\[data-theme='dark'\\] \\.login-reveal-veil \\{\\s*background: ${dark['login-bg']};`
-      )
-    );
+  test('the transition veil matches the login background in every theme', async () => {
+    // The login page paints --bg-app; the veil uses the same token so every theme hands off
+    // seamlessly without per-theme literals.
+    const page = await Bun.file('src/pages/LoginPage.module.scss').text();
+    expect(page).toMatch(/\.container \{[^}]*background: var\(--bg-app\);/);
+    expect(veil).toContain('background: var(--bg-app);');
+    expect(veil).not.toMatch(/#[0-9a-f]{3,6}\b/i);
   });
 
   test('login styles carry no hard-coded dark-only colors', async () => {

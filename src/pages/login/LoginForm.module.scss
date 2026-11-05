@@ -11,38 +11,46 @@
 }
 
 .label {
-  color: var(--text-secondary);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 18px;
+  color: var(--text-primary);
+  font-size: $text-sm;
+  font-weight: 500;
+  line-height: $leading-sm;
 }
 
 .input,
 .readout {
   width: 100%;
-  height: 36px;
-  padding: 0 12px 0 36px;
-  border: 1px solid var(--border-default);
-  border-radius: 8px;
-  background: var(--bg-app);
+  height: 40px;
+  padding: 0 12px 0 38px;
+  border: 1px solid var(--border-control);
+  border-radius: $radius-md;
+  background: var(--bg-field);
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: $text-base;
+  line-height: $leading-base;
 }
 
 .input {
-  transition: border-color var(--dur-hover) var(--ease-out-strong);
+  transition:
+    border-color var(--dur-hover) var(--ease-out-strong),
+    box-shadow var(--dur-hover) var(--ease-out-strong);
 
   &::placeholder {
     color: var(--text-tertiary);
+    opacity: 1;
   }
 
-  &:hover {
-    border-color: var(--border-strong);
+  &:hover:not(:read-only) {
+    border-color: var(--text-tertiary);
+  }
+
+  &:focus {
+    outline: none;
   }
 
   &:focus-visible {
-    outline: 2px solid var(--text-secondary);
-    outline-offset: 2px;
+    border-color: var(--accent-text);
+    box-shadow: 0 0 0 3px var(--accent-subtle);
   }
 
   &[aria-invalid='true'] {
@@ -50,15 +58,16 @@
   }
 }
 
+// Read-only connection readout: a filled surface, not an input boundary.
 .readout {
   display: flex;
   align-items: center;
-  height: 40px;
+  border-color: transparent;
   background: var(--bg-surface);
+  color: var(--text-secondary);
 
   &[data-custom='true'] {
     color: var(--text-tertiary);
-    border-color: var(--border-subtle);
   }
 }
 
@@ -68,9 +77,10 @@
   white-space: nowrap;
 }
 
+// URLs, keys and HTTP details are identifiers, not code: sans with tabular, slashed figures.
 .mono {
-  font-family: $font-mono;
-  font-size: 12.5px;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums slashed-zero;
 }
 
 .inputWrap {
@@ -97,8 +107,8 @@
   right: 4px;
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   padding: 0;
   border: 0;
   border-radius: 6px;
@@ -108,7 +118,7 @@
   transform: translateY(-50%);
 
   &:hover {
-    background: var(--bg-active);
+    background: var(--bg-raised);
     color: var(--icon-active);
   }
 }
@@ -138,18 +148,18 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  width: 30px;
-  height: 18px;
+  width: 34px;
+  height: 20px;
   padding: 2px;
-  border: 1px solid var(--border-default);
+  border: 1px solid var(--border-control);
   border-radius: 20px;
-  background: var(--bg-active);
+  background: var(--bg-raised);
 
   &::after {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
-    background: var(--text-secondary);
+    background: var(--text-tertiary);
     content: '';
     transition: transform var(--dur-press) var(--ease-out-strong);
   }
@@ -161,7 +171,7 @@
 
   &::after {
     background: var(--button-primary-fg);
-    transform: translateX(12px);
+    transform: translateX(14px);
   }
 }
 
@@ -172,15 +182,15 @@
 }
 
 .connectionLabel {
-  font-size: 13px;
+  font-size: $text-sm;
   font-weight: 500;
-  line-height: 18px;
+  line-height: $leading-sm;
 }
 
 .hint {
   color: var(--text-tertiary);
-  font-size: 12px;
-  line-height: 16px;
+  font-size: $text-xs;
+  line-height: $leading-xs;
 }
 
 .srOnly {
@@ -199,7 +209,7 @@
 
 .checkboxLabel {
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: $text-sm;
   font-weight: 400;
 }
 
@@ -217,17 +227,17 @@
   width: 100%;
   height: 40px;
   border: 0;
-  border-radius: 8px;
+  border-radius: $radius-md;
   background: var(--button-primary-bg);
   color: var(--button-primary-fg);
   font: inherit;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: $text-base;
+  font-weight: 500;
   cursor: pointer;
-  transition: opacity var(--dur-hover) var(--ease-out-strong);
+  transition: background-color var(--dur-hover) var(--ease-out-strong);
 
   &:hover:not(:disabled) {
-    opacity: 0.9;
+    background: var(--accent-hover);
   }
 
   &:disabled {
@@ -245,7 +255,7 @@
 .iconButton,
 .customConnection {
   &:focus-visible {
-    outline: 2px solid var(--text-secondary);
+    outline: 2px solid var(--focus-ring);
     outline-offset: 3px;
   }
 }
@@ -266,9 +276,9 @@
   align-items: flex-start;
   gap: 10px;
   padding: 12px 14px;
-  border: 1px solid color-mix(in srgb, var(--status-danger) 40%, var(--border-subtle));
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--status-danger) 7%, var(--bg-app));
+  border: 1px solid var(--status-danger-border);
+  border-radius: $radius-md;
+  background: var(--status-danger-bg);
   color: var(--status-danger);
   overflow-wrap: anywhere;
 
@@ -291,23 +301,27 @@
 }
 
 .errorSummary {
-  font-size: 13px;
+  font-size: $text-sm;
   font-weight: 600;
-  line-height: 18px;
+  line-height: $leading-sm;
 }
 
 .errorDetail {
   color: var(--text-secondary);
-  font-size: 12px;
-  line-height: 16px;
-
-  .mono {
-    font-size: 12px;
-  }
+  font-size: $text-xs;
+  line-height: $leading-xs;
 }
 
 .errorDetailLabel {
   color: var(--text-tertiary);
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .iconButton {
+    right: 0;
+    width: 40px;
+    height: 40px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
