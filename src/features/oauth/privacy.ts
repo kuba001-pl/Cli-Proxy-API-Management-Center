@@ -1,4 +1,4 @@
-import { credentialFileIdentity, findEmails, privacyFileName } from '@/utils/privacy';
+import { credentialFileIdentity, findEmails, privacyFileName, privacyText } from '@/utils/privacy';
 
 /**
  * Display name of a credential file (selected upload or backend-returned auth file). The
@@ -18,3 +18,11 @@ export const credentialFileDisplayName = (
     credentialFileIdentity(fileName),
   ]);
 };
+
+/**
+ * Display title of a plugin-declared OAuth entry. Entry names are free text published by the
+ * plugin and may embed account identities, so they are masked like other free text. Display
+ * only: provider ids and the raw title stay untouched for login actions.
+ */
+export const pluginOAuthDisplayTitle = (enabled: boolean, title: string): string =>
+  privacyText(enabled, title);
