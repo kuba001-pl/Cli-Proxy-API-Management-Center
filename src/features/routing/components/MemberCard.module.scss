@@ -99,7 +99,7 @@
   flex-shrink: 0;
   width: 28px;
   height: 28px;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 6px;
   background: var(--bg-raised);
   overflow: hidden;
@@ -184,7 +184,7 @@
 .chip {
   flex-shrink: 0;
   padding: 2px 7px;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 4px;
   background: var(--bg-raised);
   font-size: 11px;

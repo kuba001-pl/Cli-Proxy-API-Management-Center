@@ -44,11 +44,11 @@
 
   &.btn-secondary {
     background: var(--bg-raised);
-    border-color: var(--border-default);
+    border-color: transparent;
 
     &:hover:not(:disabled) {
       background: var(--bg-active);
-      border-color: var(--border-strong);
+      border-color: transparent;
     }
   }
 
@@ -185,7 +185,7 @@ textarea {
 
 .card {
   background: var(--bg-surface);
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 12px;
   padding: 20px;
 }
@@ -219,7 +219,7 @@ textarea {
   gap: 5px;
   min-height: 18px;
   padding: 0 6px;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: $radius-full;
   background: var(--bg-raised);
   color: var(--text-secondary);
@@ -231,18 +231,15 @@ textarea {
 .status-badge {
   &.success {
     color: var(--status-success);
-    border-color: var(--success-badge-border);
     background: var(--success-badge-bg);
   }
   &.warning {
     color: var(--status-warning);
-    border-color: var(--warning-border);
     background: var(--warning-bg);
   }
   &.error,
   &.danger {
     color: var(--status-danger);
-    border-color: var(--failure-badge-border);
     background: var(--failure-badge-bg);
   }
   &.muted,
@@ -252,7 +249,7 @@ textarea {
 }
 
 // <StatusBadge>: an unboxed colored dot + label (Figma "Status badge"). Raw `.status-badge`
-// elements keep the bordered pill above.
+// elements use a filled pill above.
 .status-badge.status-badge--dot {
   gap: 6px;
   min-height: 0;
@@ -392,8 +389,8 @@ textarea {
   width: 32px;
   height: 32px;
   padding: 0;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+  background: var(--bg-raised);
+  border: 0;
   color: var(--text-secondary);
   cursor: pointer;
   border-radius: 7px;
@@ -428,7 +425,7 @@ textarea {
 
   &:disabled:hover {
     color: var(--text-secondary);
-    background: var(--bg-secondary);
+    background: var(--bg-raised);
     transform: none;
   }
 }
@@ -437,7 +434,7 @@ textarea {
   display: flex;
   align-items: center;
   padding: $spacing-md 56px $spacing-md $spacing-lg;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-subtle);
 
   .modal-title {
     font-weight: 700;
@@ -455,7 +452,7 @@ textarea {
 
 .modal-footer {
   padding: $spacing-md $spacing-lg;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-subtle);
   display: flex;
   justify-content: flex-end;
   gap: $spacing-sm;
@@ -517,7 +514,7 @@ textarea {
 }
 
 .empty-state {
-  border: 1px dashed var(--border-subtle);
+  border: 0;
   border-radius: $radius-lg;
   padding: 16px;
   background: var(--bg-surface);
@@ -583,10 +580,10 @@ textarea {
 }
 
 .item-row {
-  border: 1px solid var(--border-color);
+  border: 0;
   border-radius: $radius-md;
   padding: $spacing-md;
-  background: var(--bg-primary);
+  background: var(--bg-raised);
   display: flex;
   align-items: center;
   justify-content: space-between;

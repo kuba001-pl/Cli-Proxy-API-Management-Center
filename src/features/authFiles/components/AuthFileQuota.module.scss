@@ -183,8 +183,8 @@ button.quotaMessageAction {
   gap: 5px;
   padding: 3px 8px;
   border-radius: $radius-full;
-  border: 1px solid var(--border-color);
-  background: color-mix(in srgb, var(--bg-primary) 70%, transparent);
+  border: 0;
+  background: var(--bg-raised);
 }
 
 .codexPlanLabel {
@@ -219,7 +219,6 @@ button.quotaMessageAction {
   & + & {
     margin-top: 3px;
     padding-top: 8px;
-    border-top: 1px dashed color-mix(in srgb, var(--border-color) 80%, transparent);
   }
 }
 
@@ -253,7 +252,7 @@ button.quotaMessageAction {
   gap: 4px;
   padding: 8px 9px;
   border-radius: 8px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  border: 0;
 }
 
 .codexResetCreditsTitle {

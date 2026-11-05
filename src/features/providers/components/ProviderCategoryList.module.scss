@@ -10,7 +10,7 @@
 
 .aside {
   background: var(--bg-surface);
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 12px;
   padding: 8px 6px;
   min-width: 0;
@@ -74,7 +74,7 @@
   box-sizing: border-box;
   width: 28px;
   height: 28px;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 8px;
   flex-shrink: 0;
   object-fit: contain;

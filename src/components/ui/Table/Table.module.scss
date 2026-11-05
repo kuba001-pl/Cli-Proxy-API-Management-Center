@@ -2,7 +2,7 @@
 @use '../../../styles/variables' as *;
 
 .wrap {
-  border: 1px solid var(--border-color);
+  border: 0;
   border-radius: 12px;
   overflow: hidden;
   background: var(--bg-primary);

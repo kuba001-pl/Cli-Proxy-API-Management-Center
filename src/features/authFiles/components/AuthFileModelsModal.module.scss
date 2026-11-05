@@ -64,7 +64,7 @@
   color: var(--text-tertiary);
   padding: 1px 6px;
   border-radius: $radius-full;
-  border: 1px solid var(--border-color);
+  border: 0;
 }
 
 .excludedBadge {
@@ -73,7 +73,7 @@
   font-weight: 600;
   color: var(--failure-badge-text);
   background: var(--failure-badge-bg);
-  border: 1px solid var(--failure-badge-border);
+  border: 0;
   border-radius: $radius-full;
   padding: 1px 7px;
   white-space: nowrap;

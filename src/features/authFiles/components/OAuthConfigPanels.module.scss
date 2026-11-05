@@ -1,9 +1,6 @@
 @use '../../../styles/mixins' as *;
 
-/* ============================================================
- * OAuth 配置双卡（排除模型 / 模型别名）共用外衣：panel 配方
- * （16px 圆角 / 1px 边框 / 82% 透感纸面），列表行走 mono 遥测。
- * ============================================================ */
+/* Shared OAuth panels use a surface; nested rows rely on spacing and hover tone. */
 
 .panel {
   display: flex;
@@ -11,9 +8,8 @@
   gap: 14px;
   padding: 20px;
   border-radius: 10px;
-  border: 1px solid var(--border-color);
+  border: 0;
   background: var(--bg-surface);
-  border-color: var(--border-default);
 }
 
 .panelHead {
@@ -62,17 +58,14 @@
   gap: 10px;
   padding: 9px 12px;
   border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
-  background: color-mix(in srgb, var(--bg-secondary) 45%, transparent);
-  transition:
-    background-color var(--dur-hover) var(--ease-out-strong),
-    border-color var(--dur-hover) var(--ease-out-strong);
+  border: 0;
+  background: transparent;
+  transition: background-color var(--dur-hover) var(--ease-out-strong);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .item:hover {
-    border-color: var(--border-hover);
-    background: color-mix(in srgb, var(--bg-secondary) 80%, transparent);
+    background: var(--bg-raised);
   }
 }
 
@@ -156,7 +149,7 @@
 }
 
 .panelBody > :global(.empty-state) {
-  border: 1px dashed var(--border-subtle);
+  border: 0;
   border-radius: 8px;
   padding: 20px 16px;
 }

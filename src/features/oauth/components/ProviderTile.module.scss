@@ -7,20 +7,20 @@
   gap: 12px;
   min-height: 64px;
   padding: 12px;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 12px;
   background: var(--bg-surface);
-  transition: border-color var(--dur-hover) var(--ease-out-strong);
+  transition: background-color var(--dur-hover) var(--ease-out-strong);
 }
 .tile:hover {
-  border-color: var(--border-strong);
+  background: var(--bg-raised);
 }
 .glyph {
   width: 32px;
   height: 32px;
   display: grid;
   place-items: center;
-  border: 1px solid var(--border-default);
+  border: 0;
   background: var(--bg-raised);
   border-radius: 8px;
 }

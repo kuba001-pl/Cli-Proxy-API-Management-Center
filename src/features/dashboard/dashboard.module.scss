@@ -49,7 +49,7 @@
   gap: 8px;
   min-height: 32px;
   padding: 6px 12px;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 8px;
   background: var(--bg-raised);
   color: var(--text-primary);
@@ -80,7 +80,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) repeat(4, minmax(0, 1fr));
   overflow: hidden;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 10px;
   background: var(--bg-surface);
 }
@@ -90,9 +90,6 @@
   gap: 8px;
   min-width: 0;
   padding: 22px 20px;
-  & + & {
-    border-left: 1px solid var(--border-subtle);
-  }
 }
 .statLabel {
   font-size: 12px;
@@ -176,7 +173,7 @@
 .trafficPanel,
 .panel {
   padding: 24px;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 10px;
   background: var(--bg-surface);
   min-width: 0;
@@ -239,7 +236,7 @@
   color: var(--text-secondary);
 }
 details.moreDetails {
-  border: 1px solid var(--border-subtle);
+  border: 0;
   border-radius: 10px;
   background: var(--bg-surface);
   color: var(--text-secondary);
@@ -390,8 +387,9 @@ details.moreDetails {
   display: inline-flex;
   gap: 8px;
   padding: 4px 8px;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 6px;
+  background: var(--bg-raised);
   font-size: 12px;
 }
 .specList {
@@ -434,7 +432,7 @@ details.moreDetails {
   flex-direction: column;
   gap: 8px;
   padding: 16px;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 8px;
   color: var(--text-primary);
   background: var(--bg-surface);
@@ -468,9 +466,6 @@ details.moreDetails {
   .statsRow {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .statTile {
-    border-bottom: 1px solid var(--border-subtle);
-  }
 }
 @include mobile {
   .statsRow {
@@ -478,22 +473,8 @@ details.moreDetails {
   }
   .statTile {
     padding: 18px 16px;
-    border-left: 0;
-
-    & + & {
-      border-left: 0;
-    }
-
     &:first-child {
       grid-column: 1 / -1;
-    }
-
-    &:nth-child(odd):not(:first-child) {
-      border-left: 1px solid var(--border-subtle);
-    }
-
-    &:nth-last-child(-n + 2) {
-      border-bottom: 0;
     }
   }
   details.moreDetails {

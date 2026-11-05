@@ -76,9 +76,9 @@
   justify-self: start;
   min-height: 32px;
   padding: 5px 10px;
-  border: 1px solid var(--border-default);
+  border: 1px solid transparent;
   border-radius: 6px;
-  background: var(--bg-surface);
+  background: var(--bg-raised);
   color: var(--text-secondary);
   cursor: pointer;
   font: 500 13px/20px $font-family;
@@ -89,8 +89,7 @@
 
   &:hover:not(:disabled) {
     color: var(--text-primary);
-    background: var(--bg-raised);
-    border-color: var(--border-strong);
+    background: var(--bg-active);
   }
   &:disabled {
     opacity: 0.5;

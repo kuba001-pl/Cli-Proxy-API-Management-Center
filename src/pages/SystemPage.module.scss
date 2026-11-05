@@ -70,7 +70,6 @@
   min-height: 100px;
   padding: $spacing-md 0;
   border: 0;
-  border-top: 1px solid var(--border-subtle);
   border-radius: 0;
   background: transparent;
   text-align: left;
@@ -226,7 +225,7 @@
   gap: $spacing-xs;
   padding: 2px 8px;
   border-radius: $radius-sm;
-  border: 1px solid var(--border-default);
+  border: 0;
   background-color: var(--bg-raised);
   font-family: $font-mono;
   font-size: 12px;
@@ -328,7 +327,7 @@
   width: 40px;
   height: 40px;
   border-radius: $radius-md;
-  border: 1px solid var(--border-default);
+  border: 0;
   background-color: var(--bg-raised);
   color: var(--text-secondary);
   flex-shrink: 0;

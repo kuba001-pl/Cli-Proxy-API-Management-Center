@@ -82,7 +82,7 @@
 }
 
 .emptyState {
-  border: 1px dashed var(--border-color);
+  border: 0;
   border-radius: 10px;
   padding: 16px;
   color: var(--text-secondary);
@@ -97,9 +97,9 @@
   flex-direction: column;
   gap: 12px;
   padding: 12px;
-  border: 1px solid var(--border-color);
+  border: 0;
   border-radius: 10px;
-  background: color-mix(in srgb, var(--bg-secondary) 64%, transparent);
+  background: var(--bg-surface);
 }
 
 .ruleCardHeader {
@@ -182,7 +182,7 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 10px;
   overflow: hidden;
 }
@@ -196,10 +196,6 @@
   min-height: 48px;
   padding: 8px 12px;
   background: var(--bg-surface);
-
-  & + & {
-    border-top: 1px solid var(--border-subtle);
-  }
 }
 
 .apiKeyIndex {
@@ -360,9 +356,9 @@
   flex-direction: column;
   gap: 12px;
   padding: 14px;
-  border: 1px solid var(--border-color);
+  border: 0;
   border-radius: 10px;
-  background: color-mix(in srgb, var(--bg-secondary) 42%, transparent);
+  background: var(--bg-surface);
 }
 
 .storeAuthRuleHeader {

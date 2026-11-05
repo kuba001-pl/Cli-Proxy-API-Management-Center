@@ -5,7 +5,7 @@
   gap: 14px;
   padding: 20px;
   background: var(--bg-surface);
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 12px;
 }
 .head {
@@ -17,7 +17,7 @@
   width: 36px;
   height: 36px;
   padding: 7px;
-  border: 1px solid var(--border-default);
+  border: 0;
   background: var(--bg-raised);
   border-radius: 8px;
   object-fit: contain;
@@ -47,7 +47,7 @@
   position: relative;
   padding: 8px 8px 8px 14px;
   background: var(--bg-raised);
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 10px;
 }
 .siteBody {
@@ -132,7 +132,7 @@
   place-items: center;
   width: 32px;
   height: 32px;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 8px;
   color: var(--text-tertiary);
 }

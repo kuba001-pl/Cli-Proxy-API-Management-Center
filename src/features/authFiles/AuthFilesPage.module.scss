@@ -43,8 +43,9 @@
   --auth-table-columns: minmax(300px, 2.45fr) minmax(88px, 0.6fr) minmax(150px, 0.93fr)
     minmax(160px, 1.04fr) 64px 24px;
   overflow-x: auto;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 10px;
+  background: var(--bg-surface);
 }
 .grid {
   display: flex;

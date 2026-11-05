@@ -4,8 +4,8 @@
 [data-theme='light'] {
   color-scheme: light;
   --bg-app: #ffffff;
-  --bg-surface: #fafafa;
-  --bg-raised: #f4f4f5;
+  --bg-surface: #f8f8f9;
+  --bg-raised: #eeeef1;
   --bg-active: #e8e8eb;
   --border-subtle: #efeff1;
   --border-default: #e4e4e7;
@@ -95,9 +95,9 @@
 [data-theme='dark'] {
   color-scheme: dark;
   --bg-app: #000000;
-  --bg-surface: #0b0b0c;
-  --bg-raised: #111113;
-  --bg-active: #1b1b1e;
+  --bg-surface: #0e0e10;
+  --bg-raised: #18181b;
+  --bg-active: #232326;
   --border-subtle: #161619;
   --border-default: #222226;
   --border-strong: #2e2e33;

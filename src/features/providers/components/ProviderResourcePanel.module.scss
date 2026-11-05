@@ -2,7 +2,7 @@
 
 .panel {
   background: var(--bg-surface);
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 10px;
   min-width: 0;
 }
@@ -47,7 +47,7 @@
   width: 40px;
   height: 40px;
   padding: 9px;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 8px;
   background: var(--bg-raised);
   object-fit: contain;
@@ -108,14 +108,11 @@
 .summary {
   display: flex;
   margin: 0;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 8px;
 
   > div {
     padding: 8px 14px;
-  }
-  > div + div {
-    border-left: 1px solid var(--border-subtle);
   }
   dt {
     color: var(--text-tertiary);
@@ -169,7 +166,6 @@
 
 .empty {
   padding: 40px 24px;
-  border-top: 1px solid var(--border-subtle);
   text-align: center;
   color: var(--text-secondary);
   font-size: 13px;
@@ -184,7 +180,7 @@
   gap: 6px;
   height: 32px;
   padding: 0 12px;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 8px;
   background: var(--bg-raised);
   color: var(--text-primary);

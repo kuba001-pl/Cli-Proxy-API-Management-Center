@@ -145,7 +145,7 @@
   gap: 10px;
   padding: 10px 14px;
   border-radius: $radius-md;
-  border: 1px solid var(--border-default);
+  border: 0;
   background: var(--bg-surface);
   flex-wrap: wrap;
 }
@@ -158,8 +158,8 @@
   gap: 6px;
   padding: 5px 12px;
   border-radius: $radius-sm;
-  border: 1px solid var(--border-default);
-  background: var(--bg-raised);
+  border: 0;
+  background: transparent;
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
@@ -202,7 +202,7 @@
 .statusDivider {
   width: 1px;
   height: 20px;
-  background: var(--border-default);
+  background: transparent;
   flex-shrink: 0;
 
   @include mobile {
@@ -257,9 +257,9 @@
   align-items: center;
   gap: 6px;
   padding: 5px 12px;
-  border: 1px solid var(--border-default);
+  border: 1px solid transparent;
   border-radius: $radius-md;
-  background: var(--bg-primary);
+  background: var(--bg-raised);
   color: var(--text-secondary);
   font-size: 12px;
   font-weight: 600;
@@ -271,7 +271,7 @@
     color $transition-fast;
 
   &:hover {
-    border-color: var(--primary-color);
+    background: var(--bg-active);
     color: var(--text-primary);
   }
 }
@@ -314,7 +314,7 @@
   flex-direction: column;
   gap: $spacing-sm;
   padding: $spacing-md;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: $radius-lg;
   background: var(--bg-primary);
   transition:
@@ -322,7 +322,6 @@
     background-color $transition-fast;
 
   &:hover {
-    border-color: color-mix(in srgb, var(--primary-color) 45%, var(--border-color));
     background: var(--bg-hover);
   }
 }
@@ -345,7 +344,7 @@
   justify-content: center;
   overflow: hidden;
   border-radius: $radius-md;
-  border: 1px solid var(--border-default);
+  border: 0;
   background: var(--bg-raised);
   color: var(--text-secondary);
   flex-shrink: 0;
@@ -412,20 +411,20 @@
 }
 
 .badge {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-default);
+  background: var(--bg-raised);
+  border: 0;
   color: var(--text-secondary);
 }
 
 .badgeSuccess {
   background: color-mix(in srgb, var(--status-success) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--status-success) 20%, transparent);
+  border: 0;
   color: var(--success-color);
 }
 
 .badgeWarning {
   background: color-mix(in srgb, var(--status-warning) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--status-warning) 20%, transparent);
+  border: 0;
   color: var(--warning-color);
 }
 
@@ -530,8 +529,8 @@
   align-items: center;
   padding: 2px 8px;
   border-radius: $radius-sm;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-default);
+  background: var(--bg-raised);
+  border: 0;
   color: var(--text-tertiary);
   font-size: 11px;
   font-weight: 600;
@@ -574,9 +573,9 @@
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--border-color);
+  border: 0;
   border-radius: $radius-md;
-  background: var(--bg-primary);
+  background: var(--bg-raised);
   color: var(--text-primary);
   text-decoration: none;
   transition:
@@ -585,7 +584,6 @@
     color $transition-fast;
 
   &:hover {
-    border-color: var(--primary-color);
     background: var(--bg-hover);
     color: var(--primary-color);
   }
@@ -689,7 +687,7 @@
   gap: 8px;
   padding: 10px;
   border-radius: $radius-md;
-  border: 1px solid var(--border-default);
+  border: 0;
   background: var(--bg-surface);
 
   :global(.form-group) {
@@ -769,7 +767,7 @@
   flex-direction: column;
   gap: $spacing-md;
   padding: $spacing-md;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: $radius-lg;
   background: var(--bg-primary);
 }

@@ -168,6 +168,7 @@
 }
 
 .filterPanelToggle {
+  border-color: transparent;
   white-space: nowrap;
 }
 
@@ -200,20 +201,11 @@
   gap: 8px;
   margin-left: auto;
   padding-left: 8px;
-  border-left: 1px solid var(--border-default);
   flex: none;
 
   > :nth-child(3),
   > :nth-child(5) {
     margin-left: 8px;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: -9px;
-      height: 20px;
-      border-left: 1px solid var(--border-default);
-    }
   }
 }
 
@@ -283,8 +275,8 @@
   @include button-reset;
   padding: 6px 10px;
   border-radius: 5px;
-  border: 1px solid var(--border-default);
-  background: var(--bg-surface);
+  border: 1px solid transparent;
+  background: var(--bg-raised);
   color: var(--text-secondary);
   font-family: $font-mono;
   font-size: 12px;
@@ -307,7 +299,7 @@
 .viewerArea {
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 12px;
   background: var(--bg-surface);
 
@@ -696,7 +688,7 @@
 
 .errorTableSurface {
   overflow: auto;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 12px;
   background: var(--bg-surface);
 }
@@ -829,7 +821,7 @@
   padding: 12px;
   max-height: 58dvh;
   overflow: auto;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 6px;
   background: var(--bg-surface);
   color: var(--text-secondary);
@@ -876,7 +868,7 @@
   }
 
   .filterChip:hover:not(:disabled) {
-    border-color: var(--border-strong);
+    background: var(--bg-active);
   }
 }
 

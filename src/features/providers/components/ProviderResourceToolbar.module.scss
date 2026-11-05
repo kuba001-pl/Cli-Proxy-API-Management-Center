@@ -27,7 +27,7 @@
   width: 32px;
   height: 32px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-default);
+  border: 1px solid transparent;
   background: var(--bg-raised);
   color: var(--text-secondary);
   cursor: pointer;
@@ -52,7 +52,7 @@
   height: 32px;
   padding: 0 11px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-default);
+  border: 1px solid transparent;
   background: var(--bg-raised);
   color: var(--text-primary);
   font-size: 13px;
@@ -62,7 +62,8 @@
     border-color var(--dur-hover) var(--ease-out-strong);
 
   &:hover:not(:disabled) {
-    border-color: var(--primary-color);
+    border-color: transparent;
+    background: var(--bg-active);
     color: var(--primary-color);
   }
 
@@ -99,14 +100,15 @@
 .filterToolbarBtn {
   padding: 3px 9px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-default);
+  border: 1px solid transparent;
   background: var(--bg-raised);
   color: var(--text-secondary);
   font-size: 12px;
   cursor: pointer;
 
   &:hover:not(:disabled) {
-    border-color: var(--primary-color);
+    border-color: transparent;
+    background: var(--bg-active);
     color: var(--primary-color);
   }
 
