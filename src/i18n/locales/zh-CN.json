@@ -1604,6 +1604,8 @@
     }
   },
   "quota_management": {
+    "not_loaded": "尚未加载配额",
+    "empty_hint": "刷新下方凭证以加载其配额。",
     "summary_label": "各提供商配额",
     "lowest": "最低剩余",
     "upcoming_title": "即将重置",
@@ -2109,6 +2111,7 @@
       "disable": "停用"
     },
     "categories": {
+      "noKeys": "暂无密钥",
       "title": "提供商",
       "activeCount": "{{active}}/{{total}} 活跃"
     },

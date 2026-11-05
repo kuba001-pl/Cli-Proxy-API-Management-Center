@@ -132,17 +132,11 @@
   scroll-margin-top: calc(var(--header-height, 64px) + 16px);
 }
 
-/* 控件槽宽度分三档；百分比兜底保证标题列永远有一半以上的位置。 */
-.size_sm {
-  --setting-control: min(120px, 42%);
-}
-
-.size_md {
-  --setting-control: min(260px, 50%);
-}
-
+/* One aligned control column; numeric fields stay compact within it. */
+.size_sm,
+.size_md,
 .size_lg {
-  --setting-control: min(340px, 58%);
+  --setting-control: min(320px, 45%);
 }
 
 .rowWide {
@@ -201,12 +195,21 @@
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   min-width: 0;
 }
 
 .rowControl > :global(.input) {
   width: 100%;
+}
+
+.size_sm .rowControl {
+  width: 100%;
+  max-width: 160px;
+}
+
+.rowToggle .rowControl {
+  justify-content: flex-end;
 }
 
 .rowBlock .rowControl {

@@ -73,12 +73,25 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 0;
-  border: 0;
-  background: transparent;
+  justify-self: start;
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  background: var(--bg-surface);
   color: var(--text-secondary);
   cursor: pointer;
+  font: 500 13px/20px $font-family;
+  transition:
+    background-color var(--dur-hover) var(--ease-out-strong),
+    border-color var(--dur-hover) var(--ease-out-strong);
   grid-column: 1 / -1;
+
+  &:hover:not(:disabled) {
+    color: var(--text-primary);
+    background: var(--bg-raised);
+    border-color: var(--border-strong);
+  }
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -165,7 +178,7 @@
   min-height: 32px;
   padding: 6px 8px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 6px;
   background: transparent;
   color: var(--text-secondary);
   font-size: 13px;
@@ -226,6 +239,7 @@
   .spinning {
     animation: none;
   }
+  .idleBody,
   .actionPill {
     transition: none;
   }

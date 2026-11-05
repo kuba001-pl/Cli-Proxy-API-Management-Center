@@ -26,7 +26,7 @@
   align-items: baseline;
   flex-wrap: wrap;
   gap: 4px 8px;
-  font: 12.5px/18px $font-mono;
+  font: 12.5px/18px $font-family;
   font-variant-numeric: tabular-nums;
   color: var(--text-tertiary);
 }
@@ -53,7 +53,7 @@
   min-height: 32px;
   padding: 6px 12px;
   border: 1px solid var(--button-primary-bg);
-  border-radius: 8px;
+  border-radius: 6px;
   background: var(--button-primary-bg);
   color: var(--button-primary-fg);
   cursor: pointer;

@@ -148,7 +148,12 @@ export function OAuthModelAliasCard(props: OAuthModelAliasCardProps) {
                   <Button variant="secondary" size="sm" onClick={() => onEditProvider(provider)}>
                     {t('common.edit')}
                   </Button>
-                  <Button variant="danger" size="sm" onClick={() => onDeleteProvider(provider)}>
+                  <Button
+                    variant="ghost"
+                    className={styles.rowDelete}
+                    size="sm"
+                    onClick={() => onDeleteProvider(provider)}
+                  >
                     {t('oauth_model_alias.delete')}
                   </Button>
                 </div>

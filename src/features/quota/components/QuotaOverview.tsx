@@ -1,5 +1,6 @@
 import { Fragment, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { IconRefreshCw } from '@/components/ui/icons';
 import { getAuthFileIcon, getTypeLabel } from '@/features/authFiles/constants';
 import { useNow } from '@/hooks/useNow';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
@@ -79,34 +80,48 @@ export function QuotaSummary({ entries, quotaFor, resolvedTheme }: Props) {
               <QuotaProviderHeading type={type} resolvedTheme={resolvedTheme} />
               <span>{t('quota_management.meta_credentials', { count: accounts.length })}</span>
             </div>
-            <p className={styles.windowLabel}>{label}</p>
-            <div className={styles.headline}>
-              <strong>
-                {window?.remaining === undefined || window.remaining === null
-                  ? '—'
-                  : `${Math.round(window.remaining)}%`}
-              </strong>
-              {lowest && (
-                <span title={getQuotaPrivacyDisplayName(lowest.entry.file, privacyEnabled)}>
-                  {t('quota_management.lowest')}
-                </span>
-              )}
-            </div>
-            <div className={styles.meters}>
-              {observations.map(({ entry, window: observation }) => (
-                <div
-                  key={getQuotaCacheKey(entry.file)}
-                  title={getQuotaPrivacyDisplayName(entry.file, privacyEnabled)}
-                >
-                  <QuotaMeter percent={observation.remaining} classes={meterClasses} />
+            {!window ? (
+              <div className={styles.summaryEmpty}>
+                <IconRefreshCw size={18} aria-hidden="true" />
+                <div>
+                  <p>{t('quota_management.not_loaded')}</p>
+                  <span>{t('quota_management.empty_hint')}</span>
                 </div>
-              ))}
-            </div>
-            <p className={styles.reset}>
-              {window?.resetAtMs
-                ? `${formatRelativeInstant(window.resetAtMs, now, i18n.resolvedLanguage)} · ${formatInstantShort(window.resetAtMs)}`
-                : '—'}
-            </p>
+              </div>
+            ) : (
+              <>
+                <p className={styles.windowLabel} title={label}>
+                  {label}
+                </p>
+                <div className={styles.headline}>
+                  <strong>
+                    {window?.remaining === undefined || window.remaining === null
+                      ? '—'
+                      : `${Math.round(window.remaining)}%`}
+                  </strong>
+                  {lowest && (
+                    <span title={getQuotaPrivacyDisplayName(lowest.entry.file, privacyEnabled)}>
+                      {t('quota_management.lowest')}
+                    </span>
+                  )}
+                </div>
+                <div className={styles.meters}>
+                  {observations.map(({ entry, window: observation }) => (
+                    <div
+                      key={getQuotaCacheKey(entry.file)}
+                      title={getQuotaPrivacyDisplayName(entry.file, privacyEnabled)}
+                    >
+                      <QuotaMeter percent={observation.remaining} classes={meterClasses} />
+                    </div>
+                  ))}
+                </div>
+                <p className={styles.reset}>
+                  {window?.resetAtMs
+                    ? `${formatRelativeInstant(window.resetAtMs, now, i18n.resolvedLanguage)} · ${formatInstantShort(window.resetAtMs)}`
+                    : '—'}
+                </p>
+              </>
+            )}
           </article>
         );
       })}

@@ -167,7 +167,7 @@ export function QuotaCard(props: QuotaCardProps) {
             disabled={!canRefresh}
           >
             <IconRefreshCw size={15} aria-hidden="true" className={styles.idleGlyph} />
-            <span className={styles.idleHint}>{t(`${adapter.i18nPrefix}.idle`)}</span>
+            <span>{t('auth_files.quota_refresh_single')}</span>
           </button>
         ) : loading && !retainedClaudeUsage ? (
           <div className={styles.skeleton} aria-busy="true">

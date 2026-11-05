@@ -25,7 +25,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 12px;
   line-height: 16px;
   color: var(--text-tertiary);
@@ -57,4 +58,9 @@
   .spinning {
     animation: none;
   }
+}
+
+.refreshButton {
+  width: 32px;
+  padding: 0;
 }

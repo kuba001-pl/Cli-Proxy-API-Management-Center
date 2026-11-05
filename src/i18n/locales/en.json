@@ -1605,6 +1605,8 @@
     }
   },
   "quota_management": {
+    "not_loaded": "Quota not loaded",
+    "empty_hint": "Refresh a credential below to load its quota.",
     "summary_label": "Quota by provider",
     "lowest": "lowest",
     "upcoming_title": "Upcoming resets",
@@ -2111,6 +2113,7 @@
       "disable": "Disable"
     },
     "categories": {
+      "noKeys": "No keys",
       "title": "Providers",
       "activeCount": "{{active}}/{{total}} active"
     },

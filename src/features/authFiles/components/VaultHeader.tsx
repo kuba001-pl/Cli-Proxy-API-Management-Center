@@ -84,9 +84,16 @@ export function VaultHeader(props: VaultHeaderProps) {
             {t('auth_files.refresh_all_button')}
           </Button>
         )}
-        <Button variant="secondary" size="sm" onClick={onRefresh} disabled={loading || refreshing}>
+        <Button
+          variant="secondary"
+          size="sm"
+          className={styles.refreshButton}
+          onClick={onRefresh}
+          disabled={loading || refreshing}
+          title={t('common.refresh')}
+          aria-label={t('common.refresh')}
+        >
           <IconRefreshCw size={14} className={refreshing ? styles.spinning : undefined} />
-          {t('common.refresh')}
         </Button>
         <Button
           size="sm"

@@ -128,6 +128,8 @@
   gap: 5px;
 }
 .healthCounts {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 .lowest {
@@ -149,7 +151,7 @@
 }
 .quotaLabel strong {
   color: var(--text-primary);
-  font-family: $font-mono;
+  font-variant-numeric: tabular-nums;
 }
 .meter {
   height: 4px;
@@ -200,7 +202,7 @@
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
-  font-family: $font-mono;
+  font-variant-numeric: tabular-nums;
   font-size: 11.5px;
   color: var(--text-secondary);
 }
@@ -239,7 +241,7 @@
 }
 .statusBlock {
   height: 10px;
-  border-radius: 1px;
+  border-radius: 2px;
 }
 .statusBlockIdle {
   background: var(--bg-active);
@@ -248,7 +250,7 @@
   background: var(--text-tertiary);
 }
 .statusBlockFailure {
-  background: var(--status-danger);
+  background-color: color-mix(in srgb, var(--status-danger) 48%, var(--text-tertiary));
 }
 .statusBlockActive .statusBlock {
   outline: 1px solid var(--text-secondary);
@@ -270,8 +272,9 @@
   border: 1px solid var(--border-color);
   box-shadow: var(--floating-shadow);
   pointer-events: none;
-  font-family: $font-mono;
-  font-size: 11px;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
   line-height: 1.5;
 }
 .tooltipTime {
@@ -339,6 +342,13 @@
 }
 .deleteButton {
   margin-left: auto;
+  color: var(--text-secondary);
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    color: var(--status-danger);
+    background: var(--destructive-10);
+  }
 }
 @media (max-width: 700px) {
   .expandedBody {

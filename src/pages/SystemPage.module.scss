@@ -1,18 +1,22 @@
 .container {
   width: 100%;
+
+  :global(.card) {
+    border-radius: 10px;
+  }
 }
 
 .pageTitle {
   font-size: 28px;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 $spacing-xl 0;
+  margin: 0 0 24px;
 }
 
 .content {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xl;
+  gap: 24px;
 }
 
 .aboutCard {
@@ -21,31 +25,29 @@
 
 .aboutHeader {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
   width: 100%;
-  gap: $spacing-md;
-  padding: $spacing-lg 0 $spacing-xl;
+  gap: 16px;
+  padding: 0 0 24px;
 }
 
 .aboutLogo {
-  width: 108px;
-  height: 108px;
-  border-radius: 26px;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 10px;
   object-fit: cover;
   box-shadow: var(--shadow);
 }
 
 .aboutTitle {
   width: min(100%, 920px);
-  font-size: clamp(28px, 4.2vw, 44px);
-  font-weight: 800;
-  line-height: 1.12;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.35;
   color: var(--text-primary);
   letter-spacing: -0.02em;
-  text-align: center;
-  text-wrap: balance;
+  text-align: left;
   white-space: normal;
   overflow-wrap: anywhere;
 }
@@ -65,7 +67,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-height: 104px;
+  min-height: 100px;
   padding: $spacing-md 0;
   border: 0;
   border-top: 1px solid var(--border-subtle);
@@ -99,10 +101,11 @@
 
 .tileHeader {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: $spacing-sm;
-  min-height: 40px;
+  min-height: 28px;
 }
 
 .tileAction {
@@ -112,18 +115,21 @@
 }
 
 .tileValue {
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-primary);
-  line-height: 1.25;
+  line-height: 1.4;
   word-break: break-word;
 }
 
 .tileSub {
   font-size: 12px;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
+  font-family: $font-mono;
   line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .section {
@@ -169,7 +175,8 @@
 
     .value {
       color: var(--text-primary);
-      font-family: $font-mono;
+      font-family: $font-family;
+      font-variant-numeric: tabular-nums;
     }
   }
 }
@@ -229,6 +236,11 @@
 .modelGroups {
   gap: 0;
 
+  :global(.item-subtitle) {
+    font-family: $font-family;
+    font-variant-numeric: tabular-nums;
+  }
+
   > :global(.item-row) {
     padding: $spacing-md 0;
     border: 0;
@@ -274,22 +286,24 @@
       font-size: 16px;
       font-weight: 600;
       color: var(--text-primary);
-      font-family: $font-mono;
+      font-family: $font-family;
+      font-variant-numeric: tabular-nums;
     }
   }
 }
 
 .quickLinks {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: $spacing-md;
 }
 
 .linkCard {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: $spacing-md;
-  padding: $spacing-sm;
+  min-height: 72px;
+  padding: 12px;
   background-color: transparent;
   border: 0;
   border-radius: $radius-md;
@@ -348,34 +362,21 @@
 .linkDesc {
   font-size: 13px;
   color: var(--text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-@media (max-width: 768px) {
-  .aboutLogo {
-    width: 92px;
-    height: 92px;
-    border-radius: 22px;
-  }
-
-  .aboutTitle {
-    width: min(100%, 24ch);
-    font-size: clamp(22px, 6.6vw, 34px);
-    font-weight: 700;
-    line-height: 1.18;
-    letter-spacing: -0.012em;
-  }
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 520px) {
   .aboutTitle {
-    width: min(100%, 19ch);
-    font-size: clamp(20px, 7.2vw, 28px);
-    font-weight: 600;
-    line-height: 1.22;
-    letter-spacing: -0.006em;
+    font-size: 18px;
+  }
+
+  .aboutHeader {
+    align-items: flex-start;
+  }
+
+  .tileValue {
+    font-size: 18px;
   }
 }
 

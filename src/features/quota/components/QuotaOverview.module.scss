@@ -14,7 +14,7 @@
   > span {
     color: var(--text-tertiary);
     font-size: 13px;
-    font-family: $font-mono;
+    font-variant-numeric: tabular-nums;
   }
   img {
     flex: none;
@@ -25,7 +25,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   border: 1px solid var(--border-default);
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--bg-surface);
   overflow: hidden;
 }
@@ -89,7 +89,7 @@
 .upcoming {
   padding: 22px 24px 10px;
   border: 1px solid var(--border-default);
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--bg-surface);
 }
 .upcomingHead {
@@ -153,7 +153,7 @@
   border-top: 1px solid var(--border-subtle);
   font-size: 13px;
   time {
-    font-family: $font-mono;
+    font-variant-numeric: tabular-nums;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
   }
@@ -189,7 +189,8 @@
   }
   b {
     width: 36px;
-    font: 600 12.5px/18px $font-mono;
+    font: 600 12.5px/18px $font-family;
+    font-variant-numeric: tabular-nums;
   }
 }
 .resetRelative {
@@ -244,5 +245,31 @@
   .resetMeter {
     grid-column: 3;
     grid-row: span 2;
+  }
+}
+
+.summaryEmpty {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0 4px;
+  color: var(--text-tertiary);
+
+  > svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  p {
+    margin: 0 0 4px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+
+  span {
+    font-size: 12px;
+    line-height: 18px;
   }
 }

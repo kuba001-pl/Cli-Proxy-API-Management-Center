@@ -1605,6 +1605,8 @@
     }
   },
   "quota_management": {
+    "not_loaded": "Kota yüklenmedi",
+    "empty_hint": "Kotasını yüklemek için aşağıdaki kimlik bilgisini yenileyin.",
     "summary_label": "Sağlayıcıya göre kotalar",
     "lowest": "en düşük kalan",
     "upcoming_title": "Yaklaşan sıfırlamalar",
@@ -2111,6 +2113,7 @@
       "disable": "Devre Dışı Bırak"
     },
     "categories": {
+      "noKeys": "Anahtar yok",
       "title": "Sağlayıcılar",
       "activeCount": "{{active}} / {{total}} Aktif"
     },

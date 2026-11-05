@@ -3,7 +3,7 @@
 .panel {
   background: var(--bg-surface);
   border: 1px solid var(--border-default);
-  border-radius: 12px;
+  border-radius: 10px;
   min-width: 0;
 }
 
@@ -125,7 +125,8 @@
   dd {
     margin: 0;
     color: var(--text-primary);
-    font: 600 12px/18px $font-mono;
+    font: 600 12px/18px $font-family;
+    font-variant-numeric: tabular-nums;
   }
 }
 

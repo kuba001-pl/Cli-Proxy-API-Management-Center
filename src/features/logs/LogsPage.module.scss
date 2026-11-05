@@ -549,7 +549,8 @@
 }
 
 .levelInfo {
-  color: var(--info-color);
+  color: var(--text-secondary);
+  font-weight: 400;
 }
 
 .statusWarn,

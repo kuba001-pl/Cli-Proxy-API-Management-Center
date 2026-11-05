@@ -68,7 +68,12 @@ export function OAuthExcludedCard(props: OAuthExcludedCardProps) {
                   <Button variant="secondary" size="sm" onClick={() => onEdit(provider)}>
                     {t('common.edit')}
                   </Button>
-                  <Button variant="danger" size="sm" onClick={() => onDelete(provider)}>
+                  <Button
+                    variant="ghost"
+                    className={styles.rowDelete}
+                    size="sm"
+                    onClick={() => onDelete(provider)}
+                  >
                     {t('oauth_excluded.delete')}
                   </Button>
                 </div>

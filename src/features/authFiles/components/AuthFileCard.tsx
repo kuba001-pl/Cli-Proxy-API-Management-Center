@@ -382,7 +382,7 @@ export function AuthFileCard(props: AuthFileCardProps) {
                   <IconSettings size={15} />
                 </Button>
                 <Button
-                  variant="danger"
+                  variant="ghost"
                   size="sm"
                   onClick={() => onDelete(file.name)}
                   className={styles.deleteButton}

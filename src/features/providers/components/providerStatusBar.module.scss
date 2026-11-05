@@ -27,15 +27,15 @@
 
 .statusBlock {
   width: 100%;
-  height: 12px;
-  border-radius: 1px;
+  height: 10px;
+  border-radius: 2px;
   transition:
     transform var(--dur-hover) var(--ease-out-strong),
     opacity var(--dur-hover) var(--ease-out-strong);
 
   .statusBlockWrapper:hover &,
   .statusBlockWrapper.statusBlockActive & {
-    transform: scaleY(1.8);
+    transform: scaleY(1.2);
     opacity: 0.9;
   }
 }
@@ -49,7 +49,7 @@
 }
 
 .statusBlockFailure {
-  background-color: var(--status-danger);
+  background-color: color-mix(in srgb, var(--status-danger) 48%, var(--text-tertiary));
 }
 
 .statusTooltip {

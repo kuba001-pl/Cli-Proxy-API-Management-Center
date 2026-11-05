@@ -1605,6 +1605,8 @@
     }
   },
   "quota_management": {
+    "not_loaded": "할당량을 불러오지 않음",
+    "empty_hint": "아래 인증 정보를 새로고침하여 할당량을 불러오세요.",
     "summary_label": "공급자별 할당량",
     "lowest": "최저 잔여량",
     "upcoming_title": "예정된 초기화",
@@ -2111,6 +2113,7 @@
       "disable": "비활성화"
     },
     "categories": {
+      "noKeys": "키 없음",
       "title": "공급자",
       "activeCount": "활성 {{active}}/{{total}}"
     },

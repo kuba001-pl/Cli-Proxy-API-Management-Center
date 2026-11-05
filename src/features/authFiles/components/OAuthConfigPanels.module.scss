@@ -10,7 +10,7 @@
   flex-direction: column;
   gap: 14px;
   padding: 20px;
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid var(--border-color);
   background: var(--bg-surface);
   border-color: var(--border-default);
@@ -65,8 +65,8 @@
   border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
   background: color-mix(in srgb, var(--bg-secondary) 45%, transparent);
   transition:
-    background-color $transition-fast,
-    border-color $transition-fast;
+    background-color var(--dur-hover) var(--ease-out-strong),
+    border-color var(--dur-hover) var(--ease-out-strong);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -84,8 +84,7 @@
 }
 
 .itemProvider {
-  font-family: $font-mono;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 650;
   color: var(--text-primary);
   @include text-ellipsis;
@@ -121,8 +120,7 @@
 
 .aliasChartTitle {
   margin: 0;
-  font-family: $font-mono;
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -137,10 +135,9 @@
 
 .panel :global(.btn) {
   transition:
-    transform var(--dur-press, 160ms) var(--ease-out-strong, ease-out),
-    background-color $transition-fast,
-    border-color $transition-fast,
-    color $transition-fast;
+    background-color var(--dur-hover) var(--ease-out-strong),
+    border-color var(--dur-hover) var(--ease-out-strong),
+    color var(--dur-hover) var(--ease-out-strong);
 }
 
 .panel :global(.btn:active:not(:disabled)) {
@@ -148,6 +145,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .item,
   .panel :global(.btn) {
     transition: none;
   }
@@ -168,4 +166,26 @@
   font-size: 12px;
   line-height: 20px;
   font-weight: 400;
+}
+
+.itemActions .rowDelete {
+  color: var(--text-secondary);
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    color: var(--status-danger);
+    background: var(--destructive-10);
+  }
+}
+
+@media (max-width: 520px) {
+  .item {
+    flex-wrap: wrap;
+    padding: 12px;
+  }
+
+  .itemActions {
+    flex-basis: 100%;
+    flex-wrap: wrap;
+  }
 }

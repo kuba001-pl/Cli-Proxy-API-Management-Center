@@ -1632,6 +1632,8 @@
     }
   },
   "quota_management": {
+    "not_loaded": "尚未載入配額",
+    "empty_hint": "重新整理下方憑證以載入其配額。",
     "summary_label": "各提供者配額",
     "lowest": "最低剩餘",
     "upcoming_title": "即將重設",
@@ -2137,6 +2139,7 @@
       "disable": "停用"
     },
     "categories": {
+      "noKeys": "尚無金鑰",
       "title": "提供商",
       "activeCount": "{{active}}/{{total}} 活躍"
     },

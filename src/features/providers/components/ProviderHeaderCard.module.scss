@@ -35,7 +35,7 @@
 .btn {
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 13px;
   font-weight: 600;
 
@@ -73,7 +73,8 @@
   gap: 0;
   margin-top: 4px;
   color: var(--text-tertiary);
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 12px;
   line-height: 18px;
 }
