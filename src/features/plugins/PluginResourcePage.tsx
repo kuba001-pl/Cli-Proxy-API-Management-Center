@@ -121,7 +121,7 @@ export function PluginResourcePage() {
         <iframe
           className={styles.frame}
           src={iframeSrc}
-          title={resource.label}
+          title={privacyText(privacyEnabled, resource.label)}
           referrerPolicy="no-referrer"
           allow="clipboard-read; clipboard-write"
         />
