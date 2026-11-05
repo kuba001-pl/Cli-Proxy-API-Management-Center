@@ -63,7 +63,7 @@ export function ProviderCategoryList({ groups, activeBrand, onSelect }: Provider
                   {t(`providersPage.providerNames.${group.id}`)}
                 </span>
                 <span className={styles.itemSubtitle}>
-                  {total === 0 && !QUICK_FILL_BRANDS.has(group.id)
+                  {total === 0
                     ? t('providersPage.categories.noKeys')
                     : t('providersPage.categories.activeCount', {
                         active: activeCount,
@@ -72,9 +72,7 @@ export function ProviderCategoryList({ groups, activeBrand, onSelect }: Provider
                 </span>
               </span>
             </span>
-            {total > 0 || QUICK_FILL_BRANDS.has(group.id) ? (
-              <span className={styles.badge}>{total}</span>
-            ) : null}
+            {total > 0 ? <span className={styles.badge}>{total}</span> : null}
           </button>
         );
       })}
