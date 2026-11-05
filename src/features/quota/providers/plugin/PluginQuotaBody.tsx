@@ -1,4 +1,6 @@
 import { useTranslation } from 'react-i18next';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyText } from '@/utils/privacy';
 import type { PluginQuotaMetric, PluginQuotaState } from '@/types';
 import { QuotaMeter } from '../../components/QuotaMeter';
 import type { QuotaBodyProps } from '../../types';
@@ -21,6 +23,9 @@ const formatMetric = (metric: PluginQuotaMetric): string => {
 
 export function PluginQuotaBody({ quota, classes, part }: QuotaBodyProps<PluginQuotaState>) {
   const { t } = useTranslation();
+  // Every label below is free text from the plugin's quota response: mask it at render time.
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
+  const mask = (text: string | undefined) => privacyText(privacyEnabled, text);
   const showPlan = part !== 'details';
   const showDetails = part !== 'plan';
   const plan =
@@ -33,12 +38,12 @@ export function PluginQuotaBody({ quota, classes, part }: QuotaBodyProps<PluginQ
           {plan && (
             <span className={classes.codexPlanItem}>
               <span className={classes.codexPlanLabel}>{t('plugin_quota.plan_label')}</span>
-              <span className={classes.codexPlanValue}>{plan}</span>
+              <span className={classes.codexPlanValue}>{mask(plan)}</span>
             </span>
           )}
           {quota.summary.map((metric) => (
             <span key={metric.key} className={classes.codexPlanItem}>
-              <span className={classes.codexPlanLabel}>{metric.label}</span>
+              <span className={classes.codexPlanLabel}>{mask(metric.label)}</span>
               <span className={classes.codexPlanValue}>{formatMetric(metric)}</span>
             </span>
           ))}
@@ -50,10 +55,10 @@ export function PluginQuotaBody({ quota, classes, part }: QuotaBodyProps<PluginQ
         quota.groups.map((group) => (
           <div key={group.id} className={classes.antigravityQuotaGroup}>
             <div className={classes.antigravityQuotaGroupHeader}>
-              <span className={classes.antigravityQuotaGroupTitle}>{group.label}</span>
+              <span className={classes.antigravityQuotaGroupTitle}>{mask(group.label)}</span>
               {group.description && (
                 <span className={classes.antigravityQuotaGroupDescription}>
-                  {group.description}
+                  {mask(group.description)}
                 </span>
               )}
             </div>
@@ -62,8 +67,11 @@ export function PluginQuotaBody({ quota, classes, part }: QuotaBodyProps<PluginQ
               return (
                 <div key={bucket.id} className={classes.quotaRow}>
                   <div className={classes.quotaRowHeader}>
-                    <span className={classes.quotaModel} title={bucket.description}>
-                      {bucket.label}
+                    <span
+                      className={classes.quotaModel}
+                      title={mask(bucket.description) || undefined}
+                    >
+                      {mask(bucket.label)}
                     </span>
                     <div className={classes.quotaMeta}>
                       <span className={classes.quotaPercent}>

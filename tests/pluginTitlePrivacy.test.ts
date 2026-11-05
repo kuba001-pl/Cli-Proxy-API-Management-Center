@@ -13,8 +13,12 @@ describe('plugin title privacy', () => {
     expect(page).toContain('privacyText(privacyEnabled, getPluginTitle(editingPlugin))');
     page = page
       .replace(/privacyText\(privacyEnabled, getPluginTitle\((plugin|editingPlugin)\)\)/g, '')
-      .replace('const name = getPluginTitle(plugin);', '');
+      .replace('const name = getPluginTitle(plugin);', '')
+      // Search matches against the raw name; that is not a render.
+      .replace('plugin.metadata?.name,', '');
     expect(page.match(/getPluginTitle\(/g) ?? []).toEqual([]);
+    // The raw plugin name must not be rendered around the helper either.
+    expect(page.match(/metadata\??\.name\b/g) ?? []).toEqual([]);
   });
 
   test('the plugin resource frame masks its accessible title', () => {

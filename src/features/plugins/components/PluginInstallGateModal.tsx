@@ -62,7 +62,7 @@ export function PluginInstallGateModal({
 
   if (!entry) return null;
 
-  const title = entry.name || entry.id;
+  const title = privacyText(privacyEnabled, entry.name || entry.id);
   const repoSlug = getPluginRepositorySlug(entry.repository);
   const repositoryURL = buildRepositoryURL(entry.repository);
   const repoLabel = repoSlug || entry.id;
