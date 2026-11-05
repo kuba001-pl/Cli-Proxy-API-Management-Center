@@ -8,12 +8,10 @@ import { I18nextProvider } from 'react-i18next';
 import { ProviderHeaderCard } from '@/features/providers/components/ProviderHeaderCard';
 import { ProviderResourcePanel } from '@/features/providers/components/ProviderResourcePanel';
 import { ProviderResourceTable } from '@/features/providers/components/ProviderResourceTable';
-import { SponsorQuickStartPanel } from '@/features/providers/components/SponsorQuickStartPanel';
 import { ResourceDetailView } from '@/features/providers/sheets/ResourceDetailView';
 import { BaseProviderForm } from '@/features/providers/sheets/forms/BaseProviderForm';
 import { getProviderDisplayName } from '@/features/providers/privacy';
 import type { ProviderResource } from '@/features/providers/types';
-import type { UseProviderWorkbenchResult } from '@/features/providers/useProviderWorkbench';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { PRIVACY_MASK } from '@/utils/privacy';
 import en from '@/i18n/locales/en.json';
@@ -134,20 +132,6 @@ describe('provider redesign', () => {
     expect(html).toContain('<dt>Keys</dt><dd>0</dd>');
   });
 
-  test('keeps the quick setup empty state with both registration links and creation', () => {
-    const html = render(
-      createElement(SponsorQuickStartPanel, {
-        resource: null,
-        workbench: { mutating: false } as UseProviderWorkbenchResult,
-      })
-    );
-    expect(html).toContain('APIKEY.FUN');
-    expect(html).toContain('No configuration yet.');
-    expect(html.match(/Register now/g)).toHaveLength(2);
-    expect(html).toContain('New');
-    expect(html).not.toContain('<form');
-  });
-
   test('keeps the table actions and enabled toggle with a masked key preview', () => {
     const html = table();
     expect(html).toContain('Enabled');
@@ -185,9 +169,7 @@ describe('provider privacy presentation', () => {
         true
       )
     ).toBe('sk-demo••••1234');
-    expect(
-      getProviderDisplayName({ ...resource, brand: 'apikeyFun', name: 'APIKEY.FUN' }, true)
-    ).toBe('APIKEY.FUN');
+    expect(getProviderDisplayName({ ...resource, brand: 'kimi', name: 'Kimi' }, true)).toBe('Kimi');
   });
 
   test('masks names in table and details, including identity portions of endpoint URLs', () => {

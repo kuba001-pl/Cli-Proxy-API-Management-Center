@@ -106,7 +106,6 @@
   },
   "nav": {
     "dashboard": "Панель",
-    "quick_start": "Быстрая настройка",
     "ai_providers": "Поставщики AI",
     "auth_files": "Файлы аутентификации",
     "oauth": "OAuth вход",
@@ -126,7 +125,6 @@
   },
   "nav_meta": {
     "dashboard": "Обзор работы",
-    "quick_start": "Настройка APIKEY.FUN",
     "ai_providers": "Маршрутизация моделей",
     "auth_files": "Файлы и учётные данные",
     "oauth": "Авторизация OAuth",
@@ -2127,7 +2125,6 @@
     },
     "categories": {
       "title": "Провайдеры",
-      "quickFill": "Быстрое заполнение",
       "activeCount": "{{active}}/{{total}} активных"
     },
     "providerNames": {
@@ -2139,9 +2136,6 @@
       "claude": "Claude",
       "vertex": "Vertex",
       "openaiCompatibility": "OpenAI-совместимый",
-      "apikeyFun": "APIKEY.FUN",
-      "fennoAI": "FennoAI",
-      "qiniuCloud": "Qiniu Cloud",
       "kimi": "Kimi"
     },
     "table": {
@@ -2166,19 +2160,8 @@
     "sponsor": {
       "protocolSummary": "Anthropic / OpenAI / Gemini / Codex API (Responses)",
       "detailHint": "{{provider}} сохраняется в соответствующие конфигурации API key по протоколам; здесь они управляются вместе.",
-      "registerLink": "Зарегистрироваться",
       "registerNow": "Зарегистрироваться сейчас",
-      "dashboardLink": "Панель управления",
-      "emptyRegisterHint": "Конфигурации пока нет.",
       "apiKeyHint": "Этот ключ записывается только в выбранную группу/протокол.",
-      "usageCheck": "Проверить квоту",
-      "usageChecking": "Проверка",
-      "usageRemaining": "Остаток: {{amount}} {{unit}}",
-      "usageBreakdown": "Использовано {{used}} / Лимит {{limit}}",
-      "usageStatus": "Статус: {{status}}",
-      "usageInvalid": "Недействительный ключ",
-      "usageEmpty": "Endpoint не вернул данные квоты.",
-      "usageApiKeyRequired": "Требуется API key",
       "aggregationConflict": "Этот объединённый провайдер содержит несколько серверных конфигураций или ключей OpenAI. Чтобы избежать потери данных, измените исходную конфигурацию.",
       "partialMutationWarning": "Операция завершилась ошибкой, но один или несколько протоколов могли обновиться. Последняя конфигурация загружена повторно; проверьте её перед повторной попыткой.",
       "groupedKeysTitle": "Групповые ключи",
@@ -2192,8 +2175,6 @@
       "urlMode": "{{provider}} URL",
       "urlHint": "Все URL используют одинаковые правила API. При сохранении записывается только endpoint текущего группового протокола.",
       "urlOptions": {
-        "standard": "Обычный URL",
-        "direct": "Прямой URL",
         "domestic": "Маршрут для материкового Китая",
         "overseas": "Зарубежный маршрут",
         "mainlandChina": "Материковый Китай (рекомендуется)",
