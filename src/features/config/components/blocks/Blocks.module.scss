@@ -224,7 +224,8 @@
 .apiKeyValue {
   overflow: hidden;
   color: var(--text-primary);
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 12.5px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -612,7 +613,8 @@
 }
 
 .apiKeyModalInputRow :global(.input) {
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 520px) {

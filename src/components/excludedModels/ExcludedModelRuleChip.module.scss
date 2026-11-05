@@ -14,9 +14,10 @@
   padding: 4px 5px 4px 9px;
   border-radius: $radius-full;
   color: var(--text-primary);
-  font-family: $font-mono;
-  font-size: 11px;
-  line-height: 1.5;
+  font-family: $font-family;
+  font-size: $text-xs;
+  font-variant-numeric: tabular-nums slashed-zero;
+  line-height: $leading-xs;
 }
 
 .label {
@@ -28,7 +29,7 @@
 .detail {
   flex-shrink: 0;
   color: var(--text-tertiary);
-  font-size: 10px;
+  font-size: $text-xs;
 }
 
 /* 显式勾选：实线 + primary 染色，读起来是「我选的」。 */

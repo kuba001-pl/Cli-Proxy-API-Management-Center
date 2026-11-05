@@ -101,7 +101,8 @@
 .fileName {
   order: 3;
   width: 100%;
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 12px;
   line-height: 18px;
   color: var(--text-tertiary);
@@ -243,14 +244,17 @@
   height: 10px;
   border-radius: 2px;
 }
+// Tone and height both encode state: idle = low baseline, healthy = mid, failure = full and red.
 .statusBlockIdle {
-  background: var(--bg-active);
+  background-color: var(--strip-idle);
+  clip-path: inset(60% 0 0 0 round 1px);
 }
 .statusBlockSuccess {
-  background: var(--text-tertiary);
+  background-color: var(--strip-success);
+  clip-path: inset(30% 0 0 0 round 1px);
 }
 .statusBlockFailure {
-  background-color: color-mix(in srgb, var(--status-danger) 48%, var(--text-tertiary));
+  background-color: var(--strip-failure);
 }
 .statusBlockActive .statusBlock {
   outline: 1px solid var(--text-secondary);

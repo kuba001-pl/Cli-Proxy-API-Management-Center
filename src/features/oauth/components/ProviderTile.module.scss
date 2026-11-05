@@ -63,7 +63,8 @@
   outline-offset: 2px;
 }
 .caption {
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 12px;
   line-height: 18px;
   color: var(--text-tertiary);

@@ -27,7 +27,8 @@
     border-color: var(--border-default);
     box-shadow: none;
     font-size: 12.5px;
-    font-family: $font-mono;
+    font-family: $font-family;
+    font-variant-numeric: tabular-nums;
     transition:
       border-color var(--dur-hover, 200ms) var(--ease-out-strong, ease-out),
       background-color var(--dur-hover, 200ms) var(--ease-out-strong, ease-out),

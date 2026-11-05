@@ -252,7 +252,8 @@
 
 .pluginId {
   color: var(--text-tertiary);
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 12px;
   @include text-ellipsis;
 }

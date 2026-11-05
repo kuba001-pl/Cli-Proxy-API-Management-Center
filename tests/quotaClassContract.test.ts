@@ -31,7 +31,8 @@ describe('quota class contract', () => {
       const size = amount.match(/font-size:\s*([^;]+);/)?.[1];
       expect(size).toBeDefined();
       expect(size).toBe(meta.match(/font-size:\s*([^;]+);/)?.[1]);
-      expect(amount).toContain('font-family: $font-mono;');
+      // Numbers are sans with tabular figures; mono is reserved for real code.
+      expect(amount).toContain('font-family: $font-family;');
       expect(amount).toContain('font-weight: 500;');
       expect(amount).toContain('font-variant-numeric: tabular-nums;');
     });

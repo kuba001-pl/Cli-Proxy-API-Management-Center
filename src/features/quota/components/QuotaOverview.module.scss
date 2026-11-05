@@ -169,7 +169,8 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    font: 12.5px/18px $font-mono;
+    font: 13px/18px $font-family;
+    font-variant-numeric: tabular-nums;
   }
 }
 .resetWindow {

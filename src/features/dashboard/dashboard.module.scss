@@ -285,8 +285,9 @@ details.moreDetails {
   }
 }
 .fleetRank {
-  color: var(--text-muted);
-  font-family: $font-mono;
+  color: var(--text-tertiary);
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
 }
 .fleetIdentity {
   flex: 1;
@@ -359,7 +360,8 @@ details.moreDetails {
     gap: 8px;
     b {
       margin-left: auto;
-      font-family: $font-mono;
+      font-family: $font-family;
+      font-variant-numeric: tabular-nums;
     }
   }
 }
@@ -413,7 +415,8 @@ details.moreDetails {
   overflow-wrap: anywhere;
 }
 .specMono {
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
 }
 .toggleOn {
   color: var(--text-primary);

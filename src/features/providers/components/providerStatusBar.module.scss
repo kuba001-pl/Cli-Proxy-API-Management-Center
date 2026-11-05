@@ -40,16 +40,19 @@
   }
 }
 
+// Tone and height both encode state: idle = low baseline, healthy = mid, failure = full and red.
 .statusBlockIdle {
-  background-color: var(--bg-active);
+  background-color: var(--strip-idle);
+  clip-path: inset(60% 0 0 0 round 1px);
 }
 
 .statusBlockSuccess {
-  background-color: var(--text-tertiary);
+  background-color: var(--strip-success);
+  clip-path: inset(30% 0 0 0 round 1px);
 }
 
 .statusBlockFailure {
-  background-color: color-mix(in srgb, var(--status-danger) 48%, var(--text-tertiary));
+  background-color: var(--strip-failure);
 }
 
 .statusTooltip {

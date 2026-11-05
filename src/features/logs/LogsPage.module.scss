@@ -190,7 +190,8 @@
   border-radius: 3px;
   background: var(--bg-active);
   color: var(--text-primary);
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 11px;
 }
 
@@ -278,7 +279,8 @@
   border: 1px solid transparent;
   background: var(--bg-raised);
   color: var(--text-secondary);
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 12px;
   cursor: pointer;
   max-width: 100%;
@@ -511,7 +513,7 @@
 }
 
 .source {
-  color: var(--text-muted);
+  color: var(--text-tertiary);
   max-width: 180px;
 }
 
@@ -565,7 +567,7 @@
 
 .levelDebug,
 .levelTrace {
-  color: var(--text-muted);
+  color: var(--text-tertiary);
 }
 
 .statusBadge {
@@ -812,7 +814,8 @@
   flex-wrap: wrap;
   gap: 8px 16px;
   color: var(--text-tertiary);
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 12px;
 }
 

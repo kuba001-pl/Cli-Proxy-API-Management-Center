@@ -128,8 +128,8 @@
 
 .badge {
   font-variant-numeric: tabular-nums;
-  font-size: 11px;
-  color: var(--text-muted);
+  font-size: $text-xs;
+  color: var(--text-tertiary);
   flex-shrink: 0;
   .active & {
     color: var(--text-primary);

@@ -193,7 +193,8 @@
   margin: 0;
   margin-top: 2px;
   font-size: 12px;
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   color: var(--text-primary);
   word-break: break-word;
 }
@@ -282,13 +283,14 @@
 
 .sponsorSummaryKey {
   max-width: 140px;
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   color: var(--text-primary);
 }
 
 .sponsorSummaryUrl {
   max-width: min(360px, 45vw);
-  font-family: $font-mono;
+  font-family: $font-family;
   color: var(--text-tertiary);
 }
 
@@ -406,7 +408,8 @@
   color: var(--text-primary);
 
   small {
-    font-family: $font-mono;
+    font-family: $font-family;
+    font-variant-numeric: tabular-nums;
     font-size: 11px;
     line-height: 1.4;
     color: var(--text-tertiary);
@@ -448,7 +451,8 @@
 }
 
 .sponsorProtocolUrl {
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 11px;
   line-height: 1.4;
   color: var(--text-tertiary);
@@ -716,7 +720,8 @@
 }
 
 .discoveryName {
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 12px;
   word-break: break-all;
 }
@@ -794,13 +799,14 @@
 .passwordInput {
   @extend .input;
   padding-right: 36px;
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 12.5px;
 }
 
 // URLs, proxy addresses and header names/values use the mono scale (brief typography).
 .inputMono {
-  font-family: $font-mono;
+  font-family: $font-family;
   font-size: 12.5px;
 }
 
@@ -950,7 +956,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   color: var(--text-primary);
 }
 
@@ -1128,7 +1135,8 @@
 }
 
 .apiKeyEntryKey {
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-weight: 600;
   color: var(--text-primary);
   min-width: 0;
@@ -1229,6 +1237,7 @@
   transform: translateY(-50%);
   pointer-events: none;
   color: var(--text-primary);
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 13px;
 }
