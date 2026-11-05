@@ -44,7 +44,7 @@ export function PluginQuotaBody({ quota, classes, part }: QuotaBodyProps<PluginQ
           {quota.summary.map((metric) => (
             <span key={metric.key} className={classes.codexPlanItem}>
               <span className={classes.codexPlanLabel}>{mask(metric.label)}</span>
-              <span className={classes.codexPlanValue}>{formatMetric(metric)}</span>
+              <span className={classes.codexPlanValue}>{mask(formatMetric(metric))}</span>
             </span>
           ))}
         </div>
@@ -77,7 +77,9 @@ export function PluginQuotaBody({ quota, classes, part }: QuotaBodyProps<PluginQ
                       <span className={classes.quotaPercent}>
                         {t('plugin_quota.remaining_percent', { percent })}
                       </span>
-                      <span className={classes.quotaReset}>{formatReset(bucket.resetTime)}</span>
+                      <span className={classes.quotaReset}>
+                        {mask(formatReset(bucket.resetTime))}
+                      </span>
                     </div>
                   </div>
                   <QuotaMeter percent={percent} classes={classes} index={index} />

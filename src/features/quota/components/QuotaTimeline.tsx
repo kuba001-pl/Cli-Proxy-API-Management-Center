@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { formatRelativeInstant, TYPE_COLORS } from '@/utils/quota';
 import { getQuotaCacheKey, getQuotaPrivacyDisplayName } from '@/utils/quota/identity';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { privacyText } from '@/utils/privacy';
 import { useNow } from '@/hooks/useNow';
 import type { ResolvedTheme, ThemeColors } from '@/types';
 import {
@@ -340,6 +341,7 @@ interface LaneProps {
 
 function Lane({ lane, span, now, mode, cells, nowPercent, resolvedTheme }: LaneProps) {
   const { t, i18n } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
 
   const windows = useMemo(
     () => projectLane(lane, span.startMs, span.endMs, now, mode),
@@ -379,7 +381,11 @@ function Lane({ lane, span, now, mode, cells, nowPercent, resolvedTheme }: LaneP
               position in this lane's ordered, render-stable list. */}
           {lane.limits.map((limit, index) => (
             <span key={`${limit.label}-${index}`} className={styles.laneLimit}>
-              {lane.provider === 'meta' ? t(limit.label) : limit.label} <b>{limit.remaining}%</b>
+              {lane.provider === 'meta'
+                ? t(limit.label)
+                : // Plugin-reported labels are free text; mask like the quota card does.
+                  privacyText(privacyEnabled, limit.label)}{' '}
+              <b>{limit.remaining}%</b>
             </span>
           ))}
         </div>

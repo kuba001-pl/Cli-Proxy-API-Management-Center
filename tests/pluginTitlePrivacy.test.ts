@@ -28,4 +28,16 @@ describe('plugin title privacy', () => {
       /resource\??\.label\b/
     );
   });
+
+  test('store and config-field text published by plugins is masked', () => {
+    const store = source('src/features/plugins/PluginStorePage.tsx');
+    expect(store).toContain('{privacyText(privacyEnabled, tag)}');
+    expect(store).toContain('privacyText(privacyEnabled, entry.license)');
+    expect(store).toContain('privacyText(privacyEnabled, versionText)');
+    expect(store).toContain("label: privacyText(privacyEnabled, labelParts.join(' · '))");
+    expect(store).not.toMatch(/>\s*\{tag\}\s*</);
+    const page = source('src/features/plugins/PluginsPage.tsx');
+    expect(page).toContain('label: privacyText(privacyEnabled, item)');
+    expect(page).not.toContain('label: item }');
+  });
 });

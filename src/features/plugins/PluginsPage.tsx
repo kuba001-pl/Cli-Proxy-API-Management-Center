@@ -438,7 +438,10 @@ export function PluginsPage() {
           <Select
             id={`plugin-field-${field.name}`}
             value={textValue}
-            options={field.enumValues.map((item) => ({ value: item, label: item }))}
+            options={field.enumValues.map((item) => ({
+              value: item,
+              label: privacyText(privacyEnabled, item),
+            }))}
             onChange={(nextValue) =>
               updateDraft((current) => ({
                 ...current,

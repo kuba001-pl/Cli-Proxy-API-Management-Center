@@ -215,10 +215,10 @@ function PluginInstallOptionsModal({
         ].filter(Boolean);
         return {
           value: release.tagName,
-          label: labelParts.join(' · '),
+          label: privacyText(privacyEnabled, labelParts.join(' · ')),
         };
       }),
-    [i18n.language, t, visibleReleaseVersions]
+    [i18n.language, privacyEnabled, t, visibleReleaseVersions]
   );
 
   useEffect(() => {
@@ -240,7 +240,7 @@ function PluginInstallOptionsModal({
     !supportsVersionSelection || versionMode === 'latest' ? '' : version.trim();
   const displayVersion = requestedVersion || entry.version;
   const target = displayVersion
-    ? `${getStoreEntryTitle(entry, privacyEnabled)} ${formatPluginVersion(displayVersion)}`
+    ? `${getStoreEntryTitle(entry, privacyEnabled)} ${privacyText(privacyEnabled, formatPluginVersion(displayVersion))}`
     : getStoreEntryTitle(entry, privacyEnabled);
   const message = isUpdate
     ? t('plugin_store.update_confirm_message', { target })
@@ -814,10 +814,10 @@ export function PluginStorePage() {
       ? t('plugin_store.source_name', { source: privacyText(privacyEnabled, sourceName) })
       : '';
     const metaItems = [
-      versionText,
+      privacyText(privacyEnabled, versionText),
       sourceText,
       privacyText(privacyEnabled, entry.author),
-      entry.license,
+      privacyText(privacyEnabled, entry.license),
     ].filter(Boolean);
     const isInstalling = installingKey === entryKey;
     const hasPendingInstall = Boolean(installingKey);
@@ -925,7 +925,7 @@ export function PluginStorePage() {
           <div className={styles.tagRow}>
             {entry.tags.map((tag) => (
               <span key={`${entryKey}-tag-${tag}`} className={styles.tag}>
-                {tag}
+                {privacyText(privacyEnabled, tag)}
               </span>
             ))}
           </div>

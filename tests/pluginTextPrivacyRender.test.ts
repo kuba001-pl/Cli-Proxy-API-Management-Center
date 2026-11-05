@@ -6,6 +6,7 @@ import i18n from '@/i18n';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { PluginInstallGateModal } from '@/features/plugins/components/PluginInstallGateModal';
 import { PluginQuotaBody } from '@/features/quota/providers/plugin/PluginQuotaBody';
+import { QuotaTimeline } from '@/features/quota/components/QuotaTimeline';
 import { QUOTA_CLASS_KEYS, bindQuotaClasses } from '@/features/quota/types';
 import type { PluginQuotaState, PluginStoreEntry } from '@/types';
 
@@ -33,7 +34,10 @@ const classes = bindQuotaClasses(
 const quota: PluginQuotaState = {
   status: 'success',
   subscription: { plan: null, tierName: `Team ${EMAIL}`, tierId: null },
-  summary: [{ key: 'spend', label: `Spend for ${EMAIL}`, value: 3 }],
+  summary: [
+    { key: 'spend', label: `Spend for ${EMAIL}`, value: 3 },
+    { key: 'credits', label: 'Credits', value: 5, unit: `credits for ${EMAIL}` },
+  ],
   groups: [
     {
       id: 'g',
@@ -45,6 +49,7 @@ const quota: PluginQuotaState = {
           label: `Bucket ${EMAIL}`,
           description: `Tooltip ${EMAIL}`,
           remainingFraction: 0.5,
+          resetTime: `Contact ${EMAIL} for reset`,
         },
       ],
     },
@@ -105,8 +110,8 @@ describe('plugin-published text in Privacy Mode (rendered output)', () => {
 
     setPrivacy(false);
     const raw = renderToStaticMarkup(createElement(PluginQuotaBody, { quota, classes }));
-    // plan, summary, group label + description, bucket label + tooltip
-    expect(raw.split(EMAIL).length - 1).toBe(6);
+    // plan, 2 summary items, group label + description, bucket label + tooltip, reset text
+    expect(raw.split(EMAIL).length - 1).toBe(8);
   });
 
   test('plugin store install gate masks the store entry name', () => {
@@ -115,5 +120,44 @@ describe('plugin-published text in Privacy Mode (rendered output)', () => {
 
     setPrivacy(false);
     expect(renderGate()).toContain(EMAIL);
+  });
+
+  test('quota timeline masks plugin-reported limit labels', () => {
+    const now = new Date(2026, 6, 29, 12).getTime();
+    const timelineQuota = {
+      status: 'success',
+      summary: [],
+      groups: [
+        {
+          id: 'g',
+          label: 'Group',
+          buckets: [
+            {
+              id: 'b',
+              label: `Bucket ${EMAIL}`,
+              remainingFraction: 0.4,
+              resetAtMs: now + 3 * 60 * 60 * 1000,
+              periodHours: 5,
+            },
+          ],
+        },
+      ],
+    } as unknown as PluginQuotaState;
+    const renderTimeline = () =>
+      render(
+        createElement(QuotaTimeline, {
+          entries: [{ file: { name: 'plugin-a.json', type: 'plugin' }, type: 'plugin' }],
+          displayNameFor: (name: string) => name,
+          resolvedTheme: 'light' as const,
+          now,
+          initialMode: 'session',
+          quotaFor: () => timelineQuota,
+        } as unknown as Parameters<typeof QuotaTimeline>[0])
+      );
+
+    setPrivacy(false);
+    expect(renderTimeline()).toContain(`Bucket ${EMAIL}`);
+    setPrivacy(true);
+    expect(renderTimeline()).not.toContain(EMAIL);
   });
 });
