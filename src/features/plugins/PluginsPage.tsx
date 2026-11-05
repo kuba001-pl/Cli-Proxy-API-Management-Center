@@ -438,7 +438,10 @@ export function PluginsPage() {
           <Select
             id={`plugin-field-${field.name}`}
             value={textValue}
-            options={field.enumValues.map((item) => ({ value: item, label: item }))}
+            options={field.enumValues.map((item) => ({
+              value: item,
+              label: privacyText(privacyEnabled, item),
+            }))}
             onChange={(nextValue) =>
               updateDraft((current) => ({
                 ...current,
@@ -619,6 +622,7 @@ export function PluginsPage() {
             const version = plugin.metadata?.version;
             const author = privacyText(privacyEnabled, plugin.metadata?.author);
             const pluginPath = privacyText(privacyEnabled, plugin.path);
+            const title = privacyText(privacyEnabled, getPluginTitle(plugin));
 
             return (
               <article key={plugin.id} className={styles.pluginRow}>
@@ -630,7 +634,7 @@ export function PluginsPage() {
                 {/* Info */}
                 <div className={styles.pluginInfo}>
                   <div className={styles.pluginName}>
-                    <h2 title={getPluginTitle(plugin)}>{getPluginTitle(plugin)}</h2>
+                    <h2 title={title}>{title}</h2>
                     <div className={styles.badgeRow}>
                       <span
                         className={
@@ -741,7 +745,9 @@ export function PluginsPage() {
         size="lg"
         title={
           editingPlugin
-            ? t('plugin_management.config_title', { name: getPluginTitle(editingPlugin) })
+            ? t('plugin_management.config_title', {
+                name: privacyText(privacyEnabled, getPluginTitle(editingPlugin)),
+              })
             : t('plugin_management.edit_config')
         }
         description={editingPlugin?.id}

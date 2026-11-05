@@ -61,7 +61,9 @@ const getErrorDetailMessage = (error: unknown): string => {
 
 const DESCRIPTION_COLLAPSED_LINES = 2;
 
-const getStoreEntryTitle = (entry: PluginStoreEntry) => entry.name || entry.id;
+/** Display title of a store entry; plugin-published names are masked in Privacy Mode. */
+const getStoreEntryTitle = (entry: PluginStoreEntry, privacyEnabled: boolean) =>
+  privacyText(privacyEnabled, entry.name || entry.id);
 const getStoreEntryKey = (entry: PluginStoreEntry) => entry.storeId || entry.id;
 const getDescriptionDOMID = (entryKey: string) =>
   `plugin-store-desc-${encodeURIComponent(entryKey)}`;
@@ -123,6 +125,7 @@ function PluginInstallOptionsModal({
   onConfirm,
 }: PluginInstallOptionsModalProps) {
   const { i18n, t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const [versionMode, setVersionMode] = useState<InstallVersionMode>('latest');
   const [showPrerelease, setShowPrerelease] = useState(false);
   const [releaseVersions, setReleaseVersions] = useState<PluginReleaseVersion[]>([]);
@@ -212,10 +215,10 @@ function PluginInstallOptionsModal({
         ].filter(Boolean);
         return {
           value: release.tagName,
-          label: labelParts.join(' · '),
+          label: privacyText(privacyEnabled, labelParts.join(' · ')),
         };
       }),
-    [i18n.language, t, visibleReleaseVersions]
+    [i18n.language, privacyEnabled, t, visibleReleaseVersions]
   );
 
   useEffect(() => {
@@ -237,8 +240,8 @@ function PluginInstallOptionsModal({
     !supportsVersionSelection || versionMode === 'latest' ? '' : version.trim();
   const displayVersion = requestedVersion || entry.version;
   const target = displayVersion
-    ? `${getStoreEntryTitle(entry)} ${formatPluginVersion(displayVersion)}`
-    : getStoreEntryTitle(entry);
+    ? `${getStoreEntryTitle(entry, privacyEnabled)} ${privacyText(privacyEnabled, formatPluginVersion(displayVersion))}`
+    : getStoreEntryTitle(entry, privacyEnabled);
   const message = isUpdate
     ? t('plugin_store.update_confirm_message', { target })
     : t('plugin_store.install_confirm_message', { target });
@@ -589,7 +592,7 @@ export function PluginStorePage() {
 
   const restartNames = restartRequiredKeys.map((key) => {
     const entry = data?.plugins.find((plugin) => getStoreEntryKey(plugin) === key);
-    return entry ? getStoreEntryTitle(entry) : key;
+    return entry ? getStoreEntryTitle(entry, privacyEnabled) : privacyText(privacyEnabled, key);
   });
 
   const hasActiveFilters = Boolean(filter.trim()) || statusFilter !== 'all';
@@ -811,10 +814,10 @@ export function PluginStorePage() {
       ? t('plugin_store.source_name', { source: privacyText(privacyEnabled, sourceName) })
       : '';
     const metaItems = [
-      versionText,
+      privacyText(privacyEnabled, versionText),
       sourceText,
       privacyText(privacyEnabled, entry.author),
-      entry.license,
+      privacyText(privacyEnabled, entry.license),
     ].filter(Boolean);
     const isInstalling = installingKey === entryKey;
     const hasPendingInstall = Boolean(installingKey);
@@ -846,7 +849,7 @@ export function PluginStorePage() {
             <StoreCardLogo src={logo} />
           </div>
           <div className={styles.cardTitleBlock}>
-            <h2 className={styles.cardTitle}>{getStoreEntryTitle(entry)}</h2>
+            <h2 className={styles.cardTitle}>{getStoreEntryTitle(entry, privacyEnabled)}</h2>
             <span className={styles.cardId}>{entry.id}</span>
           </div>
           <div className={styles.cardBadges}>
@@ -922,7 +925,7 @@ export function PluginStorePage() {
           <div className={styles.tagRow}>
             {entry.tags.map((tag) => (
               <span key={`${entryKey}-tag-${tag}`} className={styles.tag}>
-                {tag}
+                {privacyText(privacyEnabled, tag)}
               </span>
             ))}
           </div>
