@@ -17,15 +17,30 @@ describe('plugin OAuth entry title privacy', () => {
     );
   });
 
-  test('every render site of a plugin card title goes through the mask', () => {
+  test('plugin card titles are only read through the mask', () => {
+    // Strip every masked read, then reject any remaining access to a card title in any
+    // syntactic form (dot, optional chaining, bracket, or destructuring).
+    const masked = [
+      /pluginOAuthDisplayTitle\(privacyEnabled, card\.title\)/g,
+      /pluginTitleOf\(card\.title\)/g,
+    ];
+    const unmasked = [
+      /\bcard\??\.title\b/,
+      /\bcard\??\.?\[\s*['"`]title['"`]\s*\]/,
+      /\{[^}]*\btitle\b[^}]*\}\s*=\s*card\b/,
+    ];
     for (const file of [
       'src/features/oauth/OAuthPage.tsx',
       'src/features/oauth/hooks/useOAuthFlows.ts',
     ]) {
-      const source = readFileSync(file, 'utf8');
+      let source = readFileSync(file, 'utf8');
       expect(source).toContain('pluginOAuthDisplayTitle(privacyEnabled');
-      expect(source).not.toMatch(/name: card\.title\b/);
-      expect(source).not.toMatch(/\?\s*card\.title\b/);
+      for (const pattern of masked) source = source.replace(pattern, '');
+      for (const pattern of unmasked)
+        expect({ file, match: source.match(pattern)?.[0] }).toEqual({
+          file,
+          match: undefined,
+        });
     }
   });
 });
