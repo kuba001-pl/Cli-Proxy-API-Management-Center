@@ -56,13 +56,14 @@
   transition: transform var(--dur-hover, 200ms) var(--ease-out-strong, ease-out);
 }
 
+/* On-state stays clearly on, but a mid-tone track keeps rows of switches from out-shouting their data. */
 .root input:checked + .track {
-  background: var(--button-primary-bg);
-  border-color: var(--button-primary-bg);
+  background: var(--text-secondary);
+  border-color: var(--text-secondary);
 }
 
 .root input:checked + .track .thumb {
-  background: var(--button-primary-fg);
+  background: var(--bg-app);
   transform: translateX(12px);
 }
 
