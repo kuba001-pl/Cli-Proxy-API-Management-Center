@@ -7,7 +7,7 @@
   --sidebar-collapsed-width: 60px;
   --sidebar-active-width: var(--sidebar-panel-width);
   --sidebar-gap: 0px;
-  --floating-control-size: 30px;
+  --floating-control-size: 32px;
 }
 
 .app-shell {
@@ -34,20 +34,22 @@
   height: var(--header-height);
   pointer-events: none;
 
+  // Collapse handle: a small pill straddling the sidebar seam. The chevron is >= 3:1 at rest and
+  // the hit area (36 x 48) is larger than the visible pill (24 x 40).
   .sidebar-toggle-floating {
     position: fixed;
     top: 50%;
-    left: calc(var(--sidebar-active-width) - 9px);
+    left: calc(var(--sidebar-active-width) - 12px);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 18px;
-    height: 36px;
+    width: 24px;
+    height: 40px;
     padding: 0;
-    border: 1px solid transparent;
-    border-radius: 6px;
+    border: 1px solid var(--border-default);
+    border-radius: $radius-full;
     background: var(--bg-app);
-    color: var(--text-muted);
+    color: var(--icon-default);
     cursor: pointer;
     pointer-events: auto;
     transform: translateY(-50%);
@@ -57,9 +59,15 @@
       border-color var(--dur-hover) var(--ease-out-strong),
       background var(--dur-hover) var(--ease-out-strong);
 
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -4px -6px;
+    }
+
     svg {
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
     }
 
     &:hover,
@@ -70,56 +78,36 @@
     }
   }
 
-  .mobile-sidebar-actions,
-  .header-actions {
+  .mobile-sidebar-actions {
     position: absolute;
     top: var(--shell-gutter);
-    display: inline-flex;
+    left: var(--shell-gutter);
+    display: none;
     align-items: center;
-    gap: 4px;
-    padding: 5px;
+    padding: 4px;
     border: 1px solid var(--border-default);
-    border-radius: 10px;
-    background: var(--bg-surface);
+    border-radius: $radius-lg;
+    background: var(--bg-floating);
+    box-shadow: var(--shadow-floating);
     pointer-events: auto;
   }
 
-  // Figma toolbar 38:1937 sits 18px from the right edge (16px from the top).
-  .header-actions {
-    right: calc(var(--shell-gutter) + 2px);
+  svg {
+    display: block;
   }
+}
 
-  .mobile-sidebar-actions {
-    left: var(--shell-gutter);
-    display: none;
-  }
+// Global utilities (refresh, privacy, language, theme, logout). They follow the navigation in
+// the DOM; desktop docks them in the sidebar footer, phones float them top-right.
+.header-actions {
+  position: fixed;
+  z-index: $z-dropdown + 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
 
-  .mobile-sidebar-actions .btn,
-  .header-actions .btn {
-    width: var(--floating-control-size);
-    height: var(--floating-control-size);
-    min-width: var(--floating-control-size);
-    // `.btn` sets min-height: 32px; keep the 30px control so the toolbar stays 42px tall.
-    min-height: var(--floating-control-size);
-    padding: 0;
-    border-color: transparent;
-    border-radius: 6px;
-    background: transparent;
-    color: var(--icon-default);
-
-    > span {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 0;
-    }
-
-    &:hover,
-    &.active {
-      border-color: transparent;
-      background: var(--bg-active);
-      color: var(--icon-active);
-    }
+  svg {
+    display: block;
   }
 
   .language-menu,
@@ -129,48 +117,65 @@
     align-items: center;
   }
 
+  // Floating menus: hairline edge + floating shadow.
   .language-menu-popover,
   .theme-menu-popover {
     position: absolute;
-    top: calc(100% + 12px);
-    right: 0;
     z-index: $z-dropdown + 2;
     display: flex;
     flex-direction: column;
     gap: 2px;
-    min-width: 164px;
+    min-width: 184px;
     padding: 4px;
     border: 1px solid var(--border-default);
-    border-radius: 8px;
-    background: var(--bg-surface);
-    box-shadow: none;
+    border-radius: $radius-md;
+    background: var(--bg-floating);
+    box-shadow: var(--shadow-floating);
   }
 
   .language-menu-option,
   .theme-card {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     width: 100%;
-    padding: 8px 10px;
+    min-height: 34px;
+    padding: 7px 10px;
     border: 0;
     border-radius: 6px;
     background: transparent;
     color: var(--text-secondary);
     font: inherit;
-    font-size: 13px;
+    font-size: $text-base;
+    line-height: $leading-base;
     text-align: left;
+    white-space: nowrap;
     cursor: pointer;
 
     &:hover,
-    &.active {
-      background: var(--bg-active);
+    &:focus-visible {
+      background: var(--bg-raised);
       color: var(--text-primary);
+    }
+
+    &.active {
+      background: var(--accent-subtle);
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: -2px;
     }
   }
 
   .language-menu-option {
     justify-content: space-between;
+  }
+
+  .language-menu-check {
+    color: var(--accent-text);
   }
 
   .theme-card-preview {
@@ -179,17 +184,50 @@
   }
 
   .theme-card.active .theme-card-preview {
+    color: var(--accent-text);
+  }
+}
+
+.mobile-sidebar-actions .btn,
+.header-actions > .btn,
+.header-actions .language-menu > .btn,
+.header-actions .theme-menu > .btn {
+  width: var(--floating-control-size);
+  height: var(--floating-control-size);
+  min-width: var(--floating-control-size);
+  min-height: var(--floating-control-size);
+  padding: 0;
+  border-color: transparent;
+  border-radius: $radius-md;
+  background: transparent;
+  color: var(--icon-default);
+
+  > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: transparent;
+    background: var(--bg-raised);
     color: var(--icon-active);
   }
 
-  svg {
-    display: block;
+  // Pressed toggles (privacy mode) and open menus read as "on".
+  &.active,
+  &[aria-expanded='true'] {
+    border-color: transparent;
+    background: var(--accent-subtle);
+    color: var(--accent-text);
   }
 }
 
 .main-header button:focus-visible,
+.header-actions button:focus-visible,
 .sidebar .nav-item:focus-visible {
-  outline: 2px solid var(--text-secondary);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
   box-shadow: none;
 }
@@ -273,17 +311,17 @@
 
   .sidebar-brand-title {
     color: var(--text-primary);
-    font-size: 14px;
+    font-size: $text-base;
     font-weight: 600;
-    line-height: 18px;
-    letter-spacing: 0.2px;
+    line-height: $leading-sm;
+    letter-spacing: -0.005em;
   }
 
   .sidebar-brand-subtitle {
     overflow: hidden;
     color: var(--text-tertiary);
-    font-size: 11px;
-    line-height: 16px;
+    font-size: $text-xs;
+    line-height: $leading-xs;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -298,23 +336,23 @@
 
   .nav-section {
     flex: 1;
-    gap: 18px;
+    gap: 20px;
   }
 
   .nav-group {
-    gap: 1px;
+    gap: 2px;
   }
 
+  // Sentence-case group labels: readable (>= 4.5:1) without shouting.
   .nav-group-label {
     padding: 0 10px 6px;
     overflow: hidden;
     color: var(--text-tertiary);
-    font-size: 11px;
+    font-size: $text-xs;
     font-weight: 500;
-    line-height: 14px;
-    letter-spacing: 0.06em;
+    line-height: $leading-xs;
+    letter-spacing: 0.01em;
     text-overflow: ellipsis;
-    text-transform: uppercase;
     white-space: nowrap;
   }
 
@@ -367,14 +405,14 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    min-height: 32px;
-    padding: 6px 10px;
+    min-height: 34px;
+    padding: 7px 10px;
     border: 0;
-    border-radius: 6px;
+    border-radius: $radius-md;
     color: var(--text-secondary);
-    font-size: 13.5px;
+    font-size: $text-base;
     font-weight: 400;
-    line-height: 20px;
+    line-height: $leading-base;
     text-decoration: none;
     cursor: pointer;
     transition:
@@ -422,8 +460,8 @@
       background: transparent;
       color: var(--text-tertiary);
       font-family: $font-family;
-      font-size: 12px;
-      font-weight: 400;
+      font-size: $text-xs;
+      font-weight: 500;
       font-variant-numeric: tabular-nums;
     }
 
@@ -446,23 +484,28 @@
       }
     }
 
+    // Active route: a quiet accent wash and an accent glyph — no outline.
     &.active {
-      background: var(--bg-active);
-      box-shadow: inset 0 0 0 1px var(--border-subtle);
+      background: var(--accent-subtle);
       color: var(--text-primary);
       font-weight: 500;
 
       .nav-icon {
-        color: var(--icon-active);
+        color: var(--accent-text);
       }
 
       .nav-icon img {
         opacity: 1;
+        filter: none;
+      }
+
+      .nav-badge {
+        color: var(--text-secondary);
       }
     }
 
     &.nav-sub-item {
-      font-size: 12.5px;
+      font-size: $text-sm;
     }
 
     .nav-sub-dot {
@@ -513,15 +556,6 @@
   fill: currentColor;
 }
 
-:root[data-theme='dark'] .sidebar .nav-item.active .nav-icon {
-  color: var(--icon-active);
-  filter: brightness(0) invert(1);
-}
-
-:root[data-theme='dark'] .sidebar .nav-item.active .nav-icon img {
-  filter: grayscale(1) brightness(0) invert(1);
-}
-
 .nav-tooltip {
   position: fixed;
   left: calc(var(--sidebar-active-width) + 16px);
@@ -532,26 +566,29 @@
   width: max-content;
   max-width: min(320px, calc(100vw - var(--sidebar-active-width) - 32px));
   max-height: calc(100vh - 16px);
-  padding: 9px 12px;
+  padding: 8px 12px;
   overflow: hidden;
   border: 1px solid var(--border-default);
-  border-radius: 6px;
-  background: var(--bg-raised);
+  border-radius: $radius-md;
+  background: var(--bg-floating);
+  box-shadow: var(--shadow-floating);
   color: var(--text-primary);
   pointer-events: none;
   transform: translateY(-50%);
 
   .nav-tooltip-label {
     overflow: hidden;
-    font-size: 13px;
+    font-size: $text-sm;
     font-weight: 600;
+    line-height: $leading-sm;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .nav-tooltip-meta {
     color: var(--text-tertiary);
-    font-size: 11.5px;
+    font-size: $text-xs;
+    line-height: $leading-xs;
     overflow-wrap: anywhere;
   }
 }
@@ -614,54 +651,52 @@
   h1,
   .page-title {
     margin: 0;
-    font-size: 28px;
-    font-weight: 700;
-    line-height: 34px;
-    letter-spacing: -0.4px;
+    font-size: $text-2xl;
+    font-weight: 600;
+    line-height: $leading-2xl;
+    letter-spacing: -0.02em;
   }
 
   .page-caption {
     margin: 4px 0 0;
-    color: var(--text-tertiary);
-    font-size: 13px;
+    color: var(--text-secondary);
+    font-family: $font-family;
+    font-size: $text-sm;
     font-variant-numeric: tabular-nums;
-    line-height: 18px;
+    line-height: $leading-sm;
   }
 }
 
-// Desktop: the global utilities live in the sidebar footer instead of floating over the page.
+// Desktop: the global utilities dock in the sidebar footer, after the navigation.
 @media (min-width: $breakpoint-mobile + 1) {
   :root {
-    --sidebar-footer-height: 56px;
+    --sidebar-footer-height: 57px;
   }
 
-  .main-header .header-actions {
-    position: fixed;
-    top: auto;
-    right: auto;
+  .header-actions {
     bottom: 0;
     left: 0;
-    justify-content: space-between;
     width: var(--sidebar-active-width);
-    padding: 12px 18px 14px;
-    border: 0;
+    padding: 12px 14px;
     border-top: 1px solid var(--border-subtle);
     border-right: 1px solid var(--border-subtle);
-    border-radius: 0;
     background: var(--bg-app);
     transition: width var(--dur-hover) var(--ease-out-strong);
+
+    // Logout sits apart from the view utilities.
+    > .btn:last-child {
+      margin-left: auto;
+    }
   }
 
-  .main-header .language-menu-popover,
-  .main-header .theme-menu-popover {
-    top: auto;
-    right: auto;
+  .header-actions .language-menu-popover,
+  .header-actions .theme-menu-popover {
     bottom: calc(100% + 10px);
     left: 0;
   }
 
-  // The last two controls sit near the sidebar's right edge; open their menus leftward.
-  .main-header .theme-menu-popover {
+  // The theme menu sits near the sidebar's right edge; open it leftward.
+  .header-actions .theme-menu-popover {
     left: auto;
     right: 0;
   }
@@ -671,17 +706,21 @@
   }
 
   .app-shell.sidebar-is-collapsed {
-    --sidebar-footer-height: 184px;
+    --sidebar-footer-height: 196px;
 
-    .main-header .header-actions {
+    .header-actions {
       flex-direction: column;
       justify-content: flex-end;
       gap: 4px;
       padding: 10px 0 14px;
+
+      > .btn:last-child {
+        margin-left: 0;
+      }
     }
 
-    .main-header .language-menu-popover,
-    .main-header .theme-menu-popover {
+    .header-actions .language-menu-popover,
+    .header-actions .theme-menu-popover {
       right: auto;
       bottom: 0;
       left: calc(100% + 10px);
@@ -693,7 +732,8 @@
   :root {
     --header-height: 68px;
     --shell-gutter: 12px;
-    --sidebar-panel-width: min(248px, calc(100vw - 24px));
+    --sidebar-panel-width: min(280px, calc(100vw - 24px));
+    --floating-control-size: #{$hit-target-touch};
   }
 
   .app-shell,
@@ -708,27 +748,40 @@
     display: none;
   }
 
-  .main-header {
-    .header-actions,
-    .mobile-sidebar-actions {
-      padding: 4px;
-      gap: 2px;
-      border-radius: 8px;
-    }
+  .main-header .mobile-sidebar-actions {
+    display: inline-flex;
+  }
 
-    .mobile-sidebar-actions {
-      display: inline-flex;
-    }
+  // Floating utility bar, mirroring the drawer button's inset.
+  .header-actions {
+    top: var(--shell-gutter);
+    right: var(--shell-gutter);
+    padding: 4px;
+    border: 1px solid var(--border-default);
+    border-radius: $radius-lg;
+    background: var(--bg-floating);
+    box-shadow: var(--shadow-floating);
+  }
 
-    // Mirror the drawer button's inset on phones.
-    .header-actions {
-      right: var(--shell-gutter);
-    }
+  // Menus are clamped to the viewport (12px inset) instead of hanging off their trigger.
+  .header-actions .language-menu-popover,
+  .header-actions .theme-menu-popover {
+    position: fixed;
+    top: calc(var(--shell-gutter) + var(--floating-control-size) + 18px);
+    right: var(--shell-gutter);
+    left: auto;
+    max-width: calc(100vw - 2 * var(--shell-gutter));
+    max-height: calc(100dvh - var(--shell-gutter) * 2 - var(--floating-control-size) - 18px);
+    overflow-y: auto;
+  }
 
-    .language-menu-popover {
-      right: auto;
-      left: 0;
-    }
+  .header-actions .language-menu-option,
+  .header-actions .theme-card {
+    min-height: $hit-target-touch;
+  }
+
+  .sidebar .nav-item {
+    min-height: $hit-target-touch;
   }
 
   .sidebar-backdrop {
@@ -777,12 +830,12 @@
       }
     }
 
-    // The floating close button box overlaps the drawer's top-left corner, so the brand starts
-    // after it: box = gutter + control + 2 x 4px padding + 2 x 1px border; then an 8px gap,
-    // minus the drawer's own 12px inline padding.
+    // The floating close button and utility bar sit over the drawer's top edge, so the brand
+    // starts below them: bar = gutter + control + 2 x 4px padding + 2 x 1px border, then 8px,
+    // minus the drawer's own 16px top padding.
     &.open .sidebar-header,
     &.open.collapsed .sidebar-header {
-      padding-left: calc(var(--shell-gutter) + var(--floating-control-size) + 10px + 8px - 12px);
+      margin-top: calc(var(--shell-gutter) + var(--floating-control-size) + 10px + 8px - 16px);
     }
   }
 
@@ -849,7 +902,7 @@
       animation: shellSidebarIn var(--dur-hover) var(--ease-out-strong) both;
     }
 
-    .main-header .header-actions {
+    .header-actions {
       animation: shellChromeIn var(--dur-hover) var(--ease-out-strong) both;
     }
 
@@ -862,6 +915,9 @@
 @media (prefers-reduced-motion: reduce) {
   .sidebar,
   .sidebar-backdrop,
+  .sidebar .nav-item,
+  .sidebar .nav-drawer-caret,
+  .header-actions,
   .main-header .sidebar-toggle-floating {
     transition: none;
   }

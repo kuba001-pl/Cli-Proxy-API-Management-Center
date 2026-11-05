@@ -15,6 +15,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { resolveNavTarget } from './navTarget';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { PageTransition } from '@/components/common/PageTransition';
 import { MainRoutes } from '@/router/MainRoutes';
 import { authFilesApi, pluginsApi } from '@/services/api';
@@ -106,7 +107,11 @@ interface SidebarNavGroup {
 const flattenNavItems = (items: SidebarNavItem[]): SidebarNavLinkItem[] =>
   items.flatMap((item) => (item.kind === 'drawer' ? item.children : [item]));
 
-/** 点击菜单外或按下 Escape 时关闭弹出菜单 */
+/**
+ * 点击菜单外或按下 Escape 时关闭弹出菜单。
+ * Menu-button keyboard pattern: opening focuses the checked (or first) item, Arrow/Home/End move
+ * between items, and closing while focus is inside the menu returns focus to the trigger.
+ */
 function useMenuDismiss(
   open: boolean,
   menuRef: RefObject<HTMLDivElement | null>,
@@ -117,24 +122,62 @@ function useMenuDismiss(
       return;
     }
 
+    const container = menuRef.current;
+    const getTrigger = () =>
+      container?.querySelector<HTMLButtonElement>('button[aria-haspopup="menu"]') ?? null;
+    const getItems = () =>
+      Array.from(container?.querySelectorAll<HTMLElement>('[role^="menuitem"]') ?? []);
+    let focusInside = false;
+    const trackFocus = (event: FocusEvent) => {
+      focusInside = getItems().includes(event.target as HTMLElement);
+    };
+
+    const frame = requestAnimationFrame(() => {
+      const items = getItems();
+      (items.find((item) => item.getAttribute('aria-checked') === 'true') ?? items[0])?.focus();
+    });
+
     const handlePointerDown = (event: MouseEvent) => {
-      if (!menuRef.current?.contains(event.target as Node)) {
+      if (!container?.contains(event.target as Node)) {
         onClose();
       }
     };
 
-    const handleEscape = (event: KeyboardEvent) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onClose();
+        getTrigger()?.focus();
+        return;
       }
+      const items = getItems();
+      const index = items.indexOf(document.activeElement as HTMLElement);
+      if (index === -1) return;
+      const next =
+        event.key === 'ArrowDown'
+          ? (index + 1) % items.length
+          : event.key === 'ArrowUp'
+            ? (index - 1 + items.length) % items.length
+            : event.key === 'Home'
+              ? 0
+              : event.key === 'End'
+                ? items.length - 1
+                : -1;
+      if (next === -1) return;
+      event.preventDefault();
+      items[next]?.focus();
     };
 
     document.addEventListener('mousedown', handlePointerDown);
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleKeyDown);
+    container?.addEventListener('focusin', trackFocus);
 
     return () => {
+      cancelAnimationFrame(frame);
       document.removeEventListener('mousedown', handlePointerDown);
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleKeyDown);
+      container?.removeEventListener('focusin', trackFocus);
+      // Selecting an item unmounts it; hand focus back to the trigger instead of <body>.
+      if (focusInside) getTrigger()?.focus();
     };
   }, [open, menuRef, onClose]);
 }
@@ -316,6 +359,8 @@ export function MainLayout() {
   const isLogsPage = location.pathname.startsWith('/logs');
   const isPluginResourcePage = location.pathname.startsWith('/plugin-pages');
   const showSidebarLabels = !sidebarCollapsed || sidebarOpen;
+  // Phones: the off-canvas drawer must not hold focusable links while it is closed.
+  const isMobileShell = useMediaQuery('(max-width: 768px)');
 
   // Keep floating header height available to sticky mobile elements and overlays.
   useLayoutEffect(() => {
@@ -993,7 +1038,50 @@ export function MainLayout() {
             {sidebarOpen ? headerIcons.close : headerIcons.menu}
           </Button>
         </div>
+      </header>
 
+      <div className="main-body">
+        <button
+          type="button"
+          className={`sidebar-backdrop ${sidebarOpen ? 'visible' : ''}`}
+          onClick={() => setSidebarOpen(false)}
+          aria-label={t('common.close')}
+          aria-hidden={!sidebarOpen}
+          tabIndex={sidebarOpen ? 0 : -1}
+        />
+
+        <aside
+          className={`sidebar ${sidebarOpen ? 'open' : ''} ${sidebarCollapsed ? 'collapsed' : ''}`}
+          inert={isMobileShell && !sidebarOpen}
+        >
+          <div className="sidebar-header">
+            <div className="sidebar-brand" title={fullBrandName}>
+              <img src={INLINE_LOGO_JPEG} alt="" className="sidebar-brand-logo" />
+              {showSidebarLabels && (
+                <span className="sidebar-brand-text">
+                  <span className="sidebar-brand-title">{abbrBrandName}</span>
+                  <span className="sidebar-brand-subtitle">{t('sidebar.subtitle')}</span>
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="nav-section">
+            {navGroups.map((group, idx) => (
+              <div className="nav-group" key={group.id}>
+                {showSidebarLabels ? (
+                  <div className="nav-group-label">{t(group.labelKey)}</div>
+                ) : (
+                  idx > 0 && <div className="nav-group-divider" aria-hidden="true" />
+                )}
+                {group.items.map((item) => renderNavItem(item))}
+              </div>
+            ))}
+          </div>
+        </aside>
+
+        {/* Global utilities come after navigation in DOM and focus order: docked in the sidebar
+            footer on desktop, floating top-right on phones (positioned in layout.scss). */}
         <div className="header-actions floating-actions">
           <Button
             variant="ghost"
@@ -1107,46 +1195,6 @@ export function MainLayout() {
             {headerIcons.logout}
           </Button>
         </div>
-      </header>
-
-      <div className="main-body">
-        <button
-          type="button"
-          className={`sidebar-backdrop ${sidebarOpen ? 'visible' : ''}`}
-          onClick={() => setSidebarOpen(false)}
-          aria-label={t('common.close')}
-          aria-hidden={!sidebarOpen}
-          tabIndex={sidebarOpen ? 0 : -1}
-        />
-
-        <aside
-          className={`sidebar ${sidebarOpen ? 'open' : ''} ${sidebarCollapsed ? 'collapsed' : ''}`}
-        >
-          <div className="sidebar-header">
-            <div className="sidebar-brand" title={fullBrandName}>
-              <img src={INLINE_LOGO_JPEG} alt="" className="sidebar-brand-logo" />
-              {showSidebarLabels && (
-                <span className="sidebar-brand-text">
-                  <span className="sidebar-brand-title">{abbrBrandName}</span>
-                  <span className="sidebar-brand-subtitle">{t('sidebar.subtitle')}</span>
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="nav-section">
-            {navGroups.map((group, idx) => (
-              <div className="nav-group" key={group.id}>
-                {showSidebarLabels ? (
-                  <div className="nav-group-label">{t(group.labelKey)}</div>
-                ) : (
-                  idx > 0 && <div className="nav-group-divider" aria-hidden="true" />
-                )}
-                {group.items.map((item) => renderNavItem(item))}
-              </div>
-            ))}
-          </div>
-        </aside>
 
         {railTooltip && (
           <div
