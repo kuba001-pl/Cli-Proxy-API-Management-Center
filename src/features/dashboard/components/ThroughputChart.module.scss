@@ -1,8 +1,7 @@
 @use '../../../styles/mixins' as *;
 
 .chart {
-  --chart-height: 200px;
-  --bar-max-width: 34px;
+  --chart-height: 220px;
 
   margin: 0;
   display: flex;
@@ -39,14 +38,14 @@
 }
 
 .legendSwatch {
-  width: 8px;
-  height: 8px;
+  width: 14px;
+  height: 2px;
   border-radius: 2px;
   flex: none;
 }
 
 .swatchSuccess {
-  background: var(--text-tertiary);
+  background: var(--text-secondary);
 }
 
 .swatchFailure {
@@ -59,7 +58,7 @@
   display: flex;
   gap: $spacing-sm;
   /* 给峰值直标留出空间：柱子顶到 100% 时标签仍落在这段留白里 */
-  padding-top: 6px;
+  padding-top: 18px;
 }
 
 .yAxis {
@@ -100,25 +99,48 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: var(--border-color);
+  background: color-mix(in srgb, var(--border-default) 50%, transparent);
 
   &:last-child {
-    background: var(--border-primary);
+    background: var(--border-subtle);
   }
 }
 
-/* ---------- 柱体 ---------- */
+/* ---------- Thin series and full-height interaction targets ---------- */
+
+.series {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  animation: chartFade var(--dur-hover) var(--ease-out-strong) both;
+}
+
+.successLine,
+.failureLine {
+  fill: none;
+  stroke-width: 1.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.successLine {
+  stroke: var(--text-secondary);
+}
+
+.failureLine {
+  stroke: var(--status-danger);
+  stroke-width: 1.25px;
+  opacity: 0.8;
+}
 
 .columns {
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: flex-end;
-  /*
-   * 相邻柱体之间同样保持 2px 表面色间隙。窄屏时槽位宽度小于 24px，
-   * 柱体会填满槽位，没有这个 gap 就会连成一片、读起来像面积图。
-   */
-  gap: 2px;
 }
 
 .column {
@@ -126,90 +148,64 @@
   flex: 1 1 0;
   min-width: 0;
   height: 100%;
-  display: flex;
-  align-items: flex-end;
-  /* 命中区域比柱体本身更大：整列高度都可悬停 */
-  cursor: default;
-}
-
-.stack {
-  position: relative;
-  width: 100%;
-  max-width: var(--bar-max-width);
-  height: 100%;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  animation: barGrow var(--dur-hover) var(--ease-out-strong) both;
-  /* 级差由 TSX 按桶数归一化写入，整波 ≤360ms */
-  animation-delay: var(--bar-delay, 0ms);
-  transform-origin: bottom center;
-  transition: background var(--dur-hover) var(--ease-out-strong);
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    transition: none;
-  }
-}
-
-.columnActive .stack {
-  .segmentSuccess {
-    background: var(--text-primary);
-  }
-}
-
-.segment {
-  display: block;
-  width: 100%;
-  /* 数据末端 4px 圆角，基线端保持直角 */
-  border-radius: $radius-sm $radius-sm 0 0;
-}
-
-.segmentSuccess {
-  background: var(--text-tertiary);
-}
-
-.segmentFailure {
-  background: var(--status-danger);
-}
-
-/* 堆叠段之间留 2px 表面色间隙 —— 用留白而不是描边来分隔 */
-.segmentGap {
-  margin-bottom: 2px;
-}
-
-/* 上方还有失败段时，成功段顶部不再圆角 */
-.segmentSquareTop {
+  margin: 0;
+  padding: 0;
+  border: 0;
   border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: crosshair;
+  -webkit-tap-highlight-color: transparent;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 50% 0 auto;
+    border-left: 1px dashed var(--border-strong);
+    opacity: 0;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: -2px;
+    border-radius: 4px;
+  }
 }
 
-.idleTick {
-  display: block;
-  width: 100%;
-  height: 2px;
-  border-radius: $radius-full;
-  background: var(--border-primary);
+.activePoint {
+  position: absolute;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  border: 2px solid var(--text-secondary);
+  border-radius: 50%;
+  background: var(--bg-surface);
+  transform: translate(-50%, 50%);
+  opacity: 0;
 }
 
-/* bottom 由 TSX 按柱高写入；柱子全部落定后再淡入 */
+.columnActive {
+  background: color-mix(in srgb, var(--text-primary) 3%, transparent);
+
+  &::before,
+  .activePoint {
+    opacity: 1;
+  }
+}
+
 .peakLabel {
-  display: none;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  margin-bottom: 6px;
+  margin-bottom: 10px;
   font-size: 11px;
+  line-height: 16px;
   font-weight: 650;
   color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   pointer-events: none;
-  animation: peakFade var(--dur-hover) var(--ease-out-strong) backwards;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
 }
 
 .noRequests {
@@ -227,16 +223,18 @@
 
 .tooltip {
   position: absolute;
-  top: 4px;
+  top: 12px;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: $spacing-sm $spacing-md;
-  min-width: 132px;
+  gap: 8px;
+  padding: 12px 14px;
+  min-width: 160px;
+  font-variant-numeric: tabular-nums;
   border-radius: $radius-md;
   border: 1px solid var(--border-default);
-  background: var(--bg-raised);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-lg);
   font-size: 12px;
   color: var(--text-secondary);
   pointer-events: none;
@@ -251,7 +249,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    transition: opacity var(--dur-hover) var(--ease-out-strong);
+    transition: none;
   }
 }
 
@@ -277,7 +275,7 @@
 
 .xAxis {
   position: relative;
-  height: 16px;
+  height: 20px;
   margin-left: 36px;
 
   @include mobile {
@@ -327,6 +325,7 @@ details.tableToggle {
   > div {
     padding: 12px 0 0;
     border-top: 0;
+    overflow-x: auto;
   }
 }
 
@@ -383,23 +382,18 @@ details.tableToggle {
   color: var(--text-secondary);
 }
 
-@keyframes barGrow {
+@keyframes chartFade {
   from {
-    transform: scaleY(0.02);
     opacity: 0;
   }
   to {
-    transform: scaleY(1);
     opacity: 1;
   }
 }
 
-@keyframes peakFade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
+@media (prefers-reduced-motion: reduce) {
+  .series {
+    animation: none;
   }
 }
 

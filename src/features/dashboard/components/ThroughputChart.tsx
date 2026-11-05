@@ -1,29 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Collapsible } from '@/components/ui/Collapsible';
 import { formatPercent } from '@/utils/format';
 import { TRAFFIC_BUCKET_MINUTES, type TrafficWindow } from '../types';
-import { axisMax } from '../utils';
+import { axisMax, bucketRangeLabel, bucketStartLabel } from '../utils';
+import { buildSmoothLinePath } from './curve';
 import styles from './ThroughputChart.module.scss';
 
 /** 纵轴刻度条数（含 0），即 TICK_COUNT - 1 个间隔 */
 const TICK_COUNT = 5;
-
-/**
- * 桶时间标签。后端返回的是服务器本地时间字符串（"15:04-15:14"），
- * 优先使用它，而不是用浏览器时钟反推，避免时区不一致。
- */
-function bucketRangeLabel(time: string | undefined, index: number, count: number): string {
-  if (time) return time;
-  const minutesAgo = (count - index) * TRAFFIC_BUCKET_MINUTES;
-  return `-${minutesAgo}m`;
-}
-
-function bucketStartLabel(time: string | undefined, index: number, count: number): string {
-  if (!time) return bucketRangeLabel(time, index, count);
-  const [start] = time.split('-');
-  return start?.trim() || time;
-}
 
 interface ThroughputChartProps {
   traffic: TrafficWindow;
@@ -31,10 +16,31 @@ interface ThroughputChartProps {
 
 export function ThroughputChart({ traffic }: ThroughputChartProps) {
   const { t } = useTranslation();
+  const gradientId = useId();
+  const tooltipId = useId();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const { buckets, totalSuccess, totalFailure, total, peakIndex, peakTotal } = traffic;
   const scaleMax = useMemo(() => axisMax(peakTotal, TICK_COUNT - 1), [peakTotal]);
+
+  const geometry = useMemo(() => {
+    const points = buckets.map((bucket, index) => ({
+      x: ((index + 0.5) / buckets.length) * 1000,
+      y: 200 - (bucket.success / scaleMax) * 200,
+    }));
+    const failures = points.map((point, index) => ({
+      x: point.x,
+      y: 200 - (buckets[index].failed / scaleMax) * 200,
+    }));
+    const line = buildSmoothLinePath(points, 0, 200);
+    const first = points[0];
+    const last = points[points.length - 1];
+    return {
+      line,
+      area: first && last ? `${line} L${last.x} 200 L${first.x} 200 Z` : '',
+      failures: buildSmoothLinePath(failures, 0, 200),
+    };
+  }, [buckets, scaleMax]);
 
   const ticks = useMemo(
     () =>
@@ -112,29 +118,57 @@ export function ThroughputChart({ traffic }: ThroughputChartProps) {
             ))}
           </div>
 
-          <div
-            className={styles.columns}
+          <svg
+            className={styles.series}
+            viewBox="0 0 1000 200"
+            preserveAspectRatio="none"
             role="img"
             aria-label={summary}
-            onMouseLeave={() => setActiveIndex(null)}
           >
+            <defs>
+              <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--text-secondary)" stopOpacity="0.22" />
+                <stop offset="100%" stopColor="var(--text-secondary)" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <path d={geometry.area} fill={`url(#${gradientId})`} />
+            <path className={styles.successLine} d={geometry.line} />
+            {totalFailure > 0 && <path className={styles.failureLine} d={geometry.failures} />}
+          </svg>
+          <div className={styles.columns} onMouseLeave={() => setActiveIndex(null)}>
             {buckets.map((bucket, index) => {
               const bucketTotal = bucket.success + bucket.failed;
-              const successHeight = (bucket.success / scaleMax) * 100;
-              const failureHeight = (bucket.failed / scaleMax) * 100;
-              const hasBoth = bucket.success > 0 && bucket.failed > 0;
-              /* 级差按桶数归一化：不管窗口多长，整波入场都收在 360ms 内 */
-              const barDelayMs =
-                buckets.length > 1 ? Math.round((index / (buckets.length - 1)) * 360) : 0;
-
+              const range = bucketRangeLabel(bucket.time, index, buckets.length);
               return (
-                <div
+                <button
+                  type="button"
                   key={bucket.time ?? index}
                   className={`${styles.column} ${activeIndex === index ? styles.columnActive : ''}`}
+                  aria-label={`${range}: ${t('dashboard.traffic_chart_summary', {
+                    total: bucketTotal,
+                    success: bucket.success,
+                    failed: bucket.failed,
+                    minutes: TRAFFIC_BUCKET_MINUTES,
+                  })}`}
+                  aria-describedby={activeIndex === index ? tooltipId : undefined}
                   onMouseEnter={() => setActiveIndex(index)}
-                  onClick={() => setActiveIndex((current) => (current === index ? null : index))}
+                  onFocus={() => setActiveIndex(index)}
+                  onBlur={() => setActiveIndex(null)}
+                  onClick={() => setActiveIndex(index)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Escape') setActiveIndex(null);
+                    const next =
+                      event.key === 'ArrowRight'
+                        ? event.currentTarget.nextElementSibling
+                        : event.key === 'ArrowLeft'
+                          ? event.currentTarget.previousElementSibling
+                          : null;
+                    if (next instanceof HTMLButtonElement) {
+                      event.preventDefault();
+                      next.focus();
+                    }
+                  }}
                 >
-                  {/* 峰值直标放在 scaleY 容器之外，避免入场时被一起挤压 */}
                   {index === peakIndex && peakTotal > 0 && (
                     <span
                       className={styles.peakLabel}
@@ -143,29 +177,12 @@ export function ThroughputChart({ traffic }: ThroughputChartProps) {
                       {peakTotal.toLocaleString()}
                     </span>
                   )}
-                  <div
-                    className={styles.stack}
-                    style={{ '--bar-delay': `${barDelayMs}ms` } as React.CSSProperties}
-                  >
-                    {bucket.failed > 0 && (
-                      <span
-                        className={`${styles.segment} ${styles.segmentFailure} ${
-                          hasBoth ? styles.segmentGap : ''
-                        }`}
-                        style={{ height: `${failureHeight}%` }}
-                      />
-                    )}
-                    {bucket.success > 0 && (
-                      <span
-                        className={`${styles.segment} ${styles.segmentSuccess} ${
-                          bucket.failed > 0 ? styles.segmentSquareTop : ''
-                        }`}
-                        style={{ height: `${successHeight}%` }}
-                      />
-                    )}
-                    {bucketTotal === 0 && <span className={styles.idleTick} />}
-                  </div>
-                </div>
+                  <span
+                    className={styles.activePoint}
+                    style={{ bottom: `${(bucket.success / scaleMax) * 100}%` }}
+                    aria-hidden="true"
+                  />
+                </button>
               );
             })}
           </div>
@@ -179,11 +196,12 @@ export function ThroughputChart({ traffic }: ThroughputChartProps) {
                 left: `${((activeIndex! + 0.5) / buckets.length) * 100}%`,
                 transform:
                   activeIndex! < buckets.length * 0.15
-                    ? 'translateX(-12%)'
+                    ? 'translateX(0)'
                     : activeIndex! > buckets.length * 0.85
-                      ? 'translateX(-88%)'
+                      ? 'translateX(-100%)'
                       : 'translateX(-50%)',
               }}
+              id={tooltipId}
               role="status"
             >
               <span className={styles.tooltipTime}>

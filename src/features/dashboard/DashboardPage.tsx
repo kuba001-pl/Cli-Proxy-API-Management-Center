@@ -9,6 +9,7 @@ import {
   IconSidebarQuota,
   IconSidebarSystem,
 } from '@/components/ui/icons';
+import { Collapsible } from '@/components/ui/Collapsible';
 import { useAuthStore } from '@/stores';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { privacyText } from '@/utils/privacy';
@@ -229,25 +230,22 @@ export function DashboardPage() {
           <strong className={styles.statValue}>
             {connected ? formatHeadline(animatedTotal) : DASH}
           </strong>
-          <span className={styles.statHint}>
+          <div className={styles.heroSplit} aria-hidden="true">
+            <span className={styles.splitSuccess} style={{ flexGrow: traffic.totalSuccess }} />
+            <span className={styles.splitFailure} style={{ flexGrow: traffic.totalFailure }} />
+          </div>
+          <span
+            className={styles.statHint}
+            title={t('dashboard.hero_window_meta', { window: windowLabel })}
+          >
             {t('dashboard.hero_window_meta', { window: windowLabel })}
           </span>
-          <div className={styles.heroSplit}>
-            <span className={styles.heroSplitItem}>
-              <i className={`${styles.splitSwatch} ${styles.splitSuccess}`} aria-hidden="true" />
-              {t('stats.success')}
-              <b>{traffic.totalSuccess.toLocaleString()}</b>
-            </span>
-            <span className={styles.heroSplitItem}>
-              <i className={`${styles.splitSwatch} ${styles.splitFailure}`} aria-hidden="true" />
-              {t('stats.failure')}
-              <b>{traffic.totalFailure.toLocaleString()}</b>
-            </span>
-          </div>
         </article>
         {statTiles.map((tile) => (
           <article key={tile.key} className={styles.statTile} data-reveal>
-            <span className={styles.statLabel}>{tile.label}</span>
+            <span className={styles.statLabel} title={tile.label}>
+              {tile.label}
+            </span>
             <strong className={styles.statValue}>{tile.value}</strong>
             {tile.meter !== null && tile.meter !== undefined && (
               <Meter
@@ -257,7 +255,9 @@ export function DashboardPage() {
                 className={styles.statMeter}
               />
             )}
-            <span className={styles.statHint}>{tile.hint}</span>
+            <span className={styles.statHint} title={tile.hint}>
+              {tile.hint}
+            </span>
           </article>
         ))}
       </section>
@@ -276,10 +276,11 @@ export function DashboardPage() {
         </div>
       </section>
 
-      <details className={styles.moreDetails}>
-        <summary>
-          {t('dashboard.fleet_title')} · {t('dashboard.runtime_title')}
-        </summary>
+      <Collapsible
+        className={styles.moreDetails}
+        label={t('dashboard.fleet_title')}
+        hint={t('dashboard.runtime_title')}
+      >
         {/* ---------- Provider fleet ---------- */}
         <section className={styles.section} ref={fleetRef}>
           <header className={styles.sectionHead}>
@@ -478,7 +479,7 @@ export function DashboardPage() {
             ))}
           </div>
         </section>
-      </details>
+      </Collapsible>
     </div>
   );
 }

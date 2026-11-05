@@ -74,3 +74,28 @@ export function axisMax(peak: number, intervals: number): number {
   const step = Math.max(1, Math.ceil(niceCeil(peak / intervals)));
   return step * intervals;
 }
+
+/** Preserve server-local clock ranges; convert ISO instants to the browser's local clock. */
+function bucketClock(time: string): { start: string; end: string } | null {
+  const range = time.trim().match(/^(\d{1,2}:\d{2})\s*[-–]\s*(\d{1,2}:\d{2})$/);
+  if (range) return { start: range[1], end: range[2] };
+  if (!/^\d{4}-\d{2}-\d{2}T/.test(time)) return null;
+  const start = new Date(time);
+  if (!Number.isFinite(start.getTime())) return null;
+  const end = new Date(start.getTime() + TRAFFIC_BUCKET_MINUTES * 60_000);
+  const clock = (date: Date) =>
+    `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+  return { start: clock(start), end: clock(end) };
+}
+
+export function bucketRangeLabel(time: string | undefined, index: number, count: number): string {
+  if (time) {
+    const clock = bucketClock(time);
+    return clock ? `${clock.start}–${clock.end}` : time;
+  }
+  return `-${(count - index) * TRAFFIC_BUCKET_MINUTES}m`;
+}
+
+export function bucketStartLabel(time: string | undefined, index: number, count: number): string {
+  return time ? (bucketClock(time)?.start ?? time) : bucketRangeLabel(time, index, count);
+}

@@ -30,7 +30,9 @@
 }
 .heroMeta {
   margin: 0;
-  font: 12.5px/18px $font-mono;
+  font-size: 12px;
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
   color: var(--text-tertiary);
 }
 .heroActions {
@@ -76,10 +78,10 @@
 
 .statsRow {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.25fr) repeat(4, minmax(0, 1fr));
   overflow: hidden;
   border: 1px solid var(--border-default);
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--bg-surface);
 }
 .statTile {
@@ -87,7 +89,7 @@
   flex-direction: column;
   gap: 8px;
   min-width: 0;
-  padding: 20px;
+  padding: 22px 20px;
   & + & {
     border-left: 1px solid var(--border-subtle);
   }
@@ -96,7 +98,9 @@
   font-size: 12px;
   line-height: 16px;
   font-weight: 400;
-  letter-spacing: 0.4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--text-secondary);
 }
 .eyebrow {
@@ -109,18 +113,23 @@
 }
 .statValue {
   font-size: 28px;
-  line-height: 34px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
+  line-height: 36px;
+  font-weight: 650;
+  letter-spacing: -0.7px;
   font-variant-numeric: tabular-nums;
 }
 .statHint {
+  margin-top: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 12px;
   line-height: 16px;
   color: var(--text-tertiary);
 }
 .statMeter {
-  margin-top: -4px;
+  margin: 2px 0 4px;
+  height: 4px;
 }
 .heroPanelTop {
   display: flex;
@@ -130,11 +139,13 @@
 }
 .liveBadge {
   display: inline-flex;
+  line-height: 16px;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 500;
   color: var(--status-success);
+  flex: none;
 }
 .liveDot {
   width: 6px;
@@ -144,37 +155,29 @@
 }
 .heroSplit {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.heroSplitItem {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--text-tertiary);
-  b {
-    color: var(--text-primary);
-    font-family: $font-mono;
+  gap: 3px;
+  height: 4px;
+  margin: 2px 0 4px;
+  border-radius: $radius-full;
+  overflow: hidden;
+  background: var(--meter-track);
+
+  > span {
+    border-radius: inherit;
   }
 }
-.splitSwatch {
-  width: 6px;
-  height: 6px;
-  flex: none;
-}
 .splitSuccess {
-  background: var(--text-tertiary);
+  background: var(--text-secondary);
 }
 .splitFailure {
-  background: var(--status-danger);
+  background: color-mix(in srgb, var(--status-danger) 70%, var(--text-secondary));
 }
 
 .trafficPanel,
 .panel {
   padding: 24px;
   border: 1px solid var(--border-default);
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--bg-surface);
   min-width: 0;
 }
@@ -187,13 +190,12 @@
     border-radius: 0;
     background: transparent;
   }
-  // Figma 36:1855 / 65:3949: eyebrow → title → helper on a 4px rhythm.
   .sectionHead {
     gap: 4px;
-    padding-right: 200px;
-    margin-bottom: 16px;
+    padding-right: 220px;
+    margin-bottom: 22px;
   }
-  // The dark reference (36:1859) hides the helper sentence; keep it for screen readers.
+
   [data-theme='dark'] & .sectionDescription {
     position: absolute;
     width: 1px;
@@ -236,18 +238,38 @@
   font-size: 13px;
   color: var(--text-secondary);
 }
-.moreDetails {
+details.moreDetails {
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--bg-surface);
   color: var(--text-secondary);
   font-size: 13px;
+
   > summary {
-    cursor: pointer;
-    padding: 8px 0;
+    min-height: 76px;
+    padding: 18px 24px;
+    font-weight: 600;
+    transition: background var(--dur-hover) var(--ease-out-strong);
+
+    > span:first-child {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+    }
+
     &:focus-visible {
-      outline: 2px solid var(--text-secondary);
-      outline-offset: 3px;
+      outline: 2px solid var(--focus-ring);
+      outline-offset: -3px;
+      border-radius: 10px;
     }
   }
+
+  > div {
+    padding: 0 24px 24px;
+    border-top-color: var(--border-subtle);
+  }
 }
+
 .fleetList,
 .healthLegend,
 .typeList,
@@ -301,7 +323,7 @@
 .fleetTotal,
 .fleetRateValue {
   color: var(--text-primary);
-  font-family: $font-mono;
+  font-variant-numeric: tabular-nums;
 }
 .fleetMeter {
   width: 80px;
@@ -455,7 +477,32 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .statTile {
-    padding: 16px;
+    padding: 18px 16px;
+    border-left: 0;
+
+    & + & {
+      border-left: 0;
+    }
+
+    &:first-child {
+      grid-column: 1 / -1;
+    }
+
+    &:nth-child(odd):not(:first-child) {
+      border-left: 1px solid var(--border-subtle);
+    }
+
+    &:nth-last-child(-n + 2) {
+      border-bottom: 0;
+    }
+  }
+  details.moreDetails {
+    > summary {
+      padding: 16px;
+    }
+    > div {
+      padding: 0 16px 16px;
+    }
   }
   .trafficPanel,
   .panel {
@@ -475,7 +522,8 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .primaryAction,
-  .ghostAction {
+  .ghostAction,
+  .moreDetails > summary {
     transition: none;
   }
 }
