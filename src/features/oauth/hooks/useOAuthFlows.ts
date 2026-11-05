@@ -1,4 +1,5 @@
 import { credentialFileIdentitiesInText } from '@/utils/privacy';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore, useNotificationStore } from '@/stores';
@@ -7,6 +8,7 @@ import { getErrorMessage, isRecord } from '@/utils/helpers';
 import { notifyAuthFilesChanged } from '@/features/authFiles/authFilesEvents';
 import { createOAuthAttempts, type OAuthAttempt } from '../oauthAttempts';
 import { validateDevinCallback } from '../devinOAuth';
+import { pluginOAuthDisplayTitle } from '../privacy';
 import { resolveCallbackUrl } from '../callbackUrl';
 import {
   buildPluginOAuthProviderCards,
@@ -80,6 +82,7 @@ export function usePluginOAuthProviders(apiBase: string) {
  */
 export function useOAuthFlows({ providerCards, isFocused }: UseOAuthFlowsOptions) {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const { showNotification: notifyUser } = useNotificationStore();
   const showNotification = (message: string, type: Parameters<typeof notifyUser>[1]) => {
     // Raw message + redaction context: the toast masks at render time with current privacy.
@@ -123,7 +126,9 @@ export function useOAuthFlows({ providerCards, isFocused }: UseOAuthFlowsOptions
   const providerText = (provider: string, suffix: string) => {
     const card = providerCards.find((item) => item.id === provider);
     return card?.kind === 'plugin'
-      ? t(`auth_login.plugin_${suffix}`, { name: card.title })
+      ? t(`auth_login.plugin_${suffix}`, {
+          name: pluginOAuthDisplayTitle(privacyEnabled, card.title),
+        })
       : t(getAuthKey(provider, suffix));
   };
 

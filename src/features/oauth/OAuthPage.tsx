@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useRevealGroup } from '@/hooks/motion';
 import { useAuthStore, useThemeStore } from '@/stores';
+import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { pluginOAuthDisplayTitle } from './privacy';
 import iconVertex from '@/assets/icons/vertex.svg';
 import iconCodex from '@/assets/icons/codex.svg';
 import { KIMI_DISPLAY_NAME } from '@/features/providers/kimi';
@@ -41,6 +43,7 @@ type DialogTarget = { kind: 'oauth'; id: string } | { kind: 'vertex' };
  */
 export function OAuthPage() {
   const { t } = useTranslation();
+  const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const navigate = useNavigate();
   const apiBase = useAuthStore((state) => state.apiBase);
   const resolvedTheme = useThemeStore((state) => state.resolvedTheme);
@@ -73,9 +76,11 @@ export function OAuthPage() {
     onCredentialAdded: flows.recordCredentialAdded,
   });
 
+  const pluginTitleOf = (title: string) => pluginOAuthDisplayTitle(privacyEnabled, title);
+
   const labelOf = (card: OAuthProviderCard) =>
     card.kind === 'plugin'
-      ? card.title
+      ? pluginTitleOf(card.title)
       : typeof card.label === 'string'
         ? card.label
         : t(card.label.key);
@@ -94,7 +99,7 @@ export function OAuthPage() {
   const headingOf = (card: OAuthProviderCard): DialogHeading => ({
     title:
       card.kind === 'plugin'
-        ? t('auth_login.plugin_oauth_title', { name: card.title })
+        ? t('auth_login.plugin_oauth_title', { name: pluginTitleOf(card.title) })
         : t(card.titleKey),
     caption: captionOf(card),
     icon: iconOf(card),
