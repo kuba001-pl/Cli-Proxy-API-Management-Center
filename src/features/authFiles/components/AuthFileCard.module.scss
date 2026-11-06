@@ -129,16 +129,9 @@
   @include text-meta;
   @include text-ellipsis;
 }
+// Disabled is the user's own choice (the switch already shows it): plain meta text, no tag.
 .disabledLabel {
-  display: inline-flex;
-  align-items: center;
-  padding: 0 6px;
-  border-radius: $radius-sm;
-  background: var(--bg-raised);
-  color: var(--text-secondary);
-  font-size: $text-xs;
-  line-height: 18px;
-  font-weight: 500;
+  @include text-meta;
   white-space: nowrap;
 }
 // A problem credential is findable while scanning the collapsed list: restrained warning

@@ -69,7 +69,6 @@
     "connection_current": "Geçerli URL",
     "connection_edit": "Değiştir",
     "connection_done": "Tamam",
-    "connection_auto_hint": "Sistem Bağlantı için Geçerli URL Değerini Otomatik Kullanır",
     "custom_connection_label": "Özel Bağlantı URL'si",
     "custom_connection_placeholder": "Örnek: https://example.com:8317",
     "custom_connection_hint": "Varsayılan Olarak Geçerli URL Kullanılır. Gerekirse Buradan Değiştir.",
@@ -111,12 +110,12 @@
     "auth_files": "Kimlik Dosyaları",
     "oauth": "OAuth Girişi",
     "routing": "Yönlendirme",
-    "quota_management": "Kota Yönetimi",
+    "quota_management": "Kota",
     "plugins": "Eklentiler",
     "plugin_store": "Eklenti Mağazası",
-    "config_management": "Yapılandırma Paneli",
-    "logs": "Günlük Görüntüleyici",
-    "system_info": "Yönetim Merkezi Bilgisi"
+    "config_management": "Yapılandırma",
+    "logs": "Günlükler",
+    "system_info": "Hakkında"
   },
   "nav_groups": {
     "operate": "İşlet",
@@ -148,7 +147,7 @@
     "hero_period": ".",
     "hero_requests_label": "Karşılanan İstekler",
     "hero_live": "Canlı",
-    "hero_window_meta": "Son {{window}} · 10 Dakikalık Dilimler",
+    "hero_window_meta": "Son {{window}}",
     "hero_spark_label": "Son {{window}} İçindeki İstek Hacmi",
     "cta_manage_providers": "Sağlayıcıları Yönet",
     "cta_inspect_logs": "Günlükleri İncele",
@@ -168,17 +167,16 @@
     "stat_models": "Modeller",
     "stat_models_hint": "Proxy Üzerinden Sunuluyor",
     "traffic_title": "Verim",
-    "traffic_description": "Son {{window}} İçinde 10 Dakikalık Dilimlere Göre İstekler. Kesin Sayılar için Grafiğin Üzerine Gel, Ok Tuşlarını Kullan veya Veri Tablosunu Aç.",
+    "traffic_description": "Son {{window}} İçinde 10 Dakikalık Dilimlere Göre İstekler",
+    "traffic_keyboard_hint": "Dilimler Arasında Gezinmek için Ok Tuşlarını Kullan veya Kesin Sayılar için Veri Tablosunu Aç.",
     "traffic_buckets_aria": "10 Dakikalık Dilimlere Göre İstekler",
     "more_label": "Sağlayıcılar, Kimlik Bilgileri ve Çalışma Zamanı",
-    "more_hint": "Sağlayıcıya Göre Trafik, Kimlik Bilgisi Durumu, Yapılandırma ve Kısayollar",
     "traffic_table": "Veri Tablosu",
     "traffic_table_window": "Pencere",
     "traffic_chart_summary": "Son {{minutes}} Dakikada {{total}} İstek: {{success}} Başarılı, {{failed}} Başarısız.",
     "traffic_unavailable": "Henüz Trafik Kaydı Yok",
     "traffic_unavailable_hint": "Sayaçlar, Proxy İlk İsteği Karşılayınca Görünür.",
     "fleet_title": "Sağlayıcıya Göre Trafik",
-    "fleet_description": "Aynı Pencerede Sağlayıcı Başına Hacim ve Başarı Oranı.",
     "fleet_empty": "Henüz Sağlayıcı Trafiği Kaydı Yok.",
     "fleet_credentials": "Kimlik Bilgileri: {{value}}",
     "fleet_spark_label": "{{provider}} İstek Hacmi",
@@ -233,9 +231,7 @@
     "plan_column": "Plan",
     "recent_requests_column": "Son istekler",
     "lowest_quota_column": "En düşük kota",
-    "title": "Kimlik Dosyası Yönetimi",
-    "meta_total": "{{count}} Kimlik Bilgisi",
-    "meta_active": "{{count}} Etkin",
+    "title": "Kimlik Dosyaları",
     "meta_problem_one": "{{count}} Dikkat Gerektiriyor",
     "meta_problem_other": "{{count}} Dikkat Gerektiriyor",
     "empty_title": "Henüz Kimlik Bilgisi Yok",
@@ -335,7 +331,7 @@
     "pagination_next": "Sonraki",
     "pagination_info": "Sayfa {{current}} / {{total}} · {{count}} Dosya",
     "search_label": "Kimlik Bilgilerini Ada, Hesaba, Türe, Sağlayıcıya veya Hata İletisine Göre Ara",
-    "search_placeholder": "Ad, Hesap, Tür, Sağlayıcı veya Hata Ara (403, 429, Invalid). Joker için * Kullan",
+    "search_placeholder": "Ad, Hesap, Sağlayıcı veya Hata Ara (* Joker)",
     "problem_filter_label": "Durum Süzgeci",
     "problem_filter_all": "Tümü",
     "problem_filter_enabled": "Etkin",
@@ -407,7 +403,7 @@
     "proxy_url_placeholder": "socks5://username:password@proxy_ip:port/",
     "priority_label": "Öncelik (priority)",
     "priority_placeholder": "Ör. 10 veya -1",
-    "priority_hint": "Yalnızca Tam Sayı. Geçersiz Değerler Yok Sayılır. Büyük Değer Daha Yüksek Öncelik Demektir.",
+    "priority_hint": "Yalnızca Tam Sayı; Büyük Değerler Önce Kullanılır.",
     "weight_label": "Zamanlama Ağırlığı (weight)",
     "weight_tooltip": "Varsayılan 1. 0 veya Altındaki Değerler Bu Kimlik Bilgisini Ağırlıklı Zamanlamanın Dışında Bırakır. Üst Sınır 1.000.000. Değer Girdikten Sonra Etki Etmesi için Ağırlıklı Round Robin Etkinleştir.",
     "weight_hint": "Varsayılan 1. 0 veya Altındaki Değerler Bu Kimlik Bilgisini Ağırlıklı Zamanlamanın Dışında Bırakır. Üst Sınır 1.000.000. Değer Girdikten Sonra Etki Etmesi için <settingsLink>Ağırlıklı Round Robin</settingsLink> Etkinleştir.",
@@ -716,8 +712,6 @@
     "import_another": "Bir Tane Daha İçe Aktar"
   },
   "oauth_excluded": {
-    "editor_description": "Bir Sağlayıcının Hangi Modelleri Açacağını Tekil Seçimler veya Joker Kurallarla Belirle.",
-    "models_hint": "Modelleri Seçmek için Listeyi Genişlet veya Aşağıya Joker Kurallar Gir.",
     "title": "OAuth Model Devre Dışı Bırakma",
     "description": "Sağlayıcı Başına Model Devre Dışı Bırakma Kartlarla Gösterilir. Düzenlemek veya Silmek için Karta Tıkla. * Jokerleri Desteklenir. Kapsam Kimlik Dosyası Süzgecini İzler.",
     "add": "Devre Dışı Bırakma Ekle",
@@ -725,7 +719,6 @@
     "edit_title": "{{provider}} için Model Devre Dışı Bırakmayı Düzenle",
     "provider_label": "Sağlayıcı",
     "provider_placeholder": "Ör. codex / openai",
-    "provider_hint": "Varsayılan Olarak Geçerli Süzgeç Kullanılır. Var Olan Bir Sağlayıcı Seç veya Yeni Bir Ad Yaz.",
     "models_label": "Devre Dışı Bırakılacak Modeller",
     "save": "Kaydet/Güncelle",
     "save_success": "Model Devre Dışı Bırakma Güncellendi",
@@ -778,9 +771,7 @@
     "rules_reserved": "“*” Sağlayıcının Tümünü Devre Dışı Bırakır. Bunun Yerine Devre Dışı Anahtarını Kullan"
   },
   "oauth_model_alias": {
-    "editor_description": "İstemcilerinde Kullanmak için Sağlayıcı Modellerine Tutarlı Adlar Ver.",
     "edit_title": "{{provider}} için Model Takma Adlarını Düzenle",
-    "mapping_hint": "Bir Kaynak Model Seç, Sonra İstemcilerinin Kullanacağı Takma Adı Gir.",
     "mapping_row": "Takma Ad Eşlemesi {{number}}",
     "remove_mapping": "Takma Ad Eşlemesi {{number}} Sil",
     "title": "OAuth Model Takma Adları",
@@ -996,7 +987,6 @@
     "tile_waiting": "Yetkilendirme Bekleniyor",
     "tile_success": "Kimlik Bilgisi Eklendi",
     "tile_error": "Yetkilendirme Başarısız",
-    "meta_providers": "{{count}} Sağlayıcı",
     "meta_waiting": "{{count}} Yetkilendirme Bekliyor",
     "meta_added": "Bu Oturumda {{count}} Eklendi",
     "step_open_auth_page": "Giriş Sayfasını Aç ve Yetkilendir",
@@ -1019,7 +1009,6 @@
     "no_requests": "İstek Yok"
   },
   "logs": {
-    "caption": "Canlı akış · uygulama ve istek günlükleri",
     "error_logs_file": "Dosya",
     "error_logs_actions": "Dosya işlemleri",
     "preview_too_large": "Bu İstek Günlüğü 2 MiB Önizleme Sınırını Aşıyor. Görmek için İndir.",
@@ -1042,14 +1031,14 @@
     "clear_search": "Aramayı Temizle",
     "reading_enabled": "Sürekli Okuma",
     "filter_load_more": "Daha Fazla Eşleşen Günlük Göster",
-    "title": "Günlük Görüntüleyici",
+    "title": "Günlükler",
     "refresh_button": "Günlükleri Yenile",
     "clear_button": "Günlükleri Temizle",
     "fullscreen_button": "Tam Ekran",
     "exit_fullscreen_button": "Tam Ekrandan Çık",
     "download_button": "Günlükleri İndir",
     "error_logs_modal_title": "Hata İstek Günlükleri",
-    "error_logs_description": "Açmak veya İndirmek için Bir Hata İstek Günlüğü Dosyası Seç (Yalnızca İstek Günlüğü Kapalıyken Oluşur).",
+    "error_logs_description": "Yalnızca İstek Günlüğü Kapalıyken Oluşur.",
     "error_logs_request_log_enabled": "İstek günlüğü açık olduğundan yeni yalnızca hata dosyaları yazılmaz. Aşağıdaki mevcut dosyalar kullanılabilir kalır; yenilerini toplamak için istek günlüğünü kapatın.",
     "live_toggle": "Canlı",
     "error_logs_empty": "Hata İstek Günlüğü Dosyası Bulunamadı",
@@ -1111,7 +1100,7 @@
     "copy_failed": "Kopyalama Başarısız"
   },
   "config_management": {
-    "title": "Yapılandırma Paneli",
+    "title": "Yapılandırma",
     "meta_fields": "{{count}} Ayar",
     "meta_dirty": "{{count}} Kaydedilmemiş",
     "meta_dirty_source": "Kaydedilmemiş Kaynak Düzenlemeleri",
@@ -1335,20 +1324,17 @@
       "sections": {
         "common": {
           "title": "Sık Kullanılan",
-          "description": "Sunucunun Dinlediği Adres, Giden Proxy, İstemci API Anahtarları ve Günlükleme. Her Ayar Kendi Tam Bölümünde de Bulunur."
+          "description": "Sık Kullanılan Ayarlar; Her Ayar Kendi Tam Bölümünde de Bulunur."
         },
         "connectivity": {
-          "title": "Erişim ve Kimlik Doğrulama",
-          "description": "Sunucu Adresi, Bağlantı Noktası, Kimlik Dizini ve API Anahtarları"
+          "title": "Erişim ve Kimlik Doğrulama"
         },
         "logging": {
-          "title": "Günlük",
-          "description": "Hata Ayıklama, Günlük Çıktısı ve Kullanım İstatistikleri"
+          "title": "Günlük"
         },
         "advanced": {
           "antigravity_credits": "Antigravity Kredilerini Kullan",
           "title": "Gelişmiş",
-          "description": "Üst Bilgi Sahteciliği, İmza Önbelleği, Eklenti Kaynakları ve Nadiren Değişen Diğer Ayarlar",
           "plugins_title": "Eklentiler",
           "antigravity_title": "Antigravity",
           "devin_title": "Devin",
@@ -1362,7 +1348,6 @@
         },
         "tls": {
           "title": "TLS/SSL Yapılandırması",
-          "description": "HTTPS Güvenli Bağlantı Ayarları",
           "enable": "TLS Etkinleştir",
           "enable_desc": "HTTPS Güvenli Bağlantıyı Etkinleştir",
           "cert": "Sertifika Dosya Yolu",
@@ -1370,11 +1355,9 @@
         },
         "remote": {
           "title": "Uzak Yönetim",
-          "description": "Uzak Erişim ve Denetim Paneli Ayarları",
           "allow_remote": "Uzak Erişime İzin Ver",
           "allow_remote_desc": "Diğer Ana Makinelerden Yönetim Erişimine İzin Ver",
           "disable_panel": "Denetim Panelini Devre Dışı Bırak",
-          "disable_panel_desc": "Yerleşik Web Denetim Panelini Devre Dışı Bırak",
           "disable_auto_update_panel": "Panel Otomatik Güncellemelerini Devre Dışı Bırak",
           "disable_auto_update_panel_desc": "Panel İlk Eksikken İndirilir ama GitHub Üzerinden Asla Otomatik Güncellenmez",
           "secret_key": "Yönetim Anahtarı",
@@ -1461,7 +1444,6 @@
         },
         "network": {
           "title": "Ağ",
-          "description": "Proxy, Yeniden Deneme ve Yönlendirme Ayarları",
           "proxy_url": "Proxy URL",
           "request_retry": "İstek Yeniden Deneme Sayısı",
           "max_retry_credentials": "En Fazla Yeniden Deneme Kimlik Bilgisi",
@@ -1496,7 +1478,6 @@
         },
         "streaming": {
           "title": "Akış",
-          "description": "Canlı Tutma ve Başlangıç Yeniden Deneme Ayarları",
           "keepalive_seconds": "Canlı Tutma Saniyesi",
           "keepalive_hint": "Canlı Tutmayı Kapatmak için 0, Negatif Tam Sayı Ayarla veya Boş Bırak",
           "bootstrap_retries": "Başlangıç Yeniden Denemeleri",
@@ -1507,7 +1488,6 @@
         },
         "payload": {
           "title": "Yük",
-          "description": "Varsayılan Değerler, Ham JSON Kuralları, Geçersiz Kılma Kuralları ve Süzgeç Kuralları",
           "default_rules": "Varsayılan Kurallar",
           "default_rules_desc": "İstekte Parametreler Belirtilmediğinde Bu Varsayılan Değerleri Kullan",
           "default_raw_rules": "Varsayılan Ham Kurallar",
@@ -1525,7 +1505,6 @@
         "add": "API Anahtarı Ekle",
         "generate": "Üret",
         "empty": "API Anahtarı Yok",
-        "hint": "Her Girdi Bir API Anahtarını Temsil Eder ('API Anahtarı Yönetimi' Sayfa Biçimiyle Tutarlı)",
         "edit_title": "API Anahtarını Düzenle",
         "add_title": "API Anahtarı Ekle",
         "input_label": "API Anahtarı",
@@ -1627,7 +1606,6 @@
   },
   "quota_management": {
     "not_loaded": "Kotalar henüz yüklenmedi",
-    "empty_hint": "Kotalar istek üzerine yüklenir. Hepsini şimdi yükleyin veya aşağıdan tek bir kimlik bilgisini yenileyin.",
     "summary_label": "Sağlayıcıya göre kotalar",
     "load_all": "Tüm kotaları yükle",
     "summary_coverage": "{{loaded}}/{{count}} yüklendi",
@@ -1659,7 +1637,7 @@
     "search_empty_desc": "Başka Bir Dosya Adı veya E-posta Dene ya da Aramayı Temizle.",
     "search_clear": "Aramayı Temizle",
     "retry": "Yeniden dene",
-    "title": "Kota Yönetimi",
+    "title": "Kota",
     "description": "Antigravity, Codex, Claude, Kimi ve xAI Kimlik Bilgileri için OAuth Kota Durumunu İzle.",
     "refresh_all_credentials": "Tüm kotaları yenile",
     "sort_label": "Sırala",
@@ -1667,7 +1645,6 @@
     "sort_soonest": "En Yakın Toparlanma",
     "meta_credentials_one": "{{count}} Kimlik Bilgisi",
     "meta_credentials_other": "{{count}} Kimlik Bilgisi",
-    "meta_loaded": "{{count}} Yüklendi",
     "meta_attention_one": "{{count}} İlgi Gerekiyor",
     "meta_attention": "{{count}} İlgi Gerekiyor",
     "empty_title": "Kota Yeteneği Olan Kimlik Bilgisi Yok",
@@ -1704,7 +1681,6 @@
   },
   "routing": {
     "title": "Yönlendirme",
-    "summary": "Üyeler {{members}} · Katmanlar {{tiers}}",
     "refresh": "Yenile",
     "refresh_discards": "Yenilemek kaydedilmemiş düzeni siler.",
     "loading": "Yönlendirme yükleniyor…",
@@ -1720,7 +1696,7 @@
     "tier_priority": "Öncelik {{priority}}",
     "tier_priority_changed": "Öncelik {{from}} → {{to}}",
     "tier_state_active": "İstekleri karşılıyor",
-    "tier_state_standby": "Beklemede, üstteki tüm katmanlar kullanılamazsa devreye girer",
+    "tier_state_standby": "Beklemede",
     "tier_state_skipped_model": "Bu modeli sunmuyor; istekler bu katmanı atlar",
     "tier_state_skipped": "Kullanılabilir üye yok; istekler bu katmanı atlar",
     "tier_state_cooling": "Soğumada veya kullanılamıyor; istekler bu katmanı atlar",
@@ -1756,16 +1732,12 @@
     "weight_apply": "Uygula",
     "weight_inactive": "Geçerli strateji ağırlıklı döngüsel değil, bu yüzden ağırlıklar henüz etkili değil.",
     "policy_title": "Ağ geçidi politikası",
-    "policy_subtitle": "Her katmana uygulanır.",
     "strategy_label": "Katman içinde",
     "strategy_round_robin": "Döngüsel",
     "strategy_weighted_round_robin": "Ağırlıklı döngüsel",
     "strategy_fill_first": "Önce doldur",
-    "strategy_round_robin_desc": "Katmandaki her kimlik sırayla istek alır.",
-    "strategy_weighted_round_robin_desc": "İstekler katman içinde ağırlığa göre bölünür.",
-    "strategy_fill_first_desc": "Bir kimlik kullanılamaz olana kadar her şeyi alır, sonra sıradakine geçilir.",
     "affinity_label": "Oturum bağlılığı",
-    "affinity_desc": "Bir oturumun istekleri aynı kimliğe gider; kullanılamazsa otomatik olarak devredilir.",
+    "affinity_desc": "Bir oturumu, kullanılamaz olana kadar aynı kimlikte tutar.",
     "retry_label": "Yük devretme",
     "request_retry": "Yeniden deneme turu",
     "request_retry_desc": "İlk turda tüm kimlikler başarısız olduktan sonraki ek turlar.",
@@ -1800,8 +1772,7 @@
     "duration_hours": "{{count}} sa"
   },
   "plugin_management": {
-    "title": "Eklenti Yönetimi",
-    "description": "Kurulu Eklentileri Aç veya Kapat, Ayarlarını Düzenle ve Eklediği Sayfaları Aç.",
+    "title": "Eklentiler",
     "refresh": "Yenile",
     "load_failed": "Eklentiler Yüklenemedi",
     "config_load_failed": "Eklenti Yapılandırması Okunamadı",
@@ -1832,10 +1803,6 @@
     "status_inactive_hint": "Etkin, ancak henüz çalışmıyor. Yenileyin veya arka uç günlüklerini kontrol edin.",
     "status_not_loaded_hint": "Etkin, ancak arka uç bu eklentiyi yüklemedi. Arka ucu yeniden başlatın veya günlüklerini kontrol edin.",
     "status_paused_hint": "Etkin, ancak eklenti sistemi kapalı (plugins.enabled).",
-    "system_on": "Eklenti sistemi açık",
-    "system_off": "Eklenti sistemi kapalı",
-    "summary_active_one": "{{count}} eklentiden {{active}} tanesi çalışıyor",
-    "summary_active_other": "{{count}} eklentiden {{active}} tanesi çalışıyor",
     "edit_config": "Yapılandırmayı Düzenle",
     "open_repository": "Depoyu Aç",
     "config_title": "{{name}} Yapılandır",
@@ -1871,7 +1838,6 @@
   },
   "plugin_store": {
     "title": "Eklenti Mağazası",
-    "description": "Eklenti Kaydına Göz At. Sonra Geçerli Arka Uç için Eklenti Kur veya Güncelle.",
     "description_show_more": "Daha Fazla Göster",
     "description_show_less": "Daha Az Göster",
     "source_name": "Kaynak: {{source}}",
@@ -1885,7 +1851,6 @@
     "global_enabled": "Etkin",
     "global_disabled": "Devre Dışı",
     "global_disabled_hint": "plugins.enabled false. Kurulu Eklentiler Geçerli Olmaz.",
-    "plugins_dir": "Eklenti Dizini",
     "stat_available": "Kullanılabilir",
     "search_placeholder": "Eklenti Kimliği, Adı, Yazarı veya Etiketi Ara...",
     "search_label": "Eklenti Mağazasında Ara",
@@ -1897,10 +1862,7 @@
     "badge_installed": "Kurulu",
     "badge_update": "Güncelleme Var",
     "badge_effective": "Geçerli",
-    "summary_available_one": "{{count}} eklenti mevcut",
-    "summary_available_other": "{{count}} eklenti mevcut",
     "version_arrow": "v{{from}} → v{{to}}",
-    "install_type": "Kurulum: {{type}}",
     "platforms": "Platformlar: {{platforms}}",
     "auth_required": "Kimlik Doğrulama Gerekli",
     "auth_configured": "Kimlik Doğrulama Yapılandırıldı",
@@ -1954,7 +1916,7 @@
     "no_matches_desc": "Geçerli Arama veya Süzgeçle Eşleşen Eklenti Yok.",
     "clear_filters": "Süzgeçleri Temizle",
     "security_banner_title": "Üçüncü Taraf Eklentiler Tam Arka Uç Erişimiyle Çalışır",
-    "security_banner_text": "Eklentiler Proxy Hizmetinin İçinde Kod Çalıştırır ve Kimlik Bilgilerini ile Trafiği Okuyabilir. Yalnızca Güvendiğin Eklentileri Kur. Resmi router-for-me Kuruluşu Dışında Yayımlanan Eklentilerde Özellikle Dikkatli Ol.",
+    "security_banner_text": "Kimlik Bilgilerini ve Trafiği Okuyabilirler. Yalnızca Güvendiğin Eklentileri Kur.",
     "badge_untrusted": "Üçüncü Taraf",
     "gate_title": "{{name}} Kur",
     "gate_title_update": "{{name}} Güncelle",
@@ -1981,10 +1943,9 @@
     "empty_src_desc": "Bu Eklenti Menüsü Gömülebilir Bir Sayfa URL'si Sağlamıyor."
   },
   "system_info": {
-    "title": "Yönetim Merkezi Bilgisi",
+    "title": "Hakkında",
     "about_title": "CLIProxyAPI Yönetim Merkezi",
     "models_title": "Kullanılabilir Modeller",
-    "models_desc": "/models Yanıtını Gösterir ve Kimlik Doğrulama için Kayıtlı API Anahtarlarını Otomatik Kullanır.",
     "models_loading": "Kullanılabilir Modeller Yükleniyor...",
     "models_empty": "/models Hiçbir Model Döndürmedi",
     "models_error": "Model Listesi Yüklenemedi",
@@ -1996,7 +1957,6 @@
     "version_current_missing": "Sunucu Sürümü Kullanılamaz. Karşılaştırılamaz",
     "version_unknown": "Bilinmiyor",
     "quick_links_title": "Hızlı Bağlantılar",
-    "quick_links_desc": "Yardım ve Güncellemeler için Proje Depolarına ve Belgelere Eriş.",
     "link_main_repo": "Ana Depo",
     "link_main_repo_desc": "CLIProxyAPI Çekirdek Program Kaynak Kodu",
     "link_webui_repo": "WebUI Deposu",
@@ -2151,9 +2111,7 @@
     },
     "header": {
       "title": "AI Sağlayıcıları",
-      "activeResources": "{{active}} / {{total}} Aktif Kaynak",
-      "providerFamilies": "{{count}} Sağlayıcı Ailesi",
-      "updatedAt": "Güncellendi {{time}}"
+      "activeResources": "{{active}} / {{total}} Aktif Kaynak"
     },
     "actions": {
       "refresh": "Yenile",
@@ -2171,7 +2129,6 @@
       "disable": "Devre Dışı Bırak"
     },
     "categories": {
-      "noKeys": "Anahtar yok",
       "title": "Sağlayıcılar",
       "activeCount": "{{active}} / {{total}} Aktif"
     },
@@ -2304,9 +2261,6 @@
       "required": "Zorunlu",
       "baseUrlDefaultHint": "İsteğe Bağlı · Varsayılan Uç Noktayı Kullanmak İçin Boş Bırakın",
       "optional": "İsteğe Bağlı",
-      "sheetDescriptionCreate": "{{provider}} için kimlik bilgileri, bağlantı ayarları ve modeller ekleyin.",
-      "sheetDescriptionEdit": "{{provider}} için kimlik bilgilerini, bağlantı ayarlarını ve modelleri güncelleyin.",
-      "sheetDescriptionDetail": "{{provider}} yapılandırması, kimlik bilgileri ve son istek durumu.",
       "name": "Ad",
       "apiKey": "API Anahtarı",
       "apiKeyCreatePlaceholder": "API Anahtarını Gir",
@@ -2317,7 +2271,7 @@
       "prefix": "Önek",
       "priority": "Öncelik",
       "weight": "Zamanlama Ağırlığı",
-      "weightHint": "Varsayılan 1 · ≤ 0 Hariç · Üst Sınır 1.000.000",
+      "weightHint": "Varsayılan 1, Üst Sınır 1.000.000 · ≤ 0 Hariç",
       "routingDefaultsApplied": "Varsayılanlar Uygulandı",
       "priorityHint": "Yüksek Değer Önce Kullanılır",
       "disabled": "Bu Girdiyi Devre Dışı Bırak",

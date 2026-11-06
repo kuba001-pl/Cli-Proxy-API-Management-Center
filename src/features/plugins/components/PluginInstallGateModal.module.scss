@@ -60,7 +60,7 @@
   margin: 0;
   @include text-identifier;
   font-size: $text-sm;
-  color: var(--accent-text);
+  color: var(--text-primary);
   text-decoration: none;
 
   span {
@@ -74,8 +74,8 @@
   }
 
   &:hover {
-    color: var(--accent-text);
     text-decoration: underline;
+    text-underline-offset: 3px;
 
     svg {
       color: currentColor;

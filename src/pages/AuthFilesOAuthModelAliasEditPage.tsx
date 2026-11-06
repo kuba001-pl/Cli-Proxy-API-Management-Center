@@ -416,9 +416,6 @@ export function AuthFilesOAuthModelAliasEditPage() {
       {/* One page title (the task), aligned to the content edge like every other page. */}
       <header className={styles.intro}>
         <h1 className={styles.introTitle}>{title}</h1>
-        {!modelAliasUnsupported && initialLoadError === null && (
-          <p className={styles.description}>{t('oauth_model_alias.editor_description')}</p>
-        )}
       </header>
       {modelAliasUnsupported ? (
         <Card>
@@ -454,12 +451,8 @@ export function AuthFilesOAuthModelAliasEditPage() {
           <Card className={styles.settingsCard}>
             <div className={styles.editorHeader}>
               <div className={styles.sectionHeading}>
-                <span className={styles.stepNumber} aria-hidden="true">
-                  02
-                </span>
                 <div className={styles.headingCopy}>
                   <h2 className={styles.sectionTitle}>{t('oauth_model_alias.alias_label')}</h2>
-                  <p className={styles.description}>{t('oauth_model_alias.mapping_hint')}</p>
                 </div>
               </div>
               <Button
@@ -473,7 +466,7 @@ export function AuthFilesOAuthModelAliasEditPage() {
               </Button>
             </div>
 
-            {/* Without a provider this would only repeat step 01's hint. */}
+            {/* Without a provider there is nothing to say about the model catalog yet. */}
             {provider.trim() ? (
               <div className={styles.catalogHint}>
                 <IconInfo size={15} aria-hidden="true" />

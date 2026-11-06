@@ -6,15 +6,16 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: $space-3;
-  min-height: 72px;
-  padding: $space-3 $space-3 $space-3 $space-4;
+  // A launcher, not a contained unit: it sits on the page and only washes on hover.
+  min-height: 56px;
+  padding: $space-2 $space-2 $space-2 $space-2;
   border: 0;
-  border-radius: $radius-lg;
-  background: var(--bg-surface);
+  border-radius: $radius-md;
+  background: transparent;
   transition: background-color var(--dur-hover) var(--ease-out-strong);
 }
 .tile:hover {
-  background: var(--bg-raised);
+  background: var(--bg-surface);
 }
 .glyph {
   width: 32px;
@@ -52,7 +53,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: $radius-lg;
+  border-radius: $radius-md;
 }
 .main:focus-visible {
   outline: none;
@@ -96,13 +97,6 @@
 .status {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-}
-.statusDot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
 }
 .tile[data-status='success'] .status {
   color: var(--status-success);

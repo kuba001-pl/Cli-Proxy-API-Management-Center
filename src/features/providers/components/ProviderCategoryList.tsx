@@ -80,14 +80,15 @@ export function ProviderCategoryList({ groups, activeBrand, onSelect }: Provider
                 <span className={styles.itemTitle}>
                   {t(`providersPage.providerNames.${group.id}`)}
                 </span>
-                <span className={styles.itemSubtitle}>
-                  {total === 0
-                    ? t('providersPage.categories.noKeys')
-                    : t('providersPage.categories.activeCount', {
-                        active: activeCount,
-                        total,
-                      })}
-                </span>
+                {/* Only a partly switched-off provider gets a caption; the count says the rest. */}
+                {total > 0 && activeCount < total ? (
+                  <span className={styles.itemSubtitle}>
+                    {t('providersPage.categories.activeCount', {
+                      active: activeCount,
+                      total,
+                    })}
+                  </span>
+                ) : null}
               </span>
             </span>
             {total > 0 ? <span className={styles.badge}>{total}</span> : null}
@@ -99,8 +100,8 @@ export function ProviderCategoryList({ groups, activeBrand, onSelect }: Provider
 
   return (
     <div className={styles.stack}>
-      <aside className={styles.aside}>
-        <p className={styles.eyebrow}>{t('providersPage.categories.title')}</p>
+      {/* The page title already says "AI Providers": the rail is named for AT only. */}
+      <aside className={styles.aside} aria-label={t('providersPage.categories.title')}>
         {renderGroups(groups)}
       </aside>
     </div>

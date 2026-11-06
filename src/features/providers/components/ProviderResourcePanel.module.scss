@@ -92,6 +92,8 @@
   text-decoration: none;
   &:hover {
     color: var(--text-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 }
 

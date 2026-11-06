@@ -26,14 +26,6 @@
   line-height: $leading-sm;
   color: var(--text-secondary);
 }
-.metaTotal,
-.metaActive,
-.metaMuted {
-  color: var(--text-secondary);
-}
-.metaDot {
-  color: var(--text-muted);
-}
 .metaProblem {
   color: var(--status-warning);
   font-weight: 500;

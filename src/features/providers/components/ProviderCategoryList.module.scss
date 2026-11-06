@@ -9,17 +9,9 @@
   align-self: start;
 }
 
+// A picker, not a contained unit: it sits on the page (no slab) beside the resource panel.
 .aside {
-  background: var(--bg-surface);
-  border: 0;
-  border-radius: $radius-lg;
-  padding: $space-2;
   min-width: 0;
-}
-
-.eyebrow {
-  @include text-eyebrow;
-  margin: $space-2 $space-2 $space-2;
 }
 
 .list {
@@ -34,7 +26,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  min-height: 48px;
+  min-height: 40px;
   padding: 6px $space-2;
   border-radius: $radius-md;
   border: 0;
@@ -133,10 +125,6 @@
   .aside {
     padding: 0;
     background: transparent;
-  }
-
-  .eyebrow {
-    @include visually-hidden;
   }
 
   .list {

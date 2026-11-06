@@ -156,7 +156,8 @@ describe('routing board rendering', () => {
     );
     expect(html).toContain('role="radiogroup"');
     expect(html).toMatch(/role="radio" aria-checked="true" tabindex="0"[^>]*>.*Weighted/);
-    expect(html).toContain('Requests are split across the tier by weight.');
+    // De-slop: the strategy names speak for themselves; no per-strategy explanation.
+    expect(html).not.toContain('Requests are split across the tier by weight.');
   });
 
   test('styles respect reduced motion and the route is registered behind navigation', () => {

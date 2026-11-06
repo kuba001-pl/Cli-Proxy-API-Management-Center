@@ -162,16 +162,6 @@ export function PluginsPage() {
       ? storeLogos.entries
       : [];
 
-  const pluginStats = useMemo(() => {
-    const plugins = data?.plugins ?? [];
-    return {
-      discovered: plugins.length,
-      registered: plugins.filter((plugin) => plugin.registered).length,
-      configured: plugins.filter((plugin) => plugin.configured).length,
-      effective: plugins.filter((plugin) => plugin.effectiveEnabled).length,
-    };
-  }, [data?.plugins]);
-
   const visiblePlugins = useMemo(() => {
     const query = filter.trim().toLowerCase();
     const plugins = data?.plugins ?? [];
@@ -505,26 +495,10 @@ export function PluginsPage() {
       {/* ── Page Header ── */}
       <div className={styles.pageHeader}>
         <h1 className={styles.title}>{t('plugin_management.title')}</h1>
-        <p className={styles.description}>{t('plugin_management.description')}</p>
+        {/* One fact: where plugins live. System state shows as a warning only when it is off;
+            the active count is the list itself. */}
         {data ? (
           <p className={styles.summary}>
-            <span className={styles.summaryItem}>
-              <span
-                className={`${styles.statusDot} ${
-                  data.pluginsEnabled ? styles.statusDotOn : styles.statusDotOff
-                }`}
-                aria-hidden="true"
-              />
-              {data.pluginsEnabled
-                ? t('plugin_management.system_on')
-                : t('plugin_management.system_off')}
-            </span>
-            <span className={styles.summaryItem}>
-              {t('plugin_management.summary_active', {
-                active: pluginStats.effective,
-                count: pluginStats.discovered,
-              })}
-            </span>
             <span className={styles.summaryItem}>
               {t('plugin_management.plugins_dir')}
               <span className={styles.summaryPath} title={pluginsDirLabel}>
@@ -630,23 +604,30 @@ export function PluginsPage() {
                 <div className={styles.pluginInfo}>
                   <div className={styles.pluginName}>
                     <h2 title={title}>{title}</h2>
-                    <span
-                      className={`${styles.state} ${styles[`state_${state.tone}`]}`}
-                      title={technicalState}
-                    >
-                      <span className={styles.stateDot} aria-hidden="true" />
-                      {state.label}
-                    </span>
+                    {/* Running is the normal case: the switch says it, no badge. Off is plain
+                        meta text; only a plugin that should run but does not gets a tag. */}
+                    {state.tone !== 'active' ? (
+                      <span
+                        className={`${styles.state} ${styles[`state_${state.tone}`]}`}
+                        title={technicalState}
+                      >
+                        {state.label}
+                      </span>
+                    ) : null}
                     {plugin.supportsOAuth ? (
                       <span className={styles.capability}>{t('plugin_management.oauth')}</span>
                     ) : null}
                   </div>
 
-                  <span className={styles.pluginId}>{plugin.id}</span>
+                  <span className={styles.pluginId} title={pluginPath || undefined}>
+                    {plugin.id}
+                  </span>
 
                   {state.hint ? <span className={styles.stateHint}>{state.hint}</span> : null}
 
-                  {version || author || plugin.path ? (
+                  {/* Version and author only (one separator); the file path is the id's
+                      tooltip. */}
+                  {version || author ? (
                     <div className={styles.pluginMeta}>
                       {version ? (
                         <span className={styles.metaItem}>
@@ -658,15 +639,6 @@ export function PluginsPage() {
                         <span className={styles.metaItem}>
                           <span className={styles.metaDot} aria-hidden="true" />
                           {author}
-                        </span>
-                      ) : null}
-                      {plugin.path ? (
-                        <span
-                          className={`${styles.metaItem} ${styles.metaPath}`}
-                          title={pluginPath}
-                        >
-                          <span className={styles.metaDot} aria-hidden="true" />
-                          <span className={styles.metaPathText}>{pluginPath}</span>
                         </span>
                       ) : null}
                     </div>

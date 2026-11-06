@@ -100,12 +100,30 @@ describe('OAuth editor UI', () => {
     expect(disabledRow.match(/disabled=""/g)).toHaveLength(4);
   });
 
-  test('all four locales include editor guidance and accessible row labels', () => {
+  test('provider card shows the label without a step badge or how-to line', () => {
+    const markup = render(
+      createElement(OAuthEditorProviderCard, {
+        provider: '',
+        options: ['codex'],
+        onChange: noop,
+        disabled: false,
+        translationPrefix: 'oauth_excluded',
+      })
+    );
+    expect(markup).toContain(en.oauth_excluded.provider_label);
+    expect(markup).not.toContain('>01<');
+    expect(markup).not.toContain('pick an existing provider');
+  });
+
+  test('all four locales include accessible row labels, without narrating editor guidance', () => {
+    for (const locale of [en, zhCN, zhTW, ru] as Record<string, Record<string, unknown>>[]) {
+      // De-slop: the editors no longer explain how to use themselves.
+      expect(locale.oauth_excluded.editor_description).toBeUndefined();
+      expect(locale.oauth_excluded.models_hint).toBeUndefined();
+      expect(locale.oauth_model_alias.editor_description).toBeUndefined();
+      expect(locale.oauth_model_alias.mapping_hint).toBeUndefined();
+    }
     for (const locale of [en, zhCN, zhTW, ru]) {
-      expect(locale.oauth_excluded.editor_description.length).toBeGreaterThan(0);
-      expect(locale.oauth_excluded.models_hint.length).toBeGreaterThan(0);
-      expect(locale.oauth_model_alias.editor_description.length).toBeGreaterThan(0);
-      expect(locale.oauth_model_alias.mapping_hint.length).toBeGreaterThan(0);
       expect(locale.oauth_model_alias.edit_title).toContain('{{provider}}');
       expect(locale.oauth_model_alias.mapping_row).toContain('{{number}}');
       expect(locale.oauth_model_alias.remove_mapping).toContain('{{number}}');

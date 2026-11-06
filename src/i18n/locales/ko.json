@@ -69,7 +69,6 @@
     "connection_current": "현재 URL",
     "connection_edit": "변경",
     "connection_done": "완료",
-    "connection_auto_hint": "시스템이 자동으로 현재 URL을 사용하여 연결합니다",
     "custom_connection_label": "사용자 지정 연결 URL",
     "custom_connection_placeholder": "예: https://example.com:8317",
     "custom_connection_hint": "기본적으로 현재 URL이 사용됩니다. 필요한 경우 여기서 재정의하세요.",
@@ -111,12 +110,12 @@
     "auth_files": "인증 파일",
     "oauth": "OAuth 로그인",
     "routing": "라우팅",
-    "quota_management": "할당량 관리",
+    "quota_management": "할당량",
     "plugins": "플러그인",
     "plugin_store": "플러그인 스토어",
-    "config_management": "설정 패널",
-    "logs": "로그 뷰어",
-    "system_info": "관리 센터 정보"
+    "config_management": "설정",
+    "logs": "로그",
+    "system_info": "정보"
   },
   "nav_groups": {
     "operate": "운영",
@@ -148,7 +147,7 @@
     "hero_period": ".",
     "hero_requests_label": "처리된 요청",
     "hero_live": "실시간",
-    "hero_window_meta": "최근 {{window}} · 10분 단위",
+    "hero_window_meta": "최근 {{window}}",
     "hero_spark_label": "최근 {{window}} 동안의 요청량",
     "cta_manage_providers": "공급자 관리",
     "cta_inspect_logs": "로그 확인",
@@ -168,17 +167,16 @@
     "stat_models": "모델",
     "stat_models_hint": "프록시에서 제공",
     "traffic_title": "처리량",
-    "traffic_description": "최근 {{window}} 동안 10분 단위 요청 수입니다. 차트에 마우스를 올리거나 화살표 키를 사용하거나 데이터 표를 열면 정확한 값을 볼 수 있습니다.",
+    "traffic_description": "최근 {{window}} 동안 10분 단위 요청 수",
+    "traffic_keyboard_hint": "화살표 키로 구간 사이를 이동하거나 데이터 표를 열어 정확한 값을 확인하세요.",
     "traffic_buckets_aria": "10분 단위 요청 수",
     "more_label": "공급자, 자격 증명 및 런타임",
-    "more_hint": "공급자별 트래픽, 자격 증명 상태, 설정 및 바로가기",
     "traffic_table": "데이터 테이블",
     "traffic_table_window": "시간 구간",
     "traffic_chart_summary": "최근 {{minutes}}분 동안 총 {{total}}건의 요청: 성공 {{success}}건, 실패 {{failed}}건.",
     "traffic_unavailable": "아직 기록된 트래픽이 없습니다",
     "traffic_unavailable_hint": "프록시가 첫 번째 요청을 처리하면 카운터가 표시됩니다.",
     "fleet_title": "공급자별 트래픽",
-    "fleet_description": "동일한 윈도우 내 각 공급자의 요청량 및 성공률입니다.",
     "fleet_empty": "아직 기록된 공급자 트래픽이 없습니다.",
     "fleet_credentials": "자격 증명: {{value}}",
     "fleet_spark_label": "{{provider}} 요청량",
@@ -233,9 +231,7 @@
     "plan_column": "요금제",
     "recent_requests_column": "최근 요청",
     "lowest_quota_column": "최저 할당량",
-    "title": "인증 파일 관리",
-    "meta_total": "자격 증명 {{count}}개",
-    "meta_active": "사용 {{count}}개",
+    "title": "인증 파일",
     "meta_problem_one": "확인 필요 {{count}}개",
     "meta_problem_other": "확인 필요 {{count}}개",
     "empty_title": "아직 자격 증명이 없습니다",
@@ -335,7 +331,7 @@
     "pagination_next": "다음",
     "pagination_info": "{{current}} / {{total}} 페이지 · {{count}}개 파일",
     "search_label": "이름, 계정, 유형, 공급자 또는 오류 메시지로 자격 증명 검색",
-    "search_placeholder": "이름, 계정, 유형, 공급자 또는 오류(403, 429, invalid) 검색. 와일드카드로 * 사용 가능",
+    "search_placeholder": "이름, 계정, 공급자 또는 오류 검색(* 와일드카드)",
     "problem_filter_label": "상태 필터",
     "problem_filter_all": "전체",
     "problem_filter_enabled": "활성화",
@@ -407,7 +403,7 @@
     "proxy_url_placeholder": "socks5://username:password@proxy_ip:port/",
     "priority_label": "우선순위 (priority)",
     "priority_placeholder": "예: 10 또는 -1",
-    "priority_hint": "정수만 지원됩니다. 유효하지 않은 값은 무시됩니다. 값이 클수록 우선순위가 높습니다.",
+    "priority_hint": "정수만 가능하며, 값이 클수록 먼저 사용됩니다.",
     "weight_label": "스케줄링 가중치 (weight)",
     "weight_tooltip": "기본값은 1입니다. 0 이하의 값은 가중치 스케줄링에서 이 자격 증명을 제외합니다. 최대값은 1,000,000입니다. 값을 입력한 후 가중 라운드 로빈을 활성화해야 적용됩니다.",
     "weight_hint": "기본값은 1입니다. 0 이하의 값은 가중치 스케줄링에서 이 자격 증명을 제외합니다. 최대값은 1,000,000입니다. 값을 입력한 후 <settingsLink>가중 라운드 로빈</settingsLink>을 활성화해야 적용됩니다.",
@@ -716,8 +712,6 @@
     "import_another": "하나 더 가져오기"
   },
   "oauth_excluded": {
-    "editor_description": "개별 선택 또는 와일드카드 규칙을 사용하여 공급자가 노출할 모델을 선택합니다.",
-    "models_hint": "목록을 펼쳐 모델을 선택하거나 아래에 와일드카드 규칙을 입력하세요.",
     "title": "OAuth 모델 비활성화",
     "description": "공급자별 모델 비활성화가 카드로 표시됩니다. 카드를 클릭하여 수정하거나 삭제하세요. 와일드카드 * 가 지원되며 범위는 인증 파일 필터를 따릅니다.",
     "add": "비활성화 추가",
@@ -725,7 +719,6 @@
     "edit_title": "{{provider}}의 모델 비활성화 수정",
     "provider_label": "공급자",
     "provider_placeholder": "예: codex / openai",
-    "provider_hint": "기본값은 현재 필터입니다. 기존 공급자를 선택하거나 새 이름을 입력하세요.",
     "models_label": "비활성화할 모델",
     "save": "저장/업데이트",
     "save_success": "모델 비활성화가 업데이트되었습니다.",
@@ -778,9 +771,7 @@
     "rules_reserved": "“*”은(는) 공급자 전체를 비활성화합니다. 대신 '비활성화됨' 스위치를 사용하세요"
   },
   "oauth_model_alias": {
-    "editor_description": "클라이언트에서 사용할 수 있도록 공급자 모델에 일관된 이름을 지정합니다.",
     "edit_title": "{{provider}}의 모델 별칭 편집",
-    "mapping_hint": "원본 모델을 선택한 후 클라이언트에서 사용할 별칭을 입력하세요.",
     "mapping_row": "별칭 매핑 {{number}}",
     "remove_mapping": "별칭 매핑 {{number}} 삭제",
     "title": "OAuth 모델 별칭",
@@ -996,7 +987,6 @@
     "tile_waiting": "인증 대기 중",
     "tile_success": "자격 증명 추가됨",
     "tile_error": "인증 실패",
-    "meta_providers": "공급자 {{count}}개",
     "meta_waiting": "{{count}}개 인증 대기 중",
     "meta_added": "이번 세션에 {{count}}개 추가됨",
     "step_open_auth_page": "로그인 페이지를 열고 승인하세요",
@@ -1019,7 +1009,6 @@
     "no_requests": "요청 없음"
   },
   "logs": {
-    "caption": "실시간 스트림 · 애플리케이션 및 요청 로그",
     "error_logs_file": "파일",
     "error_logs_actions": "파일 작업",
     "preview_too_large": "이 요청 로그는 2 MiB 미리보기 제한을 초과합니다. 다운로드하여 확인하세요.",
@@ -1042,14 +1031,14 @@
     "clear_search": "검색 지우기",
     "reading_enabled": "지속 읽기",
     "filter_load_more": "일치하는 로그 더 보기",
-    "title": "로그 뷰어",
+    "title": "로그",
     "refresh_button": "로그 새로 고침",
     "clear_button": "로그 지우기",
     "fullscreen_button": "전체 화면",
     "exit_fullscreen_button": "전체 화면 종료",
     "download_button": "로그 다운로드",
     "error_logs_modal_title": "오류 요청 로그",
-    "error_logs_description": "열거나 다운로드할 오류 요청 로그 파일을 선택하세요(요청 로깅이 꺼져 있을 때만 생성됨).",
+    "error_logs_description": "요청 로깅이 꺼져 있을 때만 생성됩니다.",
     "error_logs_request_log_enabled": "요청 로깅이 켜져 있어 새 오류 전용 파일이 생성되지 않습니다. 아래의 기존 파일은 계속 사용할 수 있으며, 새 파일을 수집하려면 요청 로깅을 끄세요.",
     "live_toggle": "실시간",
     "error_logs_empty": "오류 요청 로그 파일이 없습니다",
@@ -1111,7 +1100,7 @@
     "copy_failed": "복사에 실패했습니다"
   },
   "config_management": {
-    "title": "설정 패널",
+    "title": "설정",
     "meta_fields": "설정 {{count}}개",
     "meta_dirty": "저장되지 않음 {{count}}개",
     "meta_dirty_source": "저장되지 않은 소스 수정 사항",
@@ -1335,20 +1324,17 @@
       "sections": {
         "common": {
           "title": "일반",
-          "description": "서버 수신 주소, 아웃바운드 프록시, 클라이언트 API 키와 로깅. 각 설정은 해당 전체 섹션에도 있습니다."
+          "description": "자주 쓰는 설정입니다. 각 설정은 해당 전체 섹션에도 있습니다."
         },
         "connectivity": {
-          "title": "접속 및 인증",
-          "description": "서버 주소, 포트, 인증 디렉터리 및 API 키"
+          "title": "접속 및 인증"
         },
         "logging": {
-          "title": "로깅",
-          "description": "디버그, 로그 출력 및 사용량 통계"
+          "title": "로깅"
         },
         "advanced": {
           "antigravity_credits": "Antigravity 크레딧 사용",
           "title": "고급",
-          "description": "헤더 위장, 서명 캐시, 플러그인 소스 및 거의 변경되지 않는 기타 설정",
           "plugins_title": "플러그인",
           "antigravity_title": "Antigravity",
           "devin_title": "Devin",
@@ -1362,7 +1348,6 @@
         },
         "tls": {
           "title": "TLS/SSL 설정",
-          "description": "HTTPS 보안 연결 설정",
           "enable": "TLS 활성화",
           "enable_desc": "HTTPS 보안 연결 활성화",
           "cert": "인증서 파일 경로",
@@ -1370,11 +1355,9 @@
         },
         "remote": {
           "title": "원격 관리",
-          "description": "원격 액세스 및 제어판 설정",
           "allow_remote": "원격 액세스 허용",
           "allow_remote_desc": "다른 호스트에서의 관리 액세스 허용",
           "disable_panel": "제어판 비활성화",
-          "disable_panel_desc": "내장 웹 제어판 비활성화",
           "disable_auto_update_panel": "패널 자동 업데이트 비활성화",
           "disable_auto_update_panel_desc": "처음 누락되었을 때는 패널을 다운로드하지만 GitHub에서 자동으로 업데이트하지는 않습니다.",
           "secret_key": "관리 키",
@@ -1461,7 +1444,6 @@
         },
         "network": {
           "title": "네트워크",
-          "description": "프록시, 재시도 및 라우팅 설정",
           "proxy_url": "프록시 URL",
           "request_retry": "요청 재시도 횟수",
           "max_retry_credentials": "최대 재시도 자격 증명 수",
@@ -1496,7 +1478,6 @@
         },
         "streaming": {
           "title": "스트리밍",
-          "description": "Keepalive 및 부트스트랩 재시도 설정",
           "keepalive_seconds": "Keepalive 시간(초)",
           "keepalive_hint": "keepalive를 비활성화하려면 0, 음의 정수로 설정하거나 비워 두세요.",
           "bootstrap_retries": "부트스트랩 재시도 횟수",
@@ -1507,7 +1488,6 @@
         },
         "payload": {
           "title": "페이로드",
-          "description": "기본값, 원시 JSON 규칙, 재정의 규칙 및 필터 규칙",
           "default_rules": "기본 규칙",
           "default_rules_desc": "요청에 매개변수가 지정되지 않은 경우 이 기본값을 사용합니다.",
           "default_raw_rules": "기본 Raw 규칙",
@@ -1525,7 +1505,6 @@
         "add": "API 키 추가",
         "generate": "생성",
         "empty": "API 키 없음",
-        "hint": "각 항목은 하나의 API 키를 나타냅니다 ('API 키 관리' 페이지 스타일과 일치).",
         "edit_title": "API 키 편집",
         "add_title": "API 키 추가",
         "input_label": "API 키",
@@ -1627,7 +1606,6 @@
   },
   "quota_management": {
     "not_loaded": "할당량을 아직 불러오지 않음",
-    "empty_hint": "할당량은 필요할 때 불러옵니다. 지금 모두 불러오거나 아래에서 인증 정보를 하나씩 새로고침하세요.",
     "summary_label": "공급자별 할당량",
     "load_all": "모든 할당량 불러오기",
     "summary_coverage": "{{count}}개 중 {{loaded}}개 로드됨",
@@ -1659,7 +1637,7 @@
     "search_empty_desc": "다른 파일명이나 이메일을 입력하거나 검색을 초기화하세요.",
     "search_clear": "검색 초기화",
     "retry": "다시 시도",
-    "title": "할당량 관리",
+    "title": "할당량",
     "description": "Antigravity, Codex, Claude, Kimi 및 xAI 자격 증명의 OAuth 할당량 상태를 모니터링합니다.",
     "refresh_all_credentials": "모든 할당량 새로 고침",
     "sort_label": "정렬",
@@ -1667,7 +1645,6 @@
     "sort_soonest": "가장 빠른 복구순",
     "meta_credentials_one": "자격 증명 {{count}}개",
     "meta_credentials_other": "자격 증명 {{count}}개",
-    "meta_loaded": "{{count}}개 로드됨",
     "meta_attention_one": "{{count}}개 주의 필요",
     "meta_attention": "{{count}}개 주의 필요",
     "empty_title": "할당량 확인 가능한 자격 증명 없음",
@@ -1704,7 +1681,6 @@
   },
   "routing": {
     "title": "라우팅",
-    "summary": "멤버 {{members}} · 계층 {{tiers}}",
     "refresh": "새로고침",
     "refresh_discards": "새로고침하면 저장하지 않은 배치가 사라집니다.",
     "loading": "라우팅을 불러오는 중…",
@@ -1720,7 +1696,7 @@
     "tier_priority": "우선순위 {{priority}}",
     "tier_priority_changed": "우선순위 {{from}} → {{to}}",
     "tier_state_active": "요청 처리 중",
-    "tier_state_standby": "대기: 위의 모든 계층을 사용할 수 없을 때 사용",
+    "tier_state_standby": "대기",
     "tier_state_skipped_model": "이 모델을 제공하지 않아 요청이 이 계층을 건너뜁니다",
     "tier_state_skipped": "사용 가능한 구성원이 없어 요청이 이 계층을 건너뜁니다",
     "tier_state_cooling": "쿨다운 중이거나 사용할 수 없어 요청이 이 계층을 건너뜁니다",
@@ -1756,16 +1732,12 @@
     "weight_apply": "적용",
     "weight_inactive": "현재 전략이 가중 라운드 로빈이 아니어서 가중치가 아직 적용되지 않습니다.",
     "policy_title": "게이트웨이 정책",
-    "policy_subtitle": "모든 계층에 적용됩니다.",
     "strategy_label": "계층 내 분배",
     "strategy_round_robin": "라운드 로빈",
     "strategy_weighted_round_robin": "가중 라운드 로빈",
     "strategy_fill_first": "먼저 채우기",
-    "strategy_round_robin_desc": "계층의 각 자격 증명이 차례로 요청을 받습니다.",
-    "strategy_weighted_round_robin_desc": "계층 안에서 가중치 비율로 요청을 나눕니다.",
-    "strategy_fill_first_desc": "하나의 자격 증명이 사용할 수 없을 때까지 모두 받고, 그다음으로 넘어갑니다.",
     "affinity_label": "세션 고정",
-    "affinity_desc": "같은 세션의 요청은 같은 자격 증명으로 가며, 사용할 수 없으면 자동으로 전환합니다.",
+    "affinity_desc": "자격 증명을 사용할 수 없게 될 때까지 세션을 그 자격 증명에 고정합니다.",
     "retry_label": "장애 조치",
     "request_retry": "재시도 횟수",
     "request_retry_desc": "첫 라운드에서 모든 자격 증명이 실패한 뒤 추가로 시도하는 라운드 수입니다.",
@@ -1800,8 +1772,7 @@
     "duration_hours": "{{count}}시간"
   },
   "plugin_management": {
-    "title": "플러그인 관리",
-    "description": "설치된 플러그인을 켜거나 끄고, 설정을 편집하고, 플러그인이 추가한 페이지를 엽니다.",
+    "title": "플러그인",
     "refresh": "새로 고침",
     "load_failed": "플러그인을 불러오지 못했습니다",
     "config_load_failed": "플러그인 설정을 읽지 못했습니다",
@@ -1832,10 +1803,6 @@
     "status_inactive_hint": "사용 설정되었지만 아직 실행되지 않았습니다. 새로 고치거나 백엔드 로그를 확인하세요.",
     "status_not_loaded_hint": "사용 설정되었지만 백엔드가 이 플러그인을 로드하지 않았습니다. 백엔드를 다시 시작하거나 로그를 확인하세요.",
     "status_paused_hint": "사용 설정되었지만 플러그인 시스템이 꺼져 있습니다(plugins.enabled).",
-    "system_on": "플러그인 시스템 켜짐",
-    "system_off": "플러그인 시스템 꺼짐",
-    "summary_active_one": "플러그인 {{count}}개 중 {{active}}개 실행 중",
-    "summary_active_other": "플러그인 {{count}}개 중 {{active}}개 실행 중",
     "edit_config": "설정 편집",
     "open_repository": "저장소 열기",
     "config_title": "{{name}} 설정",
@@ -1871,7 +1838,6 @@
   },
   "plugin_store": {
     "title": "플러그인 스토어",
-    "description": "플러그인 레지스트리를 탐색하고 현재 백엔드용 플러그인을 설치하거나 업데이트합니다.",
     "description_show_more": "더 보기",
     "description_show_less": "간략히 보기",
     "source_name": "소스: {{source}}",
@@ -1885,7 +1851,6 @@
     "global_enabled": "활성화됨",
     "global_disabled": "비활성화됨",
     "global_disabled_hint": "plugins.enabled가 false이므로 설치된 플러그인이 적용되지 않습니다.",
-    "plugins_dir": "플러그인 디렉터리",
     "stat_available": "사용 가능",
     "search_placeholder": "플러그인 ID, 이름, 작성자 또는 태그 검색...",
     "search_label": "플러그인 스토어 검색",
@@ -1897,10 +1862,7 @@
     "badge_installed": "설치됨",
     "badge_update": "업데이트 가능",
     "badge_effective": "적용 중",
-    "summary_available_one": "사용 가능한 플러그인 {{count}}개",
-    "summary_available_other": "사용 가능한 플러그인 {{count}}개",
     "version_arrow": "v{{from}} → v{{to}}",
-    "install_type": "설치 방식: {{type}}",
     "platforms": "플랫폼: {{platforms}}",
     "auth_required": "인증 필요",
     "auth_configured": "인증 설정됨",
@@ -1954,7 +1916,7 @@
     "no_matches_desc": "현재 검색 또는 필터와 일치하는 플러그인이 없습니다.",
     "clear_filters": "필터 초기화",
     "security_banner_title": "서드파티 플러그인은 전체 백엔드 접근 권한으로 실행됩니다",
-    "security_banner_text": "플러그인은 프록시 서비스 내부에서 코드를 실행하며 사용자의 자격 증명과 트래픽을 읽을 수 있습니다. 신뢰할 수 있는 플러그인만 설치하세요. 공식 router-for-me 조직에서 게시하지 않은 플러그인은 특히 주의해야 합니다.",
+    "security_banner_text": "자격 증명과 트래픽을 읽을 수 있습니다. 신뢰할 수 있는 플러그인만 설치하세요.",
     "badge_untrusted": "서드파티",
     "gate_title": "{{name}} 설치",
     "gate_title_update": "{{name}} 업데이트",
@@ -1981,10 +1943,9 @@
     "empty_src_desc": "이 플러그인 메뉴는 포함 가능한 페이지 URL을 제공하지 않습니다."
   },
   "system_info": {
-    "title": "관리 센터 정보",
+    "title": "정보",
     "about_title": "CLI Proxy API 관리 센터",
     "models_title": "사용 가능한 모델",
-    "models_desc": "/models 응답을 표시하며 저장된 API 키를 사용하여 자동으로 인증합니다.",
     "models_loading": "사용 가능한 모델을 불러오는 중...",
     "models_empty": "/models에서 반환된 모델이 없습니다",
     "models_error": "모델 목록을 불러오지 못했습니다",
@@ -1996,7 +1957,6 @@
     "version_current_missing": "서버 버전을 확인할 수 없어 비교할 수 없습니다",
     "version_unknown": "알 수 없음",
     "quick_links_title": "빠른 링크",
-    "quick_links_desc": "도움말과 업데이트를 확인하려면 프로젝트 저장소 및 문서를 참조하세요.",
     "link_main_repo": "메인 저장소",
     "link_main_repo_desc": "CLI Proxy API 핵심 프로그램 소스 코드",
     "link_webui_repo": "WebUI 저장소",
@@ -2151,9 +2111,7 @@
     },
     "header": {
       "title": "AI 공급자",
-      "activeResources": "활성 리소스 {{active}}/{{total}}개",
-      "providerFamilies": "공급자 제품군 {{count}}개",
-      "updatedAt": "{{time}} 업데이트됨"
+      "activeResources": "활성 리소스 {{active}}/{{total}}개"
     },
     "actions": {
       "refresh": "새로 고침",
@@ -2171,7 +2129,6 @@
       "disable": "비활성화"
     },
     "categories": {
-      "noKeys": "키 없음",
       "title": "공급자",
       "activeCount": "활성 {{active}}/{{total}}"
     },
@@ -2304,9 +2261,6 @@
       "required": "필수",
       "baseUrlDefaultHint": "선택 사항 · 비워 두면 기본 엔드포인트를 사용합니다",
       "optional": "선택 사항",
-      "sheetDescriptionCreate": "{{provider}}의 자격 증명, 연결 설정, 모델을 추가합니다.",
-      "sheetDescriptionEdit": "{{provider}}의 자격 증명, 연결 설정, 모델을 수정합니다.",
-      "sheetDescriptionDetail": "{{provider}}의 구성, 자격 증명 및 최근 요청 상태입니다.",
       "name": "이름",
       "apiKey": "API 키",
       "apiKeyCreatePlaceholder": "API 키를 입력하세요",
@@ -2317,7 +2271,7 @@
       "prefix": "접두사",
       "priority": "우선순위",
       "weight": "스케줄링 가중치",
-      "weightHint": "기본값 1 · ≤ 0인 경우 제외 · 최대 1,000,000",
+      "weightHint": "기본값 1, 최대 1,000,000 · ≤ 0인 경우 제외",
       "routingDefaultsApplied": "기본값 적용",
       "priorityHint": "값이 클수록 먼저 사용",
       "disabled": "이 항목 비활성화",

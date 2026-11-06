@@ -39,12 +39,17 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
+// Sites sit directly on the card (no slab inside a slab); a wash marks hover only.
 .site {
   position: relative;
-  padding: 8px 8px 8px 14px;
-  background: var(--bg-raised);
+  padding: 8px;
+  background: transparent;
   border: 0;
-  border-radius: 10px;
+  border-radius: $radius-md;
+  transition: background-color var(--dur-hover) var(--ease-out-strong);
+}
+.site:hover {
+  background: var(--bg-raised);
 }
 .siteBody {
   display: flex;
@@ -74,7 +79,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 10px;
+  border-radius: $radius-md;
 }
 .siteMain:focus-visible {
   outline: none;
@@ -92,13 +97,6 @@
 .status {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-}
-.statusDot {
-  width: 5px;
-  height: 5px;
-  background: currentColor;
-  border-radius: 50%;
 }
 .site[data-status='success'] .status {
   color: var(--status-success);
@@ -115,7 +113,7 @@
   padding: 0 4px;
   font-size: $text-sm;
   font-weight: 500;
-  color: var(--accent-text);
+  color: var(--text-primary);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -138,12 +136,20 @@
 .trailLabel {
   padding: 4px 10px;
   border-radius: $radius-md;
-  background: var(--bg-active);
+  background: var(--bg-raised);
   color: var(--text-primary);
   font-size: $text-sm;
   line-height: $leading-sm;
   font-weight: 500;
   white-space: nowrap;
+}
+.site:hover .trailLabel {
+  background: var(--bg-active);
+}
+@media (prefers-reduced-motion: reduce) {
+  .site {
+    transition: none;
+  }
 }
 @media (max-width: 850px) {
   .sites {

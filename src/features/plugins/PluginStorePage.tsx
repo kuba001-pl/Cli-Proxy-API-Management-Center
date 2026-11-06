@@ -77,12 +77,6 @@ const formatPluginVersion = (version: string) => {
 };
 const pluginVersionMatches = (left: string, right: string) =>
   normalizePluginVersion(left) === normalizePluginVersion(right);
-const formatInstallType = (installType: string) =>
-  installType
-    .trim()
-    .split('-')
-    .map((part) => (part ? `${part[0].toUpperCase()}${part.slice(1)}` : part))
-    .join(' ');
 const releaseVersionsCache = new Map<string, PluginReleaseVersion[]>();
 
 const formatReleaseDate = (value: string, locale: string) => {
@@ -850,16 +844,11 @@ export function PluginStorePage() {
           : entry.version
             ? `v${entry.version}`
             : '';
-    const sourceName = isDefaultPluginStoreSource(entry)
-      ? t('plugin_store.cli_proxy_api_source')
-      : entry.sourceName;
-    const sourceText = sourceName
-      ? t('plugin_store.source_name', { source: privacyText(privacyEnabled, sourceName) })
-      : '';
+    // Two short meta lines with at most one separator each: who/which version, then
+    // licence and platforms. Source and install type live in the install dialog.
     const metaItems = [
       privacyText(privacyEnabled, versionText),
       privacyText(privacyEnabled, entry.author),
-      privacyText(privacyEnabled, entry.license),
     ].filter(Boolean);
     const isInstalling = installingKey === entryKey;
     const hasPendingInstall = Boolean(installingKey);
@@ -867,7 +856,6 @@ export function PluginStorePage() {
     const isDescriptionExpanded = expandedDescriptionKeySet.has(entryKey);
     const isDescriptionOverflowing = overflowingDescriptionKeySet.has(entryKey);
     const descriptionID = getDescriptionDOMID(entryKey);
-    const installTypeText = entry.installType ? formatInstallType(entry.installType) : '';
     const platformText =
       entry.platforms.length > 0
         ? t('plugin_store.platforms', {
@@ -907,18 +895,9 @@ export function PluginStorePage() {
             {missingAuth ? <span className={styles.badgeWarning}>{authText}</span> : null}
           </div>
         </div>
+        {/* Installed is a fact, not a status to celebrate: plain meta text, no dot. */}
         {entry.installed ? (
-          <p className={styles.cardStatus}>
-            <span
-              className={`${styles.cardStatusDot} ${
-                entry.effectiveEnabled ? styles.cardStatusDotOn : ''
-              }`}
-              aria-hidden="true"
-            />
-            {t('plugin_store.badge_installed')}
-            {entry.effectiveEnabled ? ` · ${t('plugin_management.status_active')}` : null}
-            {entry.authRequired && entry.authConfigured ? ` · ${authText}` : null}
-          </p>
+          <p className={styles.cardStatus}>{t('plugin_store.badge_installed')}</p>
         ) : null}
         {entry.description ? (
           <div className={styles.cardDescBlock}>
@@ -959,13 +938,9 @@ export function PluginStorePage() {
             ))}
           </div>
         ) : null}
-        {installTypeText || platformText || sourceText ? (
+        {entry.license || platformText ? (
           <div className={`${styles.cardMeta} ${styles.cardMetaTechnical}`}>
-            {[
-              installTypeText ? t('plugin_store.install_type', { type: installTypeText }) : '',
-              platformText,
-              sourceText,
-            ]
+            {[privacyText(privacyEnabled, entry.license), platformText]
               .filter(Boolean)
               .map((item, index) => (
                 <span key={`${entryKey}-tech-${index}`} className={styles.metaItem}>
@@ -987,8 +962,10 @@ export function PluginStorePage() {
 
         <div className={styles.cardFooter}>
           <div className={styles.cardActions}>
+            {/* Card actions stay secondary: a grid of primary buttons has no primary. */}
             {!entry.installed ? (
               <Button
+                variant="secondary"
                 size="sm"
                 onClick={() => handleInstall(entry)}
                 disabled={actionDisabled}
@@ -1002,6 +979,7 @@ export function PluginStorePage() {
               <>
                 {entry.updateAvailable ? (
                   <Button
+                    variant="secondary"
                     size="sm"
                     onClick={() => handleInstall(entry)}
                     disabled={actionDisabled}
@@ -1050,39 +1028,11 @@ export function PluginStorePage() {
     );
   };
 
-  // Display-only: the directory reveals the OS username under /home, /Users or C:\Users.
-  const pluginsDirLabel = privacyText(privacyEnabled, data?.pluginsDir || 'plugins');
-
   return (
     <div className={styles.page}>
       {/* ── Page Header ── */}
       <div className={styles.pageHeader}>
         <h1 className={styles.title}>{t('plugin_store.title')}</h1>
-        <p className={styles.description}>{t('plugin_store.description')}</p>
-        {data ? (
-          <p className={styles.summary}>
-            <span className={styles.summaryItem}>
-              <span
-                className={`${styles.statusDot} ${
-                  data.pluginsEnabled ? styles.statusDotOn : styles.statusDotOff
-                }`}
-                aria-hidden="true"
-              />
-              {data.pluginsEnabled
-                ? t('plugin_management.system_on')
-                : t('plugin_management.system_off')}
-            </span>
-            <span className={styles.summaryItem}>
-              {t('plugin_store.summary_available', { count: stats.total })}
-            </span>
-            <span className={styles.summaryItem}>
-              {t('plugin_store.plugins_dir')}
-              <span className={styles.summaryPath} title={pluginsDirLabel}>
-                {pluginsDirLabel}
-              </span>
-            </span>
-          </p>
-        ) : null}
       </div>
 
       {/* ── Security Banner ── */}

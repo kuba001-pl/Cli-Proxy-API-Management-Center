@@ -97,7 +97,7 @@ export function ProviderSheet({
     });
   }, [confirmDiscardIfDirty, onClose]);
 
-  // One task heading ("Add Gemini key"); no eyebrow that repeats the verb.
+  // One task heading ("Add Gemini key"); no eyebrow or subtitle that repeats it.
   const providerName = t(`providersPage.providerNames.${state.brand}`);
   const titleKeySuffix = descriptor.supportsName ? 'TitleNamed' : 'Title';
   const titleText = t(
@@ -244,14 +244,6 @@ export function ProviderSheet({
       onClose={onClose}
       size={descriptor.sheetSize}
       title={titleText}
-      description={t(
-        state.mode === 'detail'
-          ? 'providersPage.form.sheetDescriptionDetail'
-          : state.mode === 'create'
-            ? 'providersPage.form.sheetDescriptionCreate'
-            : 'providersPage.form.sheetDescriptionEdit',
-        { provider: t(`providersPage.providerNames.${state.brand}`) }
-      )}
       footer={footer}
       closeDisabled={submitting}
       confirmClose={confirmDiscardIfDirty}

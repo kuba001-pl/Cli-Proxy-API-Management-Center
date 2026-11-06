@@ -94,10 +94,7 @@ function SiteEntry({
           </button>
           <span className={styles.siteMeta} id={metaId}>
             {site.status && site.statusLabel ? (
-              <span className={styles.status}>
-                <span className={styles.statusDot} aria-hidden="true" />
-                {site.statusLabel}
-              </span>
+              <span className={styles.status}>{site.statusLabel}</span>
             ) : (
               site.domain
             )}

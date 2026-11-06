@@ -29,26 +29,11 @@
 }
 
 .chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0;
-  margin-top: $space-1;
-  // Every chip leads with its separator; the container is shifted left by one separator
-  // width and clips it, so whichever chip starts a line never shows a dangling "·".
-  margin-left: -20px;
-  clip-path: inset(0 0 0 20px);
+  margin: $space-1 0 0;
   color: var(--text-secondary);
   @include numeric;
   font-size: $text-sm;
   line-height: $leading-sm;
-}
-
-.chip::before {
-  content: '·';
-  display: inline-block;
-  width: 20px;
-  text-align: center;
-  color: var(--text-muted);
 }
 
 .btnIcon {

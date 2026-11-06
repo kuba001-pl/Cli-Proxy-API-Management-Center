@@ -416,13 +416,8 @@ export function RoutingPage() {
     <div className={styles.page} ref={revealRef}>
       <header className={styles.header}>
         <div className={styles.headerCopy} data-reveal>
+          {/* No "Members · Tiers" caption: the ladder below shows both at a glance. */}
           <h1 className={styles.title}>{t('routing.title')}</h1>
-          <p className={styles.summary}>
-            {t('routing.summary', {
-              members: board?.members.length ?? 0,
-              tiers: draft?.tiers.length ?? 0,
-            })}
-          </p>
         </div>
         <div className={styles.headerActions}>
           {board && board.members.length > 0 ? (

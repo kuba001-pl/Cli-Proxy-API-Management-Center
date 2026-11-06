@@ -60,7 +60,6 @@ export function PolicyPanel({ settings, disabled = false, onChange, titleId }: P
         <h2 id={headingId} className={styles.policyTitle} tabIndex={-1}>
           {t('routing.policy_title')}
         </h2>
-        <p className={styles.policySubtitle}>{t('routing.policy_subtitle')}</p>
       </div>
 
       <section className={styles.policySection}>
@@ -83,9 +82,6 @@ export function PolicyPanel({ settings, disabled = false, onChange, titleId }: P
             ),
           }))}
         />
-        <p className={styles.policyHint}>
-          {t(`routing.strategy_${strategyKey(settings.strategy)}_desc`)}
-        </p>
       </section>
 
       <section className={styles.policyRow}>

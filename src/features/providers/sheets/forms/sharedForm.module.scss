@@ -249,7 +249,7 @@
   cursor: pointer;
 
   &:focus-visible {
-    outline: 2px solid var(--primary-color);
+    outline: 2px solid var(--focus-ring);
     outline-offset: 3px;
     border-radius: var(--radius-sm);
   }
@@ -337,7 +337,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--primary-color);
+    outline: 2px solid var(--focus-ring);
     outline-offset: -1px;
   }
 }
@@ -494,7 +494,6 @@
 
   &:hover:not(:disabled) {
     background: var(--bg-active);
-    color: var(--primary-color);
   }
 
   &:disabled {
@@ -542,9 +541,10 @@
   word-break: break-word;
 }
 
+// A passed connectivity test is a status, so it takes the success tone, not the accent.
 .connectivityHintSuccess {
   font-size: $text-xs;
-  color: var(--primary-color);
+  color: var(--status-success);
 }
 
 .statusIcon {
@@ -901,9 +901,10 @@
   }
 }
 
+// Selected chip: the shared neutral selection (raised tone plus a strong ring), no accent tint.
 .thinkingLevelOptionSelected {
-  border-color: color-mix(in srgb, var(--primary-color) 50%, var(--border-default));
-  background: color-mix(in srgb, var(--primary-color) 8%, var(--bg-app));
+  border-color: var(--border-strong);
+  background: var(--bg-selected);
 
   .thinkingLevelLabel {
     color: var(--text-primary);
@@ -960,7 +961,7 @@
 
   &:hover {
     background: var(--bg-active);
-    color: var(--primary-color);
+    color: var(--text-primary);
   }
 }
 
@@ -1002,7 +1003,7 @@
 
   &:hover {
     background: var(--bg-active);
-    color: var(--primary-color);
+    color: var(--text-primary);
   }
 }
 

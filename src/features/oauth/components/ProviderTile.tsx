@@ -22,9 +22,9 @@ export interface ProviderTileProps {
 }
 
 /**
- * 提供商磁贴：整块可点（stretched button），点击即开始登录并打开授权对话框。
- * 副行平时说明登录方式，登录进行中改为实时状态 —— 对话框关着也能看到后台进度。
- * 赞助商不走磁贴，见 SponsorCard。
+ * Provider tile: the whole tile is the hit area (stretched button) and opens the sign-in dialog.
+ * The caption line only appears when it says something (a non-default flow, a domain, or the
+ * live sign-in status while the dialog is closed). The sponsor uses SponsorCard instead.
  */
 export function ProviderTile({
   label,
@@ -37,6 +37,8 @@ export function ProviderTile({
   onOpen,
 }: ProviderTileProps) {
   const captionId = useId();
+  const showStatus = Boolean(status && statusLabel);
+  const hasCaption = showStatus || caption.length > 0;
   // 挂载时捕获延迟：之后的重渲染（状态轮询）不重播入场
   const [enterDelay] = useState(
     () => `${Math.min(TILE_BASE_DELAY_MS + index * TILE_STAGGER_MS, TILE_MAX_DELAY_MS)}ms`
@@ -57,20 +59,19 @@ export function ProviderTile({
           className={styles.main}
           onClick={onOpen}
           aria-haspopup="dialog"
-          aria-describedby={captionId}
+          aria-describedby={hasCaption ? captionId : undefined}
         >
           {label}
         </button>
-        <span className={styles.caption} id={captionId}>
-          {status && statusLabel ? (
-            <span className={styles.status}>
-              <span className={styles.statusDot} aria-hidden="true" />
-              {statusLabel}
-            </span>
-          ) : (
-            <span className={styles.captionText}>{caption}</span>
-          )}
-        </span>
+        {hasCaption && (
+          <span className={styles.caption} id={captionId}>
+            {showStatus ? (
+              <span className={styles.status}>{statusLabel}</span>
+            ) : (
+              <span className={styles.captionText}>{caption}</span>
+            )}
+          </span>
+        )}
       </span>
       <span className={styles.trail} aria-hidden="true">
         {actionLabel ? (

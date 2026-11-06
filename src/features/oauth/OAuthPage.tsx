@@ -85,12 +85,12 @@ export function OAuthPage() {
         ? card.label
         : t(card.label.key);
 
+  // Browser sign-in is the default and needs no caption; only a different flow or a
+  // site domain is worth a line under the name.
   const captionOf = (card: OAuthProviderCard) => {
     if (card.kind === 'plugin') return t('auth_login.method_plugin');
-    const method = t(
-      card.flow === 'device' ? 'auth_login.method_device' : 'auth_login.method_browser'
-    );
-    return card.domain ? `${card.domain} · ${method}` : method;
+    const method = card.flow === 'device' ? t('auth_login.method_device') : '';
+    return [card.domain, method].filter(Boolean).join(' · ');
   };
 
   const iconOf = (card: OAuthProviderCard) =>

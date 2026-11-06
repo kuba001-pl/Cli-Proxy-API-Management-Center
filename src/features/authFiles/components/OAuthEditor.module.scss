@@ -93,17 +93,6 @@
   min-width: 0;
 }
 
-// Plain step index on the title's baseline, no frame.
-.stepNumber {
-  flex-shrink: 0;
-  min-width: 20px;
-  color: var(--text-tertiary);
-  @include numeric;
-  font-size: $text-sm;
-  font-weight: 500;
-  line-height: $leading-md;
-}
-
 .headingCopy {
   min-width: 0;
 }

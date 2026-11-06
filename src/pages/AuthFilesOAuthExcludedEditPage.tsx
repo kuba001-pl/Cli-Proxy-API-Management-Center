@@ -356,9 +356,6 @@ export function AuthFilesOAuthExcludedEditPage() {
       {/* One page title (the task), aligned to the content edge like every other page. */}
       <header className={styles.intro}>
         <h1 className={styles.introTitle}>{title}</h1>
-        {!excludedUnsupported && initialLoadError === null && (
-          <p className={styles.description}>{t('oauth_excluded.editor_description')}</p>
-        )}
       </header>
       {excludedUnsupported ? (
         <Card>
@@ -394,14 +391,10 @@ export function AuthFilesOAuthExcludedEditPage() {
           <Card className={styles.settingsCard}>
             <div className={styles.editorHeader}>
               <div className={styles.sectionHeading}>
-                <span className={styles.stepNumber} aria-hidden="true">
-                  02
-                </span>
                 <div className={styles.headingCopy}>
                   <h2 className={styles.sectionTitle} id="oauth-excluded-models-label">
                     {t('oauth_excluded.models_label')}
                   </h2>
-                  <p className={styles.description}>{t('oauth_excluded.models_hint')}</p>
                 </div>
               </div>
               {resolvedProviderKey && (

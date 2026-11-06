@@ -30,15 +30,12 @@ export function OAuthEditorProviderCard({
     <Card className={styles.settingsCard}>
       <div className={styles.providerSection}>
         <div className={styles.providerRow}>
+          {/* No "01" step badge or how-to line: the label and placeholder say enough. */}
           <div className={styles.sectionHeading}>
-            <span className={styles.stepNumber} aria-hidden="true">
-              01
-            </span>
             <div className={styles.headingCopy}>
               <label className={styles.sectionTitle} htmlFor={id}>
                 {t(`${translationPrefix}.provider_label`)}
               </label>
-              <p className={styles.description}>{t(`${translationPrefix}.provider_hint`)}</p>
             </div>
           </div>
           <AutocompleteInput

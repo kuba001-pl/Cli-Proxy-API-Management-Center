@@ -20,13 +20,12 @@ export type VaultHeaderProps = {
 };
 
 /**
- * 凭证库头部：eyebrow（▍游标前缀）+ 标题 + mono 遥测 meta 行 + 动作区。
- * meta 行以 mono 文本承载凭证库遥测信息。
+ * Vault header: title, one meaningful caption (credentials needing attention, only when
+ * there are any) and actions. Totals already live in the provider tabs and sidebar badge.
+ * `totalCount` / `activeCount` stay in the props for upstream compatibility.
  */
 export function VaultHeader(props: VaultHeaderProps) {
   const {
-    totalCount,
-    activeCount,
     problemCount,
     loading,
     refreshing,
@@ -47,27 +46,13 @@ export function VaultHeader(props: VaultHeaderProps) {
         <h1 className={styles.title} data-reveal>
           {t('auth_files.title')}
         </h1>
-        <p className={styles.meta} data-reveal>
-          <span className={styles.metaTotal}>
-            {t('auth_files.meta_total', { count: totalCount })}
-          </span>
-          <span className={styles.metaDot} aria-hidden="true">
-            ·
-          </span>
-          <span className={activeCount > 0 ? styles.metaActive : styles.metaMuted}>
-            {t('auth_files.meta_active', { count: activeCount })}
-          </span>
-          {problemCount > 0 && (
-            <>
-              <span className={styles.metaDot} aria-hidden="true">
-                ·
-              </span>
-              <span className={styles.metaProblem}>
-                {t('auth_files.meta_problem', { count: problemCount })}
-              </span>
-            </>
-          )}
-        </p>
+        {problemCount > 0 && (
+          <p className={styles.meta} data-reveal>
+            <span className={styles.metaProblem}>
+              {t('auth_files.meta_problem', { count: problemCount })}
+            </span>
+          </p>
+        )}
       </div>
       <div className={styles.actions} data-reveal>
         {onRefreshCredentials && (

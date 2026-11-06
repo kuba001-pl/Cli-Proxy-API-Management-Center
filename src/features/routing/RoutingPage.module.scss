@@ -47,12 +47,6 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   min-width: 0;
 }
 
-.summary {
-  @include text-secondary;
-  @include numeric;
-  margin: 0;
-}
-
 .headerActions {
   display: flex;
   align-items: center;
@@ -150,8 +144,9 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   border-radius: 50%;
 }
 
+// A diagram node on the rail, not a status: neutral, like the rest of the ladder.
 .entryDot {
-  background: var(--status-success);
+  background: var(--icon-active);
 }
 
 .exhaustedDot {
@@ -334,15 +329,6 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   line-height: $leading-sm;
   color: var(--text-secondary);
 
-  &::before {
-    content: '';
-    flex-shrink: 0;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-  }
-
   @include mobile {
     flex-basis: 100%;
     margin-left: $index-size + 10px;
@@ -360,16 +346,12 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
     background: var(--bg-active);
     color: var(--text-primary);
   }
-
-  .tierState {
-    color: var(--status-success);
-    font-weight: 500;
-  }
 }
 
-.tierStandby .tierState::before {
-  background: transparent;
-  box-shadow: inset 0 0 0 1.25px currentColor;
+/* Serving and standby are the normal cases: plain text, no dot, no colour. Only a tier that
+   is cooling down (requests skip it) takes the warning tone. */
+.tierStandby .tierState {
+  color: var(--text-tertiary);
 }
 
 .tierCooling .tierState {
@@ -392,10 +374,6 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 
   .tierName {
     color: var(--text-secondary);
-  }
-
-  .tierState::before {
-    background: var(--text-muted);
   }
 }
 
@@ -435,7 +413,6 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   }
 }
 
-.policySubtitle,
 .policyHint {
   @include text-secondary;
   margin: 0;

@@ -56,13 +56,30 @@ describe('phase 2 page copy is translated everywhere', () => {
     'plugin_management.status_inactive_hint',
     'plugin_management.status_not_loaded_hint',
     'plugin_management.status_paused_hint',
-    'plugin_management.system_on',
-    'plugin_management.system_off',
-    'plugin_management.summary_active_other',
-    'plugin_store.summary_available_other',
+    'plugin_management.plugins_dir',
     'plugin_store.retry',
     'routing.policy_title',
   ];
+
+  // De-slop: the Plugins / Plugin Store headers no longer chain system state and counts.
+  const removed = [
+    'plugin_management.description',
+    'plugin_management.system_on',
+    'plugin_management.summary_active_other',
+    'plugin_store.description',
+    'plugin_store.summary_available_other',
+    'routing.summary',
+    'routing.policy_subtitle',
+  ];
+
+  for (const locale of LOCALES) {
+    test(`${locale} drops the narrating header copy`, () => {
+      const json = JSON.parse(read(`src/i18n/locales/${locale}.json`)) as Record<string, unknown>;
+      for (const key of removed) {
+        expect(lookup(json, key)).toBeUndefined();
+      }
+    });
+  }
 
   for (const locale of LOCALES) {
     test(`${locale} has every key`, () => {

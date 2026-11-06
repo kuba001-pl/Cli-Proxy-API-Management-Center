@@ -69,7 +69,6 @@
     "connection_current": "URL hiện tại",
     "connection_edit": "Thay đổi",
     "connection_done": "Xong",
-    "connection_auto_hint": "Hệ thống sẽ tự động dùng URL hiện tại để kết nối",
     "custom_connection_label": "URL kết nối tùy chỉnh",
     "custom_connection_placeholder": "Ví dụ: https://example.com:8317",
     "custom_connection_hint": "Mặc định dùng URL hiện tại. Ghi đè tại đây nếu cần.",
@@ -111,12 +110,12 @@
     "auth_files": "File xác thực",
     "oauth": "Đăng nhập OAuth",
     "routing": "Định tuyến",
-    "quota_management": "Quản lý Quota",
+    "quota_management": "Quota",
     "plugins": "Plugin",
     "plugin_store": "Cửa hàng Plugin",
-    "config_management": "Bảng cấu hình",
-    "logs": "Trình xem Log",
-    "system_info": "Thông tin Trung tâm Quản lý"
+    "config_management": "Cấu hình",
+    "logs": "Log",
+    "system_info": "Giới thiệu"
   },
   "nav_groups": {
     "operate": "Vận hành",
@@ -148,7 +147,7 @@
     "hero_period": ".",
     "hero_requests_label": "Yêu cầu đã xử lý",
     "hero_live": "Trực tiếp",
-    "hero_window_meta": "{{window}} vừa qua · bucket 10 phút",
+    "hero_window_meta": "{{window}} vừa qua",
     "hero_spark_label": "Lưu lượng yêu cầu trong {{window}} vừa qua",
     "cta_manage_providers": "Quản lý provider",
     "cta_inspect_logs": "Kiểm tra log",
@@ -168,17 +167,16 @@
     "stat_models": "Model",
     "stat_models_hint": "Phục vụ qua proxy",
     "traffic_title": "Thông lượng",
-    "traffic_description": "Số yêu cầu mỗi 10 phút trong {{window}} vừa qua. Di chuột lên biểu đồ, dùng phím mũi tên hoặc mở bảng dữ liệu để xem số chính xác.",
+    "traffic_description": "Số yêu cầu mỗi 10 phút trong {{window}} vừa qua",
+    "traffic_keyboard_hint": "Dùng phím mũi tên để chuyển giữa các khoảng thời gian, hoặc mở bảng dữ liệu để xem số chính xác.",
     "traffic_buckets_aria": "Yêu cầu theo từng bucket 10 phút",
     "more_label": "Provider, thông tin xác thực và cấu hình",
-    "more_hint": "Lưu lượng theo provider, trạng thái thông tin xác thực, cấu hình và lối tắt",
     "traffic_table": "Bảng dữ liệu",
     "traffic_table_window": "Cửa sổ",
     "traffic_chart_summary": "{{total}} yêu cầu trong {{minutes}} phút vừa qua: {{success}} thành công, {{failed}} thất bại.",
     "traffic_unavailable": "Chưa có lưu lượng nào được ghi nhận",
     "traffic_unavailable_hint": "Bộ đếm sẽ xuất hiện khi proxy phục vụ yêu cầu đầu tiên.",
     "fleet_title": "Lưu lượng theo provider",
-    "fleet_description": "Lưu lượng và tỷ lệ thành công của từng provider trong cùng cửa sổ.",
     "fleet_empty": "Chưa có lưu lượng provider nào được ghi nhận.",
     "fleet_credentials": "Credential: {{value}}",
     "fleet_spark_label": "Lưu lượng yêu cầu của {{provider}}",
@@ -233,9 +231,7 @@
     "plan_column": "Gói",
     "recent_requests_column": "Yêu cầu gần đây",
     "lowest_quota_column": "Hạn mức thấp nhất",
-    "title": "Quản lý File xác thực",
-    "meta_total": "{{count}} credential",
-    "meta_active": "{{count}} đang bật",
+    "title": "File xác thực",
     "meta_problem_one": "{{count}} cần xử lý",
     "meta_problem_other": "{{count}} cần xử lý",
     "empty_title": "Chưa có credential nào",
@@ -289,7 +285,7 @@
     "pagination_next": "Sau",
     "pagination_info": "Trang {{current}} / {{total}} · {{count}} file",
     "search_label": "Tìm kiếm cấu hình",
-    "search_placeholder": "Lọc theo tên, tài khoản, loại hoặc provider. Dùng * làm ký tự đại diện",
+    "search_placeholder": "Lọc theo tên, tài khoản, provider hoặc lỗi (* là ký tự đại diện)",
     "problem_filter_label": "Lọc trạng thái",
     "problem_filter_all": "Tất cả",
     "problem_filter_enabled": "Đang bật",
@@ -359,7 +355,7 @@
     "proxy_url_placeholder": "socks5://username:password@proxy_ip:port/",
     "priority_label": "Ưu tiên (priority)",
     "priority_placeholder": "ví dụ 10 hoặc -1",
-    "priority_hint": "Chỉ nhận số nguyên. Giá trị không hợp lệ sẽ bị bỏ qua. Giá trị lớn hơn nghĩa là ưu tiên cao hơn.",
+    "priority_hint": "Chỉ nhận số nguyên; giá trị lớn hơn được dùng trước.",
     "weight_label": "Trọng số điều phối (weight)",
     "weight_hint": "Mặc định là 1. Giá trị ≤ 0 sẽ loại credential này khỏi điều phối có trọng số; tối đa 1.000.000.",
     "weight_invalid_integer": "Trọng số phải là số nguyên.",
@@ -679,7 +675,6 @@
     "edit_title": "Chỉnh sửa vô hiệu hóa model cho {{provider}}",
     "provider_label": "Provider",
     "provider_placeholder": "ví dụ codex / openai",
-    "provider_hint": "Mặc định theo bộ lọc hiện tại; chọn provider có sẵn hoặc nhập tên mới.",
     "models_label": "Model cần vô hiệu hóa",
     "save": "Lưu/Cập nhật",
     "save_success": "Đã cập nhật vô hiệu hóa model",
@@ -697,9 +692,7 @@
     "provider_required": "Vui lòng nhập provider trước",
     "upgrade_required": "Phiên bản CPA hiện tại không hỗ trợ vô hiệu hóa model OAuth. Vui lòng nâng cấp.",
     "upgrade_required_title": "Vui lòng nâng cấp CLI Proxy API",
-    "upgrade_required_desc": "Phiên bản máy chủ hiện tại không hỗ trợ lấy danh sách vô hiệu hóa model OAuth. Vui lòng nâng cấp lên phiên bản CPA (CLI Proxy API) mới nhất và thử lại.",
-    "editor_description": "Chọn các model mà provider hiển thị bằng cách chọn riêng lẻ hoặc dùng quy tắc ký tự đại diện (wildcard).",
-    "models_hint": "Mở rộng danh sách để chọn model hoặc nhập quy tắc ký tự đại diện bên dưới."
+    "upgrade_required_desc": "Phiên bản máy chủ hiện tại không hỗ trợ lấy danh sách vô hiệu hóa model OAuth. Vui lòng nâng cấp lên phiên bản CPA (CLI Proxy API) mới nhất và thử lại."
   },
   "excluded_models": {
     "trigger_summary": "{{excluded}} bị loại trừ · {{available}} khả dụng",
@@ -797,9 +790,7 @@
     "upgrade_required": "Tính năng này yêu cầu phiên bản CLI Proxy API (CPA) mới hơn. Vui lòng nâng cấp.",
     "upgrade_required_title": "Vui lòng nâng cấp CLI Proxy API",
     "upgrade_required_desc": "Máy chủ hiện tại không hỗ trợ API bí danh model OAuth. Vui lòng nâng cấp lên phiên bản CLI Proxy API (CPA) mới nhất.",
-    "editor_description": "Đặt tên gọi nhất quán cho các model của provider để sử dụng trong client của bạn.",
     "edit_title": "Chỉnh sửa bí danh model cho {{provider}}",
-    "mapping_hint": "Chọn model gốc, sau đó nhập bí danh mà client của bạn sẽ dùng.",
     "mapping_row": "Ánh xạ bí danh {{number}}",
     "remove_mapping": "Xóa ánh xạ bí danh {{number}}"
   },
@@ -913,7 +904,6 @@
     "tile_waiting": "Đang chờ xác thực",
     "tile_success": "Đã thêm credential",
     "tile_error": "Xác thực thất bại",
-    "meta_providers": "{{count}} provider",
     "meta_waiting": "{{count}} đang chờ xác thực",
     "meta_added": "Đã thêm {{count}} trong phiên này",
     "step_open_auth_page": "Mở trang đăng nhập và cấp quyền",
@@ -975,17 +965,16 @@
     "no_requests": "Không có yêu cầu"
   },
   "logs": {
-    "caption": "Luồng trực tiếp · nhật ký ứng dụng và yêu cầu",
     "error_logs_file": "Tệp",
     "error_logs_actions": "Thao tác với tệp",
-    "title": "Trình xem Log",
+    "title": "Log",
     "refresh_button": "Làm mới Log",
     "clear_button": "Xóa Log",
     "fullscreen_button": "Toàn màn hình",
     "exit_fullscreen_button": "Thoát toàn màn hình",
     "download_button": "Tải Log xuống",
     "error_logs_modal_title": "Log yêu cầu lỗi",
-    "error_logs_description": "Chọn file log yêu cầu lỗi để mở hoặc tải xuống (chỉ được tạo khi tính năng ghi log yêu cầu đang tắt).",
+    "error_logs_description": "Chỉ được tạo khi tính năng ghi log yêu cầu đang tắt.",
     "error_logs_request_log_enabled": "Ghi log yêu cầu đang bật nên sẽ không tạo tệp chỉ chứa lỗi mới. Các tệp hiện có bên dưới vẫn dùng được; hãy tắt ghi log yêu cầu để thu thập tệp mới.",
     "live_toggle": "Trực tiếp",
     "error_logs_empty": "Không tìm thấy file log yêu cầu lỗi nào",
@@ -1067,7 +1056,7 @@
     "wrap_lines": "Tự động xuống dòng dài"
   },
   "config_management": {
-    "title": "Bảng cấu hình",
+    "title": "Cấu hình",
     "meta_fields": "{{count}} cài đặt",
     "meta_dirty": "{{count}} chưa lưu",
     "meta_dirty_source": "Chỉnh sửa nguồn chưa lưu",
@@ -1127,20 +1116,17 @@
       "sections": {
         "common": {
           "title": "Chung",
-          "description": "Địa chỉ máy chủ lắng nghe, proxy đi ra, API key của client và ghi log. Mỗi cài đặt cũng có trong mục đầy đủ của nó."
+          "description": "Các cài đặt thường dùng; mỗi cài đặt cũng có trong mục đầy đủ của nó."
         },
         "connectivity": {
-          "title": "Truy cập & Xác thực",
-          "description": "Địa chỉ máy chủ, cổng, thư mục xác thực và API key"
+          "title": "Truy cập & Xác thực"
         },
         "logging": {
-          "title": "Nhật ký",
-          "description": "Debug, xuất log và thống kê sử dụng"
+          "title": "Nhật ký"
         },
         "advanced": {
           "antigravity_credits": "Dùng credit Antigravity",
           "title": "Nâng cao",
-          "description": "Giả mạo header, cache chữ ký, nguồn plugin và các cài đặt ít thay đổi khác",
           "plugins_title": "Plugin",
           "signature_title": "Chữ ký Antigravity",
           "antigravity_title": "Antigravity",
@@ -1154,7 +1140,6 @@
         },
         "tls": {
           "title": "Cấu hình TLS/SSL",
-          "description": "Cài đặt kết nối HTTPS bảo mật",
           "enable": "Bật TLS",
           "enable_desc": "Bật kết nối HTTPS bảo mật",
           "cert": "Đường dẫn file chứng chỉ",
@@ -1162,11 +1147,9 @@
         },
         "remote": {
           "title": "Quản lý từ xa",
-          "description": "Truy cập từ xa và cài đặt bảng điều khiển",
           "allow_remote": "Cho phép truy cập từ xa",
           "allow_remote_desc": "Cho phép truy cập quản lý từ máy chủ khác",
           "disable_panel": "Tắt bảng điều khiển",
-          "disable_panel_desc": "Tắt bảng điều khiển web tích hợp",
           "disable_auto_update_panel": "Tắt tự động cập nhật bảng điều khiển",
           "disable_auto_update_panel_desc": "Tải bảng điều khiển khi thiếu lần đầu, nhưng không bao giờ tự cập nhật từ GitHub",
           "secret_key": "Key quản lý",
@@ -1253,7 +1236,6 @@
         },
         "network": {
           "title": "Mạng",
-          "description": "Cài đặt proxy, thử lại và định tuyến",
           "proxy_url": "URL Proxy",
           "request_retry": "Số lần thử lại yêu cầu",
           "max_retry_credentials": "Số credential thử lại tối đa",
@@ -1288,7 +1270,6 @@
         },
         "streaming": {
           "title": "Streaming",
-          "description": "Cài đặt keepalive và thử lại bootstrap",
           "keepalive_seconds": "Số giây Keepalive",
           "keepalive_hint": "Đặt 0 hoặc để trống để tắt keepalive",
           "bootstrap_retries": "Số lần thử Bootstrap",
@@ -1299,7 +1280,6 @@
         },
         "payload": {
           "title": "Payload",
-          "description": "Giá trị mặc định, quy tắc JSON thô, quy tắc ghi đè và quy tắc lọc",
           "default_rules": "Quy tắc mặc định",
           "default_rules_desc": "Dùng các giá trị mặc định này khi tham số không được chỉ định trong yêu cầu",
           "default_raw_rules": "Quy tắc thô mặc định",
@@ -1317,7 +1297,6 @@
         "add": "Thêm API Key",
         "generate": "Tạo",
         "empty": "Chưa có API key",
-        "hint": "Mỗi mục là một API key (nhất quán với phong cách trang 'Quản lý API Key')",
         "edit_title": "Chỉnh sửa API Key",
         "add_title": "Thêm API Key",
         "input_label": "API Key",
@@ -1583,7 +1562,6 @@
   },
   "quota_management": {
     "not_loaded": "Chưa tải hạn mức",
-    "empty_hint": "Hạn mức được tải khi cần. Tải tất cả ngay, hoặc làm mới từng thông tin xác thực bên dưới.",
     "summary_label": "Hạn mức theo nhà cung cấp",
     "load_all": "Tải tất cả hạn mức",
     "summary_coverage": "Đã tải {{loaded}}/{{count}}",
@@ -1609,7 +1587,7 @@
     "upcoming_empty": "Không có lần đặt lại sắp tới cho cửa sổ này.",
     "upcoming_show_all": "Hiển thị tất cả {{count}} lần đặt lại",
     "upcoming_show_less": "Thu gọn danh sách đặt lại",
-    "title": "Quản lý Quota",
+    "title": "Quota",
     "description": "Theo dõi trạng thái quota OAuth của credential Antigravity, Codex, Claude, Kimi và xAI.",
     "refresh_all_credentials": "Làm mới mọi hạn mức",
     "sort_label": "Sắp xếp",
@@ -1617,7 +1595,6 @@
     "sort_soonest": "Sớm khôi phục nhất",
     "meta_credentials_one": "{{count}} thông tin xác thực",
     "meta_credentials_other": "{{count}} thông tin xác thực",
-    "meta_loaded": "{{count}} đã tải",
     "meta_attention_one": "{{count}} cần chú ý",
     "meta_attention": "{{count}} cần chú ý",
     "empty_title": "Không có credential hỗ trợ quota",
@@ -1660,7 +1637,6 @@
   },
   "routing": {
     "title": "Định tuyến",
-    "summary": "Thành viên {{members}} · Tầng {{tiers}}",
     "refresh": "Làm mới",
     "refresh_discards": "Làm mới sẽ bỏ cách sắp xếp chưa lưu.",
     "loading": "Đang tải định tuyến…",
@@ -1676,7 +1652,7 @@
     "tier_priority": "Độ ưu tiên {{priority}}",
     "tier_priority_changed": "Độ ưu tiên {{from}} → {{to}}",
     "tier_state_active": "Đang phục vụ yêu cầu",
-    "tier_state_standby": "Chờ, dùng khi mọi tầng phía trên không khả dụng",
+    "tier_state_standby": "Chờ",
     "tier_state_skipped_model": "Không cung cấp mô hình này; yêu cầu bỏ qua tầng này",
     "tier_state_skipped": "Không có thành viên khả dụng; yêu cầu bỏ qua tầng này",
     "tier_state_cooling": "Đang hạ nhiệt hoặc không khả dụng; yêu cầu bỏ qua tầng này",
@@ -1712,16 +1688,12 @@
     "weight_apply": "Áp dụng",
     "weight_inactive": "Chiến lược hiện tại không phải xoay vòng có trọng số nên trọng số chưa có hiệu lực.",
     "policy_title": "Chính sách cổng",
-    "policy_subtitle": "Áp dụng cho mọi tầng.",
     "strategy_label": "Trong một tầng",
     "strategy_round_robin": "Xoay vòng",
     "strategy_weighted_round_robin": "Xoay vòng có trọng số",
     "strategy_fill_first": "Lấp đầy trước",
-    "strategy_round_robin_desc": "Mỗi thông tin xác thực trong tầng lần lượt nhận yêu cầu.",
-    "strategy_weighted_round_robin_desc": "Yêu cầu được chia trong tầng theo trọng số.",
-    "strategy_fill_first_desc": "Một thông tin xác thực nhận hết cho đến khi không khả dụng, rồi đến cái tiếp theo.",
     "affinity_label": "Gắn phiên",
-    "affinity_desc": "Yêu cầu của cùng một phiên đi tới cùng một thông tin xác thực, tự chuyển khi nó không khả dụng.",
+    "affinity_desc": "Giữ một phiên trên cùng một thông tin xác thực cho đến khi nó không khả dụng.",
     "retry_label": "Chuyển đổi dự phòng",
     "request_retry": "Số vòng thử lại",
     "request_retry_desc": "Số vòng thêm sau khi mọi thông tin xác thực thất bại ở vòng đầu.",
@@ -1756,8 +1728,7 @@
     "duration_hours": "{{count}} giờ"
   },
   "plugin_management": {
-    "title": "Quản lý Plugin",
-    "description": "Bật hoặc tắt plugin đã cài, chỉnh cài đặt và mở các trang mà plugin cung cấp.",
+    "title": "Plugin",
     "refresh": "Làm mới",
     "load_failed": "Không thể tải plugin",
     "config_load_failed": "Không thể đọc cấu hình plugin",
@@ -1788,10 +1759,6 @@
     "status_inactive_hint": "Đã bật nhưng chưa chạy. Hãy làm mới hoặc kiểm tra nhật ký backend.",
     "status_not_loaded_hint": "Đã bật nhưng backend chưa tải plugin này. Hãy khởi động lại backend hoặc kiểm tra nhật ký.",
     "status_paused_hint": "Đã bật nhưng hệ thống plugin đang tắt (plugins.enabled).",
-    "system_on": "Hệ thống plugin đang bật",
-    "system_off": "Hệ thống plugin đang tắt",
-    "summary_active_one": "{{active}}/{{count}} plugin đang chạy",
-    "summary_active_other": "{{active}}/{{count}} plugin đang chạy",
     "edit_config": "Chỉnh sửa cấu hình",
     "open_repository": "Mở repository",
     "config_title": "Cấu hình {{name}}",
@@ -1827,7 +1794,6 @@
   },
   "plugin_store": {
     "title": "Cửa hàng Plugin",
-    "description": "Duyệt registry plugin, sau đó cài đặt hoặc cập nhật plugin cho backend hiện tại.",
     "description_show_more": "Hiện thêm",
     "description_show_less": "Ẩn bớt",
     "source_name": "Nguồn: {{source}}",
@@ -1841,7 +1807,6 @@
     "global_enabled": "Đang bật",
     "global_disabled": "Đã tắt",
     "global_disabled_hint": "plugins.enabled đang là false nên plugin đã cài sẽ không có hiệu lực.",
-    "plugins_dir": "Thư mục plugin",
     "stat_available": "Khả dụng",
     "search_placeholder": "Tìm ID, tên, tác giả hoặc tag plugin...",
     "search_label": "Tìm cửa hàng plugin",
@@ -1853,10 +1818,7 @@
     "badge_installed": "Đã cài",
     "badge_update": "Có bản cập nhật",
     "badge_effective": "Có hiệu lực",
-    "summary_available_one": "{{count}} plugin khả dụng",
-    "summary_available_other": "{{count}} plugin khả dụng",
     "version_arrow": "v{{from}} → v{{to}}",
-    "install_type": "Cài đặt: {{type}}",
     "platforms": "Nền tảng: {{platforms}}",
     "auth_required": "Cần xác thực",
     "auth_configured": "Đã cấu hình xác thực",
@@ -1910,7 +1872,7 @@
     "no_matches_desc": "Không có plugin nào khớp tìm kiếm hoặc bộ lọc hiện tại.",
     "clear_filters": "Xóa bộ lọc",
     "security_banner_title": "Plugin bên thứ ba chạy với toàn quyền truy cập backend",
-    "security_banner_text": "Plugin thực thi mã bên trong dịch vụ proxy và có thể đọc credential cũng như lưu lượng của bạn. Chỉ cài plugin bạn tin tưởng — đặc biệt cẩn thận với plugin không do tổ chức chính thức router-for-me phát hành.",
+    "security_banner_text": "Chúng có thể đọc credential và lưu lượng của bạn. Chỉ cài plugin bạn tin tưởng.",
     "badge_untrusted": "Bên thứ ba",
     "gate_title": "Cài đặt {{name}}",
     "gate_title_update": "Cập nhật {{name}}",
@@ -1937,10 +1899,9 @@
     "empty_src_desc": "Menu plugin này không cung cấp URL trang nhúng được."
   },
   "system_info": {
-    "title": "Thông tin Trung tâm Quản lý",
+    "title": "Giới thiệu",
     "about_title": "Trung tâm Quản lý CLI Proxy API",
     "models_title": "Model khả dụng",
-    "models_desc": "Hiển thị phản hồi /models và tự động dùng API key đã lưu để xác thực.",
     "models_loading": "Đang tải model khả dụng...",
     "models_empty": "/models không trả về model nào",
     "models_error": "Không thể tải danh sách model",
@@ -1952,7 +1913,6 @@
     "version_current_missing": "Không có phiên bản máy chủ; không thể so sánh",
     "version_unknown": "Không rõ",
     "quick_links_title": "Liên kết nhanh",
-    "quick_links_desc": "Truy cập repository dự án và tài liệu để được trợ giúp và cập nhật.",
     "link_main_repo": "Repository chính",
     "link_main_repo_desc": "Mã nguồn chương trình lõi CLI Proxy API",
     "link_webui_repo": "Repository WebUI",
@@ -2023,9 +1983,7 @@
   "providersPage": {
     "header": {
       "title": "AI Provider",
-      "activeResources": "{{active}}/{{total}} tài nguyên đang hoạt động",
-      "providerFamilies": "{{count}} nhóm provider",
-      "updatedAt": "Cập nhật {{time}}"
+      "activeResources": "{{active}}/{{total}} tài nguyên đang hoạt động"
     },
     "actions": {
       "refresh": "Làm mới",
@@ -2043,7 +2001,6 @@
       "disable": "Tắt"
     },
     "categories": {
-      "noKeys": "Chưa có khóa",
       "title": "Provider",
       "activeCount": "{{active}}/{{total}} đang hoạt động"
     },
@@ -2180,9 +2137,6 @@
       "required": "Bắt buộc",
       "baseUrlDefaultHint": "Tùy chọn · để trống để dùng endpoint mặc định",
       "optional": "Tùy chọn",
-      "sheetDescriptionCreate": "Thêm thông tin xác thực, cài đặt kết nối và mô hình cho {{provider}}.",
-      "sheetDescriptionEdit": "Cập nhật thông tin xác thực, cài đặt kết nối và mô hình cho {{provider}}.",
-      "sheetDescriptionDetail": "Cấu hình, thông tin xác thực và tình trạng yêu cầu gần đây của {{provider}}.",
       "name": "Tên",
       "apiKey": "API key",
       "apiKeyCreatePlaceholder": "Nhập API key",
@@ -2193,7 +2147,7 @@
       "prefix": "Tiền tố",
       "priority": "Ưu tiên",
       "weight": "Trọng số điều phối",
-      "weightHint": "Mặc định 1 · ≤ 0 bị loại trừ · tối đa 1.000.000",
+      "weightHint": "Mặc định 1, tối đa 1.000.000 · ≤ 0 bị loại trừ",
       "routingDefaultsApplied": "Đang dùng mặc định",
       "priorityHint": "giá trị lớn hơn được dùng trước",
       "disabled": "Tắt mục này",
