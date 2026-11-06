@@ -6,6 +6,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { SelectionCheckbox } from '@/components/ui/SelectionCheckbox';
 import { ToggleSwitch } from '@/components/ui/ToggleSwitch';
 import {
+  IconAlertTriangle,
   IconChevronDown,
   IconDownload,
   IconInfo,
@@ -24,6 +25,7 @@ import {
   hasAuthFileStatusWarning,
   getAuthFileIcon,
   getTypeLabel,
+  isProblemAuthFile,
   isRuntimeOnlyAuthFile,
   normalizeProviderKey,
   supportsAuthFileManualRefresh,
@@ -120,6 +122,8 @@ export function AuthFileCard(props: AuthFileCardProps) {
   const identities = authFilePrivacyIdentities(file);
   const rawStatusMessage = privacyText(privacy, getAuthFileStatusMessage(file), identities);
   const hasStatusWarning = hasAuthFileStatusWarning(file);
+  // Same rule as the header's "N problem" count and the Problem filter.
+  const isProblem = isProblemAuthFile(file);
 
   const priorityValue = Number.isSafeInteger(file.priority) ? file.priority : undefined;
   const weightValue = Number.isSafeInteger(file.weight) ? file.weight : undefined;
@@ -192,6 +196,12 @@ export function AuthFileCard(props: AuthFileCardProps) {
             {isRuntimeOnly && (
               <span className={styles.runtimeLabel}>{t('auth_files.type_virtual')}</span>
             )}
+            {isProblem && (
+              <span className={styles.problemLabel} title={rawStatusMessage || undefined}>
+                <IconAlertTriangle size={12} aria-hidden="true" />
+                {t('auth_files.problem_label')}
+              </span>
+            )}
           </div>
         </div>
         <div className={styles.plan}>
@@ -205,7 +215,16 @@ export function AuthFileCard(props: AuthFileCardProps) {
         <div className={styles.health}>
           <ProviderStatusBar statusData={statusData} styles={styles} />
           <span className={styles.healthCounts}>
-            {t('stats.success')} {successCount} · {t('stats.failure')} {failureCount}
+            <span>
+              {t('stats.success')} {successCount}
+            </span>
+            <span>
+              {t('stats.failure')}{' '}
+              {/* Only the number takes the danger tone, so a column of rows stays calm. */}
+              <span className={failureCount > 0 ? styles.failureCount : undefined}>
+                {failureCount}
+              </span>
+            </span>
           </span>
         </div>
         <div className={styles.lowest}>
@@ -246,13 +265,13 @@ export function AuthFileCard(props: AuthFileCardProps) {
         </div>
         <button
           type="button"
-          className={styles.expand}
+          className={`${styles.expand} ${styles.more}`}
           aria-label={`${t(expanded ? 'common.collapse' : 'common.expand')} ${identity.primary}`}
           aria-expanded={expanded}
           aria-controls={detailsId}
           onClick={() => setExpanded((value) => !value)}
         >
-          ···
+          <span aria-hidden="true">···</span>
         </button>
       </header>
       <div id={detailsId} className={styles.details} hidden={!expanded}>
@@ -291,28 +310,28 @@ export function AuthFileCard(props: AuthFileCardProps) {
             )}
           </div>
           <div className={styles.fileDetail}>
-            <div className={styles.metaRow}>
-              <span>
-                <span className={styles.metaMetricLabel}>{t('auth_files.file_size')}</span>
-                {file.size ? formatFileSize(file.size) : '—'}
-              </span>
-              <span>
-                <span className={styles.metaMetricLabel}>{t('auth_files.file_modified')}</span>
-                {formatModified(file)}
-              </span>
+            <dl className={styles.metaRow}>
+              <div>
+                <dt className={styles.metaMetricLabel}>{t('auth_files.file_size')}</dt>
+                <dd>{file.size ? formatFileSize(file.size) : '—'}</dd>
+              </div>
+              <div>
+                <dt className={styles.metaMetricLabel}>{t('auth_files.file_modified')}</dt>
+                <dd>{formatModified(file)}</dd>
+              </div>
               {priorityValue !== undefined && (
-                <span title={t('auth_files.priority_hint')}>
-                  <span className={styles.metaMetricLabel}>{t('auth_files.priority_display')}</span>
-                  {priorityValue}
-                </span>
+                <div title={t('auth_files.priority_hint')}>
+                  <dt className={styles.metaMetricLabel}>{t('auth_files.priority_display')}</dt>
+                  <dd>{priorityValue}</dd>
+                </div>
               )}
               {weightValue !== undefined && (
-                <span title={t('auth_files.weight_tooltip')}>
-                  <span className={styles.metaMetricLabel}>{t('auth_files.weight_display')}</span>
-                  {weightValue}
-                </span>
+                <div title={t('auth_files.weight_tooltip')}>
+                  <dt className={styles.metaMetricLabel}>{t('auth_files.weight_display')}</dt>
+                  <dd>{weightValue}</dd>
+                </div>
               )}
-            </div>
+            </dl>
             {supportsSiwcBinding(file) && siwcExpires && (
               <span className={styles.siwcExpires} title={file.siwcExpiresAt}>
                 {t('siwc.expires', { date: siwcExpires })}

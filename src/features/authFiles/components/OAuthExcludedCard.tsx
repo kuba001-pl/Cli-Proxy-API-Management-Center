@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import type { OAuthConfigLoadError } from '@/features/authFiles/constants';
+import { getTypeLabel } from '@/features/authFiles/constants';
 import styles from './OAuthConfigPanels.module.scss';
 
 export type OAuthExcludedCardProps = {
@@ -57,7 +58,9 @@ export function OAuthExcludedCard(props: OAuthExcludedCardProps) {
             {Object.entries(excluded).map(([provider, models]) => (
               <div key={provider} className={styles.item}>
                 <div className={styles.itemInfo}>
-                  <div className={styles.itemProvider}>{provider}</div>
+                  <div className={styles.itemProvider} title={provider}>
+                    {getTypeLabel(t, provider)}
+                  </div>
                   <div className={styles.itemCount}>
                     {models?.length
                       ? t('oauth_excluded.model_count', { count: models.length })

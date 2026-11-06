@@ -18,6 +18,7 @@ import { ProviderCategoryList } from './components/ProviderCategoryList';
 import { ProviderResourcePanel } from './components/ProviderResourcePanel';
 import type { ProviderPanelControls } from './components/ProviderResourcePanel';
 import { ProviderSheet, type ProviderSheetHandle } from './sheets/ProviderSheet';
+import { PROVIDER_DESCRIPTORS } from './descriptors';
 import { isMultiProtocolSponsorBrand } from './sponsorDefinitions';
 import { isSponsorPartialMutationError } from './sponsorMutationRecovery';
 import { useProviderWorkbench } from './useProviderWorkbench';
@@ -399,8 +400,13 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
         updatedAtLabel={updatedAtLabel}
         isFetching={workbench.isFetching}
         isNewDisabled={disableMutations}
-        showNewAction={!fixedBrand}
-        newLabel={t('providersPage.actions.new')}
+        // An empty provider's panel carries the single "add" action itself.
+        showNewAction={!fixedBrand && activeGroup.resources.length > 0}
+        newLabel={
+          PROVIDER_DESCRIPTORS[activeGroup.id]?.supportsName
+            ? t('providersPage.actions.addProvider')
+            : t('providersPage.actions.addKey')
+        }
         onRefresh={() => void handleRefresh()}
         onNew={openCreate}
       />

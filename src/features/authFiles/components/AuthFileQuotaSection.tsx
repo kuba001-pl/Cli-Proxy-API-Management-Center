@@ -175,8 +175,7 @@ export function AuthFileQuotaSection(props: AuthFileQuotaSectionProps) {
   const quotaStatus = quota?.status ?? 'idle';
   const canRefreshQuota = !disableControls && !file.disabled && !resettingQuota;
   const canUseResetQuota = canRefreshQuota && quotaStatus !== 'loading';
-  // Idle state already renders a clickable "click to refresh" prompt; only offer the
-  // explicit refresh button once quota has been requested so it can be refreshed again.
+  // The idle state carries its own refresh button; this one re-requests loaded quota.
   const showRefreshQuotaAction = quotaStatus !== 'idle';
   const showResetQuotaAction = quota !== undefined && Boolean(adapter.canResetQuota?.(quota));
   const resetQuotaAction =
@@ -207,14 +206,21 @@ export function AuthFileQuotaSection(props: AuthFileQuotaSectionProps) {
       {quotaStatus === 'loading' ? (
         <div className={styles.quotaMessage}>{t(`${adapter.i18nPrefix}.loading`)}</div>
       ) : quotaStatus === 'idle' ? (
-        <button
-          type="button"
-          className={`${styles.quotaMessage} ${styles.quotaMessageAction}`}
-          onClick={() => void refreshQuotaForFile()}
-          disabled={!canRefreshQuota}
-        >
-          {t(`${adapter.i18nPrefix}.idle`)}
-        </button>
+        // Same wording and explicit action as the Quota page, not a clickable sentence.
+        <div className={styles.quotaIdle}>
+          <span className={styles.quotaIdleText}>{t('quota_management.not_loaded')}</span>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={() => void refreshQuotaForFile()}
+            disabled={!canRefreshQuota}
+            title={t('auth_files.quota_refresh_hint')}
+          >
+            <IconRefreshCw size={14} />
+            {t('auth_files.quota_refresh_single')}
+          </Button>
+        </div>
       ) : quotaStatus === 'error' ? (
         <div className={styles.quotaError}>
           {t(`${adapter.i18nPrefix}.load_failed`, {

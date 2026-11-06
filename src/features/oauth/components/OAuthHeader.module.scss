@@ -1,3 +1,4 @@
+@use '../../../styles/mixins' as *;
 @use '../../../styles/variables' as *;
 // Figma 46:2761: 58px header (34px title, meta line at y40 on an 18px line).
 .header {
@@ -7,24 +8,18 @@
   min-width: 0;
 }
 .title {
-  margin: 0;
-  font-size: 28px;
-  line-height: 34px;
-  font-weight: 700;
-  letter-spacing: -0.4px;
-  color: var(--text-primary);
+  @include text-page-title;
 }
 .meta {
   margin: 0;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
-  font-family: $font-family;
-  font-variant-numeric: tabular-nums;
-  font-size: 12px;
-  line-height: 18px;
-  color: var(--text-tertiary);
+  gap: $space-2;
+  @include numeric;
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  color: var(--text-secondary);
 }
 .metaDot {
   color: var(--text-muted);

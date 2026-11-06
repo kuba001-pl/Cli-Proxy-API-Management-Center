@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PROVIDER_LOGOS } from '../brandLogos';
 import type { ProviderBrand, ProviderGroup } from '../types';
@@ -11,9 +12,26 @@ interface ProviderCategoryListProps {
 
 export function ProviderCategoryList({ groups, activeBrand, onSelect }: ProviderCategoryListProps) {
   const { t } = useTranslation();
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // On narrow screens the list is a horizontal picker: keep the selected provider in view
+  // without scrolling the page itself.
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list || list.scrollWidth <= list.clientWidth) return;
+    const active = list.querySelector<HTMLElement>('[aria-current="page"]');
+    if (!active) return;
+    const start = active.offsetLeft; // .list is position: relative, so it is the offsetParent
+    const end = start + active.offsetWidth;
+    if (start < list.scrollLeft) {
+      list.scrollLeft = Math.max(0, start - 16);
+    } else if (end > list.scrollLeft + list.clientWidth) {
+      list.scrollLeft = end - list.clientWidth + 16;
+    }
+  }, [activeBrand]);
 
   const renderGroups = (items: ProviderGroup[]) => (
-    <div className={styles.list}>
+    <div className={styles.list} ref={listRef}>
       {items.map((group) => {
         const active = group.id === activeBrand;
         const total = group.resources.length;

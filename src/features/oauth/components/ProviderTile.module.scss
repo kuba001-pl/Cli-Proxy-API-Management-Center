@@ -1,14 +1,15 @@
+@use '../../../styles/mixins' as *;
 @use '../../../styles/variables' as *;
 .tile {
   position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 12px;
-  min-height: 64px;
-  padding: 12px;
+  gap: $space-3;
+  min-height: 72px;
+  padding: $space-3 $space-3 $space-3 $space-4;
   border: 0;
-  border-radius: 12px;
+  border-radius: $radius-lg;
   background: var(--bg-surface);
   transition: background-color var(--dur-hover) var(--ease-out-strong);
 }
@@ -41,44 +42,56 @@
   text-align: left;
   color: var(--text-primary);
   font: inherit;
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: $text-base;
+  line-height: $leading-base;
+  font-weight: 500;
+  @include text-ellipsis;
   cursor: pointer;
 }
 .main::after {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 12px;
+  border-radius: $radius-lg;
 }
 .main:focus-visible {
   outline: none;
 }
 .main:focus-visible::after {
-  outline: 2px solid var(--text-primary);
-  outline-offset: 2px;
+  @include focus-ring;
 }
+// Prose caption: sans, up to two full lines instead of a clipped single line.
 .caption {
   font-family: $font-family;
-  font-variant-numeric: tabular-nums;
-  font-size: 12px;
-  line-height: 18px;
-  color: var(--text-tertiary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  color: var(--text-secondary);
   min-width: 0;
   display: flex;
 }
 .captionText {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  @include text-ellipsis-multiline(2);
 }
 .trail {
-  color: var(--text-tertiary);
-  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--icon-default);
+  padding: 0 $space-1;
+}
+// Quiet secondary-button look; the whole tile is the hit area.
+.trailLabel {
+  padding: 4px 10px;
+  border-radius: $radius-md;
+  background: var(--bg-raised);
+  color: var(--text-primary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color var(--dur-hover) var(--ease-out-strong);
+}
+.tile:hover .trailLabel {
+  background: var(--bg-active);
 }
 .status {
   display: inline-flex;
@@ -98,7 +111,8 @@
   color: var(--status-danger);
 }
 @media (prefers-reduced-motion: reduce) {
-  .tile {
+  .tile,
+  .trailLabel {
     transition: none;
   }
 }

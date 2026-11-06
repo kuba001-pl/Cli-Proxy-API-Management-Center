@@ -1,4 +1,8 @@
+@use '../../../styles/mixins' as *;
 @use '../../../styles/variables' as *;
+
+// Rows live inside `.listScroll` (AuthFilesPage), an inline-size container: the layout follows
+// the list's width, not the viewport (wide table >= 900, no Plan column below, stacked < 640).
 
 .card {
   background: var(--bg-surface);
@@ -6,17 +10,19 @@
   min-width: 0;
 }
 .cardSelected {
-  background: var(--bg-active);
+  background: var(--accent-subtle);
 }
 .cardDisabled .identity,
 .cardDisabled .plan,
 .cardDisabled .health,
 .cardDisabled .lowest {
-  opacity: 0.68;
+  opacity: 0.6;
 }
-.cardEnter {
-  animation: auth-card-enter var(--dur-hover) var(--ease-out-strong) both;
-  animation-delay: var(--card-delay, 0ms);
+@media (prefers-reduced-motion: no-preference) {
+  .cardEnter {
+    animation: auth-card-enter var(--dur-hover) var(--ease-out-strong) both;
+    animation-delay: var(--card-delay, 0ms);
+  }
 }
 @keyframes auth-card-enter {
   from {
@@ -30,31 +36,46 @@
 .head {
   display: grid;
   grid-template-columns: var(--auth-table-columns);
-  gap: 14px;
+  gap: $space-4;
   align-items: center;
-  padding: 12px 16px;
+  min-height: 64px;
+  padding: $space-3 $space-4;
+  box-sizing: border-box;
 }
 .cardCompact .head {
-  padding-block: 8px;
+  min-height: 52px;
+  padding-block: $space-2;
 }
 .rowLead {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: $space-3;
   min-width: 0;
 }
 .expand {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 24px;
+  width: 24px;
+  height: 28px;
   padding: 0;
   background: none;
   border: 0;
-  color: var(--text-tertiary);
+  border-radius: $radius-sm;
+  color: var(--icon-default);
   cursor: pointer;
   flex-shrink: 0;
+  transition:
+    background-color var(--dur-hover) var(--ease-out-strong),
+    color var(--dur-hover) var(--ease-out-strong);
+
+  &:hover {
+    background: var(--bg-raised);
+    color: var(--text-primary);
+  }
+  &:focus-visible {
+    @include focus-ring;
+  }
 }
 .expand svg {
   transform: rotate(-90deg);
@@ -63,9 +84,10 @@
 .expand[aria-expanded='true'] svg {
   transform: rotate(0);
 }
-.expand:focus-visible {
-  outline: 2px solid var(--text-primary);
-  outline-offset: 2px;
+.more {
+  width: 32px;
+  font-size: $text-base;
+  letter-spacing: 1px;
 }
 .providerIcon {
   width: 28px;
@@ -73,12 +95,12 @@
   display: grid;
   place-items: center;
   border: 0;
-  border-radius: 6px;
+  border-radius: $radius-md;
   flex-shrink: 0;
 }
 .providerIcon img {
-  width: 19px;
-  height: 19px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
 }
 .identity {
@@ -86,52 +108,68 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 2px 8px;
+  gap: 2px $space-2;
 }
 .account {
   margin: 0;
   max-width: 100%;
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  color: var(--text-primary);
+  font-size: $text-base;
+  line-height: $leading-base;
+  font-weight: 500;
+  @include text-ellipsis;
 }
 .fileName {
   order: 3;
   width: 100%;
-  font-family: $font-family;
-  font-variant-numeric: tabular-nums;
-  font-size: 12px;
+  @include text-identifier;
+  @include text-meta;
+  @include text-ellipsis;
+}
+// A problem credential is findable while scanning the collapsed list: restrained warning
+// label in the identity cell (no full-row border), detail in the expanded row and tooltip.
+.problemLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 6px;
+  border-radius: $radius-sm;
+  @include status-tone(warning);
+  font-size: $text-xs;
   line-height: 18px;
-  color: var(--text-tertiary);
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-weight: 500;
   white-space: nowrap;
 }
 .plan {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  font-size: 13px;
+  gap: 2px;
+  color: var(--text-secondary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  min-width: 0;
 }
-.muted,
-.healthCounts {
-  color: var(--text-tertiary);
-  font-size: 12px;
-  line-height: 16px;
+.muted {
+  @include text-meta;
 }
 .health {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
 }
 .healthCounts {
+  display: flex;
+  gap: $space-3;
   color: var(--text-secondary);
-  font-variant-numeric: tabular-nums;
+  font-size: $text-xs;
+  line-height: $leading-xs;
+  @include numeric;
   white-space: nowrap;
+}
+.failureCount {
+  color: var(--status-danger);
+  font-weight: 500;
 }
 .lowest {
   min-width: 0;
@@ -139,20 +177,19 @@
 .quotaLabel {
   display: flex;
   justify-content: space-between;
-  gap: 8px;
-  font-size: 12px;
-  line-height: 16px;
+  gap: $space-2;
+  font-size: $text-xs;
+  line-height: $leading-xs;
   color: var(--text-secondary);
   margin-bottom: 6px;
 }
 .quotaLabel span {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  @include text-ellipsis;
 }
 .quotaLabel strong {
   color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  @include numeric;
 }
 .meter {
   height: 4px;
@@ -163,7 +200,7 @@
 .meter span {
   display: block;
   height: 100%;
-  background: var(--text-primary);
+  background: var(--text-secondary);
   border-radius: inherit;
 }
 .meter span[data-warning] {
@@ -173,57 +210,136 @@
   display: flex;
   align-items: center;
 }
+// Dense lists repeat the switch on every row; in dark mode a solid accent track becomes a
+// heavy blue column. "On" stays unmistakable (accent outline + accent thumb on the right) with
+// a soft wash instead of a fill. Off is the shared outlined track.
+:global([data-theme='dark']) .toggleWrap label input[role='switch']:checked + span {
+  background: var(--accent-subtle);
+  border-color: var(--accent-text);
+
+  > span {
+    background: var(--accent-text);
+  }
+}
+:global([data-theme='dark'])
+  .toggleWrap
+  label:hover
+  input[role='switch']:checked:not(:disabled)
+  + span {
+  background: var(--accent-subtle-hover);
+  border-color: var(--accent-text);
+}
+
+/* ---------- Expanded row ---------- */
+
+// Indented to the account column (checkbox + chevron + icon), so details read as the row's own.
 .details {
-  padding: 12px 20px 18px 100px;
-  background: var(--bg-raised);
+  padding: $space-2 $space-4 $space-5 108px;
+  background: var(--bg-surface);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: $space-4;
 }
 .details[hidden] {
   display: none;
 }
 .note {
   margin: 0;
-  font-size: 12px;
-  color: var(--text-secondary);
+  @include text-secondary;
   overflow-wrap: anywhere;
 }
 .warning {
   display: flex;
-  gap: 8px;
-  color: var(--status-warning);
-  font-size: 12px;
+  align-items: flex-start;
+  gap: $space-2;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  @include status-tone(warning);
+  font-size: $text-sm;
+  line-height: $leading-sm;
   overflow-wrap: anywhere;
 }
 .warningIcon {
   flex-shrink: 0;
+  margin-top: 2px;
 }
+.expandedBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(240px, 1fr);
+  gap: $space-5;
+  align-items: start;
+}
+.quotaDetail {
+  min-width: 0;
+}
+.quotaDetail:empty {
+  display: none;
+}
+.fileDetail {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  min-width: 0;
+}
+.quotaDetail:empty + .fileDetail {
+  grid-column: 1 / -1;
+}
+// Compact definition list: label above value, values tabular.
 .metaRow {
   display: flex;
-  gap: 20px;
   flex-wrap: wrap;
-  font-variant-numeric: tabular-nums;
-  font-size: 11.5px;
-  color: var(--text-secondary);
+  gap: $space-3 $space-5;
+  margin: 0;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  dd {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: $text-sm;
+    line-height: $leading-sm;
+    @include numeric;
+  }
 }
 .metaMetricLabel,
 .siwcExpires,
 .runtimeLabel {
-  color: var(--text-tertiary);
+  @include text-meta;
 }
 .actions,
 .actionsMain,
 .utilityActions {
   display: flex;
-  gap: 8px;
+  gap: $space-2;
   align-items: center;
   flex-wrap: wrap;
 }
+.actionsMain,
+.utilityActions {
+  flex: 1;
+}
 .iconButton {
-  width: 32px;
+  width: $control-height-sm;
   padding: 0 !important;
 }
+.deleteButton {
+  margin-left: auto;
+  color: var(--text-secondary);
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    color: var(--status-danger);
+    background: var(--destructive-10);
+  }
+}
+
+/* ---------- Request strip ---------- */
+
 .statusBar {
   display: flex;
   align-items: center;
@@ -244,17 +360,19 @@
   height: 10px;
   border-radius: 2px;
 }
-// Tone and height both encode state: idle = low baseline, healthy = mid, failure = full and red.
+// Height carries state before colour does: idle = 2px baseline, healthy = 5px, failure = 8px
+// in a danger tone pulled toward the surface (calm, still >= 3:1 on the panel).
 .statusBlockIdle {
   background-color: var(--strip-idle);
-  clip-path: inset(60% 0 0 0 round 1px);
+  clip-path: inset(80% 0 0 0 round 1px);
 }
 .statusBlockSuccess {
   background-color: var(--strip-success);
-  clip-path: inset(30% 0 0 0 round 1px);
+  clip-path: inset(50% 0 0 0 round 1px);
 }
 .statusBlockFailure {
-  background-color: var(--strip-failure);
+  background-color: color-mix(in srgb, var(--strip-failure) 66%, var(--bg-surface));
+  clip-path: inset(20% 0 0 0 round 1px);
 }
 .statusBlockActive .statusBlock {
   outline: 1px solid var(--text-secondary);
@@ -278,7 +396,7 @@
   pointer-events: none;
   font-family: $font-family;
   font-variant-numeric: tabular-nums;
-  font-size: 12px;
+  font-size: $text-xs;
   line-height: 1.5;
 }
 .tooltipTime {
@@ -300,63 +418,83 @@
 .tooltipRate {
   color: var(--text-secondary);
 }
-@media (max-width: 700px) {
+
+/* ---------- Responsive (container: .listScroll) ---------- */
+
+@container (max-width: 899px) {
+  .plan {
+    display: none;
+  }
+}
+
+@container (max-width: 639px) {
+  // Stacked row: identity + overflow menu on the first line (so the account name gets the
+  // width), health with its Enabled switch below, quota last.
+  .head {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'lead more'
+      'health toggle'
+      'lowest lowest';
+    gap: $space-1 $space-2;
+    padding: $space-3 $space-3 $space-4;
+  }
+  .rowLead {
+    grid-area: lead;
+    gap: $space-1;
+  }
+  .toggleWrap {
+    grid-area: toggle;
+    justify-content: center;
+    min-width: $hit-target-touch;
+    min-height: $hit-target-touch;
+  }
+  .more {
+    grid-area: more;
+  }
+  // Indent under the account text: checkbox 16 + chevron 24 + icon 28 + gaps.
+  .health {
+    grid-area: health;
+    padding-left: 80px;
+  }
+  .lowest {
+    grid-area: lowest;
+    padding-left: 80px;
+  }
+  .lowest:has(> .muted:only-child) {
+    display: none;
+  }
+  .providerIcon {
+    margin-right: $space-1;
+  }
   .details {
-    padding-left: 20px;
+    padding: $space-1 $space-3 $space-5;
   }
-}
-@media (prefers-reduced-motion: reduce) {
-  .cardEnter {
-    animation: none;
-  }
-  .expand svg {
-    transition: none;
-  }
-}
-
-.expandedBody {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(240px, 1fr);
-  gap: 24px;
-  align-items: start;
-}
-.quotaDetail {
-  min-width: 0;
-}
-.fileDetail {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-top: 8px;
-}
-.metaRow > span {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.metaMetricLabel {
-  font-family: $font-family;
-  font-size: 12px;
-}
-.actionsMain {
-  flex: 1;
-}
-.utilityActions {
-  flex: 1;
-}
-.deleteButton {
-  margin-left: auto;
-  color: var(--text-secondary);
-
-  &:hover:not(:disabled),
-  &:focus-visible {
-    color: var(--status-danger);
-    background: var(--destructive-10);
-  }
-}
-@media (max-width: 700px) {
   .expandedBody {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: $space-3;
+  }
+}
+
+@include mobile {
+  // 40px touch targets; the visible glyph stays compact.
+  .expand {
+    width: $hit-target-touch;
+    height: $hit-target-touch;
+  }
+  .iconButton {
+    width: $hit-target-touch;
+  }
+  // Chevron grows to 40px on touch, so the indent follows.
+  .health,
+  .lowest {
+    padding-left: 96px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .expand,
+  .expand svg {
+    transition: none;
   }
 }

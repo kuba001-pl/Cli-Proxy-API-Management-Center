@@ -725,7 +725,7 @@ export function AuthFilesPage() {
                   />
                   <span>{t('auth_files.account_column')}</span>
                 </div>
-                <span>{t('auth_files.plan_column')}</span>
+                <span className={styles.colPlan}>{t('auth_files.plan_column')}</span>
                 <span>{t('auth_files.recent_requests_column')}</span>
                 <span>{t('auth_files.lowest_quota_column')}</span>
                 <span>{t('auth_files.status_toggle_label')}</span>

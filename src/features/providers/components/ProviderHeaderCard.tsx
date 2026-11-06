@@ -60,9 +60,8 @@ export function ProviderHeaderCard({
         <div className={styles.actions}>
           <Button
             size="sm"
-            variant="secondary"
+            variant="ghost"
             type="button"
-            className={`${styles.btn} ${styles.btnOutline}`}
             onClick={onRefresh}
             disabled={isFetching}
             aria-label={
@@ -81,7 +80,6 @@ export function ProviderHeaderCard({
               size="sm"
               variant="primary"
               type="button"
-              className={`${styles.btn} ${styles.btnPrimary}`}
               onClick={onNew}
               disabled={isNewDisabled}
             >

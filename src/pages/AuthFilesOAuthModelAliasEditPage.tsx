@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { IconInfo, IconNetwork, IconPlus } from '@/components/ui/icons';
+import { IconInfo, IconPlus } from '@/components/ui/icons';
 import { OAuthEditorProviderCard } from '@/features/authFiles/components/OAuthEditorProviderCard';
 import { OAuthAliasMappingRow } from '@/features/authFiles/components/OAuthAliasMappingRow';
 import { SecondaryScreenShell } from '@/components/common/SecondaryScreenShell';
@@ -397,7 +397,8 @@ export function AuthFilesOAuthModelAliasEditPage() {
   return (
     <SecondaryScreenShell
       ref={swipeRef}
-      title={title}
+      // The task title renders once, as the page h1 below; the bar only carries Back / Save.
+      title={null}
       onBack={handleBack}
       backLabel={t('common.back')}
       backAriaLabel={t('common.back')}
@@ -434,15 +435,11 @@ export function AuthFilesOAuthModelAliasEditPage() {
         </Card>
       ) : (
         <>
-          <div className={styles.intro}>
-            <span className={styles.introIcon}>
-              <IconNetwork size={22} aria-hidden="true" />
-            </span>
-            <div>
-              <h1 className={styles.introTitle}>{t('oauth_model_alias.title')}</h1>
-              <p className={styles.description}>{t('oauth_model_alias.editor_description')}</p>
-            </div>
-          </div>
+          {/* One page title (the task), aligned to the content edge like every other page. */}
+          <header className={styles.intro}>
+            <h1 className={styles.introTitle}>{title}</h1>
+            <p className={styles.description}>{t('oauth_model_alias.editor_description')}</p>
+          </header>
 
           <OAuthEditorProviderCard
             provider={provider}
@@ -474,10 +471,13 @@ export function AuthFilesOAuthModelAliasEditPage() {
               </Button>
             </div>
 
-            <div className={styles.catalogHint}>
-              <IconInfo size={15} aria-hidden="true" />
-              <p className={styles.description}>{headerHint}</p>
-            </div>
+            {/* Without a provider this would only repeat step 01's hint. */}
+            {provider.trim() ? (
+              <div className={styles.catalogHint}>
+                <IconInfo size={15} aria-hidden="true" />
+                <p className={styles.description}>{headerHint}</p>
+              </div>
+            ) : null}
 
             <div className={styles.mappingsBody}>
               {mappings.map((entry, index) => (

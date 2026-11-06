@@ -97,16 +97,15 @@ export function ProviderSheet({
     });
   }, [confirmDiscardIfDirty, onClose]);
 
-  const titleText =
-    state.mode === 'create'
-      ? `${t('providersPage.form.createEyebrow')} · ${t(
-          `providersPage.providerNames.${state.brand}`
-        )}`
-      : state.mode === 'edit'
-        ? `${t('providersPage.form.editEyebrow')} · ${t(
-            `providersPage.providerNames.${state.brand}`
-          )}`
-        : `${t('providersPage.detail.title')} · ${t(`providersPage.providerNames.${state.brand}`)}`;
+  // One task heading ("Add Gemini key"); no eyebrow that repeats the verb.
+  const providerName = t(`providersPage.providerNames.${state.brand}`);
+  const titleKeySuffix = descriptor.supportsName ? 'TitleNamed' : 'Title';
+  const titleText = t(
+    `providersPage.form.${
+      state.mode === 'create' ? 'create' : state.mode === 'edit' ? 'edit' : 'detail'
+    }${titleKeySuffix}`,
+    { provider: providerName }
+  );
 
   const handleCreate = useCallback(
     async (input: ProviderEntryFormInput) => {
@@ -241,13 +240,6 @@ export function ProviderSheet({
       open={state.open}
       onClose={onClose}
       size={descriptor.sheetSize}
-      eyebrow={
-        state.mode === 'detail'
-          ? t('providersPage.detail.title')
-          : state.mode === 'create'
-            ? t('providersPage.form.createEyebrow')
-            : t('providersPage.form.editEyebrow')
-      }
       title={titleText}
       description={t(
         state.mode === 'detail'

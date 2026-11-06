@@ -7,7 +7,7 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: $space-5;
   width: 100%;
   min-width: 0;
   /* 底部为悬浮批量条留出实时高度 */
@@ -26,13 +26,12 @@
 }
 
 .errorBanner {
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--danger-color);
-  background: var(--bg-error-light);
-  border: 1px solid var(--warning-border);
-  border-radius: 10px;
-  padding: 9px 12px;
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  @include status-tone(danger);
+  border: 1px solid var(--status-danger-border);
+  border-radius: $radius-md;
+  padding: $space-2 $space-3;
   overflow-wrap: anywhere;
 }
 
@@ -40,12 +39,14 @@
 
 .listScroll {
   // Shared by the header and every AuthFileCard row so the columns always line up.
-  --auth-table-columns: minmax(300px, 2.45fr) minmax(88px, 0.6fr) minmax(150px, 0.93fr)
-    minmax(160px, 1.04fr) 64px 24px;
-  overflow-x: auto;
+  --auth-table-columns: minmax(280px, 2.45fr) minmax(88px, 0.6fr) minmax(150px, 0.93fr)
+    minmax(150px, 1.04fr) 56px 32px;
+  // Rows and header adapt to the list's own width (see AuthFileCard.module.scss).
+  container-type: inline-size;
   border: 0;
-  border-radius: 10px;
+  border-radius: $radius-lg;
   background: var(--bg-surface);
+  overflow: hidden;
 }
 .grid {
   display: flex;
@@ -56,22 +57,51 @@
 .gridQuota {
   grid-template-columns: none;
 }
+// System table header: transparent, 12/500 meta text, one rule below.
 .tableHead {
   display: grid;
   grid-template-columns: var(--auth-table-columns);
-  gap: 14px;
-  min-height: 36px;
-  padding: 8px 16px;
+  gap: $space-4;
+  min-height: 40px;
+  padding: $space-2 $space-4;
   align-items: center;
-  background: var(--bg-raised);
+  border-bottom: 1px solid var(--border-default);
   color: var(--text-tertiary);
-  font-size: 12px;
-  line-height: 16px;
+  font-size: $text-xs;
+  font-weight: 500;
+  line-height: $leading-xs;
+}
+// Rows start with a hairline; the header rule already separates the first one.
+.tableHead + article {
+  border-top: 0;
 }
 .accountColumn {
   display: flex;
   align-items: center;
-  gap: 48px;
+  gap: 88px; // lines the label up with the account text (checkbox, chevron, icon)
+}
+
+@container (max-width: 899px) {
+  .grid {
+    --auth-table-columns: minmax(220px, 2.2fr) minmax(140px, 1fr) minmax(130px, 1fr) 56px 32px;
+  }
+  .colPlan {
+    display: none;
+  }
+}
+
+// Stacked rows: the header keeps only "select all".
+@container (max-width: 639px) {
+  .tableHead {
+    display: flex;
+    padding-inline: $space-3;
+  }
+  .tableHead > :not(.accountColumn) {
+    display: none;
+  }
+  .accountColumn {
+    gap: $space-3;
+  }
 }
 
 .emptyActions {
@@ -93,11 +123,9 @@
 }
 
 .pageInfo {
-  font-family: $font-family;
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.02em;
-  color: var(--text-tertiary);
+  @include numeric;
+  font-size: $text-sm;
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 
@@ -105,7 +133,8 @@
 
 .configGrid {
   display: grid;
-  gap: 16px;
+  gap: $space-4;
+  margin-top: $space-3;
   grid-template-columns: minmax(0, 1fr);
 
   @media (min-width: 1024px) {
@@ -117,8 +146,4 @@
   .page {
     gap: 16px;
   }
-}
-
-.listScroll .grid {
-  min-width: 950px;
 }

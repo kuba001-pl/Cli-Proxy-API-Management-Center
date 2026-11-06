@@ -1,12 +1,13 @@
+@use '../../../styles/mixins' as *;
 @use '../../../styles/variables' as *;
 .card {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 20px;
+  gap: $space-4;
+  padding: $space-5;
   background: var(--bg-surface);
   border: 0;
-  border-radius: 12px;
+  border-radius: $radius-lg;
 }
 .head {
   display: flex;
@@ -26,17 +27,12 @@
   min-width: 0;
 }
 .title {
-  margin: 0 0 2px;
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 600;
-  color: var(--text-primary);
+  @include text-card-title;
+  margin-bottom: 2px;
 }
 .caption {
   margin: 0;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--text-tertiary);
+  @include text-secondary;
 }
 .sites {
   display: grid;
@@ -67,9 +63,9 @@
   border: 0;
   background: none;
   font: inherit;
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 600;
+  font-size: $text-base;
+  line-height: $leading-base;
+  font-weight: 500;
   text-align: left;
   color: var(--text-primary);
   cursor: pointer;
@@ -84,8 +80,7 @@
   outline: none;
 }
 .siteMain:focus-visible::after {
-  outline: 2px solid var(--text-primary);
-  outline-offset: 2px;
+  @include focus-ring;
 }
 .siteMeta {
   font-family: $font-family;
@@ -118,24 +113,37 @@
   align-items: center;
   gap: 6px;
   padding: 0 4px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
+  font-size: $text-sm;
+  font-weight: 500;
+  color: var(--accent-text);
   text-decoration: none;
   white-space: nowrap;
 }
+.signUp:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .signUp:focus-visible {
-  outline: 2px solid var(--text-primary);
-  outline-offset: 3px;
+  @include focus-ring(3px);
 }
 .trail {
   display: grid;
   place-items: center;
-  width: 32px;
+  min-width: 32px;
   height: 32px;
   border: 0;
-  border-radius: 8px;
-  color: var(--text-tertiary);
+  border-radius: $radius-md;
+  color: var(--icon-default);
+}
+.trailLabel {
+  padding: 4px 10px;
+  border-radius: $radius-md;
+  background: var(--bg-active);
+  color: var(--text-primary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  font-weight: 500;
+  white-space: nowrap;
 }
 @media (max-width: 850px) {
   .sites {
@@ -147,6 +155,6 @@
     flex-wrap: wrap;
   }
   .signUp {
-    font-size: 11px;
+    min-height: $hit-target-touch;
   }
 }

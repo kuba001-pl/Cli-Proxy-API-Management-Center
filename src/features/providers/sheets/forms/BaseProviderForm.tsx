@@ -529,6 +529,9 @@ export function BaseProviderForm({
           <div className={styles.field}>
             <label className={styles.label} htmlFor={`${fid}-apiKey`}>
               {t('providersPage.form.apiKey')}
+              {mode === 'create' ? (
+                <span className={styles.labelHint}> · {t('providersPage.form.required')}</span>
+              ) : null}
             </label>
             <div className={styles.passwordField}>
               <input
@@ -579,7 +582,12 @@ export function BaseProviderForm({
                   {' '}
                   · {t('providersPage.form.baseUrlRequiredHint')}
                 </span>
-              ) : null}
+              ) : (
+                <span className={styles.labelHint}>
+                  {' '}
+                  · {t('providersPage.form.baseUrlDefaultHint')}
+                </span>
+              )}
             </label>
             <input
               id={`${fid}-baseUrl`}
@@ -597,6 +605,7 @@ export function BaseProviderForm({
           <div className={styles.field}>
             <label className={styles.label} htmlFor={`${fid}-proxy`}>
               {t('providersPage.form.proxyUrl')}
+              <span className={styles.labelHint}> · {t('providersPage.form.optional')}</span>
             </label>
             <input
               id={`${fid}-proxy`}
@@ -610,6 +619,56 @@ export function BaseProviderForm({
           </div>
         ) : null}
 
+        {descriptor.supportsTestModel ? (
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor={`${fid}-testModel`}>
+              {t('providersPage.form.testModel')}
+              <span className={styles.labelHint}> · {t('providersPage.form.testModelHint')}</span>
+            </label>
+            <Select
+              id={`${fid}-testModel`}
+              value={form.testModel ?? ''}
+              options={testModelOptions}
+              onChange={(value) => updateField('testModel', value)}
+              disabled={mutating}
+              ariaLabel={t('providersPage.form.testModel')}
+            />
+            {singleConnectivity ? (
+              <div className={styles.connectivityRow}>
+                <button
+                  type="button"
+                  className={styles.connectivityBtn}
+                  disabled={mutating || connectivity.isTestingAny}
+                  onClick={() => void singleConnectivity.run()}
+                >
+                  {singleConnectivity.status.state === 'loading' ? (
+                    <span className={`${styles.statusIcon} ${styles.statusIconLoading}`}>
+                      <IconLoader2 size={14} />
+                    </span>
+                  ) : null}
+                  <span>{t('providersPage.connectivity.test')}</span>
+                </button>
+                <ConnectivityStatusIcon state={singleConnectivity.status.state} />
+                {singleConnectivity.status.state === 'success' ? (
+                  <span className={styles.connectivityHintSuccess}>
+                    {t('providersPage.connectivity.success')}
+                  </span>
+                ) : null}
+              </div>
+            ) : null}
+            {singleConnectivity?.status.state === 'error' ? (
+              <div className={styles.connectivityError}>{singleConnectivity.status.message}</div>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
+
+      {/* Optional routing: kept visibly secondary to the credential and connection. */}
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h3 className={styles.sectionTitle}>{t('providersPage.form.routingSection')}</h3>
+          <span className={styles.sectionOptional}>{t('providersPage.form.optional')}</span>
+        </div>
         {descriptor.supportsPrefix ? (
           <div className={styles.fieldRow}>
             <div className={styles.field}>
@@ -667,49 +726,6 @@ export function BaseProviderForm({
               disabled={mutating}
             />
             <span className={styles.labelHint}>{t('providersPage.form.weightHint')}</span>
-          </div>
-        ) : null}
-
-        {descriptor.supportsTestModel ? (
-          <div className={styles.field}>
-            <label className={styles.label} htmlFor={`${fid}-testModel`}>
-              {t('providersPage.form.testModel')}
-              <span className={styles.labelHint}> · {t('providersPage.form.testModelHint')}</span>
-            </label>
-            <Select
-              id={`${fid}-testModel`}
-              value={form.testModel ?? ''}
-              options={testModelOptions}
-              onChange={(value) => updateField('testModel', value)}
-              disabled={mutating}
-              ariaLabel={t('providersPage.form.testModel')}
-            />
-            {singleConnectivity ? (
-              <div className={styles.connectivityRow}>
-                <button
-                  type="button"
-                  className={styles.connectivityBtn}
-                  disabled={mutating || connectivity.isTestingAny}
-                  onClick={() => void singleConnectivity.run()}
-                >
-                  {singleConnectivity.status.state === 'loading' ? (
-                    <span className={`${styles.statusIcon} ${styles.statusIconLoading}`}>
-                      <IconLoader2 size={14} />
-                    </span>
-                  ) : null}
-                  <span>{t('providersPage.connectivity.test')}</span>
-                </button>
-                <ConnectivityStatusIcon state={singleConnectivity.status.state} />
-                {singleConnectivity.status.state === 'success' ? (
-                  <span className={styles.connectivityHintSuccess}>
-                    {t('providersPage.connectivity.success')}
-                  </span>
-                ) : null}
-              </div>
-            ) : null}
-            {singleConnectivity?.status.state === 'error' ? (
-              <div className={styles.connectivityError}>{singleConnectivity.status.message}</div>
-            ) : null}
           </div>
         ) : null}
 

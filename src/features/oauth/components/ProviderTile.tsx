@@ -16,6 +16,8 @@ export interface ProviderTileProps {
   index: number;
   status?: ProviderFlowState['status'];
   statusLabel?: string;
+  /** Visible verb for what the tile does ("Sign in", "Import", "Bind"); falls back to a plus. */
+  actionLabel?: string;
   onOpen: () => void;
 }
 
@@ -31,6 +33,7 @@ export function ProviderTile({
   index,
   status,
   statusLabel,
+  actionLabel,
   onOpen,
 }: ProviderTileProps) {
   const captionId = useId();
@@ -70,7 +73,11 @@ export function ProviderTile({
         </span>
       </span>
       <span className={styles.trail} aria-hidden="true">
-        <IconPlus size={15} />
+        {actionLabel ? (
+          <span className={styles.trailLabel}>{actionLabel}</span>
+        ) : (
+          <IconPlus size={15} />
+        )}
       </span>
     </div>
   );

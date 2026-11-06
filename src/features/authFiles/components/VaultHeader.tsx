@@ -90,8 +90,8 @@ export function VaultHeader(props: VaultHeaderProps) {
           className={styles.refreshButton}
           onClick={onRefresh}
           disabled={loading || refreshing}
-          title={t('common.refresh')}
-          aria-label={t('common.refresh')}
+          title={t('auth_files.reload_list')}
+          aria-label={t('auth_files.reload_list')}
         >
           <IconRefreshCw size={14} className={refreshing ? styles.spinning : undefined} />
         </Button>

@@ -1,7 +1,9 @@
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/Button';
 import { IconExternalLink, IconPlus, IconSearch } from '@/components/ui/icons';
 import type { ProviderRecentUsageMap } from '@/components/providers/utils';
 import { PROVIDER_LOGOS } from '../brandLogos';
+import { PROVIDER_DESCRIPTORS } from '../descriptors';
 import { getKimiAffiliateUrl } from '../kimi';
 import type { ProviderGroup, ProviderResource } from '../types';
 import { ProviderResourceTable } from './ProviderResourceTable';
@@ -53,6 +55,15 @@ export function ProviderResourcePanel({
   const { t, i18n } = useTranslation();
   const logo = PROVIDER_LOGOS[group.id];
   const providerTitle = t(`providersPage.providerNames.${group.id}`);
+  // A provider with no resources yet gets one task, not search/sort tools for empty data.
+  const hasResources = group.resources.length > 0;
+  const namedEntries = PROVIDER_DESCRIPTORS[group.id]?.supportsName === true;
+  const hasActiveFilters =
+    filter.trim().length > 0 || (toolbarControls?.selectedModels.size ?? 0) > 0;
+  const clearFilters = () => {
+    onFilterChange('');
+    toolbarControls?.onSelectedModelsChange(new Set());
+  };
   const registrationUrl =
     group.id === 'kimi' ? getKimiAffiliateUrl(i18n.resolvedLanguage ?? i18n.language) : null;
   const logoClassName = [
@@ -105,69 +116,104 @@ export function ProviderResourcePanel({
               </a>
             ) : null}
           </div>
-          <dl className={styles.summary}>
-            {[
-              [
-                'keys',
-                group.resources.reduce(
-                  (sum, resource) =>
-                    sum + (resource.apiKeyEntryCount || Number(Boolean(resource.apiKey))),
-                  0
-                ),
-              ],
-              ['models', group.resources.reduce((sum, resource) => sum + resource.modelCount, 0)],
-              ['headers', group.resources.reduce((sum, resource) => sum + resource.headerCount, 0)],
-            ].map(([key, value]) => (
-              <div key={key}>
-                <dt>{t(`providersPage.table.metrics.${key}`)}</dt>
-                <dd>{value}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-        <div className={styles.headerToolbarRow}>
-          <div className={styles.searchWrap}>
-            <span className={styles.searchIcon} aria-hidden="true">
-              <IconSearch size={16} />
-            </span>
-            <input
-              aria-label={t('providersPage.table.filterPlaceholder')}
-              type="search"
-              className={styles.searchInput}
-              value={filter}
-              onChange={(event) => onFilterChange(event.target.value)}
-              placeholder={t('providersPage.table.filterPlaceholder')}
-            />
-          </div>
-          {toolbarControls ? (
-            <ProviderResourceToolbar
-              key={group.id}
-              sortBy={toolbarControls.sortBy}
-              sortDir={toolbarControls.sortDir}
-              onSortBy={toolbarControls.onSortBy}
-              onSortDir={toolbarControls.onSortDir}
-              availableModels={toolbarControls.availableModels}
-              selectedModels={toolbarControls.selectedModels}
-              onSelectedModelsChange={toolbarControls.onSelectedModelsChange}
-            />
+          {hasResources ? (
+            <dl className={styles.summary}>
+              {[
+                [
+                  'keys',
+                  group.resources.reduce(
+                    (sum, resource) =>
+                      sum + (resource.apiKeyEntryCount || Number(Boolean(resource.apiKey))),
+                    0
+                  ),
+                ],
+                ['models', group.resources.reduce((sum, resource) => sum + resource.modelCount, 0)],
+                [
+                  'headers',
+                  group.resources.reduce((sum, resource) => sum + resource.headerCount, 0),
+                ],
+              ].map(([key, value]) => (
+                <div key={key}>
+                  <dt>{t(`providersPage.table.metrics.${key}`)}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+            </dl>
           ) : null}
         </div>
+        {hasResources ? (
+          <div className={styles.headerToolbarRow}>
+            <div className={styles.searchWrap}>
+              <span className={styles.searchIcon} aria-hidden="true">
+                <IconSearch size={16} />
+              </span>
+              <input
+                aria-label={t('providersPage.table.filterPlaceholder')}
+                type="search"
+                className={styles.searchInput}
+                value={filter}
+                onChange={(event) => onFilterChange(event.target.value)}
+                placeholder={t('providersPage.table.filterPlaceholder')}
+              />
+            </div>
+            {toolbarControls ? (
+              <ProviderResourceToolbar
+                key={group.id}
+                sortBy={toolbarControls.sortBy}
+                sortDir={toolbarControls.sortDir}
+                onSortBy={toolbarControls.onSortBy}
+                onSortDir={toolbarControls.onSortDir}
+                availableModels={toolbarControls.availableModels}
+                selectedModels={toolbarControls.selectedModels}
+                onSelectedModelsChange={toolbarControls.onSelectedModelsChange}
+              />
+            ) : null}
+          </div>
+        ) : null}
       </div>
 
-      {filteredResources.length === 0 ? (
+      {!hasResources ? (
         <div className={styles.empty}>
-          <div>{t('providersPage.table.empty')}</div>
-          <div className={styles.emptyAction}>
-            <button
-              type="button"
-              className={styles.emptyActionButton}
-              onClick={onCreate}
-              disabled={disableMutations}
+          <h3 className={styles.emptyTitle}>
+            {t(
+              namedEntries
+                ? 'providersPage.table.emptyTitleNamed'
+                : 'providersPage.table.emptyTitle',
+              { provider: providerTitle }
+            )}
+          </h3>
+          <p className={styles.emptyDescription}>
+            {t(
+              namedEntries
+                ? 'providersPage.table.emptyDescriptionNamed'
+                : 'providersPage.table.emptyDescription',
+              { provider: providerTitle }
+            )}
+          </p>
+          <Button
+            variant="primary"
+            size="sm"
+            className={styles.emptyAction}
+            onClick={onCreate}
+            disabled={disableMutations}
+          >
+            <IconPlus size={16} />
+            {t(namedEntries ? 'providersPage.actions.addProvider' : 'providersPage.actions.addKey')}
+          </Button>
+        </div>
+      ) : filteredResources.length === 0 ? (
+        <div className={styles.empty}>
+          <h3 className={styles.emptyTitle}>{t('providersPage.table.noMatchesTitle')}</h3>
+          {hasActiveFilters ? (
+            <Button
+              variant="secondary"
+              size="sm"
+              className={styles.emptyAction}
+              onClick={clearFilters}
             >
-              <IconPlus size={16} />
-              <span>{t('providersPage.actions.new')}</span>
-            </button>
-          </div>
+              {t('providersPage.table.clearFilters')}
+            </Button>
+          ) : null}
         </div>
       ) : (
         <ProviderResourceTable

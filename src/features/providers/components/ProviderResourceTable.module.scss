@@ -1,187 +1,381 @@
+@use '../../../styles/mixins' as *;
 @use '../../../styles/variables' as *;
 
-.tableFrame > div {
-  border: 0;
+// The table sizes itself from the panel, not the viewport: the provider rail and the main
+// sidebar both eat width, so a viewport breakpoint cannot know how much room is left.
+.tableFrame {
+  container: provider-table / inline-size;
   border-top: 1px solid var(--border-subtle);
-  border-radius: 0 0 10px 10px;
-  background: var(--bg-surface);
+
+  > div {
+    border: 0;
+    border-radius: 0 0 $radius-lg $radius-lg;
+    background: transparent;
+  }
 }
 
 .providerTable {
-  min-width: 780px;
   table-layout: fixed;
 
-  thead {
-    background: var(--bg-raised);
-  }
-  tbody {
-    background: var(--bg-surface);
-  }
-  th {
-    height: 36px;
-    padding: 10px 12px;
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: 400;
-  }
+  th,
   td {
-    padding: 13px 12px;
-    vertical-align: middle;
+    padding-inline: 12px;
   }
+
   th:first-child,
   td:first-child {
-    padding-left: 24px;
+    padding-left: $space-5;
   }
+
+  th:last-child,
+  td:last-child {
+    padding-right: $space-4;
+  }
+
+  td {
+    padding-block: 14px;
+  }
+}
+
+// Budget fixed widths for the controls so identity, state and Enabled always stay in view.
+.colKey {
+  width: auto;
+}
+.colUrl {
+  width: 24%;
+}
+.colPrefix {
+  width: 12%;
+}
+.colModels {
+  width: 76px;
+}
+.colStatus {
+  width: 176px;
+}
+.colEnabled {
+  width: 80px;
+}
+.colActions {
+  width: 84px;
 }
 
 .primaryCell {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   min-width: 0;
 }
+
 .primaryName,
 .primarySub,
-.baseUrl {
+.baseUrl,
+.compactMeta,
+.none {
   display: block;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: $font-family;
-  font-variant-numeric: tabular-nums;
-  font-size: 12px;
-  line-height: 18px;
+  @include text-ellipsis;
+  @include text-identifier;
 }
+
 .primaryName {
-  font-weight: 600;
   color: var(--text-primary);
+  font-size: $text-base;
+  font-weight: 500;
+  line-height: $leading-base;
 }
-.primarySub {
-  font-size: 11px;
-  color: var(--text-tertiary);
+
+.primarySub,
+.compactMeta {
+  @include text-meta;
 }
+
+.compactMeta {
+  display: none;
+}
+
 .baseUrl {
   width: 100%;
   color: var(--text-secondary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
 }
+
+.none {
+  color: var(--text-tertiary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+}
+
 .chip,
 .modelCount {
-  font-variant-numeric: tabular-nums;
+  @include numeric;
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: $text-sm;
+  line-height: $leading-sm;
 }
+
+.chip {
+  @include text-ellipsis;
+  display: block;
+}
+
 .flags {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
   margin-top: 6px;
 }
+
 .flagTag {
-  padding: 1px 6px;
-  border: 0;
-  border-radius: 4px;
+  padding: 0 6px;
+  border-radius: $radius-sm;
+  background: var(--bg-raised);
   color: var(--text-secondary);
-  font-size: 10px;
-  line-height: 16px;
+  font-size: $text-xs;
+  line-height: 18px;
 }
+
 .statusBadge {
   white-space: nowrap;
 }
+
 .statusCell {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
   align-items: flex-start;
   min-width: 0;
 }
-// One compact summary line under the meter (Figma: "412 ok  3 failed").
+
+// One compact summary line under the strip ("412 ok  3 failed").
 .stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  font-size: 12px;
-  line-height: 16px;
+  gap: 4px 10px;
+  @include numeric;
+  font-size: $text-xs;
+  line-height: $leading-xs;
   white-space: nowrap;
 }
+
 .statSuccess {
   color: var(--text-secondary);
 }
+
 .statFailure {
   color: var(--status-danger);
+  font-weight: 500;
 }
+
 .statFailureNone {
   color: var(--text-tertiary);
 }
+
 .statusBarWrap {
   width: 100%;
+  max-width: 148px;
   min-width: 0;
 }
-.actionsHead,
-.actionsCell {
-  position: sticky;
-  right: 0;
-}
-.actionsHead {
-  z-index: 3;
-  background: var(--bg-raised);
-}
-.actionsCell {
-  z-index: 2;
-  background: var(--bg-surface);
-}
-.actionsCellSelected {
-  background: var(--bg-active);
-}
+
 .actions {
   display: flex;
   gap: 2px;
   align-items: center;
   justify-content: flex-end;
 }
+
 .toggleWrap {
   display: inline-flex;
   align-items: center;
 }
+
+// Dense lists repeat the switch on every row; in dark mode the solid accent track becomes a
+// heavy blue column. Keep "on" unmistakable (accent outline + accent thumb, right side) with
+// a soft wash instead of a solid fill. Off stays the shared outlined track.
+:global([data-theme='dark']) .toggleWrap label input[role='switch']:checked + span {
+  background: var(--accent-subtle);
+  border-color: var(--accent-text);
+
+  > span {
+    background: var(--accent-text);
+  }
+}
+
+:global([data-theme='dark'])
+  .toggleWrap
+  label:hover
+  input[role='switch']:checked:not(:disabled)
+  + span {
+  background: var(--accent-subtle-hover);
+  border-color: var(--accent-text);
+}
+
 .iconBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 30px;
+  width: $control-height-sm;
+  height: $control-height-sm;
   padding: 0;
   border: 0;
-  border-radius: 6px;
+  border-radius: $radius-md;
   background: transparent;
   color: var(--icon-default);
   cursor: pointer;
   transition:
     background-color var(--dur-hover) var(--ease-out-strong),
     color var(--dur-hover) var(--ease-out-strong);
+
   &:hover:not(:disabled) {
     background: var(--bg-active);
     color: var(--text-primary);
   }
+
   &:disabled {
-    opacity: 0.4;
+    opacity: 0.5;
     cursor: not-allowed;
   }
+
   &:focus-visible {
-    outline: 2px solid var(--focus-ring);
-    outline-offset: -1px;
+    @include focus-ring(-2px);
   }
 }
+
 .srOnly {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
+  @include visually-hidden;
 }
+
+// Narrow panel (1280 with both rails, tablets): fold Prefix and Models into the identity cell.
+@container provider-table (max-width: 820px) {
+  .colPrefix,
+  .colModels,
+  .cellPrefix,
+  .cellModels {
+    display: none;
+  }
+
+  .compactMeta {
+    display: block;
+  }
+
+  .colUrl {
+    width: 30%;
+  }
+
+  .colStatus {
+    width: 160px;
+  }
+}
+
+// Phone-width panel: stacked rows that keep identity, state and actions together.
+@container provider-table (max-width: 560px) {
+  .head {
+    @include visually-hidden;
+  }
+
+  .providerTable,
+  .providerTable tbody {
+    display: block;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas:
+      'key enabled actions'
+      'url url url'
+      'status status status';
+    align-items: center;
+    column-gap: $space-2;
+    padding: $space-4;
+    border-bottom: 1px solid var(--border-subtle);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    > td,
+    > td:first-child,
+    > td:last-child {
+      display: block;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+  }
+
+  .row:hover > td {
+    background: transparent;
+  }
+
+  // Prefix and model count already live in the identity cell's compact meta line.
+  .row > .cellPrefix,
+  .row > .cellModels {
+    display: none;
+  }
+
+  .cellKey {
+    grid-area: key;
+  }
+
+  // Without a header row, the base URL carries its own label ("Base URL · Not set").
+  .row > .cellUrl {
+    grid-area: url;
+    display: flex;
+    gap: $space-2;
+    align-items: baseline;
+    min-width: 0;
+    margin-top: $space-2;
+
+    &::before {
+      content: attr(data-label);
+      flex: none;
+      @include text-meta;
+    }
+  }
+
+  .cellStatus {
+    grid-area: status;
+    margin-top: $space-3;
+  }
+
+  .cellEnabled {
+    grid-area: enabled;
+  }
+
+  .cellActions {
+    grid-area: actions;
+  }
+
+  .statusCell {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-2 $space-3;
+  }
+
+  .statusBarWrap {
+    flex: 1 1 140px;
+    max-width: 200px;
+  }
+
+  .baseUrl {
+    @include text-meta;
+  }
+}
+
+@include mobile {
+  .iconBtn {
+    width: $hit-target-touch;
+    height: $hit-target-touch;
+  }
+
+  .toggleWrap {
+    min-height: $hit-target-touch;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .iconBtn {
     transition: none;

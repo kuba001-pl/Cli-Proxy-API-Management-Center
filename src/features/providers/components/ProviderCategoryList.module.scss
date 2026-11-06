@@ -1,3 +1,4 @@
+@use '../../../styles/mixins' as *;
 @use '../../../styles/variables' as *;
 
 .stack {
@@ -11,22 +12,18 @@
 .aside {
   background: var(--bg-surface);
   border: 0;
-  border-radius: 12px;
-  padding: 8px 6px;
+  border-radius: $radius-lg;
+  padding: $space-2;
   min-width: 0;
 }
 
 .eyebrow {
-  margin: 6px 10px 10px;
-  font-size: 11px;
-  line-height: 14px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include text-eyebrow;
+  margin: $space-2 $space-2 $space-2;
 }
 
 .list {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -37,9 +34,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  min-height: 47px;
-  padding: 6px 8px;
-  border-radius: 8px;
+  min-height: 48px;
+  padding: 6px $space-2;
+  border-radius: $radius-md;
   border: 0;
   background: transparent;
   cursor: pointer;
@@ -53,8 +50,7 @@
     background: var(--bg-raised);
   }
   &:focus-visible {
-    outline: 2px solid var(--focus-ring);
-    outline-offset: -2px;
+    @include focus-ring(-2px);
   }
   &.active {
     background: var(--bg-active);
@@ -112,18 +108,14 @@
 }
 
 .itemTitle {
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: $text-base;
+  line-height: $leading-base;
+  font-weight: 500;
+  @include text-ellipsis;
 }
 
 .itemSubtitle {
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--text-tertiary);
+  @include text-meta;
 }
 
 .badge {
@@ -136,10 +128,63 @@
   }
 }
 
+// Tablet and phone: a compact horizontal picker instead of a ~500px directory above the work.
 @media (max-width: 1023px) {
+  .aside {
+    padding: 0;
+    background: transparent;
+  }
+
+  .eyebrow {
+    @include visually-hidden;
+  }
+
   .list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    flex-direction: row;
+    gap: $space-2;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    // Fade the trailing edge so it is obvious the strip continues.
+    mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+    padding-right: $space-6;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .item {
+    flex: 0 0 auto;
+    width: auto;
+    min-height: $hit-target-touch;
+    padding: 4px $space-3 4px 6px;
+    border-radius: $radius-full;
+    background: var(--bg-surface);
+    scroll-snap-align: start;
+
+    &.active {
+      background: var(--bg-active);
+    }
+  }
+
+  .itemLeft {
+    gap: $space-2;
+  }
+
+  .logo {
+    width: 28px;
+    height: 28px;
+    border-radius: $radius-full;
+  }
+
+  .itemSubtitle {
+    display: none;
+  }
+
+  .itemTitle {
+    font-size: $text-sm;
   }
 }
 
