@@ -170,6 +170,11 @@ export function QuotaPage() {
 
   const entries = useMemo(() => classifyQuotaFiles(files), [files]);
   const tabCounts = useMemo(() => buildTabCounts(entries), [entries]);
+  // Provider families without credentials add no choice; keep "All" and the active tab.
+  const visibleTabIds = useMemo(
+    () => TAB_IDS.filter((id) => id === 'all' || id === tab || (tabCounts[id] ?? 0) > 0),
+    [tab, tabCounts]
+  );
   const filteredEntries = useMemo(
     () => filterEntriesBySearch(filterEntriesByTab(entries, tab), search),
     [entries, tab, search]
@@ -354,7 +359,7 @@ export function QuotaPage() {
         {/* 提供商导航与搜索工具栏分层，避免不同控件争夺视觉焦点。 */}
         <div className={styles.tabsRow} data-reveal>
           <ProviderTabs
-            types={TAB_IDS}
+            types={visibleTabIds}
             counts={tabCounts}
             active={tab}
             resolvedTheme={resolvedTheme}
@@ -417,13 +422,8 @@ export function QuotaPage() {
 
         {!loading && !error && (
           <>
-            <QuotaSummary
-              entries={pageItems}
-              quotaFor={getQuota}
-              resolvedTheme={resolvedTheme}
-              onLoadAll={handleRefreshAll}
-              loadDisabled={disableControls || batchLoading}
-            />
+            {/* The header's primary action is the single "Load all quotas" control. */}
+            <QuotaSummary entries={pageItems} quotaFor={getQuota} resolvedTheme={resolvedTheme} />
             <UpcomingResets entries={pageItems} quotaFor={getQuota} resolvedTheme={resolvedTheme} />
           </>
         )}

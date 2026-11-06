@@ -25,6 +25,7 @@ import {
   IconSidebarDashboard,
   IconSidebarLogs,
   IconSidebarOauth,
+  IconSidebarPluginPage,
   IconSidebarPlugins,
   IconSidebarProviders,
   IconSidebarQuota,
@@ -127,9 +128,18 @@ function useMenuDismiss(
       container?.querySelector<HTMLButtonElement>('button[aria-haspopup="menu"]') ?? null;
     const getItems = () =>
       Array.from(container?.querySelectorAll<HTMLElement>('[role^="menuitem"]') ?? []);
+    // Whether the menu currently owns focus. Cleared as soon as focus moves to anything outside
+    // the menu, so a later dismissal never pulls focus back from the user's new control.
     let focusInside = false;
     const trackFocus = (event: FocusEvent) => {
       focusInside = getItems().includes(event.target as HTMLElement);
+    };
+    const handleFocusOut = (event: FocusEvent) => {
+      const next = event.relatedTarget as Node | null;
+      // null: the item was unmounted by a selection, or the window lost focus; keep ownership.
+      if (!next || container?.contains(next)) return;
+      focusInside = false;
+      onClose();
     };
 
     const frame = requestAnimationFrame(() => {
@@ -170,14 +180,19 @@ function useMenuDismiss(
     document.addEventListener('mousedown', handlePointerDown);
     document.addEventListener('keydown', handleKeyDown);
     container?.addEventListener('focusin', trackFocus);
+    container?.addEventListener('focusout', handleFocusOut);
 
     return () => {
       cancelAnimationFrame(frame);
       document.removeEventListener('mousedown', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
       container?.removeEventListener('focusin', trackFocus);
-      // Selecting an item unmounts it; hand focus back to the trigger instead of <body>.
-      if (focusInside) getTrigger()?.focus();
+      container?.removeEventListener('focusout', handleFocusOut);
+      // Selecting an item unmounts it; hand focus back to the trigger instead of <body>. Only do
+      // so while focus is still in the menu (or was dropped to <body> by the unmount).
+      const active = document.activeElement;
+      const focusDropped = !active || active === document.body || container?.contains(active);
+      if (focusInside && focusDropped) getTrigger()?.focus();
     };
   }, [open, menuRef, onClose]);
 }
@@ -189,7 +204,7 @@ function PluginSidebarIcon({ src }: { src: string }) {
   return showImage ? (
     <img src={src} alt="" onError={() => setFailed(true)} />
   ) : (
-    <IconSidebarPlugins size={18} />
+    <IconSidebarPluginPage size={18} />
   );
 }
 

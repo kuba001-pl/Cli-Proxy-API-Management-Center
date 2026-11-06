@@ -71,7 +71,10 @@ export function QuotaHeader(props: QuotaHeaderProps) {
           disabled={disableControls || refreshing}
         >
           <IconRefreshCw size={14} className={refreshing ? styles.spinning : undefined} />
-          {t('quota_management.refresh_all_credentials')}
+          {/* Before anything has been read this loads; afterwards it re-reads every quota. */}
+          {loadedCount === 0 && attentionCount === 0
+            ? t('quota_management.load_all')
+            : t('quota_management.refresh_all_credentials')}
         </button>
       </div>
     </header>

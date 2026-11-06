@@ -79,19 +79,20 @@ export function LoginForm({
   return (
     <form className={styles.form} onSubmit={handleSubmit} noValidate>
       <div className={styles.field} data-stagger>
-        <span className={styles.label}>{t('login.connection_current')}</span>
-        <div className={styles.inputWrap}>
-          <span className={styles.fieldIcon} aria-hidden="true">
-            {connectionIcon}
-          </span>
-          <div
-            className={`${styles.readout} ${styles.mono}`}
-            data-custom={editingBase}
-            title={detectedBase}
-          >
-            <span className={styles.readoutText}>{detectedBase}</span>
-          </div>
-        </div>
+        {/* While a custom URL is being entered, the overridden origin is only context (below). */}
+        {!editingBase && (
+          <>
+            <span className={styles.label}>{t('login.connection_current')}</span>
+            <div className={styles.inputWrap}>
+              <span className={styles.fieldIcon} aria-hidden="true">
+                {connectionIcon}
+              </span>
+              <div className={`${styles.readout} ${styles.mono}`} title={detectedBase}>
+                <span className={styles.readoutText}>{detectedBase}</span>
+              </div>
+            </div>
+          </>
+        )}
         <button
           type="button"
           role="switch"
@@ -144,6 +145,11 @@ export function LoginForm({
               onChange={(event) => onApiBaseChange(event.target.value)}
             />
           </div>
+        )}
+        {editingBase && detectedBase && (
+          <p className={`${styles.hint} ${styles.overriddenBase}`} title={detectedBase}>
+            {t('login.connection_overrides', { url: detectedBase })}
+          </p>
         )}
       </div>
 

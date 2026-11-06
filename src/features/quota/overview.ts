@@ -8,6 +8,10 @@ import type {
   XaiQuotaState,
 } from '@/types';
 import { getQuotaCacheKey } from '@/utils/quota/identity';
+import {
+  QUOTA_PROGRESS_HIGH_THRESHOLD,
+  QUOTA_PROGRESS_MEDIUM_THRESHOLD,
+} from './components/QuotaMeter';
 import type { QuotaFileEntry } from './logic';
 import type { QuotaCardState } from './providers';
 import type { QuotaProviderType } from './providers/types';
@@ -163,4 +167,14 @@ export function quotaSummaryState(
   if (statuses.includes('success')) return 'unavailable';
   if (statuses.includes('error')) return 'error';
   return 'idle';
+}
+
+/** Low but not exhausted: the range the amber meter stands for (see QuotaMeter). */
+export function isQuotaLow(percent: number | null | undefined): boolean {
+  return (
+    typeof percent === 'number' &&
+    Number.isFinite(percent) &&
+    percent < QUOTA_PROGRESS_HIGH_THRESHOLD &&
+    percent >= QUOTA_PROGRESS_MEDIUM_THRESHOLD
+  );
 }

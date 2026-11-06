@@ -186,6 +186,12 @@
   .closeBtn {
     top: 12px;
     right: 12px;
+  }
+}
+
+// Touch target follows the shell's mobile breakpoint, not the full-width sheet breakpoint.
+@media (max-width: $breakpoint-mobile) {
+  .closeBtn {
     width: $hit-target-touch;
     height: $hit-target-touch;
   }

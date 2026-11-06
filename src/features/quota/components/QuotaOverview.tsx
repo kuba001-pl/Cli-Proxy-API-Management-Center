@@ -7,11 +7,15 @@ import { getAuthFileIcon, getTypeLabel } from '@/features/authFiles/constants';
 import { useNow } from '@/hooks/useNow';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import type { ResolvedTheme } from '@/types';
+import { prefersReducedMotion } from '@/hooks/motion';
+import { formatDisplayDay, formatDisplayTime } from '@/utils/dateFormat';
 import { formatInstantShort, formatRelativeInstant } from '@/utils/quota';
+import { resolveTimeZoneLabel } from '@/utils/time/timezone';
 import { privacyText } from '@/utils/privacy';
 import { quotaAccountLabel } from '../accountLabel';
-import type { QuotaFileEntry } from '../logic';
+import { quotaRowDomId, type QuotaFileEntry } from '../logic';
 import {
+  isQuotaLow,
   quotaOverviewWindows,
   quotaSummaryState,
   representativeQuotaWindow,
@@ -46,6 +50,14 @@ export function QuotaProviderHeading({
   );
 }
 
+/** Bring a credential's row into view and move focus to it (keyboard and screen readers). */
+function jumpToRow(entry: QuotaFileEntry) {
+  const row = document.getElementById(quotaRowDomId(entry));
+  if (!row) return;
+  row.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'center' });
+  row.focus({ preventScroll: true });
+}
+
 interface Props {
   entries: QuotaFileEntry[];
   quotaFor: (entry: QuotaFileEntry) => QuotaCardState | undefined;
@@ -77,11 +89,12 @@ export function QuotaSummary({
         return window ? [{ entry, window }] : [];
       });
       const lowest = [...observations].sort((a, b) => a.window.remaining! - b.window.remaining!)[0];
-      const state = quotaSummaryState(
-        Boolean(lowest),
-        accounts.map((entry) => quotaFor(entry)?.status)
-      );
-      return { type, accounts, observations, lowest, state };
+      const statuses = accounts.map((entry) => quotaFor(entry)?.status);
+      const state = quotaSummaryState(Boolean(lowest), statuses);
+      // Coverage: a healthy headline must not hide credentials that failed or never loaded.
+      const loaded = statuses.filter((status) => status === 'success').length;
+      const failed = accounts.filter((entry) => quotaFor(entry)?.status === 'error');
+      return { type, accounts, observations, lowest, state, loaded, failed };
     });
   }, [entries, quotaFor]);
   if (groups.length === 0) return null;
@@ -108,7 +121,7 @@ export function QuotaSummary({
 
   return (
     <section className={styles.summary} aria-label={t('quota_management.summary_label')}>
-      {groups.map(({ type, accounts, observations, lowest, state }) => {
+      {groups.map(({ type, accounts, observations, lowest, state, loaded, failed }) => {
         const window = lowest?.window;
         const identities = accounts.flatMap(({ file }) => [file.email, file.projectId]);
         const label = window
@@ -127,11 +140,42 @@ export function QuotaSummary({
               at: formatInstantShort(window.resetAtMs),
             })
           : null;
+        const partial = state !== 'loading' && loaded < accounts.length;
+        const providerLabel = getTypeLabel(t, type);
+        const failureLine =
+          failed.length > 0 ? (
+            <p className={styles.coverageAlert}>
+              <IconAlertTriangle size={14} aria-hidden="true" />
+              <span>{t('quota_management.summary_failed', { count: failed.length })}</span>
+              <button
+                type="button"
+                className={styles.coverageJump}
+                aria-label={t('quota_management.summary_view_failed_aria', {
+                  provider: providerLabel,
+                })}
+                onClick={() => jumpToRow(failed[0])}
+              >
+                {t('quota_management.summary_view_failed')}
+              </button>
+            </p>
+          ) : null;
         return (
-          <article key={type} className={styles.summaryItem} data-state={state}>
+          <article
+            key={type}
+            className={styles.summaryItem}
+            data-state={state}
+            data-partial={partial || undefined}
+          >
             <div className={styles.summaryHead}>
               <QuotaProviderHeading type={type} resolvedTheme={resolvedTheme} />
-              <span>{t('quota_management.meta_credentials', { count: accounts.length })}</span>
+              <span>
+                {partial
+                  ? t('quota_management.summary_coverage', {
+                      loaded,
+                      count: accounts.length,
+                    })
+                  : t('quota_management.meta_credentials', { count: accounts.length })}
+              </span>
             </div>
             {state === 'data' && window ? (
               <>
@@ -141,6 +185,9 @@ export function QuotaSummary({
                     {window.remaining === null ? '—' : `${Math.round(window.remaining)}%`}
                   </strong>
                   <span>{t('quota_management.remaining_label')}</span>
+                  {isQuotaLow(window.remaining) && (
+                    <span className={styles.lowState}>{t('quota_management.low_state')}</span>
+                  )}
                 </div>
                 <QuotaMeter percent={window.remaining} classes={meterClasses} />
                 <p className={styles.reset}>
@@ -152,6 +199,7 @@ export function QuotaSummary({
                   {observations.length > 1 && resetText && <span aria-hidden="true"> · </span>}
                   {resetText && <span>{resetText}</span>}
                 </p>
+                {failureLine}
               </>
             ) : (
               <div className={styles.summaryState}>
@@ -160,14 +208,16 @@ export function QuotaSummary({
                 )}
                 <div>
                   <p className={styles.stateTitle}>{t(`quota_management.summary_${state}`)}</p>
-                  {(state === 'error' || state === 'unavailable') && (
+                  {state === 'unavailable' && (
                     <span className={styles.stateHint}>
                       {t(`quota_management.summary_${state}_hint`)}
                     </span>
                   )}
+                  {state === 'error' && failureLine}
                 </div>
               </div>
             )}
+            {state !== 'data' && state !== 'error' && failureLine}
           </article>
         );
       })}
@@ -204,7 +254,11 @@ export function UpcomingResets({ entries, quotaFor, resolvedTheme }: Props) {
       <header className={styles.upcomingHead}>
         <div>
           <h2>{t('quota_management.upcoming_title')}</h2>
-          <p>{t('quota_management.upcoming_description')}</p>
+          <p>
+            {t('quota_management.upcoming_description')}
+            <span aria-hidden="true"> · </span>
+            {t('quota_management.upcoming_timezone', { zone: resolveTimeZoneLabel(new Date(now)) })}
+          </p>
         </div>
         <SegmentedControl
           options={filterOptions}
@@ -223,11 +277,7 @@ export function UpcomingResets({ entries, quotaFor, resolvedTheme }: Props) {
       )}
       {visible.map(({ key, entry, window }, index) => {
         const date = new Date(window.resetAtMs);
-        const day = date.toLocaleDateString(i18n.resolvedLanguage, {
-          weekday: 'short',
-          day: '2-digit',
-          month: '2-digit',
-        });
+        const day = formatDisplayDay(date, i18n.resolvedLanguage);
         const previousDay = index
           ? new Date(visible[index - 1].window.resetAtMs).toDateString()
           : '';
@@ -243,11 +293,7 @@ export function UpcomingResets({ entries, quotaFor, resolvedTheme }: Props) {
             {date.toDateString() !== previousDay && <h3 className={styles.day}>{day}</h3>}
             <div className={styles.resetRow}>
               <time className={styles.resetTime} dateTime={date.toISOString()}>
-                {date.toLocaleTimeString(i18n.resolvedLanguage, {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  hour12: false,
-                })}
+                {formatDisplayTime(date, i18n.resolvedLanguage)}
               </time>
               <span className={styles.resetIdentity}>
                 {icon ? (
@@ -268,6 +314,9 @@ export function UpcomingResets({ entries, quotaFor, resolvedTheme }: Props) {
                     : t('quota_management.percent_left', {
                         percent: Math.round(window.remaining),
                       })}
+                  {isQuotaLow(window.remaining) && (
+                    <span className={styles.lowState}> · {t('quota_management.low_state')}</span>
+                  )}
                 </b>
               </span>
               <span className={styles.resetRelative}>

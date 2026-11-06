@@ -4,7 +4,8 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import i18n from '../src/i18n/index';
 import type { QuotaFileEntry } from '../src/features/quota/logic';
-import { quotaSummaryState } from '../src/features/quota/overview';
+import { isQuotaLow, quotaSummaryState } from '../src/features/quota/overview';
+import { quotaRowDomId } from '../src/features/quota/logic';
 import type { QuotaCardState } from '../src/features/quota/providers';
 import type { XaiQuotaState } from '../src/types';
 
@@ -17,6 +18,7 @@ mock.module(
 );
 
 const { QuotaSummary } = await import('../src/features/quota/components/QuotaOverview');
+const { QuotaHeader } = await import('../src/features/quota/components/QuotaHeader');
 
 beforeAll(async () => {
   await i18n.changeLanguage('en');
@@ -94,5 +96,74 @@ describe('quota summary state', () => {
     const markup = render([xai('xai-a.json')], () => weekly);
     expect(markup).toContain('70%');
     expect(markup).toContain(copy('quota_management.remaining_label'));
+  });
+
+  const weekly = (usagePercent: number) =>
+    ({
+      status: 'success',
+      billing: {
+        mode: 'billing',
+        periodType: 'weekly',
+        usagePercent,
+        resetAtMs: now + 3_600_000,
+      },
+    }) as XaiQuotaState;
+
+  test('a healthy headline states its coverage and links to the failed credential', () => {
+    const a = xai('xai-a.json');
+    const b = xai('xai-b.json');
+    const c = xai('xai-c.json');
+    const markup = render([a, b, c], (entry) =>
+      entry === b ? { status: 'error', error: 'expired' } : entry === c ? undefined : weekly(16)
+    );
+    expect(markup).toContain('84%');
+    expect(markup).toContain(i18n.t('quota_management.summary_coverage', { loaded: 1, count: 3 }));
+    expect(markup).toContain(i18n.t('quota_management.summary_failed', { count: 1 }));
+    expect(markup).toContain(copy('quota_management.summary_view_failed'));
+    expect(markup).toContain('data-partial="true"');
+  });
+
+  test('a fully loaded provider keeps its plain credential count', () => {
+    const markup = render([xai('xai-a.json'), xai('xai-b.json')], () => weekly(30));
+    expect(markup).not.toContain('data-partial');
+    expect(markup).not.toContain(copy('quota_management.summary_view_failed'));
+    expect(markup).toContain(i18n.t('quota_management.meta_credentials', { count: 2 }));
+  });
+
+  test('amber and the Low label are reserved for readings under 20% left', () => {
+    expect(isQuotaLow(19)).toBe(true);
+    expect(isQuotaLow(1)).toBe(true);
+    expect(isQuotaLow(20)).toBe(false);
+    expect(isQuotaLow(58)).toBe(false);
+    expect(isQuotaLow(0)).toBe(false);
+    expect(isQuotaLow(null)).toBe(false);
+    expect(render([xai('xai-a.json')], () => weekly(85))).toContain(
+      `>${i18n.t('quota_management.low_state')}<`
+    );
+    expect(render([xai('xai-a.json')], () => weekly(42))).not.toContain(
+      `>${i18n.t('quota_management.low_state')}<`
+    );
+  });
+
+  test('row ids are stable DOM ids for jump links', () => {
+    expect(quotaRowDomId(xai('a b@x.json'))).toBe('quota-row-xai-a%20b%40x.json');
+  });
+
+  test('the header action loads first and refreshes afterwards, with singular attention', () => {
+    const header = (loadedCount: number, attentionCount: number) =>
+      renderToStaticMarkup(
+        createElement(QuotaHeader, {
+          totalCount: 2,
+          loadedCount,
+          attentionCount,
+          refreshing: false,
+          disableControls: false,
+          onRefreshAll: () => {},
+        })
+      );
+    expect(header(0, 0)).toContain(i18n.t('quota_management.load_all'));
+    const loaded = header(1, 1);
+    expect(loaded).toContain(i18n.t('quota_management.refresh_all_credentials'));
+    expect(loaded).toContain('1 needs attention');
   });
 });

@@ -127,6 +127,39 @@
   margin: 0;
 }
 
+// Reset-availability feedback trails the quota reading as quiet secondary text.
+.card .resetNote {
+  @include text-meta;
+  grid-column: 1 / -1;
+  color: var(--text-secondary);
+}
+
+/* Not loaded yet: no meter body to reserve. The status reads as one more identity line and the
+   Refresh action centres on the compact row (the page-level notice explains the state). */
+.card[data-status='idle'] {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'head actions'
+    'body actions';
+  align-items: center;
+  row-gap: 2px;
+  padding-block: $space-4;
+
+  .idleBody {
+    @include text-meta;
+  }
+}
+
+// Programmatic focus target for "View failed": the scroll is the cue, keyboard users see a ring.
+.card:focus {
+  outline: none;
+}
+
+.card:focus-visible {
+  @include focus-ring(4px);
+  border-radius: $radius-sm;
+}
+
 .skeleton {
   grid-column: 1 / -1;
   display: grid;
@@ -180,6 +213,45 @@
   svg {
     flex: none;
     margin-top: 1px;
+  }
+}
+
+.errorBlock {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $space-2 $space-3;
+  min-width: 0;
+}
+
+.signInLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: $control-height-sm;
+  padding: 0 $space-3;
+  border-radius: $radius-md;
+  background: var(--bg-raised);
+  color: var(--text-primary);
+  font-size: $text-sm;
+  font-weight: 500;
+  line-height: $leading-sm;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--dur-hover) var(--ease-out-strong);
+
+  svg {
+    flex: none;
+    color: var(--icon-default);
+  }
+
+  &:hover {
+    background: var(--bg-active);
+  }
+
+  &:focus-visible {
+    @include focus-ring(2px);
   }
 }
 
@@ -271,6 +343,28 @@
     justify-content: flex-start;
     margin: 0 0 0 (-$space-2);
   }
+
+  // A not-loaded row has a single action: it stays beside the identity (the idle rule above is
+  // more specific than .card here) until the row is genuinely too narrow.
+  .card[data-status='idle'] .actionRow {
+    justify-content: flex-end;
+    margin: 0 (-$space-2) 0 0;
+  }
+}
+
+@container (max-width: 360px) {
+  .card[data-status='idle'] {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'head'
+      'body'
+      'actions';
+
+    .actionRow {
+      justify-content: flex-start;
+      margin: $space-2 0 0 (-$space-2);
+    }
+  }
 }
 
 @include mobile {
@@ -278,7 +372,8 @@
     padding: $space-4 0;
   }
 
-  .actionPill {
+  .actionPill,
+  .signInLink {
     min-height: $hit-target-touch;
   }
 }
@@ -289,7 +384,8 @@
     animation: none;
   }
 
-  .actionPill {
+  .actionPill,
+  .signInLink {
     transition: none;
   }
 }

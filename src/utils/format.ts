@@ -80,7 +80,14 @@ export function formatPercent(value: number, fractionDigits = 1): string {
  * 将 Unix 时间戳（秒/毫秒/微秒/纳秒）格式化为本地时间字符串
  */
 export function formatUnixTimestamp(value: unknown, locale?: string): string {
-  if (value === null || value === undefined || value === '') return '';
+  const date = parseUnixTimestamp(value);
+  if (!date) return '';
+  return locale ? date.toLocaleString(locale) : date.toLocaleString();
+}
+
+/** Unix timestamp (s / ms / µs / ns, or a date string) to a Date; null when unusable. */
+export function parseUnixTimestamp(value: unknown): Date | null {
+  if (value === null || value === undefined || value === '') return null;
 
   const asNumber = typeof value === 'number' ? value : Number(value);
   const date = (() => {
@@ -103,8 +110,7 @@ export function formatUnixTimestamp(value: unknown, locale?: string): string {
     return new Date(Math.round(asNumber / 1e6));
   })();
 
-  if (Number.isNaN(date.getTime())) return '';
-  return locale ? date.toLocaleString(locale) : date.toLocaleString();
+  return Number.isNaN(date.getTime()) ? null : date;
 }
 
 export function parseDateValue(value: unknown): Date | null {

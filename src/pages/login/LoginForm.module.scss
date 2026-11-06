@@ -65,10 +65,6 @@
   border-color: transparent;
   background: var(--bg-surface);
   color: var(--text-secondary);
-
-  &[data-custom='true'] {
-    color: var(--text-tertiary);
-  }
 }
 
 .readoutText {
@@ -191,6 +187,12 @@
   color: var(--text-tertiary);
   font-size: $text-xs;
   line-height: $leading-xs;
+}
+
+.overriddenBase {
+  margin: 0;
+  font-variant-numeric: tabular-nums slashed-zero;
+  overflow-wrap: anywhere;
 }
 
 .srOnly {

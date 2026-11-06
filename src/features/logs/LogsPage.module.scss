@@ -857,6 +857,23 @@
   font-variant-numeric: tabular-nums;
 }
 
+.errorLogViewerTools {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: -$space-1;
+
+  // On reads as on: the same accent wash as other pressed toggles.
+  :global(.btn)[aria-pressed='true'] {
+    background: var(--accent-subtle);
+    color: var(--accent-text);
+  }
+}
+
+.errorLogContent.errorLogWrapped {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .errorLogContent {
   margin: 0;
   padding: 12px;
@@ -1038,6 +1055,36 @@
     :global(.btn) {
       min-height: $hit-target-touch;
     }
+  }
+
+  // Touch targets for the row actions: the request link gets its own 40px line slot and the
+  // copy action a 40px square in the row's reserved right gutter; the glyphs stay small.
+  .requestIdBadge {
+    min-height: $hit-target-touch;
+    padding: 0 $space-2;
+    margin-left: -$space-2;
+    border-radius: $radius-md;
+  }
+
+  .wrapped .requestIdBadge {
+    flex: 0 0 auto;
+    margin-right: auto;
+  }
+
+  .copyButton:global(.btn),
+  .wrapped .copyButton:global(.btn) {
+    width: $hit-target-touch;
+    height: $hit-target-touch;
+    min-height: $hit-target-touch;
+  }
+
+  .wrapped .copyButton:global(.btn) {
+    top: 0;
+    right: 0;
+  }
+
+  .wrapped .logRow {
+    padding-right: 44px;
   }
 }
 

@@ -84,11 +84,13 @@
 
 /* ---------- 设置行 ---------- */
 
+/* One deliberate label/control grid: a bounded label track and one control column that starts
+   right after it, so every control (inputs, selects, switches) sits beside its label instead of
+   docking to the far edge of the panel. Descriptions wrap inside the label track. */
 .row {
-  --setting-control: auto;
-
   display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--setting-control);
+  grid-template-columns: minmax(200px, 300px) minmax(0, 320px);
+  justify-content: start;
   align-items: center;
   gap: $space-2 $space-6;
   min-width: 0;
@@ -98,13 +100,6 @@
   border: 0;
   border-radius: $radius-sm;
   scroll-margin-top: calc(var(--header-height, 64px) + 16px);
-}
-
-/* One aligned control column; numeric fields stay compact within it. */
-.size_sm,
-.size_md,
-.size_lg {
-  --setting-control: min(320px, 44%);
 }
 
 .rowWide {
@@ -175,10 +170,6 @@
   max-width: 160px;
 }
 
-.rowToggle .rowControl {
-  justify-content: flex-end;
-}
-
 .rowBlock .rowControl {
   display: block;
 }
@@ -226,6 +217,11 @@
   .row:not(.rowToggle) {
     grid-template-columns: minmax(0, 1fr);
     align-items: stretch;
+  }
+
+  .rowToggle {
+    grid-template-columns: minmax(0, 1fr) auto;
+    justify-content: stretch;
   }
 
   .size_sm .rowControl {

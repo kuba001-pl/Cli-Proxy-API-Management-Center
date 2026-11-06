@@ -689,16 +689,22 @@
     }
   }
 
-  .header-actions .language-menu-popover,
-  .header-actions .theme-menu-popover {
-    bottom: calc(100% + 10px);
-    left: 0;
+  // Expanded rail: both menus anchor to the docked footer itself (not to their triggers), so
+  // they span the sidebar's width and can never hang off the left viewport edge.
+  .app-shell:not(.sidebar-is-collapsed) .header-actions {
+    .language-menu,
+    .theme-menu {
+      position: static;
+    }
   }
 
-  // The theme menu sits near the sidebar's right edge; open it leftward.
+  .header-actions .language-menu-popover,
   .header-actions .theme-menu-popover {
-    left: auto;
-    right: 0;
+    right: 12px;
+    bottom: calc(100% + 8px);
+    left: 12px;
+    max-height: calc(100dvh - var(--sidebar-footer-height) - 24px);
+    overflow-y: auto;
   }
 
   .sidebar {

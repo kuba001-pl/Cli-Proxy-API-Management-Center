@@ -68,6 +68,21 @@ describe('LoginForm', () => {
     expect(markup).toContain(i18n.t('login.custom_connection_label'));
   });
 
+  test('a custom URL demotes the overridden origin to one line of context', () => {
+    const markup = render({ editingBase: true, apiBase: 'https://proxy.example.com' });
+    // No second full "Current URL" field competes with the input being edited.
+    expect(markup).not.toContain(`>${i18n.t('login.connection_current')}<`);
+    expect(markup).toContain(
+      i18n.t('login.connection_overrides', { url: 'http://localhost:8317' })
+    );
+  });
+
+  test('uses management-key wording for remembering and rejection', () => {
+    expect(i18n.t('login.remember_password_label')).toBe('Remember management key');
+    expect(i18n.t('login.error_unauthorized')).toBe('Management key not accepted');
+    expect(render()).toContain(`>${i18n.t('login.submit_button')}<`);
+  });
+
   test('toggles key visibility with an accessible pressed button', () => {
     expect(render()).toContain('type="password"');
     expect(render()).toContain(`aria-label="${i18n.t('login.show_key')}"`);

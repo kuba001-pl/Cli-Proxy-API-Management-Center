@@ -76,20 +76,65 @@
   }
 }
 
+// Mid widths (tablet, 1024 with the sidebar open): the requests tile sits beside a 2 x 2 block of
+// the other KPIs instead of becoming a full-width slab.
 @container (min-width: 560px) {
   .statsRow {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-@container (min-width: 960px) {
-  .statsRow {
-    grid-template-columns: minmax(0, 1.3fr) repeat(4, minmax(0, 1fr));
-    gap: $space-4;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .statTile:first-child {
     grid-column: auto;
+    grid-row: span 2;
+
+    // Spanning two rows earns a hero number; the split meter and caption anchor the bottom
+    // edge, level with the neighbouring tiles' captions.
+    .statValue {
+      font-size: 40px;
+      line-height: 48px;
+    }
+
+    .heroSplit {
+      margin-top: auto;
+    }
+
+    .statHint {
+      margin-top: 0;
+    }
+  }
+}
+
+// Desktop (from ~1200px viewports with the sidebar open): one row of five.
+@container (min-width: 880px) {
+  .statsRow {
+    grid-template-columns: minmax(0, 1.3fr) repeat(4, minmax(0, 1fr));
+  }
+
+  .statTile {
+    padding: $space-4 $space-5;
+  }
+
+  .statTile:first-child {
+    grid-row: auto;
+
+    .statValue {
+      font-size: 28px;
+      line-height: 36px;
+    }
+
+    .heroSplit {
+      margin-top: 0;
+    }
+
+    .statHint {
+      margin-top: auto;
+    }
+  }
+}
+
+@container (min-width: 1100px) {
+  .statsRow {
+    gap: $space-4;
   }
 }
 
@@ -128,10 +173,11 @@
   font-weight: 500;
 }
 
-// Keep short phrases ("Below target", "Target 95%") whole when the caption wraps.
+// Status phrases wrap like the rest of the caption: translated phrases ("Thấp hơn nhiều so với
+// mục tiêu") are longer than a narrow tile.
 .hintStatus,
 .hintPhrase {
-  white-space: nowrap;
+  overflow-wrap: break-word;
 }
 
 .tone_good {

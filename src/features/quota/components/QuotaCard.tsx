@@ -4,7 +4,8 @@ import { useState, type CSSProperties } from 'react';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { privacyText } from '@/utils/privacy';
 import { useTranslation } from 'react-i18next';
-import { IconAlertTriangle, IconRefreshCw } from '@/components/ui/icons';
+import { Link } from 'react-router-dom';
+import { IconAlertTriangle, IconKey, IconRefreshCw } from '@/components/ui/icons';
 import type { ClaudeQuotaState, ResolvedTheme } from '@/types';
 import { resolveQuotaErrorMessage } from '@/utils/quota';
 import { getQuotaPrivacyDisplayName } from '@/utils/quota/identity';
@@ -17,7 +18,7 @@ import {
 import { quotaAccountLabel } from '../accountLabel';
 import { bindQuotaClasses } from '../types';
 import { QUOTA_ADAPTERS, type QuotaCardState } from '../providers';
-import { isQuotaRefreshDisabled, type QuotaFileEntry } from '../logic';
+import { isQuotaRefreshDisabled, quotaRowDomId, type QuotaFileEntry } from '../logic';
 import { useClaudeResetGrants } from '../providers/claude/ClaudeResetGrants';
 import { ClaudeResetGrantDetails } from '../providers/claude/ClaudeResetGrantDetails';
 import { hasClaudeUsageData } from '../providers/claude/data';
@@ -97,7 +98,8 @@ export function QuotaCard(props: QuotaCardProps) {
     resolveQuotaErrorMessage(t, quota?.errorStatus, quota?.error || t('common.unknown_error')),
     [file.email, file.projectId]
   );
-  // Claude banked resets join the plan chip row; their expiry list follows it.
+  // Claude banked resets join the plan chip row; their expiry list follows it. Reset
+  // availability feedback comes after the quota itself: it is secondary to the reading.
   const showClaudeReset = entry.type === 'claude' && status === 'success';
   const claudePlanItems = showClaudeReset ? (
     <span className={quotaClasses.codexPlanItem}>
@@ -106,15 +108,14 @@ export function QuotaCard(props: QuotaCardProps) {
     </span>
   ) : undefined;
   const claudeAfterPlan = showClaudeReset ? (
-    <>
-      <ClaudeResetGrantDetails grants={claudeReset.grants} classes={quotaClasses} />
-      {claudeReset.message && (
-        <div role="status" className={quotaClasses.codexResetCreditsError}>
-          {t(`claude_reset.${claudeReset.message}`)}
-        </div>
-      )}
-    </>
+    <ClaudeResetGrantDetails grants={claudeReset.grants} classes={quotaClasses} />
   ) : undefined;
+  const claudeResetMessage =
+    showClaudeReset && claudeReset.message ? (
+      <div role="status" className={`${quotaClasses.codexResetCreditsError} ${styles.resetNote}`}>
+        {t(`claude_reset.${claudeReset.message}`)}
+      </div>
+    ) : null;
   const showReset =
     status === 'success' &&
     Boolean(adapter.resetQuota) &&
@@ -123,6 +124,8 @@ export function QuotaCard(props: QuotaCardProps) {
 
   return (
     <article
+      id={quotaRowDomId(entry)}
+      tabIndex={-1}
       className={`${styles.card} ${mountEntranceDelayMs === null ? '' : styles.cardEnter}`}
       style={entranceStyle}
       data-provider={entry.type}
@@ -220,9 +223,18 @@ export function QuotaCard(props: QuotaCardProps) {
             ))}
           </div>
         ) : status === 'error' ? (
-          <div className={styles.errorStrip} role="alert">
-            <IconAlertTriangle size={16} aria-hidden="true" />
-            {t(`${adapter.i18nPrefix}.load_failed`, { message: errorMessage })}
+          <div className={styles.errorBlock}>
+            <div className={styles.errorStrip} role="alert">
+              <IconAlertTriangle size={16} aria-hidden="true" />
+              {t(`${adapter.i18nPrefix}.load_failed`, { message: errorMessage })}
+            </div>
+            {/* An expired/revoked token can't be fixed by refreshing: offer the OAuth flow. */}
+            {quota?.errorStatus === 401 && (
+              <Link to="/oauth" className={styles.signInLink}>
+                <IconKey size={14} aria-hidden="true" />
+                {t('quota_management.sign_in_again')}
+              </Link>
+            )}
           </div>
         ) : quota && !retainedClaudeUsage ? (
           <adapter.Body
@@ -242,6 +254,7 @@ export function QuotaCard(props: QuotaCardProps) {
             part="details"
           />
         )}
+        {claudeResetMessage}
       </div>
     </article>
   );

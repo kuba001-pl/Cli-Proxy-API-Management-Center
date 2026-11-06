@@ -465,7 +465,9 @@ export function DashboardPage() {
                 {runtimeToggles.map((toggle) => (
                   <li
                     key={toggle.label}
-                    className={`${styles.togglePill} ${toggle.on ? styles.toggleOn : styles.toggleOff}`}
+                    className={
+                      toggle.on ? styles.togglePill : `${styles.togglePill} ${styles.toggleOff}`
+                    }
                   >
                     {toggle.label}
                     <b>{toggle.on ? t('common.yes') : t('common.no')}</b>

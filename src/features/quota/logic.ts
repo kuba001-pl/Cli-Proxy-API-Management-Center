@@ -26,6 +26,11 @@ const QUOTA_FILTER_MAP: Record<QuotaProviderType, (file: AuthFileItem) => boolea
   xai: XAI_CONFIG.filterFn,
 };
 
+/** DOM id of a credential's quota row, so summaries can jump to a failed credential. */
+export function quotaRowDomId(entry: QuotaFileEntry): string {
+  return `quota-row-${entry.type}-${encodeURIComponent(entry.file.name)}`;
+}
+
 export interface QuotaFileEntry {
   file: AuthFileItem;
   type: QuotaProviderType;

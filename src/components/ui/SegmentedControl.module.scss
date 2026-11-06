@@ -56,8 +56,13 @@
     min-height: $hit-target-touch;
   }
 
+  // The option itself is the 40px target (the track grows around it).
+  .root {
+    padding: 2px;
+  }
+
   .option {
-    min-height: 34px;
+    min-height: $hit-target-touch;
   }
 }
 
