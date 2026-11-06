@@ -133,6 +133,7 @@ describe('phase 2 layout contracts', () => {
   test('a problem credential is labelled in its collapsed row', async () => {
     const tsx = await read('src/features/authFiles/components/AuthFileCard.tsx');
     expect(tsx).toContain('isProblemAuthFile(file)');
-    expect(tsx).toContain("t('auth_files.problem_label')");
+    expect(tsx).toContain("'auth_files.problem_label'");
+    expect(tsx).toContain("'auth_files.problem_label_sign_in'");
   });
 });

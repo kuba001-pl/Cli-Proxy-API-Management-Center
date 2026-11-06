@@ -266,7 +266,9 @@
 
 .filterCount {
   margin-left: 6px;
-  color: var(--text-tertiary);
+  // Secondary, not tertiary: the selected chip's --bg-selected is lighter than the track,
+  // where tertiary falls below 4.5:1 in dark.
+  color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
 }
 
@@ -467,6 +469,10 @@
     @include focus-ring(3px);
     border-radius: $radius-sm;
   }
+
+  @include mobile {
+    min-height: $hit-target-touch;
+  }
 }
 
 /* Every item carries a leading dot; the row is shifted left by one dot slot and clipped, so
@@ -615,9 +621,56 @@ $meta-dot-slot: 3px + $space-2;
   @include text-label;
 }
 
+.installSummary {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: $space-1 $space-4;
+  margin: 0;
+  padding: $space-3 $space-4;
+  border-radius: $radius-md;
+  background: var(--bg-raised);
+
+  > div {
+    display: contents;
+  }
+
+  dt {
+    color: var(--text-secondary);
+    font-size: $text-sm;
+    line-height: $leading-sm;
+  }
+
+  dd {
+    margin: 0;
+    min-width: 0;
+    color: var(--text-primary);
+    font-size: $text-sm;
+    line-height: $leading-sm;
+    @include text-identifier;
+  }
+}
+
+.installTrustNotice {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-2;
+  margin: 0;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  @include status-tone(warning);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+}
+
+// One option fills the row (no narrow orphan tile); several share it evenly.
 .installVersionModes {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: $space-2;
 
   @include mobile {
@@ -854,6 +907,11 @@ $meta-dot-slot: 3px + $space-2;
   }
 
   .cardActions :global(.btn) {
+    min-height: $hit-target-touch;
+  }
+
+  // The whole summary row is the disclosure's tap target.
+  .sourceSummary {
     min-height: $hit-target-touch;
   }
 }

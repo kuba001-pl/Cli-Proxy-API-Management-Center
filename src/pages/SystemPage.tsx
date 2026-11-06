@@ -447,7 +447,7 @@ export function SystemPage() {
               rel="noopener noreferrer"
               className={styles.linkCard}
             >
-              <div className={`${styles.linkIcon} ${styles.github}`}>
+              <div className={styles.linkIcon}>
                 <IconGithub size={18} />
               </div>
               <div className={styles.linkContent}>
@@ -465,7 +465,7 @@ export function SystemPage() {
               rel="noopener noreferrer"
               className={styles.linkCard}
             >
-              <div className={`${styles.linkIcon} ${styles.github}`}>
+              <div className={styles.linkIcon}>
                 <IconCode size={18} />
               </div>
               <div className={styles.linkContent}>
@@ -483,7 +483,7 @@ export function SystemPage() {
               rel="noopener noreferrer"
               className={styles.linkCard}
             >
-              <div className={`${styles.linkIcon} ${styles.docs}`}>
+              <div className={styles.linkIcon}>
                 <IconBookOpen size={18} />
               </div>
               <div className={styles.linkContent}>

@@ -128,6 +128,7 @@ function PluginInstallOptionsModal({
 }: PluginInstallOptionsModalProps) {
   const { i18n, t } = useTranslation();
   const privacyEnabled = usePrivacyStore((state) => state.enabled);
+  const apiBase = useAuthStore((state) => state.apiBase);
   const [versionMode, setVersionMode] = useState<InstallVersionMode>('latest');
   const [showPrerelease, setShowPrerelease] = useState(false);
   const [releaseVersions, setReleaseVersions] = useState<PluginReleaseVersion[]>([]);
@@ -235,9 +236,33 @@ function PluginInstallOptionsModal({
 
   if (!entry) return null;
 
-  const title = isUpdate
-    ? t('plugin_store.update_confirm_title')
-    : t('plugin_store.install_confirm_title');
+  // Name the plugin in the decision title, and keep its trust context (publisher, source,
+  // listed version, target backend) visible where the user actually confirms.
+  const title = t(isUpdate ? 'plugin_store.gate_title_update' : 'plugin_store.gate_title', {
+    name: getStoreEntryTitle(entry, privacyEnabled),
+  });
+  const isOfficial = isOfficialPlugin(entry);
+  const summarySource = isDefaultPluginStoreSource(entry)
+    ? t('plugin_store.cli_proxy_api_source')
+    : privacyText(privacyEnabled, entry.sourceName || entry.sourceUrl);
+  const summaryRows = [
+    {
+      key: 'publisher',
+      label: t('plugin_store.install_summary_publisher'),
+      value: privacyText(privacyEnabled, entry.author),
+    },
+    { key: 'source', label: t('plugin_store.gate_source_label'), value: summarySource },
+    {
+      key: 'version',
+      label: t('plugin_store.install_summary_version'),
+      value: entry.version ? privacyText(privacyEnabled, formatPluginVersion(entry.version)) : '',
+    },
+    {
+      key: 'backend',
+      label: t('plugin_store.install_summary_backend'),
+      value: privacyText(privacyEnabled, apiBase),
+    },
+  ].filter((row) => Boolean(row.value));
   const requestedVersion =
     !supportsVersionSelection || versionMode === 'latest' ? '' : version.trim();
   const displayVersion = requestedVersion || entry.version;
@@ -292,6 +317,22 @@ function PluginInstallOptionsModal({
     <Modal open={Boolean(entry)} onClose={handleClose} title={title} closeDisabled={installing}>
       <div className={styles.installOptions}>
         <p className={styles.installMessage}>{message}</p>
+        {summaryRows.length > 0 ? (
+          <dl className={styles.installSummary}>
+            {summaryRows.map((row) => (
+              <div key={row.key}>
+                <dt>{row.label}</dt>
+                <dd>{row.value}</dd>
+              </div>
+            ))}
+          </dl>
+        ) : null}
+        {!isOfficial ? (
+          <p className={styles.installTrustNotice}>
+            <IconAlertTriangle size={14} aria-hidden="true" />
+            <span>{t('plugin_store.security_banner_title')}</span>
+          </p>
+        ) : null}
         <div className={styles.installVersionField}>
           <span className={styles.installVersionLabel} id="plugin-store-install-version-mode">
             {t('plugin_store.install_version_label')}
@@ -453,7 +494,7 @@ function PluginInstallOptionsModal({
             {t('common.cancel')}
           </Button>
           <Button
-            variant={isOfficialPlugin(entry) ? 'primary' : 'danger'}
+            variant="primary"
             onClick={onConfirm}
             disabled={confirmDisabled}
             loading={installing}

@@ -42,7 +42,7 @@
   --auth-table-columns: minmax(280px, 2.45fr) minmax(88px, 0.6fr) minmax(150px, 0.93fr)
     minmax(150px, 1.04fr) 56px 32px;
   // Rows and header adapt to the list's own width (see AuthFileCard.module.scss).
-  container-type: inline-size;
+  container: auth-list / inline-size;
   border: 0;
   border-radius: $radius-lg;
   background: var(--bg-surface);

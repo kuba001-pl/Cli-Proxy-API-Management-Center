@@ -193,7 +193,8 @@ export function ProviderResourceTable({
     }
     return (
       <span className={styles.baseUrl}>
-        {privacyText(privacyEnabled, r.baseUrl) || t('providersPage.status.notSet')}
+        {/* An empty Base URL is not missing configuration: the provider default applies. */}
+        {privacyText(privacyEnabled, r.baseUrl) || t('providersPage.status.defaultEndpoint')}
       </span>
     );
   };

@@ -228,8 +228,11 @@ export function ProviderSheet({
           disabled={submitDisabled}
         >
           {submitting ? <IconLoader2 size={14} /> : null}
+          {/* The verb names the task ("Add key"), matching the sheet title. */}
           {state.mode === 'create'
-            ? t('providersPage.actions.create')
+            ? descriptor.supportsName
+              ? t('providersPage.actions.addProvider')
+              : t('providersPage.actions.addKey')
             : t('providersPage.actions.save')}
         </Button>
       </>

@@ -39,10 +39,21 @@ describe('auth file card presentation contract', () => {
     expect(source).toContain('title={noteValue}');
   });
 
-  test('dims disabled content while keeping the re-enable control usable', () => {
+  test('keeps disabled credential data readable and labels the state instead', () => {
     expect(source).toContain("file.disabled === true ? styles.cardDisabled : ''");
-    expect(styles).toContain('.cardDisabled .identity');
-    expect(styles).not.toMatch(/\.cardDisabled\s*\{[^}]*opacity:/);
+    expect(source).toContain("t('auth_files.health_status_disabled')");
+    // Round-2 council: group opacity pushed account/health/quota text below 4.5:1.
+    expect(styles).not.toMatch(/\.cardDisabled[^{]*\{[^}]*opacity:/);
+  });
+
+  test('offers a sign-in recovery for expired credentials and a labelled row menu', () => {
+    expect(source).toContain('needsAuthFileReauth(file)');
+    expect(source).toContain("t('auth_files.sign_in_again')");
+    expect(source).toContain("navigate('/oauth')");
+    expect(source).toContain('<ResourceActionsMenu');
+    expect(source).toContain("t('auth_files.row_actions', { name: identity.primary })");
+    // The ellipsis is a real menu, not a second expansion toggle.
+    expect(source.match(/aria-controls=\{detailsId\}/g)).toHaveLength(1);
   });
 
   test('uses a plain-text weight tooltip while preserving the details link', () => {
@@ -79,6 +90,6 @@ describe('auth file card presentation contract', () => {
     }
     expect(source).toContain('rawStatusMessage && hasStatusWarning');
     expect(source).toContain('showManualRefreshButton');
-    expect(source).toContain('file.disabled ||');
+    expect(source).toContain('disableControls || file.disabled === true || statusLocked');
   });
 });

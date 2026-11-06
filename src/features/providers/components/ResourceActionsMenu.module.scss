@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as *;
+
 .trigger {
   display: inline-flex;
   align-items: center;
@@ -49,8 +51,9 @@
   background: transparent;
   color: var(--text-primary);
   font: inherit;
-  font-size: 13px;
+  font-size: $text-sm;
   text-align: left;
+  white-space: nowrap;
   cursor: pointer;
 
   &:hover:not(:disabled),
@@ -73,6 +76,24 @@
 .itemDanger,
 .itemDanger .itemIcon {
   color: var(--status-danger);
+}
+
+// Touch layouts: 40px trigger and items, with a wider gap so neighbouring items (incl. Delete)
+// are not mis-tapped.
+@include mobile {
+  .trigger {
+    width: $hit-target-touch;
+    height: $hit-target-touch;
+  }
+
+  .menu {
+    gap: $space-1;
+  }
+
+  .item {
+    height: $hit-target-touch;
+    font-size: $text-base;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

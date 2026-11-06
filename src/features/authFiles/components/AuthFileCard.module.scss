@@ -12,11 +12,10 @@
 .cardSelected {
   background: var(--accent-subtle);
 }
-.cardDisabled .identity,
-.cardDisabled .plan,
-.cardDisabled .health,
-.cardDisabled .lowest {
-  opacity: 0.6;
+// Disabled is carried by the Off switch and a neutral "Disabled" label. The row's data stays
+// at full contrast: operators read it to decide whether to re-enable the credential.
+.cardDisabled .meter span {
+  background: var(--text-tertiary);
 }
 @media (prefers-reduced-motion: no-preference) {
   .cardEnter {
@@ -85,9 +84,13 @@
   transform: rotate(0);
 }
 .more {
+  display: flex;
+  justify-content: center;
+  min-width: 32px;
+}
+.moreTrigger {
   width: 32px;
-  font-size: $text-base;
-  letter-spacing: 1px;
+  height: 32px;
 }
 .providerIcon {
   width: 28px;
@@ -125,6 +128,18 @@
   @include text-identifier;
   @include text-meta;
   @include text-ellipsis;
+}
+.disabledLabel {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
+  border-radius: $radius-sm;
+  background: var(--bg-raised);
+  color: var(--text-secondary);
+  font-size: $text-xs;
+  line-height: 18px;
+  font-weight: 500;
+  white-space: nowrap;
 }
 // A problem credential is findable while scanning the collapsed list: restrained warning
 // label in the identity cell (no full-row border), detail in the expanded row and tooltip.
@@ -263,6 +278,15 @@
   flex-shrink: 0;
   margin-top: 2px;
 }
+.warningText {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+// Recovery next to the reason: a refresh cannot repair an expired sign-in.
+.signInButton {
+  flex-shrink: 0;
+  margin: -4px -6px -4px 0;
+}
 .expandedBody {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(240px, 1fr);
@@ -284,10 +308,17 @@
 .quotaDetail:empty + .fileDetail {
   grid-column: 1 / -1;
 }
-// Compact definition list: label above value, values tabular.
+// Compact definition list: label above value, values tabular. A deliberate grid instead of
+// flex wrapping that strands one field on its own line: the short numeric fields share a row
+// and Modified takes its own; one row of four only when the column fits every field.
+.fileDetail {
+  container: auth-file-detail / inline-size;
+}
 .metaRow {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, max-content));
+  grid-auto-flow: row dense;
+  justify-content: start;
   gap: $space-3 $space-5;
   margin: 0;
 
@@ -306,6 +337,27 @@
     @include numeric;
   }
 }
+.metaModified {
+  grid-column: 1 / -1;
+}
+// Full account / file name: only needed where the collapsed row ellipsizes it (stacked rows).
+.metaIdentity {
+  display: none !important;
+  grid-column: 1 / -1;
+
+  dd {
+    @include text-identifier;
+  }
+}
+// Named: the stacked-row rules below query the list (`auth-list`), not this detail column.
+@container auth-file-detail (min-width: 520px) {
+  .metaRow {
+    grid-template-columns: repeat(4, max-content);
+  }
+  .metaModified {
+    grid-column: auto;
+  }
+}
 .metaMetricLabel,
 .siwcExpires,
 .runtimeLabel {
@@ -319,13 +371,12 @@
   align-items: center;
   flex-wrap: wrap;
 }
-.actionsMain,
-.utilityActions {
+.actionsMain {
   flex: 1;
 }
-.iconButton {
-  width: $control-height-sm;
-  padding: 0 !important;
+// One flowing row of labelled actions (Delete pushed to the end), not a nested wrap group.
+.utilityActions {
+  display: contents;
 }
 .deleteButton {
   margin-left: auto;
@@ -421,6 +472,12 @@
 
 /* ---------- Responsive (container: .listScroll) ---------- */
 
+@container auth-list (max-width: 639px) {
+  .metaIdentity {
+    display: flex !important;
+  }
+}
+
 @container (max-width: 899px) {
   .plan {
     display: none;
@@ -482,8 +539,12 @@
     width: $hit-target-touch;
     height: $hit-target-touch;
   }
-  .iconButton {
+  .moreTrigger {
     width: $hit-target-touch;
+    height: $hit-target-touch;
+  }
+  .actions :global(.btn) {
+    min-height: $hit-target-touch;
   }
   // Chevron grows to 40px on touch, so the indent follows.
   .health,

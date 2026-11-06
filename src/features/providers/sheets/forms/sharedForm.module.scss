@@ -1210,3 +1210,29 @@
   font-variant-numeric: tabular-nums;
   font-size: 13px;
 }
+
+.routingCollapsible {
+  min-width: 0;
+}
+
+// Touch layouts: the key reveal toggle and the connectivity Test button get full 40px targets
+// (the glyph stays small); the input reserves room so text never runs under the toggle.
+@include mobile {
+  .passwordInput {
+    padding-right: $hit-target-touch + 4px;
+  }
+
+  .passwordToggle {
+    right: 0;
+    width: $hit-target-touch;
+    height: $hit-target-touch;
+    padding: 0;
+  }
+
+  .connectivityBtn {
+    height: $hit-target-touch;
+    min-width: 64px;
+    justify-content: center;
+    padding: 0 $space-4;
+  }
+}

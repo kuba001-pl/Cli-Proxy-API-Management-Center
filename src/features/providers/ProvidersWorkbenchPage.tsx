@@ -41,10 +41,6 @@ interface SheetState {
   resource: ProviderResource | null;
 }
 
-interface ProvidersWorkbenchPageProps {
-  fixedBrand?: ProviderBrand;
-}
-
 const formatDateTime = (iso: string, locale?: string) => {
   try {
     const date = new Date(iso);
@@ -97,7 +93,7 @@ const getResourceRecentSuccess = (
   ).success;
 };
 
-export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPageProps = {}) {
+export function ProvidersWorkbenchPage() {
   const { t, i18n } = useTranslation();
   const connectionStatus = useAuthStore((s) => s.connectionStatus);
   const { showNotification, showConfirmation } = useNotificationStore();
@@ -152,17 +148,11 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
     [persistUiState]
   );
 
-  const allGroups = useMemo(() => workbench.snapshot?.groups ?? [], [workbench.snapshot]);
-  const groups = useMemo(
-    () => (fixedBrand ? allGroups.filter((group) => group.id === fixedBrand) : allGroups),
-    [allGroups, fixedBrand]
-  );
-  const firstVisibleBrand = groups[0]?.id ?? fixedBrand ?? 'gemini';
-  const activeBrand =
-    fixedBrand ??
-    (groups.some((group) => group.id === uiState.activeBrand)
-      ? uiState.activeBrand
-      : firstVisibleBrand);
+  const groups = useMemo(() => workbench.snapshot?.groups ?? [], [workbench.snapshot]);
+  const firstVisibleBrand = groups[0]?.id ?? 'gemini';
+  const activeBrand = groups.some((group) => group.id === uiState.activeBrand)
+    ? uiState.activeBrand
+    : firstVisibleBrand;
   const activeFilterState = getProviderFilterState(uiState, activeBrand);
   const filter = activeFilterState.filter;
   const providerSortBy = activeFilterState.sortBy;
@@ -384,7 +374,6 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
           onRefresh={() => void handleRefresh()}
           onNew={() => {}}
           isNewDisabled
-          showNewAction={!fixedBrand}
         />
         {errorBanner}
       </div>
@@ -401,7 +390,7 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
         isFetching={workbench.isFetching}
         isNewDisabled={disableMutations}
         // An empty provider's panel carries the single "add" action itself.
-        showNewAction={!fixedBrand && activeGroup.resources.length > 0}
+        showNewAction={activeGroup.resources.length > 0}
         newLabel={
           PROVIDER_DESCRIPTORS[activeGroup.id]?.supportsName
             ? t('providersPage.actions.addProvider')
@@ -413,27 +402,25 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
 
       {errorBanner}
 
-      <div className={`${styles.layout} ${fixedBrand ? styles.layoutSingle : ''}`.trim()}>
-        {!fixedBrand ? (
-          <ProviderCategoryList
-            groups={groups}
-            activeBrand={activeGroup.id}
-            onSelect={(brand) => {
-              const isSwitching = sheetState.open && sheetState.brand !== brand;
-              const proceed =
-                isSwitching && sheetRef.current
-                  ? sheetRef.current.confirmDiscardIfDirty()
-                  : Promise.resolve(true);
-              void proceed.then((ok) => {
-                if (!ok) return;
-                setActiveBrand(brand);
-                if (isSwitching) {
-                  closeSheet();
-                }
-              });
-            }}
-          />
-        ) : null}
+      <div className={styles.layout}>
+        <ProviderCategoryList
+          groups={groups}
+          activeBrand={activeGroup.id}
+          onSelect={(brand) => {
+            const isSwitching = sheetState.open && sheetState.brand !== brand;
+            const proceed =
+              isSwitching && sheetRef.current
+                ? sheetRef.current.confirmDiscardIfDirty()
+                : Promise.resolve(true);
+            void proceed.then((ok) => {
+              if (!ok) return;
+              setActiveBrand(brand);
+              if (isSwitching) {
+                closeSheet();
+              }
+            });
+          }}
+        />
         <ProviderResourcePanel
           group={activeGroup}
           filter={filter}
@@ -451,21 +438,19 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
         />
       </div>
 
-      {!fixedBrand ? (
-        <ProviderSheet
-          ref={sheetRef}
-          state={sheetState}
-          onClose={closeSheet}
-          onSwitchToEdit={() => {
-            setSheetState((s) => (s.resource ? { ...s, mode: 'edit' } : s));
-          }}
-          workbench={workbench}
-          onCreated={handleCreated}
-          onUpdated={handleUpdated}
-          mutationDisabled={disableMutations}
-          usageByProvider={usageByProvider}
-        />
-      ) : null}
+      <ProviderSheet
+        ref={sheetRef}
+        state={sheetState}
+        onClose={closeSheet}
+        onSwitchToEdit={() => {
+          setSheetState((s) => (s.resource ? { ...s, mode: 'edit' } : s));
+        }}
+        workbench={workbench}
+        onCreated={handleCreated}
+        onUpdated={handleUpdated}
+        mutationDisabled={disableMutations}
+        usageByProvider={usageByProvider}
+      />
     </div>
   );
 }

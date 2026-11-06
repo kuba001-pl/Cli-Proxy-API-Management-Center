@@ -337,8 +337,9 @@ export function AuthFilesOAuthExcludedEditPage() {
   return (
     <SecondaryScreenShell
       ref={swipeRef}
-      // The task title renders once, as the page h1 below; the bar only carries Back / Save.
-      title={null}
+      // The task title renders once: in the bar while loading (the shell hides children),
+      // otherwise as the page h1 below, so failure/unsupported states still name the task.
+      title={initialLoading ? title : null}
       onBack={handleBack}
       backLabel={t('common.back')}
       backAriaLabel={t('common.back')}
@@ -352,6 +353,13 @@ export function AuthFilesOAuthExcludedEditPage() {
       isLoading={initialLoading}
       loadingLabel={t('common.loading')}
     >
+      {/* One page title (the task), aligned to the content edge like every other page. */}
+      <header className={styles.intro}>
+        <h1 className={styles.introTitle}>{title}</h1>
+        {!excludedUnsupported && initialLoadError === null && (
+          <p className={styles.description}>{t('oauth_excluded.editor_description')}</p>
+        )}
+      </header>
       {excludedUnsupported ? (
         <Card>
           <EmptyState
@@ -375,12 +383,6 @@ export function AuthFilesOAuthExcludedEditPage() {
         </Card>
       ) : (
         <>
-          {/* One page title (the task), aligned to the content edge like every other page. */}
-          <header className={styles.intro}>
-            <h1 className={styles.introTitle}>{title}</h1>
-            <p className={styles.description}>{t('oauth_excluded.editor_description')}</p>
-          </header>
-
           <OAuthEditorProviderCard
             provider={provider}
             options={providerOptions}

@@ -37,6 +37,10 @@ export interface ResourceActionsMenuItem {
 interface ResourceActionsMenuProps {
   label: string;
   items: ResourceActionsMenuItem[];
+  /** Extra trigger class (e.g. a row-specific size). */
+  triggerClassName?: string;
+  /** Visible trigger content; defaults to the ellipsis glyph. */
+  triggerContent?: ReactNode;
 }
 
 const enabledItems = (menu: HTMLElement | null): HTMLButtonElement[] =>
@@ -48,7 +52,12 @@ const enabledItems = (menu: HTMLElement | null): HTMLButtonElement[] =>
  * Enter/Space/ArrowDown open on the first item, ArrowUp on the last. Menu: arrows/Home/End
  * move, Escape closes and restores focus to the trigger, Tab closes and moves on.
  */
-export function ResourceActionsMenu({ label, items }: ResourceActionsMenuProps) {
+export function ResourceActionsMenu({
+  label,
+  items,
+  triggerClassName,
+  triggerContent,
+}: ResourceActionsMenuProps) {
   const [open, setOpen] = useState(false);
   // null until the fixed position has been measured; the menu stays hidden until then.
   const [placement, setPlacement] = useState<CSSProperties | null>(null);
@@ -74,13 +83,16 @@ export function ResourceActionsMenu({ label, items }: ResourceActionsMenuProps) 
     const update = () => {
       const rect = buttonRef.current?.getBoundingClientRect();
       if (!rect) return;
+      // Size to the longest label (measured while hidden), then flip above the trigger and cap
+      // the height when there is not enough room below, so every item stays in the viewport.
+      const measuredWidth = Math.ceil(menuRef.current?.scrollWidth ?? 0);
       const next = resolveDropdownStyle(
         rect,
         window.innerWidth,
         window.innerHeight,
-        MENU_MIN_WIDTH
+        Math.max(MENU_MIN_WIDTH, measuredWidth)
       );
-      setPlacement({ ...next, width: MENU_MIN_WIDTH, maxHeight: undefined });
+      setPlacement({ ...next, overflowY: 'auto' });
     };
     update();
     window.addEventListener('resize', update);
@@ -153,7 +165,7 @@ export function ResourceActionsMenu({ label, items }: ResourceActionsMenuProps) 
       <button
         ref={buttonRef}
         type="button"
-        className={styles.trigger}
+        className={triggerClassName ? `${styles.trigger} ${triggerClassName}` : styles.trigger}
         aria-label={label}
         title={label}
         aria-haspopup="menu"
@@ -166,7 +178,7 @@ export function ResourceActionsMenu({ label, items }: ResourceActionsMenuProps) 
           else openMenu('first');
         }}
       >
-        <IconEllipsis size={16} />
+        {triggerContent ?? <IconEllipsis size={16} />}
       </button>
       {open && typeof document !== 'undefined'
         ? createPortal(

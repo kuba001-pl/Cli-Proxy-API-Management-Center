@@ -277,6 +277,12 @@
   }
 }
 
+.menuUp {
+  top: auto;
+  bottom: calc(100% + 6px);
+  transform-origin: bottom right;
+}
+
 .menuNote {
   margin: 0;
   padding: $space-2 $space-3;
@@ -302,12 +308,22 @@
   }
 
   .handle {
-    width: 28px;
+    width: $hit-target-touch;
     height: $hit-target-touch;
   }
 
   .body {
-    flex: 1 1 calc(100% - 28px - 32px - #{$hit-target-touch} - 3 * #{$space-2});
+    flex: 1 1 calc(100% - #{$hit-target-touch} - 32px - #{$hit-target-touch} - 3 * #{$space-2});
+  }
+
+  // Phones have no hover title: show the full identity (e.g. plus/pro accounts that differ
+  // only at the end) by wrapping instead of ellipsizing.
+  .name,
+  .detail {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    overflow-wrap: anywhere;
   }
 
   .menuWrap {
@@ -327,7 +343,7 @@
   }
 
   .kind {
-    margin-left: 28px + 32px + 2 * $space-2;
+    margin-left: $hit-target-touch + 32px + 2 * $space-2;
     max-width: none;
   }
 

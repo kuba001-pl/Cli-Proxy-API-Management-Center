@@ -7,7 +7,10 @@
   bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   left: var(--content-center-x, 50%);
   transform: translateX(-50%);
-  width: min(960px, calc(100vw - 24px));
+  box-sizing: border-box;
+  // Centred on the content column, so its half-width is the space from the centre to the right
+  // viewport edge: never wider than the content area (the sidebar stays uncovered).
+  width: min(960px, calc((100vw - var(--content-center-x, 50vw)) * 2 - 32px));
   z-index: $z-dropdown;
   pointer-events: none;
 }
@@ -27,17 +30,29 @@
 }
 
 .left,
-.right {
+.right,
+.selectionButtons {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
+  min-width: 0;
+}
+.selectionMenu {
+  display: none;
+}
+.bar .selectionTrigger {
+  width: auto;
+  height: auto;
+  gap: 6px;
+  padding-inline: $space-3;
+  color: var(--text-primary);
 }
 
 .count {
   font-family: $font-family;
-  font-size: 12px;
-  font-weight: 650;
+  font-size: $text-sm;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--text-primary);
   padding-right: 4px;
@@ -69,6 +84,18 @@
   .left,
   .right {
     justify-content: center;
+  }
+
+  .selectionButtons {
+    display: none;
+  }
+
+  .selectionMenu {
+    display: inline-flex;
+  }
+
+  .bar .selectionTrigger {
+    min-height: $hit-target-touch;
   }
 }
 
