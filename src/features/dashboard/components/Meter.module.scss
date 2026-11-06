@@ -8,6 +8,11 @@
   background: var(--meter-track);
 }
 
+// A target tick extends above and below the bar, so the track cannot clip.
+.withTarget {
+  overflow: visible;
+}
+
 .fill {
   height: 100%;
   border-radius: $radius-full;
@@ -18,4 +23,14 @@
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
+}
+
+.target {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--text-primary);
 }

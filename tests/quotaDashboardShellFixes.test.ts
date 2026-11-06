@@ -91,7 +91,7 @@ describe('quota body split (B05/B06)', () => {
     expect(details).not.toContain('antigravityQuotaGroupTitle');
     expect(details).not.toContain('codexPlan');
     expect(details).toContain(' · ');
-    expect(details).toContain('>62%<');
+    expect(details).toContain('>62% left<');
     expect(details).not.toContain('remaining');
     // Auth Files keeps the grouped layout.
     const full = renderToStaticMarkup(createElement(AntigravityQuotaBody, { quota, classes }));

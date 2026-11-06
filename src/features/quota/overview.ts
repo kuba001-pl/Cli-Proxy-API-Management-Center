@@ -147,3 +147,20 @@ export function upcomingQuotaResets(
     )
     .sort((a, b) => a.window.resetAtMs - b.window.resetAtMs || a.key.localeCompare(b.key));
 }
+
+/**
+ * What a provider summary can honestly say. `unavailable` = loaded successfully but the
+ * account reports no percentage window (e.g. xAI monthly billing / paid health).
+ */
+export type QuotaSummaryState = 'data' | 'loading' | 'error' | 'unavailable' | 'idle';
+
+export function quotaSummaryState(
+  hasWindow: boolean,
+  statuses: Array<QuotaCardState['status'] | undefined>
+): QuotaSummaryState {
+  if (hasWindow) return 'data';
+  if (statuses.includes('loading')) return 'loading';
+  if (statuses.includes('success')) return 'unavailable';
+  if (statuses.includes('error')) return 'error';
+  return 'idle';
+}

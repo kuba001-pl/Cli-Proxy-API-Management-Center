@@ -52,9 +52,11 @@ describe('redesign R2 fixes', () => {
     }
   });
 
-  test('dashboard traffic header uses the 4px rhythm and hides the helper only in dark', () => {
+  test('dashboard traffic header uses the 4px rhythm and shows its scope in every theme', () => {
     const css = read('src/features/dashboard/dashboard.module.scss');
-    expect(css).toMatch(/\.sectionHead \{\s*gap: 4px;/);
-    expect(css).toMatch(/\[data-theme='dark'\] & \.sectionDescription \{[^}]*clip-path/);
+    expect(css).toMatch(/\.panelHead \{[^}]*gap: \$space-1;/);
+    // The chart's unit and window are context, not decoration: never hidden per theme.
+    expect(css).not.toMatch(/\[data-theme='dark'\][^{]*\.sectionDescription/);
+    expect(css).not.toMatch(/\.sectionDescription \{[^}]*clip-path/);
   });
 });

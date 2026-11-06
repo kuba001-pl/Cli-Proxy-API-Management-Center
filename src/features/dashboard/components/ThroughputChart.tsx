@@ -1,4 +1,4 @@
-import { useId, useMemo, useState } from 'react';
+import { useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Collapsible } from '@/components/ui/Collapsible';
 import { formatPercent } from '@/utils/format';
@@ -19,9 +19,32 @@ export function ThroughputChart({ traffic }: ThroughputChartProps) {
   const gradientId = useId();
   const tooltipId = useId();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  /* Roving tab stop: one Tab stop for the whole chart, arrows move between buckets. */
+  const [focusIndex, setFocusIndex] = useState<number | null>(null);
+  /* Touch taps fire focus/hover before click; remember whether the tooltip was already open. */
+  const pointerRef = useRef<{ index: number; wasActive: boolean; touch: boolean } | null>(null);
 
-  const { buckets, totalSuccess, totalFailure, total, peakIndex, peakTotal } = traffic;
+  const { buckets, totalSuccess, totalFailure, total, peakTotal } = traffic;
   const scaleMax = useMemo(() => axisMax(peakTotal, TICK_COUNT - 1), [peakTotal]);
+  const rovingIndex =
+    focusIndex !== null && focusIndex < buckets.length ? focusIndex : buckets.length - 1;
+
+  /* The annotation labels the highest point of the plotted success line, so it sits on it. */
+  const successPeakIndex = useMemo(() => {
+    let best = -1;
+    buckets.forEach((bucket, index) => {
+      if (bucket.success > 0 && (best < 0 || bucket.success > buckets[best].success)) best = index;
+    });
+    return best;
+  }, [buckets]);
+
+  const moveFocus = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    const target = event.currentTarget.parentElement?.children[index];
+    if (target instanceof HTMLButtonElement) {
+      event.preventDefault();
+      target.focus();
+    }
+  };
 
   const geometry = useMemo(() => {
     const points = buckets.map((bucket, index) => ({
@@ -135,7 +158,12 @@ export function ThroughputChart({ traffic }: ThroughputChartProps) {
             <path className={styles.successLine} d={geometry.line} />
             {totalFailure > 0 && <path className={styles.failureLine} d={geometry.failures} />}
           </svg>
-          <div className={styles.columns} onMouseLeave={() => setActiveIndex(null)}>
+          <div
+            className={styles.columns}
+            role="group"
+            aria-label={t('dashboard.traffic_buckets_aria')}
+            onMouseLeave={() => setActiveIndex(null)}
+          >
             {buckets.map((bucket, index) => {
               const bucketTotal = bucket.success + bucket.failed;
               const range = bucketRangeLabel(bucket.time, index, buckets.length);
@@ -151,30 +179,57 @@ export function ThroughputChart({ traffic }: ThroughputChartProps) {
                     minutes: TRAFFIC_BUCKET_MINUTES,
                   })}`}
                   aria-describedby={activeIndex === index ? tooltipId : undefined}
+                  tabIndex={index === rovingIndex ? 0 : -1}
+                  onPointerDown={(event) => {
+                    pointerRef.current = {
+                      index,
+                      wasActive: activeIndex === index,
+                      touch: event.pointerType !== 'mouse',
+                    };
+                  }}
                   onMouseEnter={() => setActiveIndex(index)}
-                  onFocus={() => setActiveIndex(index)}
+                  onFocus={() => {
+                    setFocusIndex(index);
+                    setActiveIndex(index);
+                  }}
                   onBlur={() => setActiveIndex(null)}
-                  onClick={() => setActiveIndex(index)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Escape') setActiveIndex(null);
-                    const next =
-                      event.key === 'ArrowRight'
-                        ? event.currentTarget.nextElementSibling
-                        : event.key === 'ArrowLeft'
-                          ? event.currentTarget.previousElementSibling
-                          : null;
-                    if (next instanceof HTMLButtonElement) {
-                      event.preventDefault();
-                      next.focus();
+                  onClick={() => {
+                    const pointer = pointerRef.current;
+                    pointerRef.current = null;
+                    if (pointer && pointer.index === index) {
+                      // A second tap on the same bucket dismisses its tooltip; mouse hover governs.
+                      setActiveIndex(pointer.touch && pointer.wasActive ? null : index);
+                      return;
                     }
+                    // Keyboard activation (Enter / Space) toggles.
+                    setActiveIndex((current) => (current === index ? null : index));
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Escape') {
+                      setActiveIndex(null);
+                      return;
+                    }
+                    const last = buckets.length - 1;
+                    const next =
+                      event.key === 'ArrowRight' || event.key === 'ArrowDown'
+                        ? Math.min(last, index + 1)
+                        : event.key === 'ArrowLeft' || event.key === 'ArrowUp'
+                          ? Math.max(0, index - 1)
+                          : event.key === 'Home'
+                            ? 0
+                            : event.key === 'End'
+                              ? last
+                              : null;
+                    if (next !== null) moveFocus(event, next);
                   }}
                 >
-                  {index === peakIndex && peakTotal > 0 && (
+                  {index === successPeakIndex && (
                     <span
                       className={styles.peakLabel}
-                      style={{ bottom: `${Math.min(100, (bucketTotal / scaleMax) * 100)}%` }}
+                      style={{ bottom: `${Math.min(100, (bucket.success / scaleMax) * 100)}%` }}
+                      aria-hidden="true"
                     >
-                      {peakTotal.toLocaleString()}
+                      {bucket.success.toLocaleString()}
                     </span>
                   )}
                   <span

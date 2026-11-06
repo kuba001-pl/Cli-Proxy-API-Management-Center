@@ -14,6 +14,7 @@ import {
   IconDownload,
   IconEye,
   IconFileText,
+  IconInfo,
   IconExternalLink,
   IconEyeOff,
   IconMaximize2,
@@ -27,6 +28,7 @@ import {
 } from '@/components/ui/icons';
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useAuthStore, useConfigStore, useNotificationStore, usePrivacyStore } from '@/stores';
 import { logsApi, responseDataToText, type ErrorLogFile } from '@/services/api/logs';
 import { INITIAL_VISIBLE_LINES } from './model/logBuffer';
@@ -47,6 +49,7 @@ import { HTTP_METHODS, STATUS_GROUPS, type LogState } from './model/logTypes';
 import { createLogRequestGuard } from './model/logRequests';
 import { errorLogViewerReducer } from './model/errorLogViewer';
 import { shouldExitLogFullscreen } from './model/logFullscreen';
+import { IconWrapText } from './components/IconWrapText';
 import { useLogFilters } from './hooks/useLogFilters';
 import { isNearBottom, useLogScroller } from './hooks/useLogScroller';
 import {
@@ -80,7 +83,11 @@ export function LogsPage() {
     true
   );
   const [showRawLogs, setShowRawLogs] = useLocalStorage('logsPage.showRawLogs', false);
-  const [wrapLogs, setWrapLogs] = useLocalStorage('logsPage.wrapLogs', false);
+  // No saved choice yet: phones wrap so the endpoint and message are visible without
+  // scrolling sideways; wide screens keep one line per entry.
+  const [savedWrapLogs, setWrapLogs] = useLocalStorage<boolean | null>('logsPage.wrapLogs', null);
+  const narrowViewport = useMediaQuery('(max-width: 900px)');
+  const wrapLogs = savedWrapLogs ?? narrowViewport;
   const [structuredFiltersExpanded, setStructuredFiltersExpanded] = useState(false);
   const [errorLogs, setErrorLogs] = useState<ErrorLogFile[]>([]);
   const errorLogNames = useMemo(
@@ -670,6 +677,20 @@ export function LogsPage() {
                 <Button
                   variant="secondary"
                   size="sm"
+                  className={`${styles.actionButton} ${styles.liveToggle}`}
+                  aria-pressed={autoRefresh}
+                  title={t('logs.reading_enabled')}
+                  onClick={() => setAutoRefresh(!autoRefresh)}
+                  disabled={autoRefreshDisabled}
+                >
+                  <span className={styles.buttonContent}>
+                    <IconTimer size={16} aria-hidden="true" />
+                    <span className={styles.liveLabel}>{t('logs.live_toggle')}</span>
+                  </span>
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
                   onClick={() => loadLogs(false)}
                   disabled={refreshDisabled}
                   className={styles.actionButton}
@@ -678,17 +699,17 @@ export function LogsPage() {
                 >
                   <IconRefreshCw size={16} />
                 </Button>
+                <span className={styles.toolbarDivider} aria-hidden="true" />
                 <Button
                   variant="secondary"
                   size="sm"
                   className={styles.actionButton}
-                  aria-pressed={autoRefresh}
-                  aria-label={t('logs.reading_enabled')}
-                  title={t('logs.reading_enabled')}
-                  onClick={() => setAutoRefresh(!autoRefresh)}
-                  disabled={autoRefreshDisabled}
+                  aria-pressed={wrapLogs}
+                  aria-label={t('logs.wrap_lines')}
+                  title={t('logs.wrap_lines')}
+                  onClick={() => setWrapLogs(!wrapLogs)}
                 >
-                  <IconTimer size={16} />
+                  <IconWrapText size={16} />
                 </Button>
                 <Button
                   variant="secondary"
@@ -706,12 +727,13 @@ export function LogsPage() {
                   size="sm"
                   onClick={clearLogs}
                   disabled={clearDisabled}
-                  className={styles.actionButton}
+                  className={`${styles.actionButton} ${styles.clearButton}`}
                   title={t('logs.clear_button')}
                   aria-label={t('logs.clear_button')}
                 >
                   <IconTrash2 size={16} />
                 </Button>
+                <span className={styles.toolbarDivider} aria-hidden="true" />
                 <Button
                   variant="secondary"
                   size="sm"
@@ -1006,7 +1028,8 @@ export function LogsPage() {
             </div>
             {requestLogEnabled && (
               <div className={styles.archiveNotice} role="status">
-                {t('logs.error_logs_request_log_enabled')}
+                <IconInfo size={16} aria-hidden="true" />
+                <span>{t('logs.error_logs_request_log_enabled')}</span>
               </div>
             )}
             {errorLogsError && (

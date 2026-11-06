@@ -14,6 +14,7 @@ import {
   getTypeLabel,
   isThemeSurfaceIconProvider,
 } from '@/features/authFiles/constants';
+import { quotaAccountLabel } from '../accountLabel';
 import { bindQuotaClasses } from '../types';
 import { QUOTA_ADAPTERS, type QuotaCardState } from '../providers';
 import { isQuotaRefreshDisabled, type QuotaFileEntry } from '../logic';
@@ -56,6 +57,7 @@ export function QuotaCard(props: QuotaCardProps) {
     entry.type === 'claude' && hasClaudeUsageData(quota as ClaudeQuotaState | undefined);
   const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const displayName = getQuotaPrivacyDisplayName(file, privacyEnabled);
+  const account = quotaAccountLabel(file, privacyEnabled);
 
   // Capture the entrance delay only at mount, without a render-time ref read.
   const [mountEntranceDelayMs] = useState<number | null>(entranceDelayMs ?? null);
@@ -124,6 +126,7 @@ export function QuotaCard(props: QuotaCardProps) {
       className={`${styles.card} ${mountEntranceDelayMs === null ? '' : styles.cardEnter}`}
       style={entranceStyle}
       data-provider={entry.type}
+      data-status={status}
     >
       <header className={styles.head}>
         <span
@@ -143,8 +146,9 @@ export function QuotaCard(props: QuotaCardProps) {
         </span>
         <div className={styles.identity}>
           <span className={styles.fileName} title={displayName}>
-            {displayName}
+            {account.primary}
           </span>
+          {account.secondary && <span className={styles.fileMeta}>{account.secondary}</span>}
           {planQuota && status !== 'idle' && (
             <div className={bodyStyles.planSlot}>
               <adapter.Body
@@ -158,17 +162,53 @@ export function QuotaCard(props: QuotaCardProps) {
         </div>
       </header>
 
-      <div className={styles.body}>
-        {status === 'idle' ? (
+      {loading ? (
+        <footer className={styles.actionRow}>
+          <span role="status" className={styles.loadingLabel}>
+            {t(`${adapter.i18nPrefix}.loading`)}
+          </span>
+        </footer>
+      ) : (
+        <footer className={styles.actionRow}>
+          {entry.type === 'claude' && status !== 'idle' && (
+            <button
+              type="button"
+              className={styles.actionPill}
+              disabled={claudeReset.blocked}
+              onClick={claudeReset.confirm}
+              title={t(`claude_reset.${claudeReset.buttonLabel}`)}
+            >
+              <IconRefreshCw size={13} className={claudeReset.busy ? styles.spinning : undefined} />
+              {t(`claude_reset.${claudeReset.buttonLabel}`)}
+            </button>
+          )}
+          {showReset && (
+            <button
+              type="button"
+              className={styles.actionPill}
+              onClick={onReset}
+              disabled={!canRefresh || loading || resetting}
+              title={t('codex_quota.reset_button')}
+            >
+              <IconRefreshCw size={13} className={resetting ? styles.spinning : undefined} />
+              {t('codex_quota.reset_button')}
+            </button>
+          )}
           <button
             type="button"
-            className={styles.idleBody}
+            className={styles.actionPill}
             onClick={onRefresh}
-            disabled={!canRefresh}
+            disabled={isQuotaRefreshDisabled(canRefresh, loading, resetting || claudeReset.busy)}
+            title={t('auth_files.quota_refresh_hint')}
           >
-            <IconRefreshCw size={15} aria-hidden="true" className={styles.idleGlyph} />
-            <span>{t('auth_files.quota_refresh_single')}</span>
+            <IconRefreshCw size={13} className={loading ? styles.spinning : undefined} />
+            {t('auth_files.quota_refresh_single')}
           </button>
+        </footer>
+      )}
+      <div className={styles.body}>
+        {status === 'idle' ? (
+          <p className={styles.idleBody}>{t('quota_management.summary_idle')}</p>
         ) : loading && !retainedClaudeUsage ? (
           <div className={styles.skeleton} aria-busy="true">
             {[0, 1].map((row) => (
@@ -192,7 +232,7 @@ export function QuotaCard(props: QuotaCardProps) {
             part="details"
           />
         ) : !retainedClaudeUsage ? (
-          <div className={styles.idleHint}>{t(`${adapter.i18nPrefix}.idle`)}</div>
+          <div className={styles.idleHint}>{t('quota_management.summary_idle')}</div>
         ) : null}
         {retainedClaudeUsage && quota && (
           <adapter.Body
@@ -203,56 +243,6 @@ export function QuotaCard(props: QuotaCardProps) {
           />
         )}
       </div>
-
-      {loading ? (
-        <footer className={styles.actionRow}>
-          <span role="status" className={styles.loadingLabel}>
-            {t(`${adapter.i18nPrefix}.loading`)}
-          </span>
-        </footer>
-      ) : (
-        status !== 'idle' && (
-          <footer className={styles.actionRow}>
-            {entry.type === 'claude' && (
-              <button
-                type="button"
-                className={styles.actionPill}
-                disabled={claudeReset.blocked}
-                onClick={claudeReset.confirm}
-                title={t(`claude_reset.${claudeReset.buttonLabel}`)}
-              >
-                <IconRefreshCw
-                  size={13}
-                  className={claudeReset.busy ? styles.spinning : undefined}
-                />
-                {t(`claude_reset.${claudeReset.buttonLabel}`)}
-              </button>
-            )}
-            {showReset && (
-              <button
-                type="button"
-                className={styles.actionPill}
-                onClick={onReset}
-                disabled={!canRefresh || loading || resetting}
-                title={t('codex_quota.reset_button')}
-              >
-                <IconRefreshCw size={13} className={resetting ? styles.spinning : undefined} />
-                {t('codex_quota.reset_button')}
-              </button>
-            )}
-            <button
-              type="button"
-              className={styles.actionPill}
-              onClick={onRefresh}
-              disabled={isQuotaRefreshDisabled(canRefresh, loading, resetting || claudeReset.busy)}
-              title={t('auth_files.quota_refresh_hint')}
-            >
-              <IconRefreshCw size={13} className={loading ? styles.spinning : undefined} />
-              {t('auth_files.quota_refresh_single')}
-            </button>
-          </footer>
-        )
-      )}
     </article>
   );
 }

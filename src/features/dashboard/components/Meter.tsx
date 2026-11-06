@@ -14,19 +14,24 @@ interface MeterProps {
   tone?: MeterTone;
   ariaLabel: string;
   className?: string;
+  /** Optional 0–100 threshold drawn as a tick, so the colour has a visible reference. */
+  target?: number;
 }
 
 /**
  * 细条计量器：填充色承载严重度，轨道是同色淡化步阶，
  * 因此在整条上都能读出状态。
  */
-export function Meter({ value, tone, ariaLabel, className }: MeterProps) {
+export function Meter({ value, tone, ariaLabel, className, target }: MeterProps) {
   const resolvedTone = tone ?? toneForSuccessRate(value);
   const clamped = value === null ? 0 : Math.max(0, Math.min(100, value));
+  const hasTarget = typeof target === 'number' && Number.isFinite(target);
 
   return (
     <div
-      className={[styles.track, className].filter(Boolean).join(' ')}
+      className={[styles.track, hasTarget ? styles.withTarget : '', className]
+        .filter(Boolean)
+        .join(' ')}
       style={{ '--meter-fill': TONE_COLORS[resolvedTone] } as React.CSSProperties}
       role="progressbar"
       aria-valuemin={0}
@@ -35,6 +40,13 @@ export function Meter({ value, tone, ariaLabel, className }: MeterProps) {
       aria-label={ariaLabel}
     >
       <div className={styles.fill} style={{ width: `${clamped}%` }} />
+      {hasTarget && (
+        <span
+          className={styles.target}
+          style={{ left: `${Math.max(0, Math.min(100, target))}%` }}
+          aria-hidden="true"
+        />
+      )}
     </div>
   );
 }

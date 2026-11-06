@@ -20,7 +20,13 @@ import { Meter } from './components/Meter';
 import { Sparkline } from './components/Sparkline';
 import { ThroughputChart } from './components/ThroughputChart';
 import { useCountUp, useRevealGroup, useRevealOnScroll } from '@/hooks/motion';
-import { providerLabel, splitWindowMinutes, toneForSuccessRate } from './utils';
+import {
+  providerLabel,
+  splitWindowMinutes,
+  SUCCESS_RATE_TARGET,
+  toneForSuccessRate,
+  type MeterTone,
+} from './utils';
 import styles from './dashboard.module.scss';
 
 const DASH = '—';
@@ -82,13 +88,29 @@ export function DashboardPage() {
   const versionLabel = serverVersion ? `v${serverVersion.trim().replace(/^[vV]+/, '')}` : null;
   const heroMetaLine = [versionLabel, connectionLabel].filter(Boolean).join(' · ');
 
-  const statTiles = [
+  const statTiles: Array<{
+    key: string;
+    label: string;
+    value: string;
+    hint: string;
+    status?: { tone: MeterTone; label: string };
+    meter: number | null;
+    meterLabel?: string;
+    target?: number;
+    tone: MeterTone | undefined;
+  }> = [
     {
       key: 'success',
       label: t('dashboard.success_rate'),
       value: traffic.successRate === null ? DASH : formatPercent(traffic.successRate),
-      hint: t('dashboard.stat_success_hint', { total: traffic.total.toLocaleString() }),
+      hint: t('dashboard.stat_success_hint', { target: SUCCESS_RATE_TARGET }),
+      status: {
+        tone: successRateTone,
+        label: t(`dashboard.stat_success_status_${successRateTone}`),
+      },
       meter: traffic.successRate,
+      meterLabel: t('dashboard.stat_success_meter_aria', { target: SUCCESS_RATE_TARGET }),
+      target: SUCCESS_RATE_TARGET,
       tone: successRateTone,
     },
     {
@@ -205,11 +227,11 @@ export function DashboardPage() {
           </p>
         </div>
         <div className={styles.heroActions} data-reveal>
-          <Link to="/logs" className={styles.ghostAction}>
+          <Link to="/logs" className="btn btn-ghost">
             <IconSidebarLogs size={16} aria-hidden="true" />
             {t('dashboard.cta_inspect_logs')}
           </Link>
-          <Link to="/ai-providers" className={styles.primaryAction}>
+          <Link to="/ai-providers" className="btn btn-primary">
             <IconBot size={16} aria-hidden="true" />
             {t('dashboard.cta_manage_providers')}
           </Link>
@@ -234,30 +256,34 @@ export function DashboardPage() {
             <span className={styles.splitSuccess} style={{ flexGrow: traffic.totalSuccess }} />
             <span className={styles.splitFailure} style={{ flexGrow: traffic.totalFailure }} />
           </div>
-          <span
-            className={styles.statHint}
-            title={t('dashboard.hero_window_meta', { window: windowLabel })}
-          >
+          <p className={styles.statHint}>
             {t('dashboard.hero_window_meta', { window: windowLabel })}
-          </span>
+          </p>
         </article>
         {statTiles.map((tile) => (
           <article key={tile.key} className={styles.statTile} data-reveal>
-            <span className={styles.statLabel} title={tile.label}>
-              {tile.label}
-            </span>
+            <span className={styles.statLabel}>{tile.label}</span>
             <strong className={styles.statValue}>{tile.value}</strong>
             {tile.meter !== null && tile.meter !== undefined && (
               <Meter
                 value={tile.meter}
                 tone={tile.key === 'credentials' ? 'idle' : tile.tone}
-                ariaLabel={tile.label}
+                ariaLabel={tile.meterLabel ?? tile.label}
+                target={tile.target}
                 className={styles.statMeter}
               />
             )}
-            <span className={styles.statHint} title={tile.hint}>
-              {tile.hint}
-            </span>
+            <p className={styles.statHint}>
+              {tile.status && (
+                <>
+                  <span className={`${styles.hintStatus} ${styles[`tone_${tile.status.tone}`]}`}>
+                    {tile.status.label}
+                  </span>
+                  {' · '}
+                </>
+              )}
+              {tile.status ? <span className={styles.hintPhrase}>{tile.hint}</span> : tile.hint}
+            </p>
           </article>
         ))}
       </section>
@@ -265,7 +291,6 @@ export function DashboardPage() {
       {/* ---------- Traffic ---------- */}
       <section className={styles.trafficPanel} ref={trafficRef}>
         <header className={styles.sectionHead}>
-          <span className={styles.eyebrow}>{t('dashboard.traffic_eyebrow')}</span>
           <h2 className={styles.sectionTitle}>{t('dashboard.traffic_title')}</h2>
           <p className={styles.sectionDescription}>
             {t('dashboard.traffic_description', { window: windowLabel })}
@@ -278,13 +303,12 @@ export function DashboardPage() {
 
       <Collapsible
         className={styles.moreDetails}
-        label={t('dashboard.fleet_title')}
-        hint={t('dashboard.runtime_title')}
+        label={t('dashboard.more_label')}
+        hint={t('dashboard.more_hint')}
       >
         {/* ---------- Provider fleet ---------- */}
         <section className={styles.section} ref={fleetRef}>
           <header className={styles.sectionHead}>
-            <span className={styles.eyebrow}>{t('dashboard.fleet_eyebrow')}</span>
             <h2 className={styles.sectionTitle}>{t('dashboard.fleet_title')}</h2>
             <p className={styles.sectionDescription}>{t('dashboard.fleet_description')}</p>
           </header>
@@ -346,7 +370,6 @@ export function DashboardPage() {
         <section className={styles.detailGrid} ref={detailRef}>
           <div className={styles.panel} data-reveal>
             <header className={styles.panelHead}>
-              <span className={styles.eyebrow}>{t('dashboard.health_eyebrow')}</span>
               <h2 className={styles.panelTitle}>{t('dashboard.health_title')}</h2>
             </header>
             {!credentials || credentials.total === 0 ? (
@@ -425,7 +448,6 @@ export function DashboardPage() {
 
           <div className={styles.panel} data-reveal>
             <header className={styles.panelHead}>
-              <span className={styles.eyebrow}>{t('dashboard.runtime_eyebrow')}</span>
               <h2 className={styles.panelTitle}>{t('dashboard.runtime_title')}</h2>
             </header>
             <dl className={styles.specList}>
@@ -463,7 +485,6 @@ export function DashboardPage() {
         {/* ---------- CTA ---------- */}
         <section className={styles.section} ref={ctaRef}>
           <header className={styles.sectionHead} data-reveal>
-            <span className={styles.eyebrow}>{t('dashboard.cta_eyebrow')}</span>
             <h2 className={styles.sectionTitle}>{t('dashboard.cta_title')}</h2>
           </header>
           <div className={styles.ctaGrid}>

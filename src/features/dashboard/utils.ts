@@ -45,11 +45,16 @@ export function bucketsToMinutes(bucketCount: number): number {
 
 export type MeterTone = 'good' | 'warning' | 'critical' | 'idle';
 
+/** Success-rate target (percent). At or above it is healthy; the UI states it next to the meter. */
+export const SUCCESS_RATE_TARGET = 95;
+/** Below this the rate is critical rather than merely under target. */
+export const SUCCESS_RATE_CRITICAL = 80;
+
 /** 成功率 → 严重度。数值本身始终可见，颜色只是辅助通道。 */
 export function toneForSuccessRate(rate: number | null): MeterTone {
   if (rate === null) return 'idle';
-  if (rate >= 95) return 'good';
-  if (rate >= 80) return 'warning';
+  if (rate >= SUCCESS_RATE_TARGET) return 'good';
+  if (rate >= SUCCESS_RATE_CRITICAL) return 'warning';
   return 'critical';
 }
 

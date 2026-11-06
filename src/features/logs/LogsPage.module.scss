@@ -5,7 +5,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 16px;
+  gap: $space-5;
   min-width: 0;
   min-height: 0;
 }
@@ -19,53 +19,35 @@
 
 .pageHeader {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
+  justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px 16px;
+  gap: $space-3 $space-4;
   flex: none;
 }
 
 .heading {
   display: grid;
-  gap: 4px;
+  gap: $space-1;
+  min-width: 0;
 }
 
 .pageTitle {
-  margin: 0;
-  color: var(--text-primary);
-  font-size: 28px;
-  line-height: 34px;
-  font-weight: 700;
-  letter-spacing: -0.4px;
+  @include text-page-title;
 }
 
-// The caption stays available to assistive tech, but the design keeps the tabs beside the title.
 .pageCaption {
-  position: absolute;
-  width: 1px;
-  height: 1px;
+  @include text-secondary;
   margin: 0;
-  padding: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
-}
-
-.tabBar {
-  min-height: 36px;
-  background: var(--bg-app);
-
-  > button {
-    min-height: 28px;
-  }
 }
 
 .container button:focus-visible,
-.structuredFilters button:focus-visible,
+.structuredFilters button:focus-visible {
+  @include focus-ring(2px);
+}
+
 .logPanel:focus-visible {
-  outline: 2px solid var(--text-secondary);
-  outline-offset: -2px;
+  @include focus-ring(-2px);
 }
 
 .content,
@@ -105,7 +87,7 @@
   align-items: center;
   flex: none;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: $space-2;
 
   :global(.form-group) {
     margin: 0;
@@ -115,8 +97,11 @@
 .searchWrapper {
   flex: 1 1 180px;
   min-width: 120px;
+  max-width: 520px;
 }
 
+// One height for every toolbar control. Colours come from the shared input/select/button
+// styles, so the search field keeps its control border and accent focus ring.
 .searchInput:global(.input),
 .levelSelect > button,
 .filterPanelToggle:global(.btn),
@@ -124,25 +109,32 @@
   box-sizing: border-box;
   height: var(--log-control-height);
   min-height: var(--log-control-height);
-  border-radius: 6px;
-  border: 1px solid var(--border-default);
-  background: var(--bg-raised);
-  color: var(--text-secondary);
-  font-size: 13px;
-  font-weight: 500;
+  border-radius: $radius-md;
+  font-size: $text-sm;
   line-height: 1;
-  box-shadow: none;
 }
 
 .searchInput:global(.input) {
-  padding: 0 38px 0 12px;
-  background: var(--bg-app);
-  color: var(--text-primary);
+  padding-right: 38px;
 }
 
 .levelSelect > button,
 .filterPanelToggle:global(.btn) {
-  padding: 0 12px;
+  padding: 0 $space-3;
+}
+
+.filterPanelToggle:global(.btn),
+.actionButton:global(.btn) {
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  box-shadow: none;
+
+  &:hover:not(:disabled) {
+    background: var(--bg-raised);
+    color: var(--text-primary);
+  }
 }
 
 .levelSelect {
@@ -168,7 +160,6 @@
 }
 
 .filterPanelToggle {
-  border-color: transparent;
   white-space: nowrap;
 }
 
@@ -186,28 +177,32 @@
 }
 
 .filterPanelCount {
-  padding: 1px 5px;
-  border-radius: 3px;
-  background: var(--bg-active);
-  color: var(--text-primary);
-  font-family: $font-family;
-  font-variant-numeric: tabular-nums;
-  font-size: 11px;
+  @include numeric;
+  padding: 0 6px;
+  border-radius: $radius-full;
+  background: var(--accent-subtle);
+  color: var(--accent-text);
+  font-size: $text-xs;
+  line-height: $leading-xs;
 }
 
+// Toolbar groups: reading (live, refresh) · view (wrap, download, clear) · fullscreen.
 .toolbar {
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-  gap: 8px;
+  gap: $space-1;
   margin-left: auto;
-  padding-left: 8px;
+  padding-left: $space-2;
   flex: none;
+}
 
-  > :nth-child(3),
-  > :nth-child(5) {
-    margin-left: 8px;
-  }
+.toolbarDivider {
+  flex: none;
+  width: 1px;
+  height: 20px;
+  margin: 0 $space-2;
+  background: var(--border-default);
 }
 
 .actionButton:global(.btn) {
@@ -215,8 +210,6 @@
   flex: none;
   width: var(--log-control-height);
   padding: 0;
-  border-color: transparent;
-  background: transparent;
   color: var(--icon-default);
 
   > span {
@@ -227,6 +220,37 @@
     color: var(--icon-active);
     background: var(--bg-active);
   }
+}
+
+// "Live" is the one on/off state in the toolbar, so it carries its label and the accent when on.
+.liveToggle:global(.btn) {
+  width: auto;
+  padding: 0 $space-3 0 $space-2;
+  color: var(--text-secondary);
+
+  &[aria-pressed='true'] {
+    background: var(--accent-subtle);
+    color: var(--accent-text);
+
+    svg {
+      color: var(--accent-text);
+    }
+  }
+
+  &[aria-pressed='true']:hover:not(:disabled) {
+    background: var(--accent-subtle-hover);
+    color: var(--accent-text);
+  }
+}
+
+.liveLabel {
+  font-size: $text-sm;
+  font-weight: 500;
+}
+
+.clearButton:global(.btn):hover:not(:disabled),
+.clearButton:global(.btn):focus-visible {
+  color: var(--status-danger);
 }
 
 .container :global(.btn) {
@@ -256,8 +280,7 @@
 }
 
 .filterChipLabel {
-  font-size: 12px;
-  font-weight: 600;
+  @include text-label;
   color: var(--text-secondary);
 }
 
@@ -268,20 +291,20 @@
 }
 
 .filterChipHint {
-  font-size: 12px;
-  color: var(--text-tertiary);
+  @include text-meta;
 }
 
 .filterChip {
   @include button-reset;
-  padding: 6px 10px;
-  border-radius: 5px;
+  min-height: 32px;
+  padding: 0 $space-3;
+  border-radius: $radius-md;
   border: 1px solid transparent;
   background: var(--bg-raised);
   color: var(--text-secondary);
   font-family: $font-family;
   font-variant-numeric: tabular-nums;
-  font-size: 12px;
+  font-size: $text-sm;
   cursor: pointer;
   max-width: 100%;
   overflow-wrap: anywhere;
@@ -293,9 +316,9 @@
 }
 
 .filterChipActive {
-  color: var(--text-primary);
-  border-color: var(--border-strong);
-  background: var(--bg-active);
+  color: var(--accent-text);
+  border-color: transparent;
+  background: var(--accent-subtle);
 }
 
 .viewerArea {
@@ -318,6 +341,7 @@
 }
 
 .logPanel {
+  container: logs / inline-size;
   flex: 1;
   min-width: 0;
   min-height: 0;
@@ -335,13 +359,10 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 4px 16px;
-  min-height: 37px;
-  padding: 8px 20px;
+  min-height: 40px;
+  padding: $space-2 $space-5;
   border-top: 1px solid var(--border-subtle);
-  color: var(--text-tertiary);
-  /* Caption 12/16 (logs.png footer). */
-  font-size: 12px;
-  line-height: 16px;
+  @include text-meta;
   font-variant-numeric: tabular-nums;
 }
 
@@ -353,8 +374,8 @@
 }
 
 .statusDot {
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
   margin-right: 2px;
   border-radius: 50%;
   background: var(--text-muted);
@@ -402,7 +423,7 @@
   padding: 6px 20px;
   border-bottom: 1px solid var(--border-subtle);
   color: var(--text-tertiary);
-  font-size: 11px;
+  font-size: $text-xs;
   background: var(--bg-surface);
 }
 
@@ -427,7 +448,7 @@
 .errorLogContent {
   font-family: $font-mono;
   font-size: 12.5px;
-  line-height: 18px;
+  line-height: 20px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -444,14 +465,14 @@
   grid-template-columns: 143px 48px minmax(0, 1fr);
   align-items: baseline;
   gap: 14px;
-  min-height: 27px;
+  min-height: 28px;
   padding: 4px 16px 4px 20px;
   color: var(--text-secondary);
 
-  // Keep every cell on the 18px mono line box so icons/badges cannot grow the row.
+  // Keep every cell on the 20px mono line box so icons/badges cannot grow the row.
   > *,
   .rowMain > * {
-    line-height: 18px;
+    line-height: 20px;
   }
 
   // Mixed baselines (the request-id button carries an icon) would otherwise stretch the line.
@@ -491,7 +512,7 @@
 
 .badge {
   padding: 0;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .pill,
@@ -534,27 +555,28 @@
   cursor: pointer;
 }
 
-.statusSuccess {
-  color: var(--status-success);
-}
-
+// Routine traffic recedes (INFO, 2xx, 3xx); only warnings and failures take colour and weight.
+.statusSuccess,
 .statusInfo {
   color: var(--text-secondary);
+  font-weight: 400;
 }
 
 .levelInfo {
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
   font-weight: 400;
 }
 
 .statusWarn,
 .levelWarn {
   color: var(--status-warning);
+  font-weight: 600;
 }
 
 .statusError,
 .levelError {
   color: var(--status-danger);
+  font-weight: 600;
 }
 
 .rowWarn .message {
@@ -568,6 +590,7 @@
 .levelDebug,
 .levelTrace {
   color: var(--text-tertiary);
+  font-weight: 400;
 }
 
 .statusBadge {
@@ -658,27 +681,39 @@
 }
 
 .errorCard {
-  gap: 16px;
+  gap: $space-4;
 }
 
 .errorToolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: $space-3;
 }
 
 .errorDescription {
+  @include text-secondary;
   margin: 0;
-  color: var(--text-secondary);
-  font-size: 13px;
-  line-height: 20px;
+  max-width: 72ch;
 }
 
+// Context, not a fault: existing files are still listed below it.
 .archiveNotice {
-  color: var(--status-warning);
-  font-size: 12px;
-  line-height: 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: $space-2;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  background: var(--status-info-bg);
+  color: var(--text-secondary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+
+  svg {
+    flex: none;
+    margin-top: 1px;
+    color: var(--accent-text);
+  }
 }
 
 .errorPanel {
@@ -701,22 +736,26 @@
   text-align: left;
 
   th {
-    padding: 10px 8px;
-    background: var(--bg-raised);
+    padding: $space-3 $space-2;
+    border-bottom: 1px solid var(--border-default);
+    background: transparent;
     color: var(--text-tertiary);
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: 400;
+    font-size: $text-xs;
+    line-height: $leading-xs;
+    font-weight: 500;
   }
 
   td {
-    height: 57px;
-    padding: 10px 8px;
-    border-top: 1px solid var(--border-subtle);
+    height: 56px;
+    padding: $space-3 $space-2;
     color: var(--text-secondary);
-    font-family: $font-mono;
-    font-size: 12.5px;
-    line-height: 18px;
+    font-size: $text-sm;
+    line-height: $leading-sm;
+    font-variant-numeric: tabular-nums;
+  }
+
+  tbody tr + tr td {
+    border-top: 1px solid var(--border-subtle);
   }
 
   th:first-child,
@@ -735,12 +774,13 @@
 }
 
 .fileNameContent {
+  @include text-identifier;
   display: flex;
   align-items: center;
   gap: 10px;
   min-width: 220px;
   color: var(--text-primary);
-  overflow-wrap: anywhere;
+  font-size: $text-base;
 
   svg {
     flex: none;
@@ -810,13 +850,11 @@
 }
 
 .errorLogViewerMeta {
+  @include text-meta;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 16px;
-  color: var(--text-tertiary);
-  font-family: $font-family;
+  gap: $space-2 $space-4;
   font-variant-numeric: tabular-nums;
-  font-size: 12px;
 }
 
 .errorLogContent {
@@ -825,7 +863,7 @@
   max-height: 58dvh;
   overflow: auto;
   border: 0;
-  border-radius: 6px;
+  border-radius: $radius-md;
   background: var(--bg-surface);
   color: var(--text-secondary);
   white-space: pre;
@@ -875,46 +913,52 @@
   }
 }
 
-@media (min-width: 769px) and (max-width: 1100px) {
+// Icon-only labels below 1100px keep the toolbar on one line; names stay in aria/title.
+@media (max-width: 1100px) {
   .filterPanelLabel {
     display: none;
   }
 
+  .liveLabel {
+    @include visually-hidden;
+  }
+
+  .liveToggle:global(.btn) {
+    width: var(--log-control-height);
+    padding: 0;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1100px) {
   .searchWrapper {
     flex-basis: 120px;
   }
 }
 
 @media (max-width: 768px) {
-  .pageHeader {
-    gap: 12px;
+  .container {
+    --log-control-height: #{$hit-target-touch};
+    gap: $space-4;
   }
 
-  .pageTitle {
-    font-size: 24px;
-    line-height: 30px;
+  .pageHeader {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: $space-3;
   }
 
   .searchWrapper {
     flex-basis: calc(100% - 130px);
+    max-width: none;
   }
 
   .toolbar {
-    gap: 4px;
+    gap: 0;
+    padding-left: 0;
   }
 
-  .filterPanelLabel {
-    display: none;
-  }
-
-  .wrapped .logRow {
-    grid-template-columns: minmax(0, 1fr) 48px;
-    gap: 2px 8px;
-    padding: 6px 36px 6px 12px;
-  }
-
-  .wrapped .rowMain {
-    grid-column: 1 / -1;
+  .toolbarDivider {
+    margin: 0 $space-1;
   }
 
   .statusBar {
@@ -925,8 +969,107 @@
     text-align: left;
   }
 
+  // Error files become stacked rows: name, then size · modified, then actions.
   .errorTable {
-    min-width: 700px;
+    thead {
+      @include visually-hidden;
+    }
+
+    tbody,
+    tr,
+    td {
+      display: block;
+    }
+
+    tbody tr {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: $space-1 $space-3;
+      padding: $space-3 $space-4;
+    }
+
+    tbody tr + tr {
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    td,
+    tbody tr + tr td,
+    th:first-child,
+    td:first-child,
+    th:last-child,
+    td:last-child {
+      height: auto;
+      padding: 0;
+      border: 0;
+    }
+
+    td.fileName,
+    td:last-child {
+      flex: 1 1 100%;
+    }
+
+    .fileSize,
+    .fileModified {
+      min-width: 0;
+      text-align: left;
+      color: var(--text-tertiary);
+      font-size: $text-xs;
+    }
+
+    // Line the meta up with the filename text, past its 16px icon and 10px gap.
+    .fileSize {
+      margin-left: 26px;
+    }
+
+    .tableEmpty {
+      flex: 1 1 100%;
+    }
+  }
+
+  .fileNameContent {
+    min-width: 0;
+  }
+
+  .fileActions {
+    justify-content: flex-start;
+    margin-left: -$space-2;
+
+    :global(.btn) {
+      min-height: $hit-target-touch;
+    }
+  }
+}
+
+// Narrow log panels (phones, 769px with the sidebar open): time + level on the first line,
+// then the request (status, method, endpoint) and message wrapped below. The source location
+// is dropped; the raw view keeps it.
+@container logs (max-width: 640px) {
+  .wrapped .logRow {
+    grid-template-columns: minmax(0, 1fr) 48px;
+    gap: 2px 8px;
+    padding: 8px 40px 8px 12px;
+
+    & + .logRow {
+      border-top: 1px solid var(--border-subtle);
+    }
+  }
+
+  .wrapped .rowMain {
+    grid-column: 1 / -1;
+    column-gap: 10px;
+  }
+
+  .wrapped .source {
+    display: none;
+  }
+
+  .wrapped .latency {
+    width: auto;
+  }
+
+  .wrapped .level {
+    text-align: right;
   }
 }
 

@@ -40,12 +40,16 @@ describe('dashboard redesign', () => {
     expect(source).toContain('useRevealOnScroll<HTMLElement>');
     const styles = readFileSync('src/features/dashboard/dashboard.module.scss', 'utf8');
     expect(styles).toMatch(/\.statValue\s*\{[^}]*font-size: 28px;/);
-    // Stat labels are sentence-case caption text; only the section eyebrow is an overline.
+    // Stat labels are readable sentence-case labels (13px), never overlines; captions wrap
+    // instead of truncating so the window/bucket explanation stays visible.
     const statLabel = styles.match(/\.statLabel\s*\{[^}]*\}/)?.[0] ?? '';
-    expect(statLabel).toContain('font-size: 12px;');
-    expect(statLabel).toContain('font-weight: 400;');
+    expect(statLabel).toContain('font-size: $text-sm;');
     expect(statLabel).not.toContain('uppercase');
-    expect(styles).toMatch(/\.eyebrow\s*\{[^}]*text-transform: uppercase;/);
+    expect(statLabel).not.toContain('ellipsis');
+    const statHint = styles.match(/\.statHint\s*\{[^}]*\}/)?.[0] ?? '';
+    expect(statHint).not.toContain('ellipsis');
+    expect(statHint).not.toContain('nowrap');
+    expect(styles).toContain('container-type: inline-size;');
     expect(styles).not.toMatch(/gradient|backdrop-filter|box-shadow|#[a-f0-9]{3,8}\b/i);
   });
 });

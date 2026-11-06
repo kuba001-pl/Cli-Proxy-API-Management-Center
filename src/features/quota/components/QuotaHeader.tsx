@@ -66,7 +66,7 @@ export function QuotaHeader(props: QuotaHeaderProps) {
       <div className={styles.actions} data-reveal>
         <button
           type="button"
-          className={styles.primaryAction}
+          className={`btn btn-primary ${styles.primaryAction}`}
           onClick={onRefreshAll}
           disabled={disableControls || refreshing}
         >

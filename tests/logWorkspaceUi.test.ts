@@ -49,7 +49,10 @@ describe('log workspace layout contract', () => {
   test('row actions do not wrap into an empty line or remove keyboard access', () => {
     const copy = styles.match(/^\.copyButton:global\(\.btn\) \{([^}]+)\}/m)?.[1] ?? '';
     expect(copy).toContain('position: sticky');
-    expect(page).toContain("useLocalStorage('logsPage.wrapLogs', false)");
+    // A saved wrap choice wins; without one, phones wrap so the endpoint stays visible.
+    expect(page).toContain("useLocalStorage<boolean | null>('logsPage.wrapLogs', null)");
+    expect(page).toContain('const wrapLogs = savedWrapLogs ?? narrowViewport;');
+    expect(page).toContain('aria-pressed={wrapLogs}');
     // Rows fit the viewer instead of growing to max-content, so the request ID never clips.
     expect(styles).not.toContain('width: max-content');
     const list = styles.match(/^\.logList \{([^}]+)\}/m)?.[1] ?? '';
@@ -90,7 +93,8 @@ describe('log workspace layout contract', () => {
     );
     expect(styles).toContain('--log-control-height: 32px');
     expect(styles).toContain('width: var(--log-control-height)');
-    expect(styles).not.toContain('--log-control-height: 40px');
+    // Touch layouts grow the shared height to the 40px hit target rather than mixing sizes.
+    expect(styles).toContain('--log-control-height: #{$hit-target-touch};');
   });
 
   test('all supported locales describe both filtering and display settings', () => {

@@ -1,15 +1,22 @@
 import { Fragment, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IconRefreshCw } from '@/components/ui/icons';
+import { Button } from '@/components/ui/Button';
+import { IconAlertTriangle, IconRefreshCw } from '@/components/ui/icons';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { getAuthFileIcon, getTypeLabel } from '@/features/authFiles/constants';
 import { useNow } from '@/hooks/useNow';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import type { ResolvedTheme } from '@/types';
 import { formatInstantShort, formatRelativeInstant } from '@/utils/quota';
-import { getQuotaCacheKey, getQuotaPrivacyDisplayName } from '@/utils/quota/identity';
 import { privacyText } from '@/utils/privacy';
+import { quotaAccountLabel } from '../accountLabel';
 import type { QuotaFileEntry } from '../logic';
-import { quotaOverviewWindows, representativeQuotaWindow, upcomingQuotaResets } from '../overview';
+import {
+  quotaOverviewWindows,
+  quotaSummaryState,
+  representativeQuotaWindow,
+  upcomingQuotaResets,
+} from '../overview';
 import type { QuotaCardState } from '../providers';
 import type { QuotaProviderType } from '../providers/types';
 import { bindQuotaClasses } from '../types';
@@ -45,7 +52,19 @@ interface Props {
   resolvedTheme: ResolvedTheme;
 }
 
-export function QuotaSummary({ entries, quotaFor, resolvedTheme }: Props) {
+interface SummaryProps extends Props {
+  /** Shown in the single page-level notice when nothing has been loaded yet. */
+  onLoadAll?: () => void;
+  loadDisabled?: boolean;
+}
+
+export function QuotaSummary({
+  entries,
+  quotaFor,
+  resolvedTheme,
+  onLoadAll,
+  loadDisabled,
+}: SummaryProps) {
   const { t, i18n } = useTranslation();
   const now = useNow();
   const privacyEnabled = usePrivacyStore((state) => state.enabled);
@@ -58,13 +77,38 @@ export function QuotaSummary({ entries, quotaFor, resolvedTheme }: Props) {
         return window ? [{ entry, window }] : [];
       });
       const lowest = [...observations].sort((a, b) => a.window.remaining! - b.window.remaining!)[0];
-      return { type, accounts, observations, lowest };
+      const state = quotaSummaryState(
+        Boolean(lowest),
+        accounts.map((entry) => quotaFor(entry)?.status)
+      );
+      return { type, accounts, observations, lowest, state };
     });
   }, [entries, quotaFor]);
   if (groups.length === 0) return null;
+
+  // Nothing requested yet: one page-level explanation instead of a card per provider.
+  if (groups.every((group) => group.state === 'idle')) {
+    return (
+      <section className={styles.notLoaded} role="status">
+        <span className={styles.notLoadedIcon} aria-hidden="true">
+          <IconRefreshCw size={16} />
+        </span>
+        <div className={styles.notLoadedCopy}>
+          <p>{t('quota_management.not_loaded')}</p>
+          <span>{t('quota_management.empty_hint')}</span>
+        </div>
+        {onLoadAll && (
+          <Button variant="secondary" size="sm" onClick={onLoadAll} disabled={loadDisabled}>
+            {t('quota_management.load_all')}
+          </Button>
+        )}
+      </section>
+    );
+  }
+
   return (
     <section className={styles.summary} aria-label={t('quota_management.summary_label')}>
-      {groups.map(({ type, accounts, observations, lowest }) => {
+      {groups.map(({ type, accounts, observations, lowest, state }) => {
         const window = lowest?.window;
         const identities = accounts.flatMap(({ file }) => [file.email, file.projectId]);
         const label = window
@@ -73,54 +117,56 @@ export function QuotaSummary({ entries, quotaFor, resolvedTheme }: Props) {
               window.labelKey ? t(window.labelKey, window.labelParams) : window.label,
               identities
             )
-          : t(`${type}_quota.idle`);
+          : '';
+        const lowestName = lowest
+          ? quotaAccountLabel(lowest.entry.file, privacyEnabled).primary
+          : '';
+        const resetText = window?.resetAtMs
+          ? t('quota_management.summary_resets', {
+              relative: formatRelativeInstant(window.resetAtMs, now, i18n.resolvedLanguage),
+              at: formatInstantShort(window.resetAtMs),
+            })
+          : null;
         return (
-          <article key={type} className={styles.summaryItem}>
+          <article key={type} className={styles.summaryItem} data-state={state}>
             <div className={styles.summaryHead}>
               <QuotaProviderHeading type={type} resolvedTheme={resolvedTheme} />
               <span>{t('quota_management.meta_credentials', { count: accounts.length })}</span>
             </div>
-            {!window ? (
-              <div className={styles.summaryEmpty}>
-                <IconRefreshCw size={18} aria-hidden="true" />
-                <div>
-                  <p>{t('quota_management.not_loaded')}</p>
-                  <span>{t('quota_management.empty_hint')}</span>
-                </div>
-              </div>
-            ) : (
+            {state === 'data' && window ? (
               <>
-                <p className={styles.windowLabel} title={label}>
-                  {label}
-                </p>
+                <p className={styles.windowLabel}>{label}</p>
                 <div className={styles.headline}>
                   <strong>
-                    {window?.remaining === undefined || window.remaining === null
-                      ? '—'
-                      : `${Math.round(window.remaining)}%`}
+                    {window.remaining === null ? '—' : `${Math.round(window.remaining)}%`}
                   </strong>
-                  {lowest && (
-                    <span title={getQuotaPrivacyDisplayName(lowest.entry.file, privacyEnabled)}>
-                      {t('quota_management.lowest')}
+                  <span>{t('quota_management.remaining_label')}</span>
+                </div>
+                <QuotaMeter percent={window.remaining} classes={meterClasses} />
+                <p className={styles.reset}>
+                  {observations.length > 1 && (
+                    <span title={lowestName}>
+                      {t('quota_management.lowest_of', { count: observations.length })}
+                    </span>
+                  )}
+                  {observations.length > 1 && resetText && <span aria-hidden="true"> · </span>}
+                  {resetText && <span>{resetText}</span>}
+                </p>
+              </>
+            ) : (
+              <div className={styles.summaryState}>
+                {state === 'error' && (
+                  <IconAlertTriangle size={16} aria-hidden="true" className={styles.stateIcon} />
+                )}
+                <div>
+                  <p className={styles.stateTitle}>{t(`quota_management.summary_${state}`)}</p>
+                  {(state === 'error' || state === 'unavailable') && (
+                    <span className={styles.stateHint}>
+                      {t(`quota_management.summary_${state}_hint`)}
                     </span>
                   )}
                 </div>
-                <div className={styles.meters}>
-                  {observations.map(({ entry, window: observation }) => (
-                    <div
-                      key={getQuotaCacheKey(entry.file)}
-                      title={getQuotaPrivacyDisplayName(entry.file, privacyEnabled)}
-                    >
-                      <QuotaMeter percent={observation.remaining} classes={meterClasses} />
-                    </div>
-                  ))}
-                </div>
-                <p className={styles.reset}>
-                  {window?.resetAtMs
-                    ? `${formatRelativeInstant(window.resetAtMs, now, i18n.resolvedLanguage)} · ${formatInstantShort(window.resetAtMs)}`
-                    : '—'}
-                </p>
-              </>
+              </div>
             )}
           </article>
         );
@@ -129,11 +175,13 @@ export function QuotaSummary({ entries, quotaFor, resolvedTheme }: Props) {
   );
 }
 
+type ResetFilter = 'all' | 'session' | 'weekly';
+
 export function UpcomingResets({ entries, quotaFor, resolvedTheme }: Props) {
   const { t, i18n } = useTranslation();
   const now = useNow();
   const privacyEnabled = usePrivacyStore((state) => state.enabled);
-  const [filter, setFilter] = useState<'all' | 'session' | 'weekly'>('all');
+  const [filter, setFilter] = useState<ResetFilter>('all');
   const [expanded, setExpanded] = useState(false);
   const resets = useMemo(
     () => upcomingQuotaResets(entries, quotaFor, now),
@@ -146,6 +194,11 @@ export function UpcomingResets({ entries, quotaFor, resolvedTheme }: Props) {
   );
   const visible = expanded ? filtered : filtered.slice(0, 5);
   if (resets.length === 0) return null;
+  const filterOptions = (['all', 'session', 'weekly'] as const).map((value) => ({
+    value,
+    label:
+      value === 'all' ? t('auth_files.filter_all') : t(`quota_management.windows_mode_${value}`),
+  }));
   return (
     <section className={styles.upcoming}>
       <header className={styles.upcomingHead}>
@@ -153,27 +206,15 @@ export function UpcomingResets({ entries, quotaFor, resolvedTheme }: Props) {
           <h2>{t('quota_management.upcoming_title')}</h2>
           <p>{t('quota_management.upcoming_description')}</p>
         </div>
-        <div
-          className={styles.filters}
-          role="group"
-          aria-label={t('quota_management.upcoming_filter')}
-        >
-          {(['all', 'session', 'weekly'] as const).map((value) => (
-            <button
-              key={value}
-              type="button"
-              aria-pressed={filter === value}
-              onClick={() => {
-                setFilter(value);
-                setExpanded(false);
-              }}
-            >
-              {value === 'all'
-                ? t('auth_files.filter_all')
-                : t(`quota_management.windows_mode_${value}`)}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          options={filterOptions}
+          value={filter}
+          onChange={(value) => {
+            setFilter(value);
+            setExpanded(false);
+          }}
+          ariaLabel={t('quota_management.upcoming_filter')}
+        />
       </header>
       {visible.length === 0 && (
         <p className={styles.empty} role="status">
@@ -190,7 +231,7 @@ export function UpcomingResets({ entries, quotaFor, resolvedTheme }: Props) {
         const previousDay = index
           ? new Date(visible[index - 1].window.resetAtMs).toDateString()
           : '';
-        const name = getQuotaPrivacyDisplayName(entry.file, privacyEnabled);
+        const account = quotaAccountLabel(entry.file, privacyEnabled);
         const label = privacyText(
           privacyEnabled,
           window.labelKey ? t(window.labelKey, window.labelParams) : window.label,
@@ -201,7 +242,7 @@ export function UpcomingResets({ entries, quotaFor, resolvedTheme }: Props) {
           <Fragment key={key}>
             {date.toDateString() !== previousDay && <h3 className={styles.day}>{day}</h3>}
             <div className={styles.resetRow}>
-              <time dateTime={date.toISOString()}>
+              <time className={styles.resetTime} dateTime={date.toISOString()}>
                 {date.toLocaleTimeString(i18n.resolvedLanguage, {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -209,15 +250,25 @@ export function UpcomingResets({ entries, quotaFor, resolvedTheme }: Props) {
                 })}
               </time>
               <span className={styles.resetIdentity}>
-                {icon && <img src={icon} width={24} height={24} alt="" />}
-                <span title={name}>{name}</span>
-              </span>
-              <span className={styles.resetWindow} title={label}>
-                {label}
+                {icon ? (
+                  <img src={icon} width={20} height={20} alt={getTypeLabel(t, entry.type)} />
+                ) : null}
+                <span className={styles.resetText}>
+                  <span className={styles.resetName} title={account.secondary ?? account.primary}>
+                    {account.primary}
+                  </span>
+                  <span className={styles.resetWindow}>{label}</span>
+                </span>
               </span>
               <span className={styles.resetMeter}>
                 <QuotaMeter percent={window.remaining} classes={meterClasses} />
-                <b>{window.remaining === null ? '—' : `${Math.round(window.remaining)}%`}</b>
+                <b>
+                  {window.remaining === null
+                    ? '—'
+                    : t('quota_management.percent_left', {
+                        percent: Math.round(window.remaining),
+                      })}
+                </b>
               </span>
               <span className={styles.resetRelative}>
                 {formatRelativeInstant(window.resetAtMs, now, i18n.resolvedLanguage)}

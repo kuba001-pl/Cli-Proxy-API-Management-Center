@@ -1,19 +1,31 @@
 @use '../../../styles/mixins' as *;
 
+/* Credential row: identity + actions on top, the quota meters get the full width below.
+   Columns follow the row's own width (container query), not the viewport. */
+
 .card {
+  container-type: inline-size;
   display: grid;
-  grid-template-columns: minmax(180px, 250px) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'head actions'
+    'body body';
   align-items: start;
-  gap: 24px;
-  padding: 20px 0;
+  gap: $space-4 $space-5;
   min-width: 0;
-  border-bottom: 1px solid var(--border-subtle);
-  background: var(--bg-app);
+  padding: $space-5 0;
+  border-top: 1px solid var(--border-subtle);
+
+  &:first-child {
+    border-top: 0;
+  }
 }
+
 .cardEnter {
   animation: quota-card-enter var(--dur-hover) var(--ease-out-strong) both;
   animation-delay: var(--card-delay, 0ms);
 }
+
 @keyframes quota-card-enter {
   from {
     opacity: 0;
@@ -24,222 +36,259 @@
     transform: translateY(0);
   }
 }
+
+/* ---------- Identity ---------- */
+
 .head {
+  grid-area: head;
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: $space-3;
   min-width: 0;
 }
+
 .iconWrap {
   display: none;
 }
+
 .card[data-provider='plugin'] .iconWrap {
   display: inline-flex;
 }
+
 .icon {
   width: 24px;
   height: 24px;
   object-fit: contain;
 }
+
 .iconFallback {
   color: var(--icon-default);
 }
+
 .identity {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
   flex: 1 1 auto;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
+
+// Full identity, wrapped when needed: never truncated.
 .fileName {
+  @include text-identifier;
   display: block;
   min-width: 0;
-  font: 600 13px/18px $font-family;
-  font-variant-numeric: tabular-nums;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   color: var(--text-primary);
+  font-size: $text-base;
+  font-weight: 500;
+  line-height: $leading-base;
 }
+
+.fileMeta {
+  @include text-meta;
+  @include text-identifier;
+}
+
+/* ---------- Meters ---------- */
+
 // Meter columns are shared with nested groups (Antigravity) through --quota-columns.
 .body {
-  --quota-columns: 3;
+  --quota-columns: 1;
+  grid-area: body;
   display: grid;
   grid-template-columns: repeat(var(--quota-columns), minmax(0, 1fr));
   align-items: start;
-  gap: 16px 24px;
+  gap: $space-5 $space-6;
   min-width: 0;
 }
-.idleBody {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  justify-self: start;
-  min-height: 32px;
-  padding: 5px 10px;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  background: var(--bg-raised);
-  color: var(--text-secondary);
-  cursor: pointer;
-  font: 500 13px/20px $font-family;
-  transition:
-    background-color var(--dur-hover) var(--ease-out-strong),
-    border-color var(--dur-hover) var(--ease-out-strong);
-  grid-column: 1 / -1;
 
-  &:hover:not(:disabled) {
-    color: var(--text-primary);
-    background: var(--bg-active);
-  }
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  &:focus-visible {
-    outline: 2px solid var(--text-secondary);
-    outline-offset: 3px;
+@container (min-width: 520px) {
+  .body {
+    --quota-columns: 2;
   }
 }
-.idleGlyph {
-  flex: none;
+
+@container (min-width: 820px) {
+  .body {
+    --quota-columns: 3;
+  }
 }
+
+@container (min-width: 1160px) {
+  .body {
+    --quota-columns: 4;
+  }
+}
+
+.idleBody,
 .idleHint {
-  color: var(--text-tertiary);
-  font-size: 13px;
-  line-height: 20px;
+  @include text-secondary;
+  grid-column: 1 / -1;
+  margin: 0;
 }
+
 .skeleton {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 200px));
-  gap: 24px;
+  grid-template-columns: repeat(var(--quota-columns), minmax(0, 1fr));
+  gap: $space-5 $space-6;
 }
+
 .skeletonRow {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
+
 .skeletonLabel,
 .skeletonTrack,
 .skeletonReset {
   display: block;
-  border-radius: 3px;
-  background: var(--bg-active);
+  border-radius: $radius-sm;
+  background: var(--bg-raised);
 }
+
 .skeletonLabel {
   width: 55%;
-  height: 10px;
+  height: 12px;
 }
+
 .skeletonTrack {
   width: 100%;
   height: 5px;
 }
+
 .skeletonReset {
   width: 70%;
-  height: 8px;
+  height: 10px;
 }
-.loadingLabel {
-  display: inline-flex;
-  align-items: center;
-  min-height: 32px;
-  padding: 6px 8px;
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--text-tertiary);
-  white-space: nowrap;
-}
+
 .errorStrip {
+  @include status-tone(danger);
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: $space-2;
   grid-column: 1 / -1;
-  color: var(--status-danger);
-  font-size: 13px;
-  line-height: 20px;
+  justify-self: start;
+  max-width: 100%;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  font-size: $text-sm;
+  line-height: $leading-sm;
   overflow-wrap: anywhere;
+
   svg {
     flex: none;
-    margin-top: 2px;
+    margin-top: 1px;
   }
 }
+
+/* ---------- Actions ---------- */
+
 .actionRow {
+  grid-area: actions;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 8px;
   flex-wrap: wrap;
-  max-width: 280px;
+  gap: $space-1;
+  margin: -$space-1 (-$space-2) 0 0;
 }
+
+.loadingLabel {
+  display: inline-flex;
+  align-items: center;
+  min-height: $control-height-sm;
+  padding: 0 $space-2;
+  color: var(--text-secondary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  white-space: nowrap;
+}
+
 .actionPill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 32px;
-  padding: 6px 8px;
+  min-height: $control-height-sm;
+  padding: 0 $space-2;
   border: 0;
-  border-radius: 6px;
+  border-radius: $radius-md;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 600;
+  font-size: $text-sm;
+  font-weight: 500;
+  line-height: $leading-sm;
   white-space: nowrap;
   cursor: pointer;
-  transition: background var(--dur-hover) var(--ease-out-strong);
+  transition:
+    background-color var(--dur-hover) var(--ease-out-strong),
+    color var(--dur-hover) var(--ease-out-strong);
+
+  svg {
+    flex: none;
+    color: var(--icon-default);
+  }
+
   &:hover:not(:disabled) {
     background: var(--bg-raised);
     color: var(--text-primary);
   }
+
   &:disabled {
-    color: var(--text-muted);
+    opacity: 0.5;
     cursor: not-allowed;
   }
+
   &:focus-visible {
-    outline: 2px solid var(--text-secondary);
-    outline-offset: 2px;
+    @include focus-ring(2px);
   }
 }
+
 .spinning {
   animation: quota-card-spin 0.8s linear infinite;
 }
+
 @keyframes quota-card-spin {
   to {
     transform: rotate(360deg);
   }
 }
-@media (max-width: 1200px) {
-  .card {
-    grid-template-columns: minmax(170px, 220px) minmax(0, 1fr);
-  }
-  .actionRow {
-    grid-column: 2;
-    max-width: none;
-  }
-}
-@media (max-width: 1100px) {
-  .body {
-    --quota-columns: 2;
-  }
-}
-@include mobile {
+
+/* ---------- Narrow rows: identity, then actions, then meters ---------- */
+
+@container (max-width: 560px) {
   .card {
     grid-template-columns: minmax(0, 1fr);
-    gap: 16px;
+    grid-template-areas:
+      'head'
+      'actions'
+      'body';
+    gap: $space-3;
   }
+
   .actionRow {
-    grid-column: 1;
-  }
-  .body {
-    gap: 16px;
+    justify-content: flex-start;
+    margin: 0 0 0 (-$space-2);
   }
 }
+
+@include mobile {
+  .card {
+    padding: $space-4 0;
+  }
+
+  .actionPill {
+    min-height: $hit-target-touch;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cardEnter,
   .spinning {
     animation: none;
   }
-  .idleBody,
+
   .actionPill {
     transition: none;
   }

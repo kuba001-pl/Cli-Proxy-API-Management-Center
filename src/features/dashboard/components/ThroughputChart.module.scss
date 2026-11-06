@@ -12,17 +12,25 @@
 /* ---------- 图例 ---------- */
 
 .legend {
-  // Anchored to the traffic panel (positioned ancestor) so it shares the overline's
-  // baseline row instead of a chart-relative negative offset.
-  position: absolute;
-  right: 24px;
-  top: 24px;
+  // In flow above the plot by default (narrow panels); see the container query below.
   display: flex;
   flex-wrap: wrap;
-  gap: $spacing-md;
-  font-size: 13px;
-  line-height: 18px;
+  gap: $space-2 $space-4;
+  margin-bottom: $space-2;
+  font-size: $text-sm;
+  line-height: $leading-sm;
   color: var(--text-secondary);
+}
+
+// Wide panels: anchor the legend to the traffic panel (positioned container) so it
+// shares the title's row. The panel reserves the space on its header.
+@container (min-width: 720px) {
+  .legend {
+    position: absolute;
+    top: $space-5;
+    right: $space-5;
+    margin: 0;
+  }
 }
 
 .legendItem {
@@ -32,7 +40,7 @@
 }
 
 .legendValue {
-  font-weight: 650;
+  font-weight: 600;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
 }
@@ -63,20 +71,16 @@
 
 .yAxis {
   position: relative;
-  width: 28px;
+  width: 32px;
   height: var(--chart-height);
   flex: none;
-
-  @include mobile {
-    width: 30px;
-  }
 }
 
 .yTick {
   position: absolute;
   right: 0;
   transform: translateY(-50%);
-  font-size: 11px;
+  font-size: $text-xs;
   color: var(--text-tertiary);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -198,10 +202,10 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  margin-bottom: 10px;
-  font-size: 11px;
-  line-height: 16px;
-  font-weight: 650;
+  margin-bottom: 8px;
+  font-size: $text-xs;
+  line-height: $leading-xs;
+  font-weight: 600;
   color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -214,8 +218,8 @@
   margin: 0;
   display: grid;
   place-items: center;
-  font-size: 13px;
-  color: var(--text-tertiary);
+  font-size: $text-sm;
+  color: var(--text-secondary);
   pointer-events: none;
 }
 
@@ -229,13 +233,10 @@
   flex-direction: column;
   gap: 8px;
   padding: 12px 14px;
-  min-width: 160px;
+  min-width: 168px;
   font-variant-numeric: tabular-nums;
-  border-radius: $radius-md;
-  border: 1px solid var(--border-default);
-  background: var(--bg-surface);
-  box-shadow: var(--shadow-lg);
-  font-size: 12px;
+  @include surface-floating;
+  font-size: $text-sm;
   color: var(--text-secondary);
   pointer-events: none;
   /* 悬停换柱时滑到新位置（可中断，CSS transition 自然 retarget），入场只淡入 */
@@ -254,7 +255,7 @@
 }
 
 .tooltipTime {
-  font-weight: 650;
+  font-weight: 600;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
 }
@@ -276,17 +277,14 @@
 .xAxis {
   position: relative;
   height: 20px;
-  margin-left: 36px;
-
-  @include mobile {
-    margin-left: 38px;
-  }
+  // y-axis width + plot gap
+  margin-left: 40px;
 }
 
 .xTick {
   position: absolute;
   transform: translateX(-50%);
-  font-size: 11px;
+  font-size: $text-xs;
   color: var(--text-tertiary);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -297,17 +295,19 @@
 // A single divider, not a second card: override the shared Collapsible surface
 // (element-qualified so it wins regardless of stylesheet order).
 details.tableToggle {
-  margin-top: 12px;
+  margin-top: $space-3;
   border: 0;
   border-top: 1px solid var(--border-subtle);
   border-radius: 0;
   background: transparent;
   overflow: visible;
-  font-size: 13px;
+  font-size: $text-sm;
 
   > summary {
-    padding: 14px 0 0;
-    font-weight: 600;
+    min-height: 40px;
+    padding: $space-3 0 0;
+    font-size: $text-sm;
+    font-weight: 500;
     color: var(--text-secondary);
 
     &:hover {
@@ -316,9 +316,8 @@ details.tableToggle {
     }
 
     &:focus-visible {
-      outline: 2px solid var(--text-secondary);
-      outline-offset: 2px;
-      border-radius: 4px;
+      @include focus-ring(2px);
+      border-radius: $radius-sm;
     }
   }
 
@@ -332,21 +331,27 @@ details.tableToggle {
 .table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12px;
+  font-size: $text-sm;
   font-variant-numeric: tabular-nums;
 
   th,
   td {
-    padding: 5px $spacing-sm;
+    padding: 8px $space-3;
     text-align: right;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-subtle);
     color: var(--text-secondary);
   }
 
   thead th {
+    border-bottom-color: var(--border-default);
     color: var(--text-tertiary);
-    font-weight: 600;
+    font-size: $text-xs;
+    font-weight: 500;
     white-space: nowrap;
+  }
+
+  tbody tr:last-child > * {
+    border-bottom: 0;
   }
 
   tbody th[scope='row'] {
@@ -361,11 +366,11 @@ details.tableToggle {
 .placeholder {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xs;
-  padding: $spacing-xl;
+  align-items: center;
+  gap: $space-1;
+  padding: $space-7 $space-5;
   border-radius: $radius-lg;
-  border: 1px dashed var(--border-primary);
-  background: var(--bg-surface);
+  background: var(--bg-raised);
   text-align: center;
 }
 
@@ -394,11 +399,5 @@ details.tableToggle {
 @media (prefers-reduced-motion: reduce) {
   .series {
     animation: none;
-  }
-}
-
-@media (max-width: 768px) {
-  .legend {
-    position: static;
   }
 }
