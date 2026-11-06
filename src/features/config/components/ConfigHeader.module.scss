@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as *;
+
 .header {
   display: flex;
   align-items: flex-end;
@@ -14,12 +16,7 @@
 }
 
 .title {
-  margin: 0;
-  font-size: 28px;
-  line-height: 34px;
-  font-weight: 700;
-  letter-spacing: -0.4px;
-  color: var(--text-primary);
+  @include text-page-title;
 }
 
 .meta {
@@ -27,19 +24,21 @@
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
-  gap: 4px 8px;
+  gap: $space-1 $space-2;
   font-family: $font-family;
   font-variant-numeric: tabular-nums;
-  font-size: 12px;
-  line-height: 16px;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-tertiary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  color: var(--text-secondary);
 }
 
-.metaDot,
 .metaMuted,
 .metaOk {
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
+}
+
+.metaDot {
+  color: var(--text-muted);
 }
 
 .metaWarning {
@@ -53,7 +52,7 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: $space-2;
   flex-shrink: 0;
 }
 

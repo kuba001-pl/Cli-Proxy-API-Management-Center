@@ -1,22 +1,18 @@
+@use '../styles/mixins' as *;
+
 .container {
   width: 100%;
-
-  :global(.card) {
-    border-radius: 10px;
-  }
 }
 
 .pageTitle {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 24px;
+  @include text-page-title;
+  margin-bottom: $space-5;
 }
 
 .content {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: $space-5;
 }
 
 .aboutCard {
@@ -27,48 +23,47 @@
   display: flex;
   align-items: center;
   width: 100%;
-  gap: 16px;
-  padding: 0 0 24px;
+  gap: $space-3;
+  padding: 0 0 $space-5;
 }
 
 .aboutLogo {
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
-  border-radius: 10px;
+  border-radius: $radius-md;
   object-fit: cover;
-  box-shadow: var(--shadow);
 }
 
 .aboutTitle {
-  width: min(100%, 920px);
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.35;
-  color: var(--text-primary);
-  letter-spacing: -0.02em;
-  text-align: left;
-  white-space: normal;
+  @include text-card-title;
+  min-width: 0;
   overflow-wrap: anywhere;
 }
 
+/* Four facts in one compact row; two columns on tablets, one on phones. */
 .aboutInfoGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: $spacing-lg;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $space-5 $space-6;
 
-  @media (max-width: 900px) {
-    grid-template-columns: 1fr;
+  @media (max-width: 1100px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: 520px) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: $space-4;
   }
 }
 
-// The about card already frames these: tiles are unframed rows split by one hairline.
 .infoTile {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  min-height: 100px;
-  padding: $spacing-md 0;
+  align-items: flex-start;
+  gap: $space-1;
+  min-width: 0;
+  padding: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -86,50 +81,56 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--focus-ring);
-    outline-offset: 2px;
+    @include focus-ring(4px);
     border-radius: $radius-sm;
   }
 }
 
 .tileLabel {
-  font-size: 13px;
-  font-weight: 600;
   color: var(--text-secondary);
-}
-
-.tileHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: $spacing-sm;
-  min-height: 28px;
+  font-size: $text-sm;
+  font-weight: 400;
+  line-height: $leading-sm;
 }
 
 .tileAction {
-  flex-shrink: 0;
+  margin: $space-1 0 0 (-$space-3);
   white-space: nowrap;
-  margin: -4px -8px 0 0;
 }
 
 .tileValue {
-  font-family: $font-family;
-  font-variant-numeric: tabular-nums;
-  font-size: 20px;
-  font-weight: 600;
+  @include text-identifier;
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  max-width: 100%;
   color: var(--text-primary);
-  line-height: 1.4;
-  word-break: break-word;
+  font-size: $text-md;
+  font-weight: 500;
+  line-height: $leading-md;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--icon-default);
+}
+
+.statusDotOk {
+  background: var(--status-success);
+}
+
+.statusDotError {
+  background: var(--status-danger);
 }
 
 .tileSub {
-  font-size: 12px;
+  @include text-identifier;
   color: var(--text-secondary);
-  font-family: $font-family;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
+  font-size: $text-sm;
+  line-height: $leading-sm;
 }
 
 .section {
@@ -139,22 +140,18 @@
 }
 
 .sectionTitle {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0 0 $spacing-md 0;
+  @include text-section-title;
+  margin-bottom: $space-4;
 }
 
 .sectionDescription {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin: 0 0 $spacing-md 0;
+  @include text-secondary;
+  max-width: 72ch;
+  margin: (-$space-2) 0 $space-4;
 }
 
-.clearLoginActions {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
+.sectionDescriptionLast {
+  margin-bottom: 0;
 }
 
 .infoGrid {
@@ -206,13 +203,18 @@
   display: flex;
   flex-wrap: wrap;
   flex: 0 0 100%;
-  gap: $spacing-sm;
+  gap: $space-2;
 }
 
 .groupTitle {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
+  gap: $space-2;
+
+  :global(.item-title) {
+    font-size: $text-base;
+    font-weight: 600;
+  }
 }
 
 .groupIcon {
@@ -221,32 +223,48 @@
   flex-shrink: 0;
 }
 
+/* Model IDs are identifiers, not code: sans, tabular, quiet chip. */
 .modelTag {
+  @include text-identifier;
   display: inline-flex;
-  align-items: center;
-  gap: $spacing-xs;
-  padding: 2px 8px;
-  border-radius: $radius-sm;
+  align-items: baseline;
+  gap: $space-2;
+  min-height: 28px;
+  padding: $space-1 10px;
   border: 0;
+  border-radius: $radius-sm;
   background-color: var(--bg-raised);
-  font-family: $font-family;
-  font-variant-numeric: tabular-nums;
-  font-size: 12px;
+  font-size: $text-sm;
+  line-height: $leading-sm;
 }
 
-// Model groups sit inside the section card: unframed rows split by a hairline.
+.modelCount {
+  @include text-meta;
+  @include numeric;
+  margin: 0;
+}
+
+// Model groups sit inside the section card: separated by space, not rules.
 .modelGroups {
-  gap: 0;
+  gap: $space-5;
+  margin-top: $space-4;
+
+  :global(.item-meta) {
+    flex-direction: row;
+    align-items: baseline;
+    gap: $space-2;
+  }
 
   :global(.item-subtitle) {
-    font-family: $font-family;
-    font-variant-numeric: tabular-nums;
+    @include text-meta;
   }
 
   > :global(.item-row) {
-    padding: $spacing-md 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $space-3;
+    padding: 0;
     border: 0;
-    border-top: 1px solid var(--border-subtle);
     border-radius: 0;
     background: transparent;
   }
@@ -254,12 +272,12 @@
 
 .modelName {
   color: var(--text-primary);
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .modelAlias {
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: $text-xs;
 }
 
 .versionCheck {
@@ -296,16 +314,17 @@
 
 .quickLinks {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-  gap: $spacing-md;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: $space-2;
+  margin: 0 (-$space-3);
 }
 
 .linkCard {
   display: flex;
-  align-items: flex-start;
-  gap: $spacing-md;
-  min-height: 72px;
-  padding: 12px;
+  align-items: center;
+  gap: $space-3;
+  min-height: 56px;
+  padding: $space-2 $space-3;
   background-color: transparent;
   border: 0;
   border-radius: $radius-md;
@@ -318,8 +337,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--focus-ring);
-    outline-offset: 2px;
+    @include focus-ring(0);
   }
 }
 
@@ -327,18 +345,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: $radius-md;
   border: 0;
   background-color: var(--bg-raised);
-  color: var(--text-secondary);
+  color: var(--icon-default);
   flex-shrink: 0;
-
-  &.github,
-  &.docs {
-    background-color: var(--bg-raised);
-  }
 }
 
 .linkContent {
@@ -349,36 +362,26 @@
 .linkTitle {
   display: flex;
   align-items: center;
-  gap: $spacing-xs;
-  font-size: 15px;
-  font-weight: 600;
+  gap: $space-1;
   color: var(--text-primary);
-  margin-bottom: 2px;
+  font-size: $text-base;
+  font-weight: 500;
+  line-height: $leading-base;
 
   svg {
-    opacity: 0.5;
+    color: var(--icon-default);
     flex-shrink: 0;
   }
 }
 
 .linkDesc {
-  font-size: 13px;
-  color: var(--text-secondary);
-  line-height: 1.5;
+  @include text-secondary;
   overflow-wrap: anywhere;
 }
 
-@media (max-width: 520px) {
-  .aboutTitle {
-    font-size: 18px;
-  }
-
-  .aboutHeader {
-    align-items: flex-start;
-  }
-
-  .tileValue {
-    font-size: 18px;
+@include mobile {
+  .linkCard {
+    min-height: 48px;
   }
 }
 

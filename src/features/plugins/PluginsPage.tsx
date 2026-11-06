@@ -41,6 +41,7 @@ import {
 } from './pluginResources';
 import { waitForPluginState } from './pluginPolling';
 import { getPluginLogo } from './pluginLogo';
+import { resolvePluginDisplayState } from './pluginStatus';
 import styles from './PluginsPage.module.scss';
 
 type PluginRuntimeWaitStatus = 'ready' | 'globalDisabled' | 'timeout';
@@ -505,6 +506,33 @@ export function PluginsPage() {
       <div className={styles.pageHeader}>
         <h1 className={styles.title}>{t('plugin_management.title')}</h1>
         <p className={styles.description}>{t('plugin_management.description')}</p>
+        {data ? (
+          <p className={styles.summary}>
+            <span className={styles.summaryItem}>
+              <span
+                className={`${styles.statusDot} ${
+                  data.pluginsEnabled ? styles.statusDotOn : styles.statusDotOff
+                }`}
+                aria-hidden="true"
+              />
+              {data.pluginsEnabled
+                ? t('plugin_management.system_on')
+                : t('plugin_management.system_off')}
+            </span>
+            <span className={styles.summaryItem}>
+              {t('plugin_management.summary_active', {
+                active: pluginStats.effective,
+                count: pluginStats.discovered,
+              })}
+            </span>
+            <span className={styles.summaryItem}>
+              {t('plugin_management.plugins_dir')}
+              <span className={styles.summaryPath} title={pluginsDirLabel}>
+                {pluginsDirLabel}
+              </span>
+            </span>
+          </p>
+        ) : null}
       </div>
 
       {/* ── Alerts ── */}
@@ -512,53 +540,6 @@ export function PluginsPage() {
 
       {data && !data.pluginsEnabled ? (
         <div className={styles.warningBox}>{t('plugin_management.global_disabled_hint')}</div>
-      ) : null}
-
-      {/* ── Status Bar ── */}
-      {data ? (
-        <div className={styles.statusBar}>
-          <div className={styles.statusPill}>
-            <span
-              className={`${styles.statusDot} ${
-                data.pluginsEnabled ? styles.statusDotOn : styles.statusDotOff
-              }`}
-            />
-            <span className={styles.statusLabel}>{t('plugin_management.global_status')}</span>
-            <span className={styles.statusValue}>
-              {data.pluginsEnabled
-                ? t('plugin_management.global_enabled')
-                : t('plugin_management.global_disabled')}
-            </span>
-          </div>
-
-          <span className={styles.statusDivider} />
-
-          <div className={styles.statusPill}>
-            <span className={styles.statusLabel}>{t('plugin_management.plugins_dir')}</span>
-            <span
-              className={`${styles.statusValue} ${styles.statusPathValue}`}
-              title={pluginsDirLabel}
-            >
-              {pluginsDirLabel}
-            </span>
-          </div>
-
-          <span className={styles.statusDivider} />
-
-          <div className={styles.statusPill}>
-            <span className={styles.statusLabel}>{t('plugin_management.discovered')}</span>
-            <span className={styles.statusValue}>{pluginStats.discovered}</span>
-          </div>
-
-          <span className={styles.statusDivider} />
-
-          <div className={styles.statusPill}>
-            <span className={styles.statusLabel}>{t('plugin_management.effective')}</span>
-            <span className={styles.statusValue}>
-              {pluginStats.effective}/{pluginStats.registered}
-            </span>
-          </div>
-        </div>
       ) : null}
 
       {/* ── Toolbar ── */}
@@ -572,7 +553,7 @@ export function PluginsPage() {
           leftElement={<IconSearch size={16} />}
         />
         <Button
-          variant="secondary"
+          variant="ghost"
           size="sm"
           onClick={loadPlugins}
           disabled={!connected || loading || Boolean(mutatingID || deletingID)}
@@ -623,6 +604,20 @@ export function PluginsPage() {
             const author = privacyText(privacyEnabled, plugin.metadata?.author);
             const pluginPath = privacyText(privacyEnabled, plugin.path);
             const title = privacyText(privacyEnabled, getPluginTitle(plugin));
+            const displayState = resolvePluginDisplayState(plugin, Boolean(data?.pluginsEnabled));
+            const state = {
+              tone: displayState.tone,
+              label: t(displayState.labelKey),
+              hint: displayState.hintKey ? t(displayState.hintKey) : '',
+            };
+            const technicalState = [
+              plugin.registered
+                ? t('plugin_management.registered')
+                : t('plugin_management.not_registered'),
+              plugin.configured
+                ? t('plugin_management.configured')
+                : t('plugin_management.not_configured'),
+            ].join(' · ');
 
             return (
               <article key={plugin.id} className={styles.pluginRow}>
@@ -635,54 +630,43 @@ export function PluginsPage() {
                 <div className={styles.pluginInfo}>
                   <div className={styles.pluginName}>
                     <h2 title={title}>{title}</h2>
-                    <div className={styles.badgeRow}>
-                      <span
-                        className={
-                          plugin.effectiveEnabled ? styles.badgeSuccess : styles.badgeMuted
-                        }
-                      >
-                        {plugin.effectiveEnabled
-                          ? t('plugin_management.status_effective')
-                          : t('plugin_management.status_inactive')}
-                      </span>
-                      <span className={plugin.registered ? styles.badge : styles.badgeWarning}>
-                        {plugin.registered
-                          ? t('plugin_management.registered')
-                          : t('plugin_management.not_registered')}
-                      </span>
-                      <span className={plugin.configured ? styles.badge : styles.badgeMuted}>
-                        {plugin.configured
-                          ? t('plugin_management.configured')
-                          : t('plugin_management.not_configured')}
-                      </span>
-                      {plugin.supportsOAuth ? (
-                        <span className={styles.badge}>{t('plugin_management.oauth')}</span>
-                      ) : null}
-                    </div>
+                    <span
+                      className={`${styles.state} ${styles[`state_${state.tone}`]}`}
+                      title={technicalState}
+                    >
+                      <span className={styles.stateDot} aria-hidden="true" />
+                      {state.label}
+                    </span>
+                    {plugin.supportsOAuth ? (
+                      <span className={styles.capability}>{t('plugin_management.oauth')}</span>
+                    ) : null}
                   </div>
 
                   <span className={styles.pluginId}>{plugin.id}</span>
+
+                  {state.hint ? <span className={styles.stateHint}>{state.hint}</span> : null}
 
                   {version || author || plugin.path ? (
                     <div className={styles.pluginMeta}>
                       {version ? (
                         <span className={styles.metaItem}>
+                          <span className={styles.metaDot} aria-hidden="true" />
                           <strong>{version}</strong>
                         </span>
                       ) : null}
-                      {version && author ? (
-                        <span className={styles.metaDot} aria-hidden="true" />
-                      ) : null}
-                      {author ? <span className={styles.metaItem}>{author}</span> : null}
-                      {(version || author) && plugin.path ? (
-                        <span className={styles.metaDot} aria-hidden="true" />
+                      {author ? (
+                        <span className={styles.metaItem}>
+                          <span className={styles.metaDot} aria-hidden="true" />
+                          {author}
+                        </span>
                       ) : null}
                       {plugin.path ? (
                         <span
                           className={`${styles.metaItem} ${styles.metaPath}`}
                           title={pluginPath}
                         >
-                          {pluginPath}
+                          <span className={styles.metaDot} aria-hidden="true" />
+                          <span className={styles.metaPathText}>{pluginPath}</span>
                         </span>
                       ) : null}
                     </div>
@@ -704,20 +688,8 @@ export function PluginsPage() {
                     disabled={!connected || actionBusy}
                     loading={openingConfig}
                   >
-                    <IconSettings size={14} />
+                    <IconSettings size={15} />
                     {t('plugin_management.edit_config')}
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => handleDeletePlugin(plugin)}
-                    disabled={!connected || actionBusy}
-                    loading={deletingPlugin}
-                    title={t('plugin_management.delete_plugin')}
-                    aria-label={t('plugin_management.delete_plugin')}
-                  >
-                    <IconTrash2 size={14} />
-                    {t('plugin_management.delete_plugin')}
                   </Button>
                   {github ? (
                     <a
@@ -728,9 +700,22 @@ export function PluginsPage() {
                       title={t('plugin_management.open_repository')}
                       aria-label={t('plugin_management.open_repository')}
                     >
-                      <IconGithub size={14} />
+                      <IconGithub size={16} />
                     </a>
                   ) : null}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    iconOnly
+                    className={styles.deleteButton}
+                    onClick={() => handleDeletePlugin(plugin)}
+                    disabled={!connected || actionBusy}
+                    loading={deletingPlugin}
+                    title={t('plugin_management.delete_plugin')}
+                    aria-label={`${t('plugin_management.delete_plugin')} ${title}`}
+                  >
+                    {deletingPlugin ? null : <IconTrash2 size={16} />}
+                  </Button>
                 </div>
               </article>
             );

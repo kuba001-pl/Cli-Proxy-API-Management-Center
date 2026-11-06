@@ -34,14 +34,20 @@
   top: 50%;
   z-index: 1;
   transform: translateY(-50%);
-  padding: 2px;
+  padding: 4px;
   border: 0;
+  border-radius: $radius-sm;
   background: none;
-  color: var(--text-secondary);
-  font-size: 10px;
+  color: var(--icon-default);
+  font-size: $text-xs;
   line-height: 1;
   cursor: pointer;
-  opacity: 0.58;
+  opacity: 0.8;
+
+  &:focus-visible {
+    @include focus-ring(0);
+    opacity: 1;
+  }
   transition: opacity var(--dur-hover, 200ms) var(--ease-out-strong, ease-out);
 
   &:hover {
@@ -69,10 +75,7 @@
 }
 
 .blockLabel {
-  color: var(--text-secondary);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.4;
+  @include text-label;
 }
 
 /* 列表的「添加」统一落在列表下方左侧：新条目会出现在这里。 */
@@ -82,11 +85,9 @@
 }
 
 .emptyState {
-  border: 0;
-  border-radius: 10px;
-  padding: 16px;
-  color: var(--text-secondary);
-  text-align: center;
+  @include text-secondary;
+  padding: $space-4 0;
+  border-top: 1px solid var(--border-subtle);
   background: transparent;
 }
 
@@ -95,10 +96,10 @@
 .ruleCard {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 12px;
+  gap: $space-4;
+  padding: $space-4;
   border: 0;
-  border-radius: 10px;
+  border-radius: $radius-lg;
   background: var(--bg-surface);
 }
 
@@ -112,9 +113,9 @@
 
 .ruleCardTitle {
   color: var(--text-primary);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.25;
+  font-size: $text-base;
+  font-weight: 600;
+  line-height: $leading-base;
 }
 
 /* ---------- 字符串列表 ---------- */
@@ -134,45 +135,39 @@
 
 /* ---------- API 密钥列表 ---------- */
 
-/* 与设置行同一副骨架：标题 + 说明在左、主操作在右；条目是发丝分隔的单行，不再套卡片。 */
+/* Sits on the group panel: a title row with the add action, then hairline-separated key
+   rows (a list, so the hairlines carry meaning). */
 .apiKeys {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: $space-2;
 }
 
 .apiKeysHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: $space-4;
 }
 
 .apiKeysCopy {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   min-width: 0;
 }
 
 .apiKeysTitle {
   color: var(--text-primary);
-  font-size: 13.5px;
-  font-weight: 600;
-  line-height: 1.4;
+  font-size: $text-base;
+  font-weight: 500;
+  line-height: $leading-base;
 }
 
-/* Redundant with the section context; kept for screen readers only (matches config.png). */
+/* Redundant with the section context; kept for screen readers only. */
 .apiKeysHint {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+  @include visually-hidden;
 }
 
 .apiKeyList {
@@ -183,50 +178,47 @@
   padding: 0;
   list-style: none;
   border: 0;
-  border-radius: 10px;
-  overflow: hidden;
 }
 
 .apiKeyRow {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
-  /* 序号 / 名称 / 掩码按文字基线对齐（三种字号混排），操作组整体居中。 */
   align-items: center;
-  gap: 12px;
+  gap: $space-3;
   min-height: 48px;
-  padding: 8px 12px;
-  background: var(--bg-surface);
+  padding: $space-2 0;
+  border-top: 1px solid var(--border-subtle);
+  background: transparent;
 }
 
 .apiKeyIndex {
   min-width: 24px;
   color: var(--text-tertiary);
-  font-size: 11.5px;
+  font-size: $text-xs;
   font-variant-numeric: tabular-nums;
 }
 
 .apiKeyMeta {
   display: flex;
   align-items: baseline;
-  gap: 12px;
+  gap: $space-3;
   min-width: 0;
 }
 
 .apiKeyName {
   overflow: hidden;
   color: var(--text-primary);
-  font-size: 13.5px;
-  font-weight: 600;
+  font-size: $text-base;
+  font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .apiKeyValue {
+  @include text-identifier;
   overflow: hidden;
-  color: var(--text-primary);
-  font-family: $font-family;
-  font-variant-numeric: tabular-nums;
-  font-size: 12.5px;
+  color: var(--text-secondary);
+  font-size: $text-base;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -346,20 +338,18 @@
 }
 
 .storeAuthEmpty {
+  @include text-secondary;
   margin: 0;
-  color: var(--text-secondary);
-  font-size: 13px;
-  line-height: 1.5;
 }
 
 .storeAuthRule {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 14px;
+  gap: $space-4;
+  padding: $space-4;
   border: 0;
-  border-radius: 10px;
-  background: var(--bg-surface);
+  border-radius: $radius-lg;
+  background: var(--bg-raised);
 }
 
 .storeAuthRuleHeader {
@@ -373,8 +363,8 @@
     min-width: 0;
     overflow: hidden;
     color: var(--text-primary);
-    font-size: 13px;
-    font-weight: 700;
+    font-size: $text-base;
+    font-weight: 600;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
@@ -397,9 +387,7 @@
   gap: 6px;
 
   > span {
-    color: var(--text-secondary);
-    font-size: 12px;
-    font-weight: 700;
+    @include text-label;
   }
 }
 
@@ -409,15 +397,11 @@
   gap: 7px;
 
   > span {
-    color: var(--text-secondary);
-    font-size: 12px;
-    font-weight: 700;
+    @include text-label;
   }
 
   small {
-    color: var(--text-tertiary);
-    font-size: 12px;
-    line-height: 1.45;
+    @include text-meta;
   }
 }
 
@@ -430,17 +414,17 @@
 .storeAuthCheckbox {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  min-height: 28px;
-  color: var(--text-secondary);
-  font-size: 12px;
-  font-weight: 650;
-  line-height: 1.4;
+  gap: $space-2;
+  min-height: 32px;
+  color: var(--text-primary);
+  font-size: $text-sm;
+  font-weight: 400;
+  line-height: $leading-sm;
 
   input {
-    width: 14px;
-    height: 14px;
-    accent-color: var(--primary-color);
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
   }
 }
 
@@ -469,7 +453,7 @@
   gap: 12px;
   margin-left: 10px;
   padding-left: 12px;
-  border-left: 2px solid var(--border-color);
+  border-left: 2px solid var(--border-default);
 }
 
 .payloadAdvancedGrid {
@@ -574,20 +558,10 @@
     flex-wrap: wrap;
   }
 
-  .apiKeyRow {
-    grid-template-columns: auto minmax(0, 1fr);
-    row-gap: 4px;
-  }
-
+  /* Identity and the three row actions stay on one line; long names wrap above the mask. */
   .apiKeyMeta {
     flex-direction: column;
     gap: 2px;
-  }
-
-  /* 换行后操作组与名称左对齐：抵消 ghost 按钮自身的水平内边距。 */
-  .apiKeyActions {
-    grid-column: 2;
-    margin-left: -10px;
   }
 }
 
@@ -608,8 +582,13 @@
 
 .apiKeyActions :global(.btn) {
   width: 32px;
-  height: 30px;
+  height: 32px;
   padding: 0;
+
+  @include mobile {
+    width: $hit-target-touch;
+    height: $hit-target-touch;
+  }
 }
 
 .apiKeyModalInputRow :global(.input) {

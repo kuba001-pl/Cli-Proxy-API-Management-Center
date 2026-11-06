@@ -79,7 +79,7 @@ $diff-hunk-color: var(--info-color);
   align-items: center;
   gap: $spacing-sm;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   font-family: $diff-mono;
 }
 
@@ -190,7 +190,7 @@ $diff-hunk-color: var(--info-color);
   flex-shrink: 0;
   text-align: center;
   user-select: none;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 // ── Code text ───────────────────────────────────────────
@@ -268,12 +268,12 @@ $diff-hunk-color: var(--info-color);
   .lineNum {
     width: 36px;
     padding: 0 4px;
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .linePrefix {
     width: 16px;
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .hunkGutter {
@@ -285,7 +285,7 @@ $diff-hunk-color: var(--info-color);
   }
 
   .diffBody {
-    font-size: 11px;
+    font-size: 12px;
     line-height: 18px;
   }
 
@@ -294,6 +294,6 @@ $diff-hunk-color: var(--info-color);
   }
 
   .fileStats {
-    font-size: 11px;
+    font-size: 12px;
   }
 }

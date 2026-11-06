@@ -193,7 +193,7 @@ describe('routing save bar', () => {
     expect(shared).toContain('if (!visible');
     expect(shared).toContain('useActionBarHeightVar(containerRef, heightVar, visible)');
     expect(styles).toContain('left: var(--content-center-x, 50%)');
-    expect(styles).toContain('border-radius: 10px');
+    expect(styles).toContain('border-radius: $radius-lg');
     expect(styles).toContain('-webkit-backdrop-filter: blur(12px)');
     // Review-before-save stays: the bar's save opens the change review dialog.
     expect(page).toContain('onSave={() => setReviewOpen(true)}');

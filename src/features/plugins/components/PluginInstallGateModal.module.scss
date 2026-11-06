@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as *;
+
 // Multi-step install confirmation ("gauntlet") for third-party plugins.
 
 .gateModal {
@@ -9,10 +11,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: $spacing-sm 0 $spacing-md;
+  gap: $space-2;
+  padding: $space-2 0 $space-5;
   text-align: center;
-  border-bottom: 1px solid var(--border-color);
 }
 
 .logoBox {
@@ -22,8 +23,8 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 12px;
-  border: 1px solid var(--border-default);
+  border-radius: $radius-lg;
+  border: 0;
   background: var(--bg-raised);
   color: var(--text-secondary);
 
@@ -36,17 +37,17 @@
 
 .name {
   margin: 0;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: $text-xl;
+  line-height: $leading-2xl;
+  font-weight: 600;
   color: var(--text-primary);
   overflow-wrap: anywhere;
 }
 
 .slug {
+  @include text-identifier;
   margin: 0;
-  font-family: $font-family;
-  font-variant-numeric: tabular-nums;
-  font-size: 13px;
+  font-size: $text-sm;
   color: var(--text-secondary);
   overflow-wrap: anywhere;
 }
@@ -55,12 +56,11 @@
   display: inline-flex;
   max-width: 100%;
   align-items: center;
-  gap: 4px;
+  gap: $space-1;
   margin: 0;
-  font-family: $font-family;
-  font-variant-numeric: tabular-nums;
-  font-size: 13px;
-  color: var(--text-secondary);
+  @include text-identifier;
+  font-size: $text-sm;
+  color: var(--accent-text);
   text-decoration: none;
 
   span {
@@ -70,11 +70,11 @@
 
   svg {
     flex-shrink: 0;
-    color: var(--text-tertiary);
+    color: currentColor;
   }
 
   &:hover {
-    color: var(--text-primary);
+    color: var(--accent-text);
     text-decoration: underline;
 
     svg {
@@ -90,9 +90,8 @@
 }
 
 .source {
+  @include text-meta;
   margin: 0;
-  font-size: 12px;
-  color: var(--text-tertiary);
   overflow-wrap: anywhere;
 }
 
@@ -100,85 +99,83 @@
 .warningBanner {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
-  margin-top: $spacing-lg;
-  padding: 12px 14px;
+  gap: $space-2;
+  margin-top: $space-5;
+  padding: $space-3 $space-4;
   border-radius: $radius-md;
-  border: 1px solid color-mix(in srgb, var(--quota-medium-color) 45%, var(--border-color));
-  background: color-mix(in srgb, var(--quota-medium-color) 16%, var(--bg-secondary));
+  border: 1px solid var(--status-warning-border);
+  background: var(--status-warning-bg);
   color: var(--text-primary);
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 1.4;
+  font-weight: 500;
+  font-size: $text-base;
+  line-height: $leading-base;
 
   svg {
     flex-shrink: 0;
-    color: var(--quota-medium-color);
+    color: var(--status-warning);
   }
 }
 
 .effects {
-  margin: $spacing-md 0 0;
-  padding-left: $spacing-md;
-  border-left: 2px solid var(--border-color);
+  margin: $space-4 0 0;
+  padding: 0;
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: $space-3;
 
   li {
     position: relative;
-    padding-left: 18px;
-    font-size: 14px;
-    line-height: 1.5;
+    padding-left: $space-5;
+    font-size: $text-base;
+    line-height: $leading-base;
     color: var(--text-secondary);
 
     &::before {
       content: '';
       position: absolute;
-      left: 0;
+      left: $space-1;
       top: 7px;
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background: var(--text-tertiary);
+      background: var(--icon-default);
     }
   }
 }
 
 .untrustedAlert {
-  margin-top: $spacing-lg;
-  padding: 12px 14px;
+  margin-top: $space-5;
+  padding: $space-3 $space-4;
   border-radius: $radius-md;
-  border: 1px solid color-mix(in srgb, var(--status-warning) 35%, transparent);
-  background: color-mix(in srgb, var(--status-warning) 10%, transparent);
+  border: 1px solid var(--status-danger-border);
+  background: var(--status-danger-bg);
 }
 
 .untrustedText {
   margin: 0;
-  font-size: 13.5px;
-  line-height: 1.5;
-  font-weight: 600;
-  color: var(--danger-color);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  font-weight: 500;
+  color: var(--status-danger);
 }
 
 .originGrid {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 4px 12px;
-  margin: 10px 0 0;
+  gap: $space-1 $space-3;
+  margin: $space-2 0 0;
 
   dt {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: $text-sm;
+    font-weight: 500;
     color: var(--text-secondary);
   }
 
   dd {
+    @include text-identifier;
     margin: 0;
-    font-family: $font-family;
-    font-variant-numeric: tabular-nums;
-    font-size: 12px;
+    font-size: $text-sm;
     color: var(--text-primary);
     overflow-wrap: anywhere;
   }
@@ -186,21 +183,20 @@
 
 // ── Step 3: type-to-confirm ──
 .confirmBlock {
-  margin-top: $spacing-lg;
+  margin-top: $space-5;
 }
 
 .confirmPrompt {
   display: block;
-  margin-bottom: $spacing-sm;
-  font-size: 14px;
-  font-weight: 600;
+  margin-bottom: $space-2;
+  font-size: $text-base;
+  font-weight: 500;
   color: var(--text-primary);
-  line-height: 1.5;
+  line-height: $leading-base;
   overflow-wrap: anywhere;
 }
 
 .confirmHint {
-  margin: $spacing-sm 0 0;
-  font-size: 12px;
-  color: var(--text-tertiary);
+  @include text-meta;
+  margin: $space-2 0 0;
 }

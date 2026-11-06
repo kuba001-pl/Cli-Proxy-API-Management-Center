@@ -317,29 +317,23 @@ export function SystemPage() {
               className={`${styles.infoTile} ${styles.tapTile}`}
               onClick={handleInfoVersionTap}
             >
-              <div className={styles.tileHeader}>
-                <div className={styles.tileLabel}>{t('footer.version')}</div>
-              </div>
+              <div className={styles.tileLabel}>{t('footer.version')}</div>
               <div className={styles.tileValue}>{appVersion}</div>
             </button>
 
             <div className={styles.infoTile}>
-              <div className={styles.tileHeader}>
-                <div className={styles.tileLabel}>{t('footer.api_version')}</div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className={styles.tileAction}
-                  onClick={() => void handleVersionCheck()}
-                  loading={checkingVersion}
-                  title={t('system_info.version_check_button')}
-                  aria-label={t('system_info.version_check_button')}
-                >
-                  {t('system_info.version_check_button')}
-                </Button>
-              </div>
+              <div className={styles.tileLabel}>{t('footer.api_version')}</div>
               <div className={styles.tileValue}>{apiVersion}</div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className={styles.tileAction}
+                onClick={() => void handleVersionCheck()}
+                loading={checkingVersion}
+              >
+                {t('system_info.version_check_button')}
+              </Button>
             </div>
 
             <div className={styles.infoTile}>
@@ -348,71 +342,27 @@ export function SystemPage() {
             </div>
 
             <div className={styles.infoTile}>
-              <div className={styles.tileLabel}>{t('connection.status')}</div>
-              <div className={styles.tileValue}>{t(`common.${auth.connectionStatus}_status`)}</div>
+              <div className={styles.tileLabel}>
+                {/* The shared label carries a trailing colon for inline use; tiles don't. */}
+                {t('connection.status').replace(/[:：]\s*$/, '')}
+              </div>
+              <div className={styles.tileValue}>
+                <span
+                  className={`${styles.statusDot} ${
+                    auth.connectionStatus === 'connected'
+                      ? styles.statusDotOk
+                      : auth.connectionStatus === 'error'
+                        ? styles.statusDotError
+                        : ''
+                  }`}
+                  aria-hidden="true"
+                />
+                {t(`common.${auth.connectionStatus}_status`)}
+              </div>
               <div className={styles.tileSub}>
                 {privacyIdentity(privacyEnabled, auth.apiBase) || '-'}
               </div>
             </div>
-          </div>
-        </Card>
-
-        <Card title={t('system_info.quick_links_title')}>
-          <p className={styles.sectionDescription}>{t('system_info.quick_links_desc')}</p>
-          <div className={styles.quickLinks}>
-            <a
-              href="https://github.com/router-for-me/CLIProxyAPI"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.linkCard}
-            >
-              <div className={`${styles.linkIcon} ${styles.github}`}>
-                <IconGithub size={22} />
-              </div>
-              <div className={styles.linkContent}>
-                <div className={styles.linkTitle}>
-                  {t('system_info.link_main_repo')}
-                  <IconExternalLink size={14} />
-                </div>
-                <div className={styles.linkDesc}>{t('system_info.link_main_repo_desc')}</div>
-              </div>
-            </a>
-
-            <a
-              href="https://github.com/router-for-me/Cli-Proxy-API-Management-Center"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.linkCard}
-            >
-              <div className={`${styles.linkIcon} ${styles.github}`}>
-                <IconCode size={22} />
-              </div>
-              <div className={styles.linkContent}>
-                <div className={styles.linkTitle}>
-                  {t('system_info.link_webui_repo')}
-                  <IconExternalLink size={14} />
-                </div>
-                <div className={styles.linkDesc}>{t('system_info.link_webui_repo_desc')}</div>
-              </div>
-            </a>
-
-            <a
-              href="https://help.router-for.me/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.linkCard}
-            >
-              <div className={`${styles.linkIcon} ${styles.docs}`}>
-                <IconBookOpen size={22} />
-              </div>
-              <div className={styles.linkContent}>
-                <div className={styles.linkTitle}>
-                  {t('system_info.link_docs')}
-                  <IconExternalLink size={14} />
-                </div>
-                <div className={styles.linkDesc}>{t('system_info.link_docs_desc')}</div>
-              </div>
-            </a>
           </div>
         </Card>
 
@@ -430,11 +380,17 @@ export function SystemPage() {
           }
         >
           <p className={styles.sectionDescription}>{t('system_info.models_desc')}</p>
-          {modelStatus && (
-            <div className={`status-badge ${modelStatus.type}`}>
-              {privacyText(privacyEnabled, modelStatus.message)}
-            </div>
-          )}
+          {modelStatus &&
+            (modelStatus.type === 'success' || modelStatus.type === 'muted' ? (
+              /* A successful fetch is routine: one line of meta text, not a badge. */
+              <p className={styles.modelCount} role="status">
+                {privacyText(privacyEnabled, modelStatus.message)}
+              </p>
+            ) : (
+              <div className={`status-badge ${modelStatus.type}`}>
+                {privacyText(privacyEnabled, modelStatus.message)}
+              </div>
+            ))}
           {modelsError && (
             <div className="error-box">{privacyText(privacyEnabled, modelsError)}</div>
           )}
@@ -482,13 +438,76 @@ export function SystemPage() {
           )}
         </Card>
 
-        <Card title={t('system_info.clear_login_title')}>
-          <p className={styles.sectionDescription}>{t('system_info.clear_login_desc')}</p>
-          <div className={styles.clearLoginActions}>
-            <Button variant="danger" onClick={handleClearLoginStorage}>
+        <Card title={t('system_info.quick_links_title')}>
+          <p className={styles.sectionDescription}>{t('system_info.quick_links_desc')}</p>
+          <div className={styles.quickLinks}>
+            <a
+              href="https://github.com/router-for-me/CLIProxyAPI"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.linkCard}
+            >
+              <div className={`${styles.linkIcon} ${styles.github}`}>
+                <IconGithub size={18} />
+              </div>
+              <div className={styles.linkContent}>
+                <div className={styles.linkTitle}>
+                  {t('system_info.link_main_repo')}
+                  <IconExternalLink size={13} aria-hidden="true" />
+                </div>
+                <div className={styles.linkDesc}>{t('system_info.link_main_repo_desc')}</div>
+              </div>
+            </a>
+
+            <a
+              href="https://github.com/router-for-me/Cli-Proxy-API-Management-Center"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.linkCard}
+            >
+              <div className={`${styles.linkIcon} ${styles.github}`}>
+                <IconCode size={18} />
+              </div>
+              <div className={styles.linkContent}>
+                <div className={styles.linkTitle}>
+                  {t('system_info.link_webui_repo')}
+                  <IconExternalLink size={13} aria-hidden="true" />
+                </div>
+                <div className={styles.linkDesc}>{t('system_info.link_webui_repo_desc')}</div>
+              </div>
+            </a>
+
+            <a
+              href="https://help.router-for.me/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.linkCard}
+            >
+              <div className={`${styles.linkIcon} ${styles.docs}`}>
+                <IconBookOpen size={18} />
+              </div>
+              <div className={styles.linkContent}>
+                <div className={styles.linkTitle}>
+                  {t('system_info.link_docs')}
+                  <IconExternalLink size={13} aria-hidden="true" />
+                </div>
+                <div className={styles.linkDesc}>{t('system_info.link_docs_desc')}</div>
+              </div>
+            </a>
+          </div>
+        </Card>
+
+        <Card
+          title={t('system_info.clear_login_title')}
+          extra={
+            <Button variant="danger" size="sm" onClick={handleClearLoginStorage}>
               {t('system_info.clear_login_button')}
             </Button>
-          </div>
+          }
+        >
+          <p className={`${styles.sectionDescription} ${styles.sectionDescriptionLast}`}>
+            {t('system_info.clear_login_desc')}
+          </p>
         </Card>
       </div>
 
