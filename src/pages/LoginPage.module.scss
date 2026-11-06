@@ -8,26 +8,12 @@
   isolation: isolate;
   background: var(--bg-app);
   color: var(--text-primary);
-
-  // 移动端顶部点阵横幅的高度
-  --hero-band: clamp(200px, 38dvh, 340px);
 }
 
-// 桌面端按 Figma 设计为居中极简表单，不显示点阵；移动端点阵收为页面顶部的横幅，
-// 铺在表单之后、向下淡入底色。隐藏时画布尺寸为 0，DotMatrixHero 不会启动动画。
+// The sign-in screen is a calm, centred form at every width: no dot-matrix banner, not even on
+// phones. A hidden panel has a 0-size canvas, so DotMatrixHero never starts its animation.
 .brandPanel {
   display: none;
-
-  @media (max-width: $breakpoint-mobile) {
-    display: block;
-    position: absolute;
-    inset: 0 0 auto;
-    // 位于表单之后；.container 的 isolation 让 -1 层仍绘制在页面底色之上
-    z-index: -1;
-    height: var(--hero-band);
-    overflow: hidden;
-    pointer-events: none;
-  }
 }
 
 .formPanel {
@@ -238,14 +224,6 @@
   .topBar {
     top: 20px;
     right: 24px;
-  }
-}
-
-// 移动端：表单从点阵横幅的下缘附近开始，点阵在品牌标题之上，不压住输入区；
-// 极矮屏直接从顶部排布，交给滚动兜底。
-@media (max-width: $breakpoint-mobile) and (min-height: 560px) {
-  .main {
-    padding-top: max(0px, calc(var(--hero-band) - 160px));
   }
 }
 

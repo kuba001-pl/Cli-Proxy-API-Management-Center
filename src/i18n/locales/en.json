@@ -2044,6 +2044,8 @@
   },
   "theme": {
     "switch": "Theme",
+    "switch_to_light": "Switch to light mode",
+    "switch_to_dark": "Switch to dark mode",
     "light": "Wool Paper",
     "white": "Pure White",
     "dark": "Dark",

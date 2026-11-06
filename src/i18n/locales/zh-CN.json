@@ -2037,6 +2037,8 @@
   },
   "theme": {
     "switch": "主题",
+    "switch_to_light": "切换到浅色模式",
+    "switch_to_dark": "切换到深色模式",
     "light": "羊毛纸",
     "white": "纯白",
     "dark": "暗色",

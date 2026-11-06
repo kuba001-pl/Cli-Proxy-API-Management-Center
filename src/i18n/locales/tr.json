@@ -2044,6 +2044,8 @@
   },
   "theme": {
     "switch": "Tema",
+    "switch_to_light": "Açık moda geç",
+    "switch_to_dark": "Koyu moda geç",
     "light": "Yün Kağıt",
     "white": "Saf Beyaz",
     "dark": "Koyu",

@@ -13,9 +13,11 @@
   gap: 8px;
   min-height: $control-height;
   padding: 0 14px;
-  border: 1px solid transparent;
+  border: 1px solid var(--border-default);
   border-radius: $radius-md;
-  background: var(--bg-raised);
+  // Neutral buttons sit on a field-coloured face with a fine edge, so they read as deliberate
+  // controls on any surface instead of a grey block on a grey card.
+  background: var(--bg-field);
   color: var(--text-primary);
   font-size: $text-base;
   line-height: $leading-base;
@@ -50,17 +52,19 @@
   }
 
   &.btn-secondary {
-    background: var(--bg-raised);
-    border-color: transparent;
+    background: var(--bg-field);
+    border-color: var(--border-default);
     color: var(--text-primary);
+    box-shadow: var(--shadow-control, none);
 
     &:hover:not(:disabled) {
-      background: var(--bg-active);
-      border-color: transparent;
+      background: var(--bg-raised);
+      border-color: var(--border-strong);
     }
   }
 
   &.btn-ghost {
+    border-color: transparent;
     background: transparent;
     color: var(--text-secondary);
 

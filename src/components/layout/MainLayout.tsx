@@ -55,7 +55,6 @@ import { triggerHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { LANGUAGE_LABEL_KEYS, LANGUAGE_ORDER } from '@/utils/constants';
 import { isSupportedLanguage } from '@/utils/language';
 import { getSidebarShortcutLabel, isSidebarToggleShortcut } from '@/utils/sidebarShortcut';
-import type { Theme } from '@/types';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { privacyText } from '@/utils/privacy';
 
@@ -277,37 +276,6 @@ const headerIcons = {
       <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" />
     </svg>
   ),
-  whiteTheme: (
-    <svg {...headerIconProps}>
-      <circle cx="12" cy="12" r="7" />
-      <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" />
-    </svg>
-  ),
-  autoTheme: (
-    <svg {...headerIconProps}>
-      <defs>
-        <clipPath id="mainLayoutAutoThemeSunLeftHalf">
-          <rect x="0" y="0" width="12" height="24" />
-        </clipPath>
-      </defs>
-      <circle cx="12" cy="12" r="4" />
-      <circle
-        cx="12"
-        cy="12"
-        r="4"
-        clipPath="url(#mainLayoutAutoThemeSunLeftHalf)"
-        fill="currentColor"
-      />
-      <path d="M12 2v2" />
-      <path d="M12 20v2" />
-      <path d="M4.93 4.93l1.41 1.41" />
-      <path d="M17.66 17.66l1.41 1.41" />
-      <path d="M2 12h2" />
-      <path d="M20 12h2" />
-      <path d="M6.34 17.66l-1.41 1.41" />
-      <path d="M19.07 4.93l-1.41 1.41" />
-    </svg>
-  ),
   logout: (
     <svg {...headerIconProps}>
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -316,13 +284,6 @@ const headerIcons = {
     </svg>
   ),
 };
-
-const THEME_CARDS: Array<{ key: Theme; labelKey: string }> = [
-  { key: 'auto', labelKey: 'theme.auto' },
-  { key: 'white', labelKey: 'theme.white' },
-  { key: 'light', labelKey: 'theme.light' },
-  { key: 'dark', labelKey: 'theme.dark' },
-];
 
 export function MainLayout() {
   const { t } = useTranslation();
@@ -339,8 +300,8 @@ export function MainLayout() {
   const fetchConfig = useConfigStore((state) => state.fetchConfig);
   const clearCache = useConfigStore((state) => state.clearCache);
 
-  const theme = useThemeStore((state) => state.theme);
   const setTheme = useThemeStore((state) => state.setTheme);
+  const resolvedTheme = useThemeStore((state) => state.resolvedTheme);
   const language = useLanguageStore((state) => state.language);
   const setLanguage = useLanguageStore((state) => state.setLanguage);
 
@@ -355,7 +316,6 @@ export function MainLayout() {
     top: number;
   } | null>(null);
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
-  const [themeMenuOpen, setThemeMenuOpen] = useState(false);
   const [pluginResources, setPluginResources] = useState<PluginResourceEntry[]>([]);
   const [expandedPluginResourceIDs, setExpandedPluginResourceIDs] = useState<Set<string>>(
     () => new Set()
@@ -365,7 +325,6 @@ export function MainLayout() {
   const railTooltipRef = useRef<HTMLDivElement | null>(null);
   const focusedRailItemRef = useRef<HTMLElement | null>(null);
   const languageMenuRef = useRef<HTMLDivElement | null>(null);
-  const themeMenuRef = useRef<HTMLDivElement | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
 
   const fullBrandName = 'CLI Proxy API Management Center';
@@ -467,27 +426,18 @@ export function MainLayout() {
   }, []);
 
   const closeLanguageMenu = useCallback(() => setLanguageMenuOpen(false), []);
-  const closeThemeMenu = useCallback(() => setThemeMenuOpen(false), []);
   useMenuDismiss(languageMenuOpen, languageMenuRef, closeLanguageMenu);
-  useMenuDismiss(themeMenuOpen, themeMenuRef, closeThemeMenu);
 
   const toggleLanguageMenu = useCallback(() => {
     setLanguageMenuOpen((prev) => !prev);
-    setThemeMenuOpen(false);
   }, []);
 
-  const toggleThemeMenu = useCallback(() => {
-    setThemeMenuOpen((prev) => !prev);
+  // One control, two themes: flip whatever is currently shown between dark and Pure White.
+  const isDarkTheme = resolvedTheme === 'dark';
+  const toggleTheme = useCallback(() => {
     setLanguageMenuOpen(false);
-  }, []);
-
-  const handleThemeSelect = useCallback(
-    (nextTheme: Theme) => {
-      setTheme(nextTheme);
-      setThemeMenuOpen(false);
-    },
-    [setTheme]
-  );
+    setTheme(isDarkTheme ? 'white' : 'dark');
+  }, [isDarkTheme, setTheme]);
 
   const handleLanguageSelect = useCallback(
     (nextLanguage: string) => {
@@ -1152,54 +1102,15 @@ export function MainLayout() {
               </div>
             )}
           </div>
-          <div className={`theme-menu ${themeMenuOpen ? 'open' : ''}`} ref={themeMenuRef}>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleThemeMenu}
-              title={t('theme.switch')}
-              aria-label={t('theme.switch')}
-              aria-haspopup="menu"
-              aria-expanded={themeMenuOpen}
-            >
-              {theme === 'auto'
-                ? headerIcons.autoTheme
-                : theme === 'dark'
-                  ? headerIcons.moon
-                  : theme === 'white'
-                    ? headerIcons.whiteTheme
-                    : headerIcons.sun}
-            </Button>
-            {themeMenuOpen && (
-              <div
-                className="notification entering theme-menu-popover"
-                role="menu"
-                aria-label={t('theme.switch')}
-              >
-                {THEME_CARDS.map((tc) => (
-                  <button
-                    key={tc.key}
-                    type="button"
-                    className={`theme-card ${theme === tc.key ? 'active' : ''}`}
-                    onClick={() => handleThemeSelect(tc.key)}
-                    role="menuitemradio"
-                    aria-checked={theme === tc.key}
-                  >
-                    <span className="theme-card-preview" aria-hidden="true">
-                      {tc.key === 'auto'
-                        ? headerIcons.autoTheme
-                        : tc.key === 'dark'
-                          ? headerIcons.moon
-                          : tc.key === 'white'
-                            ? headerIcons.whiteTheme
-                            : headerIcons.sun}
-                    </span>
-                    <span className="theme-card-label">{t(tc.labelKey)}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleTheme}
+            title={t(isDarkTheme ? 'theme.switch_to_light' : 'theme.switch_to_dark')}
+            aria-label={t(isDarkTheme ? 'theme.switch_to_light' : 'theme.switch_to_dark')}
+          >
+            {isDarkTheme ? headerIcons.sun : headerIcons.moon}
+          </Button>
           <Button
             variant="ghost"
             size="sm"

@@ -110,16 +110,14 @@
     display: block;
   }
 
-  .language-menu,
-  .theme-menu {
+  .language-menu {
     position: relative;
     display: inline-flex;
     align-items: center;
   }
 
   // Floating menus: hairline edge + floating shadow.
-  .language-menu-popover,
-  .theme-menu-popover {
+  .language-menu-popover {
     position: absolute;
     z-index: $z-dropdown + 2;
     display: flex;
@@ -133,8 +131,7 @@
     box-shadow: var(--shadow-floating);
   }
 
-  .language-menu-option,
-  .theme-card {
+  .language-menu-option {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -177,21 +174,11 @@
   .language-menu-check {
     color: var(--accent-text);
   }
-
-  .theme-card-preview {
-    display: inline-flex;
-    color: var(--icon-default);
-  }
-
-  .theme-card.active .theme-card-preview {
-    color: var(--accent-text);
-  }
 }
 
 .mobile-sidebar-actions .btn,
 .header-actions > .btn,
-.header-actions .language-menu > .btn,
-.header-actions .theme-menu > .btn {
+.header-actions .language-menu > .btn {
   width: var(--floating-control-size);
   height: var(--floating-control-size);
   min-width: var(--floating-control-size);
@@ -264,8 +251,7 @@
   height: 100dvh;
   padding: 16px 12px;
   overflow-y: auto;
-  border-right: 1px solid var(--border-subtle);
-  // One continuous canvas: the sidebar shares the page background and is set off by a hairline.
+  // One continuous canvas: the sidebar shares the page background with no seam.
   background: var(--bg-app);
   scrollbar-width: none;
   transition:
@@ -531,7 +517,29 @@
     }
 
     .nav-item {
+      position: relative;
       padding-inline: 0;
+    }
+
+    // Icon-only rail: no tile behind the glyph. Hover brightens the icon; the active route gets
+    // the accent glyph plus a short rounded marker on the rail's edge.
+    @media (min-width: $breakpoint-mobile + 1) {
+      .nav-item:hover,
+      .nav-item.active {
+        background: transparent;
+      }
+
+      .nav-item.active::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: -8px;
+        width: 3px;
+        height: 18px;
+        border-radius: 0 $radius-full $radius-full 0;
+        background: var(--accent);
+        transform: translateY(-50%);
+      }
     }
 
     .nav-badge,
@@ -678,8 +686,6 @@
     left: 0;
     width: var(--sidebar-active-width);
     padding: 12px 14px;
-    border-top: 1px solid var(--border-subtle);
-    border-right: 1px solid var(--border-subtle);
     background: var(--bg-app);
     transition: width var(--dur-hover) var(--ease-out-strong);
 
@@ -692,14 +698,12 @@
   // Expanded rail: both menus anchor to the docked footer itself (not to their triggers), so
   // they span the sidebar's width and can never hang off the left viewport edge.
   .app-shell:not(.sidebar-is-collapsed) .header-actions {
-    .language-menu,
-    .theme-menu {
+    .language-menu {
       position: static;
     }
   }
 
-  .header-actions .language-menu-popover,
-  .header-actions .theme-menu-popover {
+  .header-actions .language-menu-popover {
     right: 12px;
     bottom: calc(100% + 8px);
     left: 12px;
@@ -725,8 +729,7 @@
       }
     }
 
-    .header-actions .language-menu-popover,
-    .header-actions .theme-menu-popover {
+    .header-actions .language-menu-popover {
       right: auto;
       bottom: 0;
       left: calc(100% + 10px);
@@ -770,8 +773,7 @@
   }
 
   // Menus are clamped to the viewport (12px inset) instead of hanging off their trigger.
-  .header-actions .language-menu-popover,
-  .header-actions .theme-menu-popover {
+  .header-actions .language-menu-popover {
     position: fixed;
     top: calc(var(--shell-gutter) + var(--floating-control-size) + 18px);
     right: var(--shell-gutter);
@@ -781,8 +783,7 @@
     overflow-y: auto;
   }
 
-  .header-actions .language-menu-option,
-  .header-actions .theme-card {
+  .header-actions .language-menu-option {
     min-height: $hit-target-touch;
   }
 

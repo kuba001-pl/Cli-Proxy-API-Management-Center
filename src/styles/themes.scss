@@ -112,6 +112,7 @@
   --overlay-bg: rgb(28 22 12 / 0.3);
   --shadow: none;
   --shadow-floating: 0 1px 2px rgb(40 30 12 / 0.06), 0 10px 28px rgb(40 30 12 / 0.12);
+  --shadow-control: 0 1px 1px rgb(0 0 0 / 0.04);
   --shadow-modal: 0 2px 4px rgb(40 30 12 / 0.05), 0 24px 56px rgb(40 30 12 / 0.16);
 }
 
@@ -152,6 +153,7 @@
   --meter-track: #ebebeb;
   --overlay-bg: rgb(0 0 0 / 0.28);
   --shadow-floating: 0 1px 2px rgb(0 0 0 / 0.05), 0 10px 28px rgb(0 0 0 / 0.1);
+  --shadow-control: 0 1px 1px rgb(0 0 0 / 0.04);
   --shadow-modal: 0 2px 4px rgb(0 0 0 / 0.04), 0 24px 56px rgb(0 0 0 / 0.14);
 }
 
@@ -194,6 +196,7 @@
   --meter-track: #1f1f23;
   --overlay-bg: rgb(0 0 0 / 0.62);
   --shadow-floating: 0 12px 32px rgb(0 0 0 / 0.55);
+  --shadow-control: none;
   --shadow-modal: 0 24px 64px rgb(0 0 0 / 0.6);
 }
 

@@ -211,23 +211,13 @@ describe('login dot-matrix on mobile', () => {
     expect(source).toContain("origin: compact ? 'top-right' : 'bottom-right'");
   });
 
-  test('mobile shows the dots as a top banner instead of hiding them', async () => {
+  test('the dot banner stays hidden at every width, so its animation never starts', async () => {
     const page = await Bun.file('src/pages/LoginPage.module.scss').text();
-    const hero = await Bun.file('src/pages/login/DotMatrixHero.module.scss').text();
     const brandPanel = page.slice(page.indexOf('.brandPanel {'), page.indexOf('.formPanel {'));
-    // 桌面端按 Figma 设计不显示点阵；移动端媒体查询内恢复为顶部横幅
-    const mobilePanel = brandPanel.slice(
-      brandPanel.indexOf('@media (max-width: $breakpoint-mobile)')
-    );
-    expect(mobilePanel).toContain('display: block');
-    expect(mobilePanel).not.toContain('display: none');
-    expect(mobilePanel).toContain('height: var(--hero-band)');
-    expect(mobilePanel).toContain('pointer-events: none');
-    expect(page).toMatch(/--hero-band: clamp\(/);
-    // 横幅向下淡出；标语在移动端让位给表单标题
-    const mobileHero = hero.slice(hero.indexOf('@media (max-width: $breakpoint-mobile)'));
-    expect(mobileHero).toMatch(/mask-image: linear-gradient\(\s*to bottom/);
-    expect(mobileHero).toMatch(/\.title \{\s*display: none;/);
+    // Fork design decision: a calm centred form on phones too, with no dot-matrix banner.
+    expect(brandPanel).toContain('display: none');
+    expect(brandPanel).not.toContain('display: block');
+    expect(brandPanel).not.toContain('@media');
   });
 
   test('the login page mounts the hero in the decorative banner and keeps the auto-login splash', async () => {

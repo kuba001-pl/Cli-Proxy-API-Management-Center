@@ -2000,6 +2000,8 @@
   },
   "theme": {
     "switch": "Giao diện",
+    "switch_to_light": "Chuyển sang chế độ sáng",
+    "switch_to_dark": "Chuyển sang chế độ tối",
     "light": "Giấy len",
     "white": "Trắng tinh",
     "dark": "Tối",
