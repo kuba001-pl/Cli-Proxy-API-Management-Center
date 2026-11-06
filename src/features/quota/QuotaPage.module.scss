@@ -216,7 +216,7 @@
 .grid {
   display: flex;
   flex-direction: column;
-  gap: $space-4;
+  gap: $space-6;
   min-width: 0;
 }
 
@@ -224,14 +224,13 @@
   gap: $space-2;
 }
 
-// One surface per provider: heading on top, credential rows separated by hairlines.
+// No slab per provider: the heading and space group the rows; hairlines separate credentials.
 .providerGroup {
-  @include surface-panel(0);
   min-width: 0;
 }
 
 .providerHeading {
-  padding: $space-4 $space-5 $space-1;
+  padding-bottom: $space-1;
 }
 
 .providerRows {
@@ -240,7 +239,6 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding: 0 $space-5;
 }
 
 /* A quiet surface owns the empty state: icon disc, one line, one action. */
@@ -304,12 +302,8 @@
     gap: $space-4;
   }
 
-  .providerHeading {
-    padding: $space-4 $space-4 0;
-  }
-
-  .providerRows {
-    padding: 0 $space-4;
+  .grid {
+    gap: $space-5;
   }
 }
 

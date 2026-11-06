@@ -104,7 +104,8 @@ describe('log workspace layout contract', () => {
       expect(messages.logs.show_raw_logs).toBeTruthy();
       expect(messages.logs.wrap_lines).toBeTruthy();
       expect(messages.logs.hide_management_logs).toBeTruthy();
-      expect(messages.logs.caption).toBeTruthy();
+      // The page header carries no template caption (de-slop rule 3).
+      expect(messages.logs.caption).toBeUndefined();
       expect(messages.logs.error_logs_file).toBeTruthy();
       expect(messages.logs.error_logs_actions).toBeTruthy();
     }

@@ -18,6 +18,7 @@ export function ThroughputChart({ traffic }: ThroughputChartProps) {
   const { t } = useTranslation();
   const gradientId = useId();
   const tooltipId = useId();
+  const keyboardHintId = useId();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   /* Roving tab stop: one Tab stop for the whole chart, arrows move between buckets. */
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
@@ -158,10 +159,15 @@ export function ThroughputChart({ traffic }: ThroughputChartProps) {
             <path className={styles.successLine} d={geometry.line} />
             {totalFailure > 0 && <path className={styles.failureLine} d={geometry.failures} />}
           </svg>
+          {/* How to explore the chart is an assistive-tech hint, not visible copy. */}
+          <span id={keyboardHintId} className={styles.srOnly}>
+            {t('dashboard.traffic_keyboard_hint')}
+          </span>
           <div
             className={styles.columns}
             role="group"
             aria-label={t('dashboard.traffic_buckets_aria')}
+            aria-describedby={keyboardHintId}
             onMouseLeave={() => setActiveIndex(null)}
           >
             {buckets.map((bucket, index) => {

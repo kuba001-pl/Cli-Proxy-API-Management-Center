@@ -11,6 +11,11 @@
  *     Tertiary is for meta information (timestamps, captions, table headers) and still readable.
  *   - --text-muted is decorative or disabled only (~2.3-3:1). Never use it for information.
  *   - --border-control, --icon-default, --focus-ring and --accent >= 3:1 (UI components).
+ *
+ * Monochrome primary: the --accent* family is a strong neutral, not a hue. Primary buttons are
+ * near-black with light text in the light themes and near-white with dark text in dark mode;
+ * active nav, switch-on, focus, links, selection and the chart highlight follow it. Colour is
+ * reserved for status (success, warning, danger). Token names stay for compatibility.
  *   - Hairlines (--border-subtle/--border-default) are decorative separators only.
  *
  * Legacy names below the palette are aliases: many modules consume them. Retune values here,
@@ -87,7 +92,7 @@
   --text-secondary: #4d483f;
   --text-tertiary: #5f594f;
   --text-muted: #a8a196;
-  --text-on-accent: #ffffff;
+  --text-on-accent: #fdfcf9;
   --icon-default: #666055;
   --icon-active: #1c1a16;
 
@@ -96,17 +101,17 @@
   --border-strong: #cbc4b6;
   --border-control: #8f887c;
 
-  --accent: #3a5ad1;
-  --accent-hover: #3150c2;
-  --accent-text: #3450c0;
-  --accent-subtle: color-mix(in srgb, var(--accent) 11%, transparent);
-  --accent-subtle-hover: color-mix(in srgb, var(--accent) 16%, transparent);
-  --focus-ring: #3450c0;
+  --accent: #1c1a16;
+  --accent-hover: #38342d;
+  --accent-text: #1c1a16;
+  --accent-subtle: color-mix(in srgb, var(--accent) 9%, transparent);
+  --accent-subtle-hover: color-mix(in srgb, var(--accent) 13%, transparent);
+  --focus-ring: #2b2822;
 
   --status-success: #166b3c;
   --status-warning: #80500a;
   --status-danger: #b02b23;
-  --status-info: var(--accent-text);
+  --status-info: var(--text-primary);
 
   --meter-track: #e4dfd5;
   --overlay-bg: rgb(28 22 12 / 0.3);
@@ -141,10 +146,10 @@
   --border-strong: #cfcfcf;
   --border-control: #8b8b8b;
 
-  --accent: #3a5ad1;
-  --accent-hover: #3150c2;
-  --accent-text: #3552c4;
-  --focus-ring: #3552c4;
+  --accent: #111111;
+  --accent-hover: #333333;
+  --accent-text: #111111;
+  --focus-ring: #222222;
 
   --status-success: #12703f;
   --status-warning: #86540a;
@@ -173,7 +178,7 @@
   --text-secondary: #a6a6ae;
   --text-tertiary: #8e8e97;
   --text-muted: #58585f;
-  --text-on-accent: #ffffff;
+  --text-on-accent: #0b0b0c;
   --icon-default: #8e8e97;
   --icon-active: #ededef;
 
@@ -182,12 +187,12 @@
   --border-strong: #3a3a40;
   --border-control: #636369;
 
-  --accent: #4567dd;
-  --accent-hover: #3b5bd0;
-  --accent-text: #93a9f5;
-  --accent-subtle: color-mix(in srgb, var(--accent) 16%, transparent);
-  --accent-subtle-hover: color-mix(in srgb, var(--accent) 22%, transparent);
-  --focus-ring: #93a9f5;
+  --accent: #ededef;
+  --accent-hover: #d4d4d8;
+  --accent-text: #ededef;
+  --accent-subtle: color-mix(in srgb, var(--accent) 14%, transparent);
+  --accent-subtle-hover: color-mix(in srgb, var(--accent) 19%, transparent);
+  --focus-ring: #c8c8ce;
 
   --status-success: #4cc38a;
   --status-warning: #e3a33e;
@@ -209,12 +214,12 @@
   --status-success-bg: color-mix(in srgb, var(--status-success) 10%, var(--bg-surface));
   --status-warning-bg: color-mix(in srgb, var(--status-warning) 10%, var(--bg-surface));
   --status-danger-bg: color-mix(in srgb, var(--status-danger) 10%, var(--bg-surface));
-  --status-info-bg: color-mix(in srgb, var(--accent) 10%, var(--bg-surface));
+  --status-info-bg: color-mix(in srgb, var(--accent) 8%, var(--bg-surface));
   --status-success-border: color-mix(in srgb, var(--status-success) 32%, var(--bg-surface));
   --status-warning-border: color-mix(in srgb, var(--status-warning) 32%, var(--bg-surface));
   --status-danger-border: color-mix(in srgb, var(--status-danger) 32%, var(--bg-surface));
 
-  // Data viz: one accent series, status series, faint grid, readable axis labels.
+  // Data viz: one neutral highlight series, status series, faint grid, readable axis labels.
   --viz-accent: var(--accent-text);
   --viz-success: var(--status-success);
   --viz-failure: var(--status-danger);
@@ -245,9 +250,10 @@
   --border-primary: var(--border-default);
   --border-hover: var(--border-strong);
   // --primary-color is consumed as text, outline and small fills: it is the text-safe accent.
+  // Hover/active step toward the page so they stay visible on a neutral accent.
   --primary-color: var(--accent-text);
-  --primary-hover: color-mix(in srgb, var(--accent-text) 82%, var(--text-primary));
-  --primary-active: color-mix(in srgb, var(--accent-text) 70%, var(--text-primary));
+  --primary-hover: color-mix(in srgb, var(--accent-text) 84%, var(--bg-app));
+  --primary-active: color-mix(in srgb, var(--accent-text) 72%, var(--bg-app));
   --primary-contrast: var(--bg-app);
   --success-color: var(--status-success);
   --quota-medium-color: var(--status-warning);

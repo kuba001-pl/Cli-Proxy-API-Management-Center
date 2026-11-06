@@ -58,14 +58,15 @@
 
 /* ---------- KPI tiles ---------- */
 
+// Plain figures on the page, separated by space: the row is already a clear group, so the
+// tiles carry no slab (de-slop rule 4).
 .statsRow {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: $space-3;
+  gap: $space-5 $space-5;
 }
 
 .statTile {
-  @include surface-panel($space-5);
   display: flex;
   flex-direction: column;
   gap: $space-2;
@@ -110,10 +111,6 @@
     grid-template-columns: minmax(0, 1.3fr) repeat(4, minmax(0, 1fr));
   }
 
-  .statTile {
-    padding: $space-4 $space-5;
-  }
-
   .statTile:first-child {
     grid-row: auto;
 
@@ -134,7 +131,7 @@
 
 @container (min-width: 1100px) {
   .statsRow {
-    gap: $space-4;
+    column-gap: $space-6;
   }
 }
 
@@ -202,21 +199,10 @@
 }
 
 .liveBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
   flex: none;
-  color: var(--status-success);
+  color: var(--text-tertiary);
   font-size: $text-xs;
-  font-weight: 500;
   line-height: $leading-xs;
-}
-
-.liveDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--status-success);
 }
 
 .heroSplit {
@@ -539,20 +525,17 @@ details.moreDetails {
 .toggleList {
   display: flex;
   flex-wrap: wrap;
-  gap: $space-2;
+  gap: $space-1 $space-5;
   margin-top: $space-2;
 }
 
+// Label/value pairs as plain text: neutral facts don't earn pills.
 .typeChip,
 .togglePill {
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   gap: $space-2;
-  min-height: 28px;
-  padding: 0 $space-3;
-  border: 0;
-  border-radius: $radius-full;
-  background: var(--bg-raised);
+  min-height: 24px;
   color: var(--text-secondary);
   font-size: $text-sm;
 
@@ -680,7 +663,6 @@ details.moreDetails {
     gap: $space-5;
   }
 
-  .statTile,
   .trafficPanel,
   .panel {
     padding: $space-4;

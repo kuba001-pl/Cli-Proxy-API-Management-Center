@@ -470,7 +470,7 @@
       }
     }
 
-    // Active route: a quiet accent wash and an accent glyph — no outline.
+    // Active route: a quiet neutral wash and a primary-coloured glyph — no outline.
     &.active {
       background: var(--accent-subtle);
       color: var(--text-primary);
@@ -522,7 +522,7 @@
     }
 
     // Icon-only rail: no tile behind the glyph. Hover brightens the icon; the active route gets
-    // the accent glyph plus a short rounded marker on the rail's edge.
+    // the primary glyph plus a short neutral marker on the rail's edge.
     @media (min-width: $breakpoint-mobile + 1) {
       .nav-item:hover,
       .nav-item.active {

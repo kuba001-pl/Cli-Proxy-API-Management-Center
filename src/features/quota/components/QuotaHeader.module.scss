@@ -2,7 +2,7 @@
 
 .header {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: $space-4 $space-5;
   flex-wrap: wrap;
@@ -27,16 +27,6 @@
   align-items: baseline;
   flex-wrap: wrap;
   gap: $space-1 $space-2;
-}
-
-.metaTotal,
-.metaLoaded,
-.metaMuted {
-  color: var(--text-secondary);
-}
-
-.metaDot {
-  color: var(--text-muted);
 }
 
 .metaAttention {

@@ -242,12 +242,8 @@ export function DashboardPage() {
         <article className={styles.statTile} data-reveal>
           <div className={styles.heroPanelTop}>
             <span className={styles.statLabel}>{t('dashboard.hero_requests_label')}</span>
-            {connected && (
-              <span className={styles.liveBadge}>
-                <i className={styles.liveDot} aria-hidden="true" />
-                {t('dashboard.hero_live')}
-              </span>
-            )}
+            {/* Healthy state is plain secondary text: no dot, no colour. */}
+            {connected && <span className={styles.liveBadge}>{t('dashboard.hero_live')}</span>}
           </div>
           <strong className={styles.statValue}>
             {connected ? formatHeadline(animatedTotal) : DASH}
@@ -301,16 +297,11 @@ export function DashboardPage() {
         </div>
       </section>
 
-      <Collapsible
-        className={styles.moreDetails}
-        label={t('dashboard.more_label')}
-        hint={t('dashboard.more_hint')}
-      >
+      <Collapsible className={styles.moreDetails} label={t('dashboard.more_label')}>
         {/* ---------- Provider fleet ---------- */}
         <section className={styles.section} ref={fleetRef}>
           <header className={styles.sectionHead}>
             <h2 className={styles.sectionTitle}>{t('dashboard.fleet_title')}</h2>
-            <p className={styles.sectionDescription}>{t('dashboard.fleet_description')}</p>
           </header>
           <div className={styles.panel}>
             {providers.length === 0 ? (

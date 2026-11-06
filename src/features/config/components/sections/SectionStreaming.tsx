@@ -28,7 +28,6 @@ export function SectionStreaming({
   return (
     <SectionCard
       title={t('config_management.visual.sections.streaming.title')}
-      description={t('config_management.visual.sections.streaming.description')}
       animateIn={animateIn}
     >
       <SettingList>

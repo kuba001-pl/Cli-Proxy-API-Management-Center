@@ -48,7 +48,6 @@ export function SectionAdvanced({
   return (
     <SectionCard
       title={t('config_management.visual.sections.advanced.title')}
-      description={t('config_management.visual.sections.advanced.description')}
       animateIn={animateIn}
     >
       <SectionOAuthBehavior

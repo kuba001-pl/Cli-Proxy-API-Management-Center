@@ -401,3 +401,7 @@ details.tableToggle {
     animation: none;
   }
 }
+
+.srOnly {
+  @include visually-hidden;
+}

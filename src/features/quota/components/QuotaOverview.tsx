@@ -106,10 +106,7 @@ export function QuotaSummary({
         <span className={styles.notLoadedIcon} aria-hidden="true">
           <IconRefreshCw size={16} />
         </span>
-        <div className={styles.notLoadedCopy}>
-          <p>{t('quota_management.not_loaded')}</p>
-          <span>{t('quota_management.empty_hint')}</span>
-        </div>
+        <p className={styles.notLoadedCopy}>{t('quota_management.not_loaded')}</p>
         {onLoadAll && (
           <Button variant="secondary" size="sm" onClick={onLoadAll} disabled={loadDisabled}>
             {t('quota_management.load_all')}

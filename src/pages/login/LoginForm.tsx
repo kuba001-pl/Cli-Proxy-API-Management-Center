@@ -112,9 +112,10 @@ export function LoginForm({
           <span className={styles.switchTrack} aria-hidden="true" />
           <span className={styles.connectionCopy}>
             <span className={styles.connectionLabel}>{t('login.custom_connection_label')}</span>
-            <span className={styles.hint}>
-              {t(editingBase ? 'login.custom_connection_hint' : 'login.connection_auto_hint')}
-            </span>
+            {/* Off needs no caption: the current URL is shown right above. */}
+            {editingBase && (
+              <span className={styles.hint}>{t('login.custom_connection_hint')}</span>
+            )}
           </span>
           <span className={styles.srOnly}>
             {t(editingBase ? 'login.connection_done' : 'login.connection_edit')}

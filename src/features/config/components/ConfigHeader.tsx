@@ -1,12 +1,12 @@
-import { Fragment, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IconRefreshCw } from '@/components/ui/icons';
 import { Button } from '@/components/ui/Button';
-import type { HeaderMetaSegment } from '../uiState';
+import { pickHeaderFact, type HeaderMetaSegment } from '../uiState';
 import styles from './ConfigHeader.module.scss';
 
 export type ConfigHeaderProps = {
-  /** ▍mono meta 行的段落序列（uiState.buildHeaderMeta 的产物）。 */
+  /** Meta segments from uiState.buildHeaderMeta; the header shows only the one that matters. */
   meta: HeaderMetaSegment[];
   reloadDisabled: boolean;
   reloading: boolean;
@@ -18,7 +18,7 @@ export type ConfigHeaderProps = {
 };
 
 /**
- * 配置面板头部：标题领衔 + ▍mono 遥测 meta 行 + 重载 ghost。
+ * 配置面板头部：标题领衔 + 至多一条需要关注的状态 + 重载 ghost。
  * 保存动作不在头部常驻 —— 由 FloatingSaveBar 在 dirty 时承载。
  */
 export function ConfigHeader({
@@ -36,6 +36,7 @@ export function ConfigHeader({
     error: styles.metaError,
     ok: styles.metaOk,
   };
+  const fact = pickHeaderFact(meta);
 
   return (
     <header className={styles.header}>
@@ -43,22 +44,15 @@ export function ConfigHeader({
         <h1 className={styles.title} data-reveal>
           {t('config_management.title')}
         </h1>
-        <p className={styles.meta} data-reveal>
-          {meta.map((segment, index) => (
-            <Fragment key={segment.key}>
-              {index > 0 ? (
-                <span className={styles.metaDot} aria-hidden="true">
-                  ·
-                </span>
-              ) : null}
-              <span className={toneClass[segment.tone]}>
-                {segment.count !== undefined
-                  ? t(segment.labelKey, { count: segment.count })
-                  : t(segment.labelKey)}
-              </span>
-            </Fragment>
-          ))}
-        </p>
+        {fact ? (
+          <p className={styles.meta} data-reveal>
+            <span className={toneClass[fact.tone]}>
+              {fact.count !== undefined
+                ? t(fact.labelKey, { count: fact.count })
+                : t(fact.labelKey)}
+            </span>
+          </p>
+        ) : null}
       </div>
       <div className={styles.actions} data-reveal>
         {leadingActions}

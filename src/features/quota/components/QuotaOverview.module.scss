@@ -181,42 +181,24 @@
 /* ---------- Nothing loaded yet: a single page-level notice ---------- */
 
 .notLoaded {
-  @include surface-panel($space-4 $space-5);
+  // A plain status line, not a slab: the rows below already say "Not loaded yet".
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: $space-3 $space-4;
+  gap: $space-2 $space-3;
 }
 
 .notLoadedIcon {
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
   flex: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--bg-raised);
   color: var(--icon-default);
 }
 
 .notLoadedCopy {
-  flex: 1 1 280px;
+  @include text-secondary;
+  flex: 1 1 240px;
   min-width: 0;
-
-  p {
-    margin: 0;
-    color: var(--text-primary);
-    font-size: $text-base;
-    font-weight: 500;
-    line-height: $leading-base;
-  }
-
-  span {
-    @include text-secondary;
-    display: block;
-    margin-top: 2px;
-  }
+  margin: 0;
 }
 
 /* ---------- Upcoming resets ---------- */

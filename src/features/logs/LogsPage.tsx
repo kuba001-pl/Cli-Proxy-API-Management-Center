@@ -454,7 +454,6 @@ export function LogsPage() {
       <header className={styles.pageHeader}>
         <div className={styles.heading}>
           <h1 className={styles.pageTitle}>{t('logs.title')}</h1>
-          <p className={styles.pageCaption}>{t('logs.caption')}</p>
         </div>
         <SegmentedControl<TabType>
           ariaLabel={t('logs.title')}
@@ -990,7 +989,6 @@ export function LogsPage() {
                   role="status"
                   data-live={autoRefresh && !disableControls}
                 >
-                  <span className={styles.statusDot} aria-hidden="true" />
                   {t(
                     catchingUp && autoRefresh
                       ? 'logs.read_status_catching_up'

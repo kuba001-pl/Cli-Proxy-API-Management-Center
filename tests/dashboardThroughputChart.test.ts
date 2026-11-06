@@ -80,9 +80,23 @@ describe('throughput chart', () => {
     expect(buttons).toEqual(['-1', '-1', '0']);
   });
 
-  test('describes the interaction the chart actually offers', () => {
+  test('keeps the visible scope short and the keyboard hint for assistive tech', () => {
+    // Visible copy states the unit and window only; how to explore the chart is an aria hint.
     const copy = i18n.t('dashboard.traffic_description', { window: '3h 20m' });
-    expect(copy).not.toMatch(/column/i);
-    expect(copy).toMatch(/arrow keys/);
+    expect(copy).toContain('3h 20m');
+    expect(copy).not.toMatch(/hover|arrow keys/i);
+    const hint = i18n.t('dashboard.traffic_keyboard_hint');
+    expect(hint).not.toMatch(/column/i);
+    expect(hint).toMatch(/arrow keys/);
+    const markup = render(
+      traffic([
+        [10, 1],
+        [12, 0],
+      ])
+    );
+    const describedBy = markup.match(/role="group"[^>]*aria-describedby="([^"]+)"/)?.[1];
+    expect(describedBy).toBeTruthy();
+    expect(markup).toContain(`id="${describedBy}"`);
+    expect(markup).toContain(hint);
   });
 });

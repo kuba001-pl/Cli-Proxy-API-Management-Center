@@ -27,7 +27,7 @@ const status = (dirty: boolean) =>
   });
 
 describe('config panel redesign', () => {
-  test('header shows the real setting count and only shows unsaved count when dirty', () => {
+  test('header shows at most one fact: nothing when clean, the unsaved count when dirty', () => {
     const header = (dirtyCount: number, sourceDirty = false) =>
       render(
         createElement(ConfigHeader, {
@@ -44,10 +44,14 @@ describe('config panel redesign', () => {
           extraActions: createElement(ModeSwitch, { mode: 'visual', onChange: noop }),
         })
       );
-    expect(header(0)).toContain('Config Panel');
-    expect(header(0)).toContain('94 settings');
+    expect(header(0)).toContain('>Config<');
+    // Routine facts ("94 settings", "In sync") stay out of the header (de-slop rule 3).
+    expect(header(0)).not.toContain('94 settings');
+    expect(header(0)).not.toContain('In sync');
     expect(header(0)).not.toContain('unsaved');
+    expect(header(0)).not.toContain('·');
     expect(header(2)).toContain('2 unsaved');
+    expect(header(2)).not.toContain('94 settings');
     expect(header(0, true)).toContain('1 unsaved');
     expect(header(0).indexOf('Reload')).toBeLessThan(header(0).indexOf('radiogroup'));
     expect(header(0)).toContain('role="radio" aria-checked="true" tabindex="0"');

@@ -2,7 +2,7 @@
 
 .header {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 16px 24px;
   flex-wrap: wrap;
@@ -35,10 +35,6 @@
 .metaMuted,
 .metaOk {
   color: var(--text-secondary);
-}
-
-.metaDot {
-  color: var(--text-muted);
 }
 
 .metaWarning {

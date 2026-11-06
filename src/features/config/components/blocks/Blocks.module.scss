@@ -165,11 +165,6 @@
   line-height: $leading-base;
 }
 
-/* Redundant with the section context; kept for screen readers only. */
-.apiKeysHint {
-  @include visually-hidden;
-}
-
 .apiKeyList {
   display: flex;
   flex-direction: column;

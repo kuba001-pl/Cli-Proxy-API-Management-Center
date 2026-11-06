@@ -1,7 +1,7 @@
 @use './variables.scss' as *;
 
 /*
- * Buttons. Hierarchy: one accent primary per view; quiet filled secondary; ghost for tertiary
+ * Buttons. Hierarchy: one strong-neutral primary per view; quiet filled secondary; ghost for tertiary
  * and toolbar actions; danger is tinted and must name its exact scope.
  * Sizes: md = 36px (matches inputs), sm = 32px. Icon-only buttons are square (32px desktop,
  * 40px on touch layouts).
