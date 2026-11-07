@@ -1,0 +1,117 @@
+# Fork-only: publish management.html as the latest GitHub release on every change to main.
+#
+# CLIProxyAPI's panel updater reads <repo>/releases/latest, takes the `management.html` asset
+# and compares GitHub's sha256 asset digest with its local copy (every 3h, on start-up and on
+# config hot-reload). So each verified push to main becomes a new "latest" release, and
+# servers with `remote-management.panel-github-repository` pointing here pick it up.
+#
+# Versions are `v<upstream base>-fork.<n>`: the base is the newest upstream release tag
+# reachable from HEAD (fetched from upstream at run time), n counts this fork's releases on
+# that base. Upstream's tag-driven release.yml is left untouched.
+name: Fork Release
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**/*.md'
+      - 'LICENSE'
+  workflow_dispatch:
+
+concurrency:
+  group: fork-release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  UPSTREAM_REPO: https://github.com/router-for-me/Cli-Proxy-API-Management-Center.git
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Fetch upstream release tags
+        run: git fetch --no-tags "$UPSTREAM_REPO" '+refs/tags/v*:refs/tags/v*'
+
+      - name: Compute version
+        id: version
+        run: |
+          set -euo pipefail
+          base="$(git describe --tags --abbrev=0 --match 'v[0-9]*' --exclude '*-*' HEAD 2>/dev/null || echo v0.0.0)"
+          last="$(git tag --list "${base}-fork.*" | sed "s/^${base}-fork\.//" | sort -n | tail -n 1)"
+          next=$(( ${last:-0} + 1 ))
+          version="${base}-fork.${next}"
+          previous="$(git tag --list 'v*-fork.*' --sort=-creatordate | head -n 1 || true)"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "previous=${previous}" >> "$GITHUB_OUTPUT"
+          echo "Releasing ${version} (previous fork release: ${previous:-none})"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.3'
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Test and lint
+        run: |
+          bun run test
+          bun run lint
+
+      - name: Build all-in-one HTML
+        run: bun run build
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+
+      - name: Prepare release asset
+        id: asset
+        run: |
+          set -euo pipefail
+          mv dist/index.html dist/management.html
+          digest="sha256:$(sha256sum dist/management.html | cut -d' ' -f1)"
+          echo "digest=${digest}" >> "$GITHUB_OUTPUT"
+          ls -lh dist/management.html
+          echo "${digest}"
+
+      - name: Generate release notes
+        env:
+          PREVIOUS: ${{ steps.version.outputs.previous }}
+          DIGEST: ${{ steps.asset.outputs.digest }}
+        run: |
+          set -euo pipefail
+          {
+            if [ -n "${PREVIOUS}" ]; then
+              git log --no-merges --pretty=format:'- %h %s' "${PREVIOUS}..HEAD"
+            else
+              git log --no-merges --pretty=format:'- %h %s' -n 30 HEAD
+            fi
+            printf '\n\n`management.html` digest: `%s`\n' "${DIGEST}"
+          } > release-notes.md
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.version }}
+          target_commitish: ${{ github.sha }}
+          body_path: release-notes.md
+          files: dist/management.html
+          draft: false
+          prerelease: false
+          make_latest: 'true'
