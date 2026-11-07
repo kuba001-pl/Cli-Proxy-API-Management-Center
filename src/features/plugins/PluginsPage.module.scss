@@ -213,6 +213,76 @@
   line-height: $leading-sm;
 }
 
+.pluginIdDetails {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.pluginIdSummary {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  max-width: 100%;
+  min-width: 0;
+  border-radius: $radius-sm;
+  color: var(--icon-default);
+  list-style: none;
+  cursor: pointer;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+  &:hover .pluginId {
+    color: var(--text-primary);
+  }
+  &:focus-visible {
+    @include focus-ring(2px);
+  }
+  > svg {
+    flex-shrink: 0;
+    transition: transform var(--dur-hover) var(--ease-out-strong);
+  }
+}
+
+.pluginIdDetails[open] > .pluginIdSummary > svg {
+  transform: rotate(180deg);
+}
+
+.pluginPath {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 $space-2;
+  margin: $space-1 0 0;
+  color: var(--text-secondary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+}
+
+.pluginPathLabel {
+  color: var(--text-tertiary);
+}
+
+.pluginPathValue {
+  @include text-identifier;
+  user-select: text;
+}
+
+.visuallyHidden {
+  @include visually-hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pluginIdSummary > svg {
+    transition: none;
+  }
+}
+
+@include mobile {
+  .pluginIdSummary {
+    @include hit-area;
+  }
+}
+
 /* Each item carries a leading dot; shifting the row one dot slot left and clipping it hides
    the dot of whichever item starts a line. */
 $meta-dot-slot: 3px + $space-2;
@@ -460,7 +530,7 @@ $meta-dot-slot: 3px + $space-2;
   &:focus {
     border-color: var(--accent-text);
     outline: none;
-    box-shadow: 0 0 0 3px var(--accent-subtle);
+    box-shadow: 0 0 0 1px var(--focus-ring);
   }
 }
 

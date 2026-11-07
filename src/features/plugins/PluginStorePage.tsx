@@ -28,6 +28,7 @@ import { privacyText } from '@/utils/privacy';
 import type { PluginStoreEntry, PluginStoreResponse } from '@/types';
 import {
   buildRepositoryURL,
+  collectAmbiguousStorePluginIds,
   isDefaultPluginStoreSource,
   isOfficialPlugin,
   notifyPluginResourcesChanged,
@@ -42,6 +43,7 @@ import {
   type PluginReleaseVersion,
 } from './pluginReleaseVersions';
 import { waitForPluginStoreState } from './pluginPolling';
+import { resolvePluginDisplayState } from './pluginStatus';
 import styles from './PluginStorePage.module.scss';
 
 type StoreStatusFilter = 'all' | 'installed' | 'notInstalled' | 'updates';
@@ -585,6 +587,11 @@ export function PluginStorePage() {
     };
   }, [data?.plugins]);
 
+  const ambiguousPluginIds = useMemo(
+    () => collectAmbiguousStorePluginIds(data?.plugins ?? []),
+    [data?.plugins]
+  );
+
   const visiblePlugins = useMemo(() => {
     const plugins = data?.plugins ?? [];
     const byStatus = plugins.filter((plugin) => {
@@ -845,7 +852,22 @@ export function PluginStorePage() {
             ? `v${entry.version}`
             : '';
     // Two short meta lines with at most one separator each: who/which version, then
-    // licence and platforms. Source and install type live in the install dialog.
+    // licence and platforms. Install type lives in the install dialog; the source joins the
+    // ID only when another source lists the same plugin ID.
+    const sourceText = !ambiguousPluginIds.has(entry.id)
+      ? ''
+      : isDefaultPluginStoreSource(entry)
+        ? t('plugin_store.cli_proxy_api_source')
+        : t('plugin_store.source_name', {
+            source: privacyText(
+              privacyEnabled,
+              entry.sourceName || entry.sourceId || entry.sourceUrl
+            ),
+          });
+    // Installed and running is the quiet default; a disabled or not-running install is named.
+    const installedState = entry.installed
+      ? resolvePluginDisplayState(entry, data?.pluginsEnabled ?? true)
+      : null;
     const metaItems = [
       privacyText(privacyEnabled, versionText),
       privacyText(privacyEnabled, entry.author),
@@ -880,7 +902,10 @@ export function PluginStorePage() {
           </div>
           <div className={styles.cardTitleBlock}>
             <h2 className={styles.cardTitle}>{getStoreEntryTitle(entry, privacyEnabled)}</h2>
-            <span className={styles.cardId}>{entry.id}</span>
+            <span className={styles.cardId}>
+              {entry.id}
+              {sourceText ? ` · ${sourceText}` : null}
+            </span>
           </div>
           <div className={styles.cardBadges}>
             {!isOfficial ? (
@@ -896,8 +921,15 @@ export function PluginStorePage() {
           </div>
         </div>
         {/* Installed is a fact, not a status to celebrate: plain meta text, no dot. */}
-        {entry.installed ? (
-          <p className={styles.cardStatus}>{t('plugin_store.badge_installed')}</p>
+        {installedState ? (
+          <p className={styles.cardStatus} data-tone={installedState.tone}>
+            {installedState.tone === 'warning' ? (
+              <IconAlertTriangle size={12} aria-hidden="true" />
+            ) : null}
+            {installedState.tone === 'active'
+              ? t('plugin_store.badge_installed')
+              : `${t('plugin_store.badge_installed')} · ${t(installedState.labelKey)}`}
+          </p>
         ) : null}
         {entry.description ? (
           <div className={styles.cardDescBlock}>

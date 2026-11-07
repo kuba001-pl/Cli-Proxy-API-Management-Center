@@ -8,6 +8,7 @@ import { Select } from '@/components/ui/Select';
 import { Sheet } from '@/components/ui/Sheet';
 import { ToggleSwitch } from '@/components/ui/ToggleSwitch';
 import {
+  IconChevronDown,
   IconGithub,
   IconPlug,
   IconRefreshCw,
@@ -619,14 +620,32 @@ export function PluginsPage() {
                     ) : null}
                   </div>
 
-                  <span className={styles.pluginId} title={pluginPath || undefined}>
-                    {plugin.id}
-                  </span>
+                  {/* The file path is a diagnostic fact: a native disclosure on the id keeps it
+                      one tap or keypress away (and copyable) without a permanent meta chain. */}
+                  {pluginPath ? (
+                    <details className={styles.pluginIdDetails}>
+                      <summary className={styles.pluginIdSummary}>
+                        <span className={styles.pluginId}>{plugin.id}</span>
+                        <span className={styles.visuallyHidden}>
+                          {t('plugin_management.file_path')}
+                        </span>
+                        <IconChevronDown size={14} aria-hidden="true" />
+                      </summary>
+                      <p className={styles.pluginPath}>
+                        <span className={styles.pluginPathLabel}>
+                          {t('plugin_management.file_path')}
+                        </span>
+                        <span className={styles.pluginPathValue}>{pluginPath}</span>
+                      </p>
+                      <p className={styles.pluginPath}>{technicalState}</p>
+                    </details>
+                  ) : (
+                    <span className={styles.pluginId}>{plugin.id}</span>
+                  )}
 
                   {state.hint ? <span className={styles.stateHint}>{state.hint}</span> : null}
 
-                  {/* Version and author only (one separator); the file path is the id's
-                      tooltip. */}
+                  {/* Version and author only (one separator). */}
                   {version || author ? (
                     <div className={styles.pluginMeta}>
                       {version ? (

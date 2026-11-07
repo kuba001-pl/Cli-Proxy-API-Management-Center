@@ -217,10 +217,14 @@
 
 .filterCount {
   margin-left: 6px;
-  // Secondary, not tertiary: the selected chip's --bg-selected is lighter than the track,
-  // where tertiary falls below 4.5:1 in dark.
   color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
+
+  // On the inverted selected pill, follow its label colour.
+  [aria-checked='true'] > & {
+    color: inherit;
+    opacity: 0.72;
+  }
 }
 
 // ─── Card Grid ──────────────────────────────────────────
@@ -355,8 +359,16 @@
 }
 
 .cardStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
   margin: 0;
   @include text-meta;
+
+  // Not running although enabled: the one installed state that needs attention.
+  &[data-tone='warning'] {
+    color: var(--status-warning);
+  }
 }
 
 .cardDesc {
