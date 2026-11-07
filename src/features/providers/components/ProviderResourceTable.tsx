@@ -41,8 +41,6 @@ interface ProviderResourceTableProps {
   onToggleDisabled?: (resource: ProviderResource, disabled: boolean) => void;
 }
 
-const columnWidths = ['23%', '18%', '10%', '8%', '20%', '8%', '76px'];
-
 const isSponsorResource = (resource: ProviderResource): boolean =>
   isMultiProtocolSponsorBrand(resource.brand);
 
@@ -171,6 +169,17 @@ export function ProviderResourceTable({
     );
   };
 
+  // Shown only when the panel is too narrow for the Prefix / Models columns (container query).
+  const renderCompactMeta = (r: ProviderResource) => {
+    const parts = [
+      r.prefix
+        ? `${t('providersPage.table.prefix')}: ${privacyText(privacyEnabled, r.prefix, [r.name])}`
+        : null,
+      isSponsorResource(r) ? null : `${t('providersPage.table.metrics.models')}: ${r.modelCount}`,
+    ].filter(Boolean);
+    return parts.length ? <span className={styles.compactMeta}>{parts.join(' · ')}</span> : null;
+  };
+
   const renderBaseUrl = (r: ProviderResource) => {
     if (isSponsorResource(r)) {
       return <span className={styles.baseUrl}>{renderProtocolSummary(r)}</span>;
@@ -184,28 +193,26 @@ export function ProviderResourceTable({
     }
     return (
       <span className={styles.baseUrl}>
-        {privacyText(privacyEnabled, r.baseUrl) || t('providersPage.status.notSet')}
+        {/* An empty Base URL is not missing configuration: the provider default applies. */}
+        {privacyText(privacyEnabled, r.baseUrl) || t('providersPage.status.defaultEndpoint')}
       </span>
     );
   };
 
   return (
     <div className={styles.tableFrame}>
-      <Table
-        className={styles.providerTable}
-        cols={columnWidths.map((w, i) => (
-          <col key={i} style={{ width: w }} />
-        ))}
-      >
-        <TableHeader>
+      <Table className={styles.providerTable}>
+        <TableHeader className={styles.head}>
           <TableRow>
-            <TableHead>{t('providersPage.table.key')}</TableHead>
-            <TableHead>{t('providersPage.table.baseUrl')}</TableHead>
-            <TableHead>{t('providersPage.table.prefix')}</TableHead>
-            <TableHead>{t('providersPage.table.metrics.models')}</TableHead>
-            <TableHead>{t('providersPage.table.status')}</TableHead>
-            <TableHead>{t('providersPage.toast.enabled')}</TableHead>
-            <TableHead alignRight className={styles.actionsHead}>
+            <TableHead className={styles.colKey}>{t('providersPage.table.key')}</TableHead>
+            <TableHead className={styles.colUrl}>{t('providersPage.table.baseUrl')}</TableHead>
+            <TableHead className={styles.colPrefix}>{t('providersPage.table.prefix')}</TableHead>
+            <TableHead className={styles.colModels}>
+              {t('providersPage.table.metrics.models')}
+            </TableHead>
+            <TableHead className={styles.colStatus}>{t('providersPage.table.status')}</TableHead>
+            <TableHead className={styles.colEnabled}>{t('providersPage.toast.enabled')}</TableHead>
+            <TableHead alignRight className={styles.colActions}>
               <span className={styles.srOnly}>{t('providersPage.table.actions')}</span>
             </TableHead>
           </TableRow>
@@ -213,23 +220,30 @@ export function ProviderResourceTable({
         <TableBody>
           {resources.map((resource) => {
             return (
-              <TableRow key={resource.id} selected={resource.id === selectedId}>
-                <TableCell>
+              <TableRow
+                key={resource.id}
+                selected={resource.id === selectedId}
+                className={styles.row}
+              >
+                <TableCell className={styles.cellKey}>
                   {renderPrimary(resource)}
+                  {renderCompactMeta(resource)}
                   {renderFlags(resource)}
                 </TableCell>
-                <TableCell>{renderBaseUrl(resource)}</TableCell>
-                <TableCell>
+                <TableCell className={styles.cellUrl} data-label={t('providersPage.table.baseUrl')}>
+                  {renderBaseUrl(resource)}
+                </TableCell>
+                <TableCell className={styles.cellPrefix}>
                   {resource.prefix ? (
                     <span className={styles.chip}>
                       {privacyText(privacyEnabled, resource.prefix, [resource.name])}
                     </span>
                   ) : (
-                    <span className={styles.baseUrl}>{t('providersPage.status.none')}</span>
+                    <span className={styles.none}>{t('providersPage.status.none')}</span>
                   )}
                 </TableCell>
-                <TableCell>{renderModelsSummary(resource)}</TableCell>
-                <TableCell>
+                <TableCell className={styles.cellModels}>{renderModelsSummary(resource)}</TableCell>
+                <TableCell className={styles.cellStatus}>
                   <div className={styles.statusCell}>
                     {!usageByProvider || isSponsorResource(resource) || resource.disabled
                       ? renderStatus(resource)
@@ -263,7 +277,7 @@ export function ProviderResourceTable({
                     ) : null}
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell className={styles.cellEnabled}>
                   {onToggleDisabled ? (
                     <span className={styles.toggleWrap} onClick={(e) => e.stopPropagation()}>
                       <ToggleSwitch
@@ -279,15 +293,7 @@ export function ProviderResourceTable({
                     </span>
                   ) : null}
                 </TableCell>
-                <TableCell
-                  alignRight
-                  className={[
-                    styles.actionsCell,
-                    resource.id === selectedId ? styles.actionsCellSelected : '',
-                  ]
-                    .filter(Boolean)
-                    .join(' ')}
-                >
+                <TableCell alignRight className={styles.cellActions}>
                   <div className={styles.actions}>
                     <button
                       type="button"

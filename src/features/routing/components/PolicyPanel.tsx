@@ -14,6 +14,8 @@ export interface PolicyPanelProps {
   settings: RoutingSettings;
   disabled?: boolean;
   onChange: (next: RoutingSettings) => void;
+  /** Optional id for the panel heading, so the page header can jump to it. */
+  titleId?: string;
 }
 
 function StrategyMark({ strategy }: { strategy: RoutingStrategy }) {
@@ -40,9 +42,10 @@ function StrategyMark({ strategy }: { strategy: RoutingStrategy }) {
   );
 }
 
-export function PolicyPanel({ settings, disabled = false, onChange }: PolicyPanelProps) {
+export function PolicyPanel({ settings, disabled = false, onChange, titleId }: PolicyPanelProps) {
   const { t } = useTranslation();
   const id = useId();
+  const headingId = titleId ?? `${id}-title`;
   const update = (patch: Partial<RoutingSettings>) => onChange({ ...settings, ...patch });
 
   const readCount = (value: string, max: number): number => {
@@ -52,12 +55,11 @@ export function PolicyPanel({ settings, disabled = false, onChange }: PolicyPane
   };
 
   return (
-    <aside className={styles.policy} aria-labelledby={`${id}-title`}>
+    <aside className={styles.policy} aria-labelledby={headingId}>
       <div className={styles.policyHead}>
-        <h2 id={`${id}-title`} className={styles.policyTitle}>
+        <h2 id={headingId} className={styles.policyTitle} tabIndex={-1}>
           {t('routing.policy_title')}
         </h2>
-        <p className={styles.policySubtitle}>{t('routing.policy_subtitle')}</p>
       </div>
 
       <section className={styles.policySection}>
@@ -80,9 +82,6 @@ export function PolicyPanel({ settings, disabled = false, onChange }: PolicyPane
             ),
           }))}
         />
-        <p className={styles.policyHint}>
-          {t(`routing.strategy_${strategyKey(settings.strategy)}_desc`)}
-        </p>
       </section>
 
       <section className={styles.policyRow}>

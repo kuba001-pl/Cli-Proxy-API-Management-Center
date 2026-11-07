@@ -486,7 +486,6 @@ export function AuthFilesPage() {
 
   /* ---------- 头部遥测计数 ---------- */
 
-  const activeCount = useMemo(() => files.filter((file) => file.disabled !== true).length, [files]);
   const problemCount = useMemo(() => files.filter(isProblemAuthFile).length, [files]);
 
   /* ---------- 首屏卡片一次性级联入场 ----------
@@ -591,8 +590,6 @@ export function AuthFilesPage() {
   return (
     <div className={styles.page}>
       <VaultHeader
-        totalCount={files.length}
-        activeCount={activeCount}
         problemCount={problemCount}
         loading={loading}
         refreshing={refreshing}
@@ -725,7 +722,7 @@ export function AuthFilesPage() {
                   />
                   <span>{t('auth_files.account_column')}</span>
                 </div>
-                <span>{t('auth_files.plan_column')}</span>
+                <span className={styles.colPlan}>{t('auth_files.plan_column')}</span>
                 <span>{t('auth_files.recent_requests_column')}</span>
                 <span>{t('auth_files.lowest_quota_column')}</span>
                 <span>{t('auth_files.status_toggle_label')}</span>

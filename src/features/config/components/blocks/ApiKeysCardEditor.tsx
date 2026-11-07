@@ -159,7 +159,6 @@ function ScopedApiKeysCardEditor({
             {t('config_management.visual.api_keys.label')}
             <DirtyFieldIndicator fieldId="apiKeys" />
           </span>
-          <span className={styles.apiKeysHint}>{t('config_management.visual.api_keys.hint')}</span>
         </div>
         <Button variant="secondary" size="sm" onClick={openAddModal} disabled={disabled}>
           <IconPlus size={14} />

@@ -6,15 +6,23 @@
  * so it shows what actually landed, including after a partial failure.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { AutocompleteInput } from '@/components/ui/AutocompleteInput';
 import { Button } from '@/components/ui/Button';
-import { IconRefreshCw } from '@/components/ui/icons';
+import { IconRefreshCw, IconSlidersHorizontal } from '@/components/ui/icons';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
-import { useRevealGroup } from '@/hooks/motion';
+import { prefersReducedMotion, useRevealGroup } from '@/hooks/motion';
 import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard';
 import {
   RoutingConflictError,
@@ -380,26 +388,49 @@ export function RoutingPage() {
           />
           <p className={styles.footnote}>{t('routing.footnote')}</p>
         </section>
-        <PolicyPanel settings={draft.settings} disabled={saving} onChange={handleSettings} />
+        <PolicyPanel
+          titleId={policyTitleId}
+          settings={draft.settings}
+          disabled={saving}
+          onChange={handleSettings}
+        />
       </div>
     );
   };
 
   const editingMember = weightEdit ? (members.get(weightEdit.key) ?? null) : null;
 
+  // Once the policy panel stacks under a long ladder, the header offers a jump to it.
+  const policyTitleId = useId();
+  const jumpToPolicy = () => {
+    const heading = document.getElementById(policyTitleId);
+    if (!heading) return;
+    heading.scrollIntoView({
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+      block: 'start',
+    });
+    heading.focus({ preventScroll: true });
+  };
+
   return (
     <div className={styles.page} ref={revealRef}>
       <header className={styles.header}>
         <div className={styles.headerCopy} data-reveal>
+          {/* No "Members · Tiers" caption: the ladder below shows both at a glance. */}
           <h1 className={styles.title}>{t('routing.title')}</h1>
-          <p className={styles.summary}>
-            {t('routing.summary', {
-              members: board?.members.length ?? 0,
-              tiers: draft?.tiers.length ?? 0,
-            })}
-          </p>
         </div>
         <div className={styles.headerActions}>
+          {board && board.members.length > 0 ? (
+            <Button
+              variant="secondary"
+              size="sm"
+              className={styles.policyJump}
+              onClick={jumpToPolicy}
+            >
+              <IconSlidersHorizontal size={14} />
+              {t('routing.policy_title')}
+            </Button>
+          ) : null}
           <Button
             variant="ghost"
             size="sm"

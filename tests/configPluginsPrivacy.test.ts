@@ -143,12 +143,15 @@ describe('privacy wiring in config, plugins and OAuth editor pages', () => {
     // C08: store source warnings.
     expect(store).toContain('privacyText(privacyEnabled, sourceLabel)');
     expect(store).toContain('privacyText(privacyEnabled, sourceError.message)');
-    // C06: the global plugin directory, text and native tooltip.
+    // C06: the global plugin directory, text and native tooltip. Only the Plugins page shows
+    // it now (de-slop: the store header no longer repeats it), and the store must not leak it.
+    expect(plugins).toContain("privacyText(privacyEnabled, data?.pluginsDir || 'plugins')");
+    expect(plugins).toContain('title={pluginsDirLabel}');
     for (const page of [plugins, store]) {
-      expect(page).toContain("privacyText(privacyEnabled, data?.pluginsDir || 'plugins')");
-      expect(page).toContain('title={pluginsDirLabel}');
       expect(page).not.toContain('title={data.pluginsDir');
     }
+    expect(store).not.toContain('data.pluginsDir');
+    expect(store).not.toContain('data?.pluginsDir');
   });
 
   test('OAuth editor initial-load errors are masked at render', () => {

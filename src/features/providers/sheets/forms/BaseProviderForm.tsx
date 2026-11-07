@@ -529,6 +529,9 @@ export function BaseProviderForm({
           <div className={styles.field}>
             <label className={styles.label} htmlFor={`${fid}-apiKey`}>
               {t('providersPage.form.apiKey')}
+              {mode === 'create' ? (
+                <span className={styles.labelHint}> · {t('providersPage.form.required')}</span>
+              ) : null}
             </label>
             <div className={styles.passwordField}>
               <input
@@ -579,7 +582,12 @@ export function BaseProviderForm({
                   {' '}
                   · {t('providersPage.form.baseUrlRequiredHint')}
                 </span>
-              ) : null}
+              ) : (
+                <span className={styles.labelHint}>
+                  {' '}
+                  · {t('providersPage.form.baseUrlDefaultHint')}
+                </span>
+              )}
             </label>
             <input
               id={`${fid}-baseUrl`}
@@ -597,6 +605,7 @@ export function BaseProviderForm({
           <div className={styles.field}>
             <label className={styles.label} htmlFor={`${fid}-proxy`}>
               {t('providersPage.form.proxyUrl')}
+              <span className={styles.labelHint}> · {t('providersPage.form.optional')}</span>
             </label>
             <input
               id={`${fid}-proxy`}
@@ -607,66 +616,6 @@ export function BaseProviderForm({
               placeholder="http://127.0.0.1:7890"
               disabled={mutating}
             />
-          </div>
-        ) : null}
-
-        {descriptor.supportsPrefix ? (
-          <div className={styles.fieldRow}>
-            <div className={styles.field}>
-              <label className={styles.label} htmlFor={`${fid}-prefix`}>
-                {t('providersPage.form.prefix')}
-              </label>
-              <input
-                id={`${fid}-prefix`}
-                {...concealInputProps(privacyEnabled)}
-                className={styles.input}
-                value={form.prefix}
-                onChange={(e) => updateField('prefix', e.target.value)}
-                disabled={mutating}
-              />
-            </div>
-            {descriptor.supportsPriority ? (
-              <div className={styles.field}>
-                <label className={styles.label} htmlFor={`${fid}-prio`}>
-                  {t('providersPage.form.priority')}
-                </label>
-                <input
-                  id={`${fid}-prio`}
-                  type="number"
-                  className={styles.input}
-                  value={form.priority ?? ''}
-                  onChange={(e) =>
-                    updateField(
-                      'priority',
-                      e.target.value === '' ? undefined : Number(e.target.value)
-                    )
-                  }
-                  disabled={mutating}
-                />
-              </div>
-            ) : null}
-          </div>
-        ) : null}
-
-        {brand !== 'openaiCompatibility' ? (
-          <div className={styles.field}>
-            <label className={styles.label} htmlFor={`${fid}-weight`}>
-              {t('providersPage.form.weight')}
-            </label>
-            <input
-              id={`${fid}-weight`}
-              type="number"
-              step="1"
-              max={MAX_CREDENTIAL_WEIGHT}
-              className={styles.input}
-              value={form.weight ?? ''}
-              placeholder="1"
-              onChange={(e) =>
-                updateField('weight', e.target.value === '' ? undefined : Number(e.target.value))
-              }
-              disabled={mutating}
-            />
-            <span className={styles.labelHint}>{t('providersPage.form.weightHint')}</span>
           </div>
         ) : null}
 
@@ -712,38 +661,116 @@ export function BaseProviderForm({
             ) : null}
           </div>
         ) : null}
-
-        {descriptor.supportsWebsockets ? (
-          <label className={styles.checkboxRow}>
-            <input
-              type="checkbox"
-              className={styles.checkboxBox}
-              checked={form.websockets ?? false}
-              disabled={mutating}
-              onChange={(e) => updateField('websockets', e.target.checked)}
-            />
-            <span className={styles.checkboxText}>
-              <span>{t('providersPage.form.websockets')}</span>
-            </span>
-          </label>
-        ) : null}
-
-        {descriptor.supportsDisabled ? (
-          <label className={styles.checkboxRow}>
-            <input
-              type="checkbox"
-              className={styles.checkboxBox}
-              checked={form.disabled}
-              disabled={mutating}
-              onChange={(e) => updateField('disabled', e.target.checked)}
-            />
-            <span className={styles.checkboxText}>
-              <span>{t('providersPage.form.disabled')}</span>
-              <small>{t('providersPage.form.disabledHint')}</small>
-            </span>
-          </label>
-        ) : null}
       </div>
+
+      {/* Optional routing: folded away when adding a key (defaults apply), open when editing. */}
+      <Collapsible
+        className={styles.routingCollapsible}
+        label={t('providersPage.form.routingSection')}
+        hint={
+          mode === 'create'
+            ? t('providersPage.form.routingDefaultsApplied')
+            : t('providersPage.form.optional')
+        }
+        defaultOpen={mode === 'edit'}
+      >
+        <div className={styles.section}>
+          {descriptor.supportsPrefix ? (
+            <div className={styles.fieldRow}>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor={`${fid}-prefix`}>
+                  {t('providersPage.form.prefix')}
+                </label>
+                <input
+                  id={`${fid}-prefix`}
+                  {...concealInputProps(privacyEnabled)}
+                  className={styles.input}
+                  value={form.prefix}
+                  onChange={(e) => updateField('prefix', e.target.value)}
+                  disabled={mutating}
+                />
+              </div>
+              {descriptor.supportsPriority ? (
+                <div className={styles.field}>
+                  <label className={styles.label} htmlFor={`${fid}-prio`}>
+                    {t('providersPage.form.priority')}
+                    <span className={styles.labelHint}>
+                      {' '}
+                      · {t('providersPage.form.priorityHint')}
+                    </span>
+                  </label>
+                  <input
+                    id={`${fid}-prio`}
+                    type="number"
+                    className={styles.input}
+                    value={form.priority ?? ''}
+                    onChange={(e) =>
+                      updateField(
+                        'priority',
+                        e.target.value === '' ? undefined : Number(e.target.value)
+                      )
+                    }
+                    disabled={mutating}
+                  />
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          {brand !== 'openaiCompatibility' ? (
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor={`${fid}-weight`}>
+                {t('providersPage.form.weight')}
+              </label>
+              <input
+                id={`${fid}-weight`}
+                type="number"
+                step="1"
+                max={MAX_CREDENTIAL_WEIGHT}
+                className={styles.input}
+                value={form.weight ?? ''}
+                placeholder="1"
+                onChange={(e) =>
+                  updateField('weight', e.target.value === '' ? undefined : Number(e.target.value))
+                }
+                disabled={mutating}
+              />
+              <span className={styles.labelHint}>{t('providersPage.form.weightHint')}</span>
+            </div>
+          ) : null}
+
+          {descriptor.supportsWebsockets ? (
+            <label className={styles.checkboxRow}>
+              <input
+                type="checkbox"
+                className={styles.checkboxBox}
+                checked={form.websockets ?? false}
+                disabled={mutating}
+                onChange={(e) => updateField('websockets', e.target.checked)}
+              />
+              <span className={styles.checkboxText}>
+                <span>{t('providersPage.form.websockets')}</span>
+              </span>
+            </label>
+          ) : null}
+
+          {descriptor.supportsDisabled ? (
+            <label className={styles.checkboxRow}>
+              <input
+                type="checkbox"
+                className={styles.checkboxBox}
+                checked={form.disabled}
+                disabled={mutating}
+                onChange={(e) => updateField('disabled', e.target.checked)}
+              />
+              <span className={styles.checkboxText}>
+                <span>{t('providersPage.form.disabled')}</span>
+                <small>{t('providersPage.form.disabledHint')}</small>
+              </span>
+            </label>
+          ) : null}
+        </div>
+      </Collapsible>
 
       <ProviderBehaviorEditor
         brand={brand}

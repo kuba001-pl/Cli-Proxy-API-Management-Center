@@ -1,74 +1,72 @@
+@use '../styles/mixins' as *;
+
 .container {
   width: 100%;
 }
 
 .pageTitle {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 $spacing-xl 0;
+  @include text-page-title;
+  margin-bottom: $space-5;
 }
 
 .content {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xl;
+  // Sections are separated by space and their headings, not by panels.
+  gap: $space-7;
+  max-width: 1100px;
 }
 
-.aboutCard {
-  overflow: hidden;
+.aboutSection {
+  min-width: 0;
 }
 
 .aboutHeader {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
   width: 100%;
-  gap: $spacing-md;
-  padding: $spacing-lg 0 $spacing-xl;
+  gap: $space-3;
+  padding: 0 0 $space-5;
 }
 
 .aboutLogo {
-  width: 108px;
-  height: 108px;
-  border-radius: 26px;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: $radius-md;
   object-fit: cover;
-  box-shadow: var(--shadow);
 }
 
 .aboutTitle {
-  width: min(100%, 920px);
-  font-size: clamp(28px, 4.2vw, 44px);
-  font-weight: 800;
-  line-height: 1.12;
-  color: var(--text-primary);
-  letter-spacing: -0.02em;
-  text-align: center;
-  text-wrap: balance;
-  white-space: normal;
+  @include text-section-title;
+  min-width: 0;
   overflow-wrap: anywhere;
 }
 
+/* Four facts in one compact row; two columns on tablets, one on phones. */
 .aboutInfoGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: $spacing-lg;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $space-5 $space-6;
 
-  @media (max-width: 900px) {
-    grid-template-columns: 1fr;
+  @media (max-width: 1100px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: 520px) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: $space-4;
   }
 }
 
-// The about card already frames these: tiles are unframed rows split by one hairline.
 .infoTile {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  min-height: 104px;
-  padding: $spacing-md 0;
+  align-items: flex-start;
+  gap: $space-1;
+  min-width: 0;
+  padding: 0;
   border: 0;
-  border-top: 1px solid var(--border-subtle);
   border-radius: 0;
   background: transparent;
   text-align: left;
@@ -85,70 +83,80 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--focus-ring);
-    outline-offset: 2px;
+    @include focus-ring(4px);
     border-radius: $radius-sm;
   }
 }
 
 .tileLabel {
-  font-size: 13px;
-  font-weight: 600;
   color: var(--text-secondary);
-}
-
-.tileHeader {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: $spacing-sm;
-  min-height: 40px;
+  font-size: $text-sm;
+  font-weight: 400;
+  line-height: $leading-sm;
 }
 
 .tileAction {
-  flex-shrink: 0;
+  margin: $space-1 0 0 (-$space-3);
   white-space: nowrap;
-  margin: -4px -8px 0 0;
 }
 
 .tileValue {
-  font-family: $font-mono;
-  font-size: 20px;
-  font-weight: 700;
+  @include text-identifier;
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  max-width: 100%;
   color: var(--text-primary);
-  line-height: 1.25;
-  word-break: break-word;
+  font-size: $text-md;
+  font-weight: 500;
+  line-height: $leading-md;
+}
+
+.connectionIdle {
+  color: var(--text-secondary);
+}
+
+.connectionError {
+  color: var(--status-danger);
 }
 
 .tileSub {
-  font-size: 12px;
-  color: var(--text-tertiary);
-  line-height: 1.4;
+  @include text-identifier;
+  color: var(--text-secondary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
 }
 
 .section {
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
+  gap: $space-4;
+  min-width: 0;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: $space-3 $space-4;
+}
+
+.sectionCopy {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  min-width: 0;
 }
 
 .sectionTitle {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0 0 $spacing-md 0;
+  @include text-section-title;
 }
 
 .sectionDescription {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin: 0 0 $spacing-md 0;
-}
-
-.clearLoginActions {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
+  @include text-secondary;
+  max-width: 72ch;
+  margin: 0;
 }
 
 .infoGrid {
@@ -169,7 +177,8 @@
 
     .value {
       color: var(--text-primary);
-      font-family: $font-mono;
+      font-family: $font-family;
+      font-variant-numeric: tabular-nums;
     }
   }
 }
@@ -186,7 +195,8 @@
   padding: $spacing-sm $spacing-md;
   background-color: var(--bg-secondary);
   border-radius: $radius-md;
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 13px;
 
   &:hover {
@@ -198,13 +208,18 @@
   display: flex;
   flex-wrap: wrap;
   flex: 0 0 100%;
-  gap: $spacing-sm;
+  gap: $space-2;
 }
 
 .groupTitle {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
+  gap: $space-2;
+
+  :global(.item-title) {
+    font-size: $text-base;
+    font-weight: 600;
+  }
 }
 
 .groupIcon {
@@ -213,26 +228,47 @@
   flex-shrink: 0;
 }
 
+/* Model IDs are identifiers, not code: sans, tabular, quiet chip. */
 .modelTag {
+  @include text-identifier;
   display: inline-flex;
-  align-items: center;
-  gap: $spacing-xs;
-  padding: 2px 8px;
+  align-items: baseline;
+  gap: $space-2;
+  min-height: 28px;
+  padding: $space-1 10px;
+  border: 0;
   border-radius: $radius-sm;
-  border: 1px solid var(--border-default);
   background-color: var(--bg-raised);
-  font-family: $font-mono;
-  font-size: 12px;
+  font-size: $text-sm;
+  line-height: $leading-sm;
 }
 
-// Model groups sit inside the section card: unframed rows split by a hairline.
+.modelCount {
+  @include text-meta;
+  @include numeric;
+  margin: 0;
+}
+
+// Model groups sit inside the section card: separated by space, not rules.
 .modelGroups {
-  gap: 0;
+  gap: $space-5;
+
+  :global(.item-meta) {
+    flex-direction: row;
+    align-items: baseline;
+    gap: $space-2;
+  }
+
+  :global(.item-subtitle) {
+    @include text-meta;
+  }
 
   > :global(.item-row) {
-    padding: $spacing-md 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $space-3;
+    padding: 0;
     border: 0;
-    border-top: 1px solid var(--border-subtle);
     border-radius: 0;
     background: transparent;
   }
@@ -240,12 +276,12 @@
 
 .modelName {
   color: var(--text-primary);
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .modelAlias {
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: $text-xs;
 }
 
 .versionCheck {
@@ -274,22 +310,25 @@
       font-size: 16px;
       font-weight: 600;
       color: var(--text-primary);
-      font-family: $font-mono;
+      font-family: $font-family;
+      font-variant-numeric: tabular-nums;
     }
   }
 }
 
 .quickLinks {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: $spacing-md;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: $space-2;
+  margin: 0 (-$space-3);
 }
 
 .linkCard {
   display: flex;
   align-items: center;
-  gap: $spacing-md;
-  padding: $spacing-sm;
+  gap: $space-3;
+  min-height: 56px;
+  padding: $space-2 $space-3;
   background-color: transparent;
   border: 0;
   border-radius: $radius-md;
@@ -302,8 +341,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--focus-ring);
-    outline-offset: 2px;
+    @include focus-ring(0);
   }
 }
 
@@ -311,18 +349,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: $radius-md;
-  border: 1px solid var(--border-default);
+  border: 0;
   background-color: var(--bg-raised);
-  color: var(--text-secondary);
+  color: var(--icon-default);
   flex-shrink: 0;
-
-  &.github,
-  &.docs {
-    background-color: var(--bg-raised);
-  }
 }
 
 .linkContent {
@@ -333,49 +366,26 @@
 .linkTitle {
   display: flex;
   align-items: center;
-  gap: $spacing-xs;
-  font-size: 15px;
-  font-weight: 600;
+  gap: $space-1;
   color: var(--text-primary);
-  margin-bottom: 2px;
+  font-size: $text-base;
+  font-weight: 500;
+  line-height: $leading-base;
 
   svg {
-    opacity: 0.5;
+    color: var(--icon-default);
     flex-shrink: 0;
   }
 }
 
 .linkDesc {
-  font-size: 13px;
-  color: var(--text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  @include text-secondary;
+  overflow-wrap: anywhere;
 }
 
-@media (max-width: 768px) {
-  .aboutLogo {
-    width: 92px;
-    height: 92px;
-    border-radius: 22px;
-  }
-
-  .aboutTitle {
-    width: min(100%, 24ch);
-    font-size: clamp(22px, 6.6vw, 34px);
-    font-weight: 700;
-    line-height: 1.18;
-    letter-spacing: -0.012em;
-  }
-}
-
-@media (max-width: 520px) {
-  .aboutTitle {
-    width: min(100%, 19ch);
-    font-size: clamp(20px, 7.2vw, 28px);
-    font-weight: 600;
-    line-height: 1.22;
-    letter-spacing: -0.006em;
+@include mobile {
+  .linkCard {
+    min-height: 48px;
   }
 }
 

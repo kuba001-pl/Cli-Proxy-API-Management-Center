@@ -18,6 +18,7 @@ import { ProviderCategoryList } from './components/ProviderCategoryList';
 import { ProviderResourcePanel } from './components/ProviderResourcePanel';
 import type { ProviderPanelControls } from './components/ProviderResourcePanel';
 import { ProviderSheet, type ProviderSheetHandle } from './sheets/ProviderSheet';
+import { PROVIDER_DESCRIPTORS } from './descriptors';
 import { isMultiProtocolSponsorBrand } from './sponsorDefinitions';
 import { isSponsorPartialMutationError } from './sponsorMutationRecovery';
 import { useProviderWorkbench } from './useProviderWorkbench';
@@ -39,23 +40,6 @@ interface SheetState {
   mode: SheetMode;
   resource: ProviderResource | null;
 }
-
-interface ProvidersWorkbenchPageProps {
-  fixedBrand?: ProviderBrand;
-}
-
-const formatDateTime = (iso: string, locale?: string) => {
-  try {
-    const date = new Date(iso);
-    if (Number.isNaN(date.getTime())) return iso;
-    return new Intl.DateTimeFormat(locale, {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    }).format(date);
-  } catch {
-    return iso;
-  }
-};
 
 const matchesFilter = (r: ProviderResource, normalized: string): boolean => {
   if (!normalized) return true;
@@ -96,8 +80,8 @@ const getResourceRecentSuccess = (
   ).success;
 };
 
-export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPageProps = {}) {
-  const { t, i18n } = useTranslation();
+export function ProvidersWorkbenchPage() {
+  const { t } = useTranslation();
   const connectionStatus = useAuthStore((s) => s.connectionStatus);
   const { showNotification, showConfirmation } = useNotificationStore();
 
@@ -151,17 +135,11 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
     [persistUiState]
   );
 
-  const allGroups = useMemo(() => workbench.snapshot?.groups ?? [], [workbench.snapshot]);
-  const groups = useMemo(
-    () => (fixedBrand ? allGroups.filter((group) => group.id === fixedBrand) : allGroups),
-    [allGroups, fixedBrand]
-  );
-  const firstVisibleBrand = groups[0]?.id ?? fixedBrand ?? 'gemini';
-  const activeBrand =
-    fixedBrand ??
-    (groups.some((group) => group.id === uiState.activeBrand)
-      ? uiState.activeBrand
-      : firstVisibleBrand);
+  const groups = useMemo(() => workbench.snapshot?.groups ?? [], [workbench.snapshot]);
+  const firstVisibleBrand = groups[0]?.id ?? 'gemini';
+  const activeBrand = groups.some((group) => group.id === uiState.activeBrand)
+    ? uiState.activeBrand
+    : firstVisibleBrand;
   const activeFilterState = getProviderFilterState(uiState, activeBrand);
   const filter = activeFilterState.filter;
   const providerSortBy = activeFilterState.sortBy;
@@ -262,14 +240,6 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
     [groups]
   );
 
-  const providerFamilies = useMemo(
-    () => groups.filter((g) => g.resources.length > 0).length,
-    [groups]
-  );
-
-  const updatedAtLabel = workbench.snapshot
-    ? formatDateTime(workbench.snapshot.fetchedAt, i18n.language)
-    : t('providersPage.modelCatalog.notLoaded');
   const errorBanner = workbench.errorMessage ? (
     <div className="error-box">{workbench.errorMessage}</div>
   ) : null;
@@ -377,13 +347,10 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
         <ProviderHeaderCard
           totalActive={0}
           totalResources={0}
-          providerFamilies={0}
-          updatedAtLabel={updatedAtLabel}
           isFetching={workbench.isFetching}
           onRefresh={() => void handleRefresh()}
           onNew={() => {}}
           isNewDisabled
-          showNewAction={!fixedBrand}
         />
         {errorBanner}
       </div>
@@ -395,39 +362,40 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
       <ProviderHeaderCard
         totalActive={totalActive}
         totalResources={totalResources}
-        providerFamilies={providerFamilies}
-        updatedAtLabel={updatedAtLabel}
         isFetching={workbench.isFetching}
         isNewDisabled={disableMutations}
-        showNewAction={!fixedBrand}
-        newLabel={t('providersPage.actions.new')}
+        // An empty provider's panel carries the single "add" action itself.
+        showNewAction={activeGroup.resources.length > 0}
+        newLabel={
+          PROVIDER_DESCRIPTORS[activeGroup.id]?.supportsName
+            ? t('providersPage.actions.addProvider')
+            : t('providersPage.actions.addKey')
+        }
         onRefresh={() => void handleRefresh()}
         onNew={openCreate}
       />
 
       {errorBanner}
 
-      <div className={`${styles.layout} ${fixedBrand ? styles.layoutSingle : ''}`.trim()}>
-        {!fixedBrand ? (
-          <ProviderCategoryList
-            groups={groups}
-            activeBrand={activeGroup.id}
-            onSelect={(brand) => {
-              const isSwitching = sheetState.open && sheetState.brand !== brand;
-              const proceed =
-                isSwitching && sheetRef.current
-                  ? sheetRef.current.confirmDiscardIfDirty()
-                  : Promise.resolve(true);
-              void proceed.then((ok) => {
-                if (!ok) return;
-                setActiveBrand(brand);
-                if (isSwitching) {
-                  closeSheet();
-                }
-              });
-            }}
-          />
-        ) : null}
+      <div className={styles.layout}>
+        <ProviderCategoryList
+          groups={groups}
+          activeBrand={activeGroup.id}
+          onSelect={(brand) => {
+            const isSwitching = sheetState.open && sheetState.brand !== brand;
+            const proceed =
+              isSwitching && sheetRef.current
+                ? sheetRef.current.confirmDiscardIfDirty()
+                : Promise.resolve(true);
+            void proceed.then((ok) => {
+              if (!ok) return;
+              setActiveBrand(brand);
+              if (isSwitching) {
+                closeSheet();
+              }
+            });
+          }}
+        />
         <ProviderResourcePanel
           group={activeGroup}
           filter={filter}
@@ -445,21 +413,19 @@ export function ProvidersWorkbenchPage({ fixedBrand }: ProvidersWorkbenchPagePro
         />
       </div>
 
-      {!fixedBrand ? (
-        <ProviderSheet
-          ref={sheetRef}
-          state={sheetState}
-          onClose={closeSheet}
-          onSwitchToEdit={() => {
-            setSheetState((s) => (s.resource ? { ...s, mode: 'edit' } : s));
-          }}
-          workbench={workbench}
-          onCreated={handleCreated}
-          onUpdated={handleUpdated}
-          mutationDisabled={disableMutations}
-          usageByProvider={usageByProvider}
-        />
-      ) : null}
+      <ProviderSheet
+        ref={sheetRef}
+        state={sheetState}
+        onClose={closeSheet}
+        onSwitchToEdit={() => {
+          setSheetState((s) => (s.resource ? { ...s, mode: 'edit' } : s));
+        }}
+        workbench={workbench}
+        onCreated={handleCreated}
+        onUpdated={handleUpdated}
+        mutationDisabled={disableMutations}
+        usageByProvider={usageByProvider}
+      />
     </div>
   );
 }

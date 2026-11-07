@@ -17,6 +17,7 @@ import type { AuthFileItem, ResolvedTheme, ThemeColors } from '@/types';
 import { normalizeOAuthProviderKey } from '@/utils/providerKeys';
 import { parseTimestamp } from '@/utils/timestamp';
 import { TYPE_COLORS } from '@/utils/quota';
+import { formatDisplayTimestamp } from '@/utils/dateFormat';
 
 export type { ResolvedTheme, ThemeColors, TypeColorSet } from '@/types';
 export type AuthFileModelItem = {
@@ -28,14 +29,7 @@ export type AuthFileModelItem = {
 export type AuthFileIconAsset = string | { light: string; dark: string };
 
 export type QuotaProviderType =
-  | 'antigravity'
-  | 'claude'
-  | 'codex'
-  | 'devin'
-  | 'kimi'
-  | 'meta'
-  | 'plugin'
-  | 'xai';
+  'antigravity' | 'claude' | 'codex' | 'devin' | 'kimi' | 'meta' | 'plugin' | 'xai';
 export type AuthFileQuotaFilter = string | null;
 export type OAuthConfigLoadError = 'loading' | 'unsupported' | 'load' | null;
 
@@ -156,6 +150,18 @@ export const isProblemAuthFile = (file: AuthFileItem): boolean => {
   return file.unavailable === true || status === 'error' || hasAuthFileStatusWarning(file);
 };
 
+/**
+ * Status messages that say the stored sign-in itself is no longer valid (expired/revoked
+ * refresh token, explicit re-authentication). A retry or refresh cannot repair these; the
+ * account has to sign in again through an OAuth flow.
+ */
+const REAUTH_STATUS_PATTERN =
+  /\b(re-?auth\w*|re-?login|sign in again|log in again|invalid_grant|revoked)\b|(token|credential|session|login)s?\b[^.;]*\bexpired|\bexpired\b[^.;]*\b(token|credential|session|login)/i;
+
+/** Problem credential whose known error says it needs a new sign-in (shown as "Needs sign-in"). */
+export const needsAuthFileReauth = (file: AuthFileItem): boolean =>
+  isProblemAuthFile(file) && REAUTH_STATUS_PATTERN.test(getAuthFileStatusMessage(file));
+
 export const getTypeLabel = (t: TFunction, type: string): string => {
   const providerKey = normalizeProviderKey(type);
   const key = `auth_files.filter_${providerKey}`;
@@ -260,7 +266,7 @@ export function isRuntimeOnlyAuthFile(file: AuthFileItem): boolean {
   return false;
 }
 
-export const formatModified = (item: AuthFileItem): string => {
+export const formatModified = (item: AuthFileItem, locale?: string): string => {
   const raw = item['modtime'] ?? item.modified;
   if (!raw) return '-';
   const asNumber = Number(raw);
@@ -268,7 +274,8 @@ export const formatModified = (item: AuthFileItem): string => {
     Number.isFinite(asNumber) && !Number.isNaN(asNumber)
       ? new Date(asNumber < 1e12 ? asNumber * 1000 : asNumber)
       : (parseTimestamp(raw) ?? new Date(String(raw)));
-  return Number.isNaN(date.getTime()) ? '-' : date.toLocaleString();
+  // One UI-wide convention (spelled month, 24-hour, UI language): `Nov 6, 2026, 23:02`.
+  return Number.isNaN(date.getTime()) ? '-' : formatDisplayTimestamp(date, locale);
 };
 
 // 检查模型是否被 OAuth 排除

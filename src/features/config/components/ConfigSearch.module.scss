@@ -6,16 +6,14 @@
   position: relative;
   min-width: 0;
   flex: 1 1 240px;
-  max-width: 340px;
+  max-width: 360px;
 
   :global(.form-group) {
     margin-bottom: 0;
   }
 
   :global(.input) {
-    height: 32px;
-    border-radius: 6px;
-    font-size: 13px;
+    font-size: $text-base;
   }
 }
 
@@ -38,14 +36,8 @@
   gap: 2px;
   max-height: 320px;
   overflow-y: auto;
-  padding: 6px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--floating-surface, var(--bg-primary));
-  box-shadow: var(
-    --floating-shadow,
-    0 14px 32px color-mix(in srgb, var(--text-primary) 16%, transparent)
-  );
+  padding: $space-1;
+  @include surface-floating;
   transform-origin: top center;
   animation: config-search-in var(--dur-press, 160ms) var(--ease-out-strong, ease-out) both;
 }
@@ -64,19 +56,20 @@
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  padding: 9px 10px;
-  border-radius: 8px;
+  min-height: 40px;
+  padding: $space-2 $space-3;
+  border-radius: $radius-sm;
   text-align: left;
   transition: background-color $transition-fast;
 
   &:hover {
-    background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+    background: var(--bg-raised);
   }
 }
 
 /* Keyboard/pointer "active" option — the aria-activedescendant target. */
 .searchResultItemActive {
-  background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+  background: var(--accent-subtle);
 }
 
 .searchResultLabel {
@@ -85,30 +78,29 @@
   gap: 7px;
   min-width: 0;
   color: var(--text-primary);
-  font-size: 13px;
-  font-weight: 650;
-  line-height: 1.3;
+  font-size: $text-base;
+  font-weight: 500;
+  line-height: $leading-base;
 }
 
 .searchResultQualifier {
   color: var(--text-tertiary);
-  font-size: 11px;
-  font-weight: 600;
+  font-size: $text-xs;
+  font-weight: 400;
   white-space: nowrap;
 }
 
 .searchResultSection {
   flex: 0 0 auto;
-  color: var(--text-secondary);
-  font-size: 11px;
-  font-weight: 650;
+  color: var(--text-tertiary);
+  font-size: $text-xs;
+  font-weight: 500;
   white-space: nowrap;
 }
 
 .searchEmpty {
-  padding: 12px 10px;
-  color: var(--text-secondary);
-  font-size: 13px;
+  @include text-secondary;
+  padding: $space-3;
   text-align: center;
 }
 

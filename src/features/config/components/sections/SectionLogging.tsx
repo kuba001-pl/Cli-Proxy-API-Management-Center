@@ -17,11 +17,7 @@ export function SectionLogging({
   const fieldProps = { values, disabled, onChange };
 
   return (
-    <SectionCard
-      title={t('config_management.visual.sections.logging.title')}
-      description={t('config_management.visual.sections.logging.description')}
-      animateIn={animateIn}
-    >
+    <SectionCard title={t('config_management.visual.sections.logging.title')} animateIn={animateIn}>
       <SettingList>
         <DebugToggle {...fieldProps} />
         <ToggleSetting

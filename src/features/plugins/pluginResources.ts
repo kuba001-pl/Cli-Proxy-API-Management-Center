@@ -79,6 +79,23 @@ export const isDefaultPluginStoreSource = (
   entry.sourceId.trim().toLowerCase() === DEFAULT_PLUGIN_STORE_SOURCE_ID ||
   entry.sourceName.trim().toLowerCase() === DEFAULT_PLUGIN_STORE_SOURCE_NAME;
 
+/**
+ * Plugin IDs listed by more than one store source. Only these cards need a source label:
+ * elsewhere the source is routine metadata that lives in the install dialog.
+ */
+export const collectAmbiguousStorePluginIds = (
+  entries: ReadonlyArray<Pick<PluginStoreEntry, 'id' | 'sourceId' | 'sourceUrl'>>
+): Set<string> => {
+  const sourcesById = new Map<string, Set<string>>();
+  for (const entry of entries) {
+    const source = entry.sourceId || entry.sourceUrl;
+    const sources = sourcesById.get(entry.id) ?? new Set<string>();
+    sources.add(source);
+    sourcesById.set(entry.id, sources);
+  }
+  return new Set([...sourcesById].filter(([, sources]) => sources.size > 1).map(([id]) => id));
+};
+
 // The string a user must retype to confirm a risky install: the repo slug when
 // available (most faithful to the source), otherwise the plugin id.
 export const getPluginConfirmToken = (entry: PluginStoreEntry): string =>

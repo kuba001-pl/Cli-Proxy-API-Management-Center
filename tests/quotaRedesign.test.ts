@@ -20,10 +20,12 @@ const read = (path: string) => readFileSync(path, 'utf8');
 
 describe('quota meter status presentation', () => {
   test.each([
+    // Amber ("Medium") is reserved for the stated low threshold (< 20% left).
     [100, 'High'],
     [70, 'High'],
-    [46, 'Medium'],
-    [29, 'Medium'],
+    [46, 'High'],
+    [20, 'High'],
+    [19, 'Medium'],
     [1, 'Medium'],
     [0, 'Low'],
   ])('renders %s remaining with %s status', (percent, tone) => {

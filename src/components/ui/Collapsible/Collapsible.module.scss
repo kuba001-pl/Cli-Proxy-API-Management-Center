@@ -2,17 +2,19 @@
 @use '../../../styles/variables' as *;
 
 .root {
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background: var(--bg-primary);
+  border: 0;
+  border-radius: $radius-lg;
+  background: var(--bg-surface);
   overflow: hidden;
 }
 
 .summary {
   list-style: none;
   cursor: pointer;
-  padding: 10px 14px;
-  font-size: 13px;
+  min-height: 44px;
+  padding: 10px 16px;
+  font-size: $text-base;
+  line-height: $leading-base;
   font-weight: 500;
   color: var(--text-primary);
   display: flex;
@@ -30,7 +32,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--primary-color);
+    outline: 2px solid var(--focus-ring);
     outline-offset: -2px;
   }
 }
@@ -44,15 +46,16 @@
 }
 
 .summaryHint {
-  font-size: 12px;
-  color: var(--muted-foreground);
+  font-size: $text-sm;
+  color: var(--text-tertiary);
   font-weight: 400;
+  font-variant-numeric: tabular-nums;
 }
 
 .chevron {
   width: 16px;
   height: 16px;
-  color: var(--muted-foreground);
+  color: var(--icon-default);
   transition: transform var(--dur-hover, 200ms) var(--ease-out-strong, ease-out);
   flex-shrink: 0;
 
@@ -62,13 +65,13 @@
 }
 
 .content {
-  padding: 14px;
-  border-top: 1px solid var(--border-color);
+  padding: $space-1 $space-4 $space-4;
+  border-top: 0;
 }
 
 .contentFlush {
   padding: 0;
-  border-top: 1px solid var(--border-color);
+  border-top: 0;
 }
 
 /* 展开时内容 160ms 淡入。只做透明度、不做高度动画 ——

@@ -54,11 +54,7 @@ export function SectionNetwork({
   ];
 
   return (
-    <SectionCard
-      title={t('config_management.visual.sections.network.title')}
-      description={t('config_management.visual.sections.network.description')}
-      animateIn={animateIn}
-    >
+    <SectionCard title={t('config_management.visual.sections.network.title')} animateIn={animateIn}>
       <SettingList>
         <ProxyUrlField values={values} disabled={disabled} onChange={onChange} wide />
         <TextSetting
@@ -113,7 +109,6 @@ export function SectionNetwork({
         <SelectSetting
           fieldId="routingStrategy"
           label={t('config_management.visual.sections.network.routing_strategy')}
-          description={t('config_management.visual.sections.network.routing_strategy_hint')}
           value={values.routingStrategy}
           options={routingStrategyOptions}
           disabled={disabled}

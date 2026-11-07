@@ -14,6 +14,7 @@ import {
   buildHeaderMeta,
   countSectionErrors,
   countTotalErrors,
+  pickHeaderFact,
   readSavedMode,
   readSavedSection,
   resolveDirtyTabs,
@@ -282,6 +283,41 @@ describe('buildHeaderMeta', () => {
     const status = resolveStatus(statusInput({ yamlError: true }));
     const meta = buildHeaderMeta({ ...base, status });
     expect(meta.map((segment) => segment.key)).toEqual(['fields', 'yaml_error']);
+  });
+});
+
+describe('pickHeaderFact', () => {
+  const base = {
+    fieldCount: 58,
+    status: resolveStatus(statusInput()),
+    dirtyCount: 0,
+    sourceDirty: false,
+    errorCount: 0,
+  };
+
+  test('a clean, synced config has no header fact', () => {
+    expect(pickHeaderFact(buildHeaderMeta(base))).toBeNull();
+  });
+
+  test('errors outrank unsaved edits, which outrank routine counts', () => {
+    const status = resolveStatus(statusInput({ validationBlocked: true, dirty: true }));
+    const meta = buildHeaderMeta({ ...base, status, dirtyCount: 3, errorCount: 2 });
+    expect(pickHeaderFact(meta)?.key).toBe('errors');
+    const dirty = buildHeaderMeta({
+      ...base,
+      status: resolveStatus(statusInput({ dirty: true })),
+      dirtyCount: 3,
+    });
+    expect(pickHeaderFact(dirty)?.key).toBe('dirty');
+  });
+
+  test('transient states surface, but never the setting count', () => {
+    const loading = buildHeaderMeta({
+      ...base,
+      status: resolveStatus(statusInput({ loading: true })),
+    });
+    expect(pickHeaderFact(loading)?.key).toBe('loading');
+    expect(pickHeaderFact([{ key: 'fields', labelKey: 'x', count: 1, tone: 'muted' }])).toBeNull();
   });
 });
 

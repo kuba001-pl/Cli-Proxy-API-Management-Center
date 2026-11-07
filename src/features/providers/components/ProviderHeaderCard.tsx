@@ -7,8 +7,10 @@ interface ProviderHeaderCardProps {
   title?: string;
   totalActive: number;
   totalResources: number;
-  providerFamilies: number;
-  updatedAtLabel: string;
+  /** No longer rendered (one-fact caption); optional for upstream call-site compatibility. */
+  providerFamilies?: number;
+  /** No longer rendered (one-fact caption); optional for upstream call-site compatibility. */
+  updatedAtLabel?: string;
   isFetching?: boolean;
   isNewDisabled?: boolean;
   showNewAction?: boolean;
@@ -22,8 +24,6 @@ export function ProviderHeaderCard({
   title,
   totalActive,
   totalResources,
-  providerFamilies,
-  updatedAtLabel,
   isFetching = false,
   isNewDisabled = false,
   showNewAction = true,
@@ -41,28 +41,20 @@ export function ProviderHeaderCard({
         <div className={styles.titleArea}>
           <h1 className={styles.title}>{title ?? t('providersPage.header.title')}</h1>
           {showSummary ? (
-            <div className={styles.chips}>
-              <span className={styles.chip}>
-                {t('providersPage.header.activeResources', {
-                  active: totalActive,
-                  total: totalResources,
-                })}
-              </span>
-              <span className={styles.chip}>
-                {t('providersPage.header.providerFamilies', { count: providerFamilies })}
-              </span>
-              <span className={styles.chip}>
-                {t('providersPage.header.updatedAt', { time: updatedAtLabel })}
-              </span>
-            </div>
+            // One fact, not a " · " chain: family count and fetch time were noise.
+            <p className={styles.chips}>
+              {t('providersPage.header.activeResources', {
+                active: totalActive,
+                total: totalResources,
+              })}
+            </p>
           ) : null}
         </div>
         <div className={styles.actions}>
           <Button
             size="sm"
-            variant="secondary"
+            variant="ghost"
             type="button"
-            className={`${styles.btn} ${styles.btnOutline}`}
             onClick={onRefresh}
             disabled={isFetching}
             aria-label={
@@ -81,7 +73,6 @@ export function ProviderHeaderCard({
               size="sm"
               variant="primary"
               type="button"
-              className={`${styles.btn} ${styles.btnPrimary}`}
               onClick={onNew}
               disabled={isNewDisabled}
             >

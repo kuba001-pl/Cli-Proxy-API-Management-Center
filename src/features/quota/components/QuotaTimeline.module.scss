@@ -42,13 +42,14 @@ $lane-width: 210px;
 
 .nav,
 .modes {
-  // Same segmented control as Upcoming resets: one outline, filled active segment.
+  // Filled track matches the Upcoming resets segmented control.
   display: inline-flex;
   align-items: center;
   gap: 2px;
   padding: 2px;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 9px;
+  background: var(--bg-raised);
 
   button {
     height: 30px;
@@ -397,7 +398,7 @@ $lane-width: 210px;
 }
 
 .disclosure {
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 12px;
   padding: 16px 24px;
   background: var(--bg-surface);

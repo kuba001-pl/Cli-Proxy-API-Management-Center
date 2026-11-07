@@ -1,248 +1,417 @@
 @use '../../../styles/mixins' as *;
 
+/* ---------- Provider heading (section titles + summary cards) ---------- */
+
 .provider {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: $space-3;
   min-width: 0;
+
   h2 {
-    margin: 0;
-    font-size: 16px;
-    line-height: 24px;
-    font-weight: 600;
+    @include text-card-title;
+    font-size: $text-md;
   }
+
   > span {
+    @include numeric;
     color: var(--text-tertiary);
-    font-size: 13px;
-    font-family: $font-mono;
+    font-size: $text-sm;
   }
+
   img {
     flex: none;
     object-fit: contain;
   }
 }
+
+/* ---------- Provider summary: one quiet card per provider ---------- */
+
 .summary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-  border: 1px solid var(--border-default);
-  border-radius: 12px;
-  background: var(--bg-surface);
-  overflow: hidden;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 216px), 1fr));
+  gap: $space-4;
 }
+
 .summaryItem {
+  @include surface-panel($space-5);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: $space-2;
   min-width: 0;
-  padding: 22px 24px;
-  & + & {
-    border-left: 1px solid var(--border-subtle);
-  }
 }
+
 .summaryHead {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+  gap: $space-3;
+  margin-bottom: $space-2;
+
+  .provider h2 {
+    font-size: $text-base;
+    font-weight: 500;
+  }
+
+  .provider img {
+    width: 20px;
+    height: 20px;
+  }
+
   > span {
-    font-size: 13px;
-    color: var(--text-tertiary);
+    @include text-meta;
+    flex: none;
   }
 }
-.windowLabel,
-.reset {
+
+.windowLabel {
+  @include text-secondary;
   margin: 0;
-  font-size: 13px;
-  line-height: 20px;
-  color: var(--text-secondary);
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
+
 .headline {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: $space-2;
+
   strong {
-    font-size: 36px;
-    line-height: 50px;
-    letter-spacing: -0.4px;
-    font-variant-numeric: tabular-nums;
+    @include numeric;
+    color: var(--text-primary);
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 40px;
+    letter-spacing: -0.02em;
   }
+
   span {
-    font-size: 13px;
-    color: var(--text-tertiary);
+    color: var(--text-secondary);
+    font-size: $text-sm;
   }
 }
-.meters {
-  display: flex;
-  gap: 8px;
-  min-height: 5px;
-  > div {
-    flex: 1;
-    min-width: 0;
-  }
-}
+
 .reset {
-  color: var(--text-tertiary);
+  @include text-meta;
+  margin: $space-1 0 0;
+  overflow-wrap: anywhere;
 }
+
+.summaryState {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-2;
+  margin-top: auto;
+  padding-top: $space-1;
+}
+
+.stateIcon {
+  flex: none;
+  margin-top: 2px;
+  color: var(--status-danger);
+}
+
+.stateTitle {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: $text-base;
+  font-weight: 500;
+  line-height: $leading-base;
+}
+
+.stateHint {
+  @include text-meta;
+  display: block;
+  margin-top: 2px;
+}
+
+.summaryItem[data-state='error'] .stateTitle {
+  color: var(--status-danger);
+}
+
+// Partial coverage: the head says "2 of 3 loaded" in secondary (not meta) tone.
+.summaryItem[data-partial] .summaryHead > span {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+// "1 failed · View": a short warning line under the valid reading, linking to the failed row.
+.coverageAlert {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px $space-2;
+  margin: $space-1 0 0;
+  color: var(--status-warning);
+  font-size: $text-sm;
+  font-weight: 500;
+  line-height: $leading-sm;
+
+  svg {
+    flex: none;
+  }
+}
+
+.summaryState .coverageAlert {
+  margin-top: $space-1;
+}
+
+.coverageJump {
+  @include button-reset;
+  min-height: 24px;
+  padding: 0 $space-1;
+  margin-left: -$space-1;
+  border-radius: $radius-sm;
+  color: var(--accent-text);
+  font-size: $text-sm;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--bg-raised);
+  }
+}
+
+.lowState {
+  color: var(--status-warning);
+  font-weight: 500;
+}
+
+/* ---------- Nothing loaded yet: a single page-level notice ---------- */
+
+.notLoaded {
+  // A plain status line, not a slab: the rows below already say "Not loaded yet".
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $space-2 $space-3;
+}
+
+.notLoadedIcon {
+  display: inline-flex;
+  flex: none;
+  color: var(--icon-default);
+}
+
+.notLoadedCopy {
+  @include text-secondary;
+  flex: 1 1 240px;
+  min-width: 0;
+  margin: 0;
+}
+
+/* ---------- Upcoming resets ---------- */
+
 .upcoming {
-  padding: 22px 24px 10px;
-  border: 1px solid var(--border-default);
-  border-radius: 12px;
-  background: var(--bg-surface);
+  @include surface-panel($space-5);
+  container-type: inline-size;
+  padding-bottom: $space-3;
 }
+
 .upcomingHead {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
   flex-wrap: wrap;
-  padding-bottom: 8px;
+  gap: $space-3 $space-4;
+  padding-bottom: $space-2;
+
   h2 {
-    margin: 0;
-    font-size: 18px;
-    line-height: 24px;
-    font-weight: 700;
+    @include text-section-title;
   }
+
   p {
-    margin: 4px 0 0;
-    font-size: 13px;
-    color: var(--text-tertiary);
+    @include text-secondary;
+    margin: $space-1 0 0;
   }
 }
-.filters {
-  display: flex;
-  gap: 2px;
-  padding: 2px;
-  border: 1px solid var(--border-default);
-  border-radius: 9px;
-  button {
-    height: 30px;
-    padding: 0 10px;
-    border: 0;
-    border-radius: 7px;
-    background: transparent;
-    color: var(--text-tertiary);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    &[aria-pressed='true'] {
-      color: var(--text-primary);
-      background: var(--bg-active);
-    }
-    &:focus-visible {
-      outline: 2px solid var(--text-secondary);
-      outline-offset: 2px;
-    }
-  }
-}
+
 .day {
-  margin: 16px 0 6px;
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 600;
+  @include text-label;
+  margin: $space-5 0 $space-1;
   color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
 }
+
+// Wide: time | identity (account over window) | meter + value | countdown.
 .resetRow {
   display: grid;
-  grid-template-columns: 56px minmax(150px, 1fr) minmax(120px, 200px) 150px 90px;
+  grid-template-columns: 52px minmax(0, 1fr) minmax(160px, 260px) 112px;
+  grid-template-areas: 'time ident meter rel';
   align-items: center;
-  gap: 16px;
-  padding: 11px 0;
+  gap: $space-2 $space-4;
+  min-height: 56px;
+  padding: $space-2 0;
   border-top: 1px solid var(--border-subtle);
-  font-size: 13px;
-  time {
-    font-family: $font-mono;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-  }
 }
+
+.resetTime {
+  @include numeric;
+  grid-area: time;
+  align-self: start;
+  padding-top: 1px;
+  color: var(--text-primary);
+  font-size: $text-base;
+  font-weight: 500;
+  line-height: $leading-base;
+}
+
 .resetIdentity {
+  grid-area: ident;
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: flex-start;
+  gap: $space-3;
   min-width: 0;
+
   img {
     flex: none;
+    margin-top: 1px;
     object-fit: contain;
   }
-  > span {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    font: 12.5px/18px $font-mono;
-  }
 }
+
+.resetText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.resetName {
+  @include text-identifier;
+  color: var(--text-primary);
+  font-size: $text-base;
+  line-height: $leading-base;
+}
+
 .resetWindow {
-  color: var(--text-secondary);
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  @include text-secondary;
+  overflow-wrap: anywhere;
 }
+
 .resetMeter {
+  grid-area: meter;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: $space-3;
+  min-width: 0;
+
   > div {
-    flex: 1;
+    flex: 1 1 auto;
+    min-width: 48px;
   }
+
   b {
-    width: 36px;
-    font: 600 12.5px/18px $font-mono;
+    @include numeric;
+    flex: none;
+    min-width: 64px;
+    color: var(--text-primary);
+    font-size: $text-sm;
+    font-weight: 500;
+    text-align: right;
+    white-space: nowrap;
   }
 }
+
 .resetRelative {
-  color: var(--text-tertiary);
+  @include text-meta;
+  grid-area: rel;
   text-align: right;
-  font-size: 12px;
 }
-.showAll {
-  display: inline-flex;
-  padding: 12px 0 6px;
-  color: var(--text-secondary);
-  font-size: 13px;
-  font-weight: 600;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  &:focus-visible {
-    outline: 2px solid var(--text-secondary);
-    outline-offset: 3px;
-  }
-}
-.empty {
-  padding: 16px 0;
-  color: var(--text-tertiary);
-  font-size: 13px;
-}
-@media (max-width: 1000px) {
+
+// Medium panels (1024px with the sidebar, tablets): the meter and countdown stack on the
+// right so the account keeps a readable width; every value stays visible.
+@container (max-width: 760px) {
   .resetRow {
-    grid-template-columns: 50px minmax(120px, 1fr) 130px 100px;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    grid-template-areas:
+      'time ident meter'
+      'time ident rel';
+    align-items: start;
+    row-gap: 2px;
   }
-  .resetRelative {
+
+  .resetMeter {
+    width: 152px;
+    padding-top: 2px;
+
+    > div {
+      min-width: 40px;
+    }
+
+    b {
+      min-width: 0;
+    }
+  }
+}
+
+// Phones: identity gets the full line so emails never break mid-word; the meter, its value
+// and the countdown share the line below.
+@container (max-width: 420px) {
+  .resetRow {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    grid-template-areas:
+      'time ident ident'
+      '. meter rel';
+    align-items: center;
+    row-gap: $space-2;
+    padding: $space-3 0;
+  }
+
+  .resetTime {
+    align-self: start;
+  }
+
+  .resetIdentity img {
     display: none;
   }
-}
-@include mobile {
-  .summaryItem + .summaryItem {
-    border-left: 0;
-    border-top: 1px solid var(--border-subtle);
-  }
-  .upcoming {
-    padding: 16px;
-  }
-  .resetRow {
-    grid-template-columns: 48px minmax(0, 1fr) 90px;
-    gap: 8px;
-  }
-  .resetWindow {
-    grid-column: 2;
-    grid-row: auto;
-    font-size: 12px;
-  }
+
   .resetMeter {
-    grid-column: 3;
-    grid-row: span 2;
+    width: auto;
+    padding-top: 0;
+  }
+
+  .resetRelative {
+    white-space: nowrap;
+  }
+}
+
+.showAll {
+  @include button-reset;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  margin-top: $space-1;
+  padding: 0 $space-2;
+  margin-left: -$space-2;
+  border-radius: $radius-md;
+  color: var(--accent-text);
+  font-size: $text-sm;
+  font-weight: 500;
+
+  &:hover {
+    background: var(--bg-raised);
+  }
+}
+
+.empty {
+  @include text-secondary;
+  margin: 0;
+  padding: $space-4 0;
+}
+
+@include mobile {
+  .summaryItem,
+  .upcoming {
+    padding: $space-4;
+  }
+
+  .coverageJump {
+    @include hit-area;
+  }
+
+  .upcoming {
+    padding-bottom: $space-2;
   }
 }

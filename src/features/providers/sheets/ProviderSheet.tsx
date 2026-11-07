@@ -97,16 +97,15 @@ export function ProviderSheet({
     });
   }, [confirmDiscardIfDirty, onClose]);
 
-  const titleText =
-    state.mode === 'create'
-      ? `${t('providersPage.form.createEyebrow')} · ${t(
-          `providersPage.providerNames.${state.brand}`
-        )}`
-      : state.mode === 'edit'
-        ? `${t('providersPage.form.editEyebrow')} · ${t(
-            `providersPage.providerNames.${state.brand}`
-          )}`
-        : `${t('providersPage.detail.title')} · ${t(`providersPage.providerNames.${state.brand}`)}`;
+  // One task heading ("Add Gemini key"); no eyebrow or subtitle that repeats it.
+  const providerName = t(`providersPage.providerNames.${state.brand}`);
+  const titleKeySuffix = descriptor.supportsName ? 'TitleNamed' : 'Title';
+  const titleText = t(
+    `providersPage.form.${
+      state.mode === 'create' ? 'create' : state.mode === 'edit' ? 'edit' : 'detail'
+    }${titleKeySuffix}`,
+    { provider: providerName }
+  );
 
   const handleCreate = useCallback(
     async (input: ProviderEntryFormInput) => {
@@ -229,8 +228,11 @@ export function ProviderSheet({
           disabled={submitDisabled}
         >
           {submitting ? <IconLoader2 size={14} /> : null}
+          {/* The verb names the task ("Add key"), matching the sheet title. */}
           {state.mode === 'create'
-            ? t('providersPage.actions.create')
+            ? descriptor.supportsName
+              ? t('providersPage.actions.addProvider')
+              : t('providersPage.actions.addKey')
             : t('providersPage.actions.save')}
         </Button>
       </>
@@ -241,22 +243,7 @@ export function ProviderSheet({
       open={state.open}
       onClose={onClose}
       size={descriptor.sheetSize}
-      eyebrow={
-        state.mode === 'detail'
-          ? t('providersPage.detail.title')
-          : state.mode === 'create'
-            ? t('providersPage.form.createEyebrow')
-            : t('providersPage.form.editEyebrow')
-      }
       title={titleText}
-      description={t(
-        state.mode === 'detail'
-          ? 'providersPage.form.sheetDescriptionDetail'
-          : state.mode === 'create'
-            ? 'providersPage.form.sheetDescriptionCreate'
-            : 'providersPage.form.sheetDescriptionEdit',
-        { provider: t(`providersPage.providerNames.${state.brand}`) }
-      )}
       footer={footer}
       closeDisabled={submitting}
       confirmClose={confirmDiscardIfDirty}

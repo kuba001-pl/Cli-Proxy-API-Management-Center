@@ -21,6 +21,8 @@ export interface SponsorCardProps {
   caption: string;
   icon: string;
   signUpLabel: string;
+  /** Visible verb on each site entry ("Sign in"); falls back to a plus. */
+  signInLabel?: string;
   sites: SponsorCardSite[];
   /** 点站点入口：开始该站登录并打开授权对话框。 */
   onOpen: (siteId: string) => void;
@@ -31,6 +33,7 @@ export function SponsorCard({
   caption,
   icon,
   signUpLabel,
+  signInLabel,
   sites,
   onOpen,
 }: SponsorCardProps) {
@@ -53,6 +56,7 @@ export function SponsorCard({
             key={site.id}
             site={site}
             signUpLabel={signUpLabel}
+            signInLabel={signInLabel}
             onOpen={() => onOpen(site.id)}
           />
         ))}
@@ -64,10 +68,12 @@ export function SponsorCard({
 function SiteEntry({
   site,
   signUpLabel,
+  signInLabel,
   onOpen,
 }: {
   site: SponsorCardSite;
   signUpLabel: string;
+  signInLabel?: string;
   onOpen: () => void;
 }) {
   const metaId = useId();
@@ -88,10 +94,7 @@ function SiteEntry({
           </button>
           <span className={styles.siteMeta} id={metaId}>
             {site.status && site.statusLabel ? (
-              <span className={styles.status}>
-                <span className={styles.statusDot} aria-hidden="true" />
-                {site.statusLabel}
-              </span>
+              <span className={styles.status}>{site.statusLabel}</span>
             ) : (
               site.domain
             )}
@@ -108,7 +111,11 @@ function SiteEntry({
           {signUpLabel}
         </a>
         <span className={styles.trail} aria-hidden="true">
-          <IconPlus size={15} />
+          {signInLabel ? (
+            <span className={styles.trailLabel}>{signInLabel}</span>
+          ) : (
+            <IconPlus size={15} />
+          )}
         </span>
       </div>
     </div>

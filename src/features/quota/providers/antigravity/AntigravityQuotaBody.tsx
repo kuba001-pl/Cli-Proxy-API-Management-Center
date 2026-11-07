@@ -171,7 +171,7 @@ export function AntigravityQuotaBody({
             const percent = Math.max(0, Math.min(1, bucket.remainingFraction)) * 100;
             const percentLabel = shouldShowAntigravityQuotaAvailable(bucket, group.buckets)
               ? t('antigravity_quota.quota_available')
-              : `${Math.round(percent)}%`;
+              : t('quota_management.percent_left', { percent: Math.round(percent) });
             const bucketLabel = translateAntigravityQuotaLabel(
               bucket.label,
               resolveAntigravityBucketLabelKey(bucket.label, bucket.window),

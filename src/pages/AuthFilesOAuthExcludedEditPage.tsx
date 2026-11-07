@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { IconEyeOff, IconNetwork } from '@/components/ui/icons';
+import { IconNetwork } from '@/components/ui/icons';
 import { OAuthEditorProviderCard } from '@/features/authFiles/components/OAuthEditorProviderCard';
 import {
   ExcludedModelsPicker,
@@ -337,7 +337,9 @@ export function AuthFilesOAuthExcludedEditPage() {
   return (
     <SecondaryScreenShell
       ref={swipeRef}
-      title={title}
+      // The task title renders once: in the bar while loading (the shell hides children),
+      // otherwise as the page h1 below, so failure/unsupported states still name the task.
+      title={initialLoading ? title : null}
       onBack={handleBack}
       backLabel={t('common.back')}
       backAriaLabel={t('common.back')}
@@ -351,6 +353,10 @@ export function AuthFilesOAuthExcludedEditPage() {
       isLoading={initialLoading}
       loadingLabel={t('common.loading')}
     >
+      {/* One page title (the task), aligned to the content edge like every other page. */}
+      <header className={styles.intro}>
+        <h1 className={styles.introTitle}>{title}</h1>
+      </header>
       {excludedUnsupported ? (
         <Card>
           <EmptyState
@@ -374,16 +380,6 @@ export function AuthFilesOAuthExcludedEditPage() {
         </Card>
       ) : (
         <>
-          <div className={styles.intro}>
-            <span className={styles.introIcon}>
-              <IconEyeOff size={22} aria-hidden="true" />
-            </span>
-            <div>
-              <h1 className={styles.introTitle}>{t('oauth_excluded.title')}</h1>
-              <p className={styles.description}>{t('oauth_excluded.editor_description')}</p>
-            </div>
-          </div>
-
           <OAuthEditorProviderCard
             provider={provider}
             options={providerOptions}
@@ -395,14 +391,10 @@ export function AuthFilesOAuthExcludedEditPage() {
           <Card className={styles.settingsCard}>
             <div className={styles.editorHeader}>
               <div className={styles.sectionHeading}>
-                <span className={styles.stepNumber} aria-hidden="true">
-                  02
-                </span>
                 <div className={styles.headingCopy}>
                   <h2 className={styles.sectionTitle} id="oauth-excluded-models-label">
                     {t('oauth_excluded.models_label')}
                   </h2>
-                  <p className={styles.description}>{t('oauth_excluded.models_hint')}</p>
                 </div>
               </div>
               {resolvedProviderKey && (

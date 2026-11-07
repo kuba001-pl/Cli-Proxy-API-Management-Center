@@ -7,6 +7,7 @@ import { ModelMappingDiagram, type ModelMappingDiagramRef } from '@/components/m
 import { IconChevronUp } from '@/components/ui/icons';
 import type { OAuthModelAliasEntry } from '@/types';
 import type { AuthFileModelItem, OAuthConfigLoadError } from '@/features/authFiles/constants';
+import { getTypeLabel } from '@/features/authFiles/constants';
 import styles from './OAuthConfigPanels.module.scss';
 
 type ViewMode = 'diagram' | 'list';
@@ -137,7 +138,9 @@ export function OAuthModelAliasCard(props: OAuthModelAliasCardProps) {
             {Object.entries(modelAlias).map(([provider, mappings]) => (
               <div key={provider} className={styles.item}>
                 <div className={styles.itemInfo}>
-                  <div className={styles.itemProvider}>{provider}</div>
+                  <div className={styles.itemProvider} title={provider}>
+                    {getTypeLabel(t, provider)}
+                  </div>
                   <div className={styles.itemCount}>
                     {mappings?.length
                       ? t('oauth_model_alias.model_count', { count: mappings.length })
@@ -148,7 +151,12 @@ export function OAuthModelAliasCard(props: OAuthModelAliasCardProps) {
                   <Button variant="secondary" size="sm" onClick={() => onEditProvider(provider)}>
                     {t('common.edit')}
                   </Button>
-                  <Button variant="danger" size="sm" onClick={() => onDeleteProvider(provider)}>
+                  <Button
+                    variant="ghost"
+                    className={styles.rowDelete}
+                    size="sm"
+                    onClick={() => onDeleteProvider(provider)}
+                  >
                     {t('oauth_model_alias.delete')}
                   </Button>
                 </div>

@@ -45,11 +45,16 @@ export function bucketsToMinutes(bucketCount: number): number {
 
 export type MeterTone = 'good' | 'warning' | 'critical' | 'idle';
 
+/** Success-rate target (percent). At or above it is healthy; the UI states it next to the meter. */
+export const SUCCESS_RATE_TARGET = 95;
+/** Below this the rate is critical rather than merely under target. */
+export const SUCCESS_RATE_CRITICAL = 80;
+
 /** 成功率 → 严重度。数值本身始终可见，颜色只是辅助通道。 */
 export function toneForSuccessRate(rate: number | null): MeterTone {
   if (rate === null) return 'idle';
-  if (rate >= 95) return 'good';
-  if (rate >= 80) return 'warning';
+  if (rate >= SUCCESS_RATE_TARGET) return 'good';
+  if (rate >= SUCCESS_RATE_CRITICAL) return 'warning';
   return 'critical';
 }
 
@@ -73,4 +78,29 @@ export function axisMax(peak: number, intervals: number): number {
   if (peak <= 0 || intervals <= 0) return Math.max(1, intervals);
   const step = Math.max(1, Math.ceil(niceCeil(peak / intervals)));
   return step * intervals;
+}
+
+/** Preserve server-local clock ranges; convert ISO instants to the browser's local clock. */
+function bucketClock(time: string): { start: string; end: string } | null {
+  const range = time.trim().match(/^(\d{1,2}:\d{2})\s*[-–]\s*(\d{1,2}:\d{2})$/);
+  if (range) return { start: range[1], end: range[2] };
+  if (!/^\d{4}-\d{2}-\d{2}T/.test(time)) return null;
+  const start = new Date(time);
+  if (!Number.isFinite(start.getTime())) return null;
+  const end = new Date(start.getTime() + TRAFFIC_BUCKET_MINUTES * 60_000);
+  const clock = (date: Date) =>
+    `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+  return { start: clock(start), end: clock(end) };
+}
+
+export function bucketRangeLabel(time: string | undefined, index: number, count: number): string {
+  if (time) {
+    const clock = bucketClock(time);
+    return clock ? `${clock.start}–${clock.end}` : time;
+  }
+  return `-${(count - index) * TRAFFIC_BUCKET_MINUTES}m`;
+}
+
+export function bucketStartLabel(time: string | undefined, index: number, count: number): string {
+  return time ? (bucketClock(time)?.start ?? time) : bucketRangeLabel(time, index, count);
 }

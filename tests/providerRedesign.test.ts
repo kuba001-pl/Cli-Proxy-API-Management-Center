@@ -75,7 +75,7 @@ const setPrivacy = (enabled: boolean) => {
 afterEach(() => setPrivacy(initialPrivacyEnabled));
 
 describe('provider redesign', () => {
-  test('keeps refresh, creation and the active resource summary', () => {
+  test('keeps refresh, creation and a single active-resource caption', () => {
     const html = render(
       createElement(ProviderHeaderCard, {
         totalActive: 2,
@@ -89,7 +89,9 @@ describe('provider redesign', () => {
     expect(html).toContain('<h1');
     expect(html).toContain('AI Providers');
     expect(html).toContain('2/3 active resources');
-    expect(html).toContain('Updated Example time');
+    // De-slop: one fact under the title, no " · " chain of family count and fetch time.
+    expect(html).not.toContain('Updated Example time');
+    expect(html).not.toContain('provider famil');
     expect(html).toContain('aria-label="Refresh"');
     expect(html).toContain('New');
   });

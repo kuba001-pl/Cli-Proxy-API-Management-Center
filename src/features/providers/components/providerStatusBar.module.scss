@@ -27,29 +27,31 @@
 
 .statusBlock {
   width: 100%;
-  height: 12px;
-  border-radius: 1px;
-  transition:
-    transform var(--dur-hover) var(--ease-out-strong),
-    opacity var(--dur-hover) var(--ease-out-strong);
+  height: 10px;
+  border-radius: 2px;
+  transition: opacity var(--dur-hover) var(--ease-out-strong);
 
   .statusBlockWrapper:hover &,
   .statusBlockWrapper.statusBlockActive & {
-    transform: scaleY(1.8);
-    opacity: 0.9;
+    opacity: 0.8;
   }
 }
 
+// Height carries state before colour does: idle = 2px baseline, healthy = 5px, failure = 8px. The failure tone is pulled toward the surface so a run of failures reads as "look
+// here", not as an alarm; it still clears 3:1 against the panel in every theme.
 .statusBlockIdle {
-  background-color: var(--bg-active);
+  background-color: var(--strip-idle);
+  clip-path: inset(80% 0 0 0 round 1px);
 }
 
 .statusBlockSuccess {
-  background-color: var(--text-tertiary);
+  background-color: var(--strip-success);
+  clip-path: inset(50% 0 0 0 round 1px);
 }
 
 .statusBlockFailure {
-  background-color: var(--status-danger);
+  background-color: color-mix(in srgb, var(--strip-failure) 66%, var(--bg-surface));
+  clip-path: inset(20% 0 0 0 round 1px);
 }
 
 .statusTooltip {
@@ -103,11 +105,11 @@
 }
 
 .tooltipSuccess {
-  color: var(--success-color);
+  color: var(--status-success);
 }
 
 .tooltipFailure {
-  color: var(--danger-color);
+  color: var(--status-danger);
 }
 
 .tooltipRate {

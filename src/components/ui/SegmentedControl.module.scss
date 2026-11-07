@@ -3,10 +3,10 @@
   align-items: center;
   gap: 2px;
   max-width: 100%;
-  min-height: 34px;
+  min-height: $control-height-sm;
   padding: 3px;
-  border: 1px solid var(--border-default);
-  border-radius: 8px;
+  border: 0;
+  border-radius: $radius-md;
   background: var(--bg-raised);
 }
 
@@ -17,34 +17,53 @@
   gap: 6px;
   min-height: 26px;
   min-width: 0;
-  padding: 3px 10px;
+  padding: 3px 12px;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   background: transparent;
-  color: var(--text-tertiary);
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
   cursor: pointer;
   transition:
     color var(--dur-press) var(--ease-out-strong),
     background-color var(--dur-press) var(--ease-out-strong);
 
-  &:hover:not(:disabled) {
+  &:hover:not(:disabled):not([aria-checked='true']) {
     color: var(--text-primary);
   }
+  // Selected: an inverted pill (the strong neutral accent). Two adjacent greys were too close
+  // to tell apart; the inverted face clears 3:1 against the track in every theme.
   &[aria-checked='true'] {
-    background: var(--bg-active);
-    color: var(--text-primary);
+    background: var(--accent);
+    color: var(--text-on-accent);
   }
+  // Focus stays a separate cue: a ring outside the pill, with a track-coloured gap.
   &:focus-visible {
-    outline: 2px solid var(--text-secondary);
-    outline-offset: 1px;
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
   }
   &:disabled {
     opacity: 0.45;
     cursor: not-allowed;
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .root {
+    min-height: $hit-target-touch;
+  }
+
+  // The option itself is the 40px target (the track grows around it).
+  .root {
+    padding: 2px;
+  }
+
+  .option {
+    min-height: $hit-target-touch;
   }
 }
 

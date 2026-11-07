@@ -4,7 +4,7 @@ import { authFilesApi } from '@/services/api';
 import { useNotificationStore } from '@/stores';
 import type { AuthFileItem, OAuthModelAliasEntry } from '@/types';
 import type { AuthFileModelItem, OAuthConfigLoadError } from '@/features/authFiles/constants';
-import { normalizeProviderKey } from '@/features/authFiles/constants';
+import { getTypeLabel, normalizeProviderKey } from '@/features/authFiles/constants';
 type ViewMode = 'diagram' | 'list';
 
 export type UseAuthFilesOauthResult = {
@@ -195,12 +195,16 @@ export function useAuthFilesOauth(options: UseAuthFilesOauthOptions): UseAuthFil
 
   const deleteExcluded = useCallback(
     (provider: string) => {
-      const providerLabel = provider.trim() || provider;
+      const providerLabel = getTypeLabel(t, provider.trim() || provider);
       showConfirmation({
         title: t('oauth_excluded.delete_title'),
-        message: t('oauth_excluded.delete_confirm', { provider: providerLabel }),
+        message: t('oauth_excluded.delete_confirm', {
+          provider: providerLabel,
+          count: excluded[provider]?.length ?? 0,
+        }),
         variant: 'danger',
-        confirmText: t('common.confirm'),
+        // Name the exact scope on the button too: this removes a mapping, not the provider.
+        confirmText: t('oauth_excluded.delete'),
         onConfirm: async () => {
           if (!excludedReadyRef.current) {
             showLoadRequired();
@@ -239,16 +243,19 @@ export function useAuthFilesOauth(options: UseAuthFilesOauthOptions): UseAuthFil
         },
       });
     },
-    [loadExcluded, showConfirmation, showLoadRequired, showNotification, t]
+    [excluded, loadExcluded, showConfirmation, showLoadRequired, showNotification, t]
   );
 
   const deleteModelAlias = useCallback(
     (provider: string) => {
       showConfirmation({
         title: t('oauth_model_alias.delete_title'),
-        message: t('oauth_model_alias.delete_confirm', { provider }),
+        message: t('oauth_model_alias.delete_confirm', {
+          provider: getTypeLabel(t, provider),
+          count: modelAlias[provider]?.length ?? 0,
+        }),
         variant: 'danger',
-        confirmText: t('common.confirm'),
+        confirmText: t('oauth_model_alias.delete'),
         onConfirm: async () => {
           if (!modelAliasReadyRef.current) {
             showLoadRequired();
@@ -265,7 +272,7 @@ export function useAuthFilesOauth(options: UseAuthFilesOauthOptions): UseAuthFil
         },
       });
     },
-    [loadModelAlias, showConfirmation, showLoadRequired, showNotification, t]
+    [loadModelAlias, modelAlias, showConfirmation, showLoadRequired, showNotification, t]
   );
 
   const handleMappingUpdate = useCallback(

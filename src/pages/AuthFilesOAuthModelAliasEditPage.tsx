@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { IconInfo, IconNetwork, IconPlus } from '@/components/ui/icons';
+import { IconInfo, IconPlus } from '@/components/ui/icons';
 import { OAuthEditorProviderCard } from '@/features/authFiles/components/OAuthEditorProviderCard';
 import { OAuthAliasMappingRow } from '@/features/authFiles/components/OAuthAliasMappingRow';
 import { SecondaryScreenShell } from '@/components/common/SecondaryScreenShell';
@@ -397,7 +397,9 @@ export function AuthFilesOAuthModelAliasEditPage() {
   return (
     <SecondaryScreenShell
       ref={swipeRef}
-      title={title}
+      // The task title renders once: in the bar while loading (the shell hides children),
+      // otherwise as the page h1 below, so failure/unsupported states still name the task.
+      title={initialLoading ? title : null}
       onBack={handleBack}
       backLabel={t('common.back')}
       backAriaLabel={t('common.back')}
@@ -411,6 +413,10 @@ export function AuthFilesOAuthModelAliasEditPage() {
       isLoading={initialLoading}
       loadingLabel={t('common.loading')}
     >
+      {/* One page title (the task), aligned to the content edge like every other page. */}
+      <header className={styles.intro}>
+        <h1 className={styles.introTitle}>{title}</h1>
+      </header>
       {modelAliasUnsupported ? (
         <Card>
           <EmptyState
@@ -434,16 +440,6 @@ export function AuthFilesOAuthModelAliasEditPage() {
         </Card>
       ) : (
         <>
-          <div className={styles.intro}>
-            <span className={styles.introIcon}>
-              <IconNetwork size={22} aria-hidden="true" />
-            </span>
-            <div>
-              <h1 className={styles.introTitle}>{t('oauth_model_alias.title')}</h1>
-              <p className={styles.description}>{t('oauth_model_alias.editor_description')}</p>
-            </div>
-          </div>
-
           <OAuthEditorProviderCard
             provider={provider}
             options={providerOptions}
@@ -455,12 +451,8 @@ export function AuthFilesOAuthModelAliasEditPage() {
           <Card className={styles.settingsCard}>
             <div className={styles.editorHeader}>
               <div className={styles.sectionHeading}>
-                <span className={styles.stepNumber} aria-hidden="true">
-                  02
-                </span>
                 <div className={styles.headingCopy}>
                   <h2 className={styles.sectionTitle}>{t('oauth_model_alias.alias_label')}</h2>
-                  <p className={styles.description}>{t('oauth_model_alias.mapping_hint')}</p>
                 </div>
               </div>
               <Button
@@ -474,10 +466,13 @@ export function AuthFilesOAuthModelAliasEditPage() {
               </Button>
             </div>
 
-            <div className={styles.catalogHint}>
-              <IconInfo size={15} aria-hidden="true" />
-              <p className={styles.description}>{headerHint}</p>
-            </div>
+            {/* Without a provider there is nothing to say about the model catalog yet. */}
+            {provider.trim() ? (
+              <div className={styles.catalogHint}>
+                <IconInfo size={15} aria-hidden="true" />
+                <p className={styles.description}>{headerHint}</p>
+              </div>
+            ) : null}
 
             <div className={styles.mappingsBody}>
               {mappings.map((entry, index) => (

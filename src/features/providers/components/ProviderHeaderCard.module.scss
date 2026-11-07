@@ -1,3 +1,4 @@
+@use '../../../styles/mixins' as *;
 @use '../../../styles/variables' as *;
 
 .card {
@@ -9,7 +10,7 @@
   align-items: flex-end;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: $space-4;
 }
 
 .titleArea {
@@ -17,75 +18,27 @@
 }
 
 .title {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 34px;
-  letter-spacing: -0.4px;
-  color: var(--text-primary);
+  @include text-page-title;
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: $space-2;
   align-items: center;
 }
 
-.btn {
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-
-  > span {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-}
-
-.btnOutline {
-  border-color: var(--border-default);
-  background: var(--bg-raised);
-  color: var(--text-primary);
-
-  &:hover:not(:disabled) {
-    background: var(--bg-active);
-  }
-}
-
-.btnPrimary {
-  border-color: var(--button-primary-bg);
-  background: var(--button-primary-bg);
-  color: var(--button-primary-fg);
-
-  &:hover:not(:disabled) {
-    opacity: 0.9;
-    background: var(--button-primary-bg);
-  }
-}
-
 .chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0;
-  margin-top: 4px;
-  color: var(--text-tertiary);
-  font-family: $font-mono;
-  font-size: 12px;
-  line-height: 18px;
-}
-
-.chip + .chip::before {
-  content: '·';
-  padding: 0 8px;
+  margin: $space-1 0 0;
+  color: var(--text-secondary);
+  @include numeric;
+  font-size: $text-sm;
+  line-height: $leading-sm;
 }
 
 .btnIcon {
   display: inline-flex;
-  color: var(--icon-default);
+  color: currentColor;
 }
 
 .spin {

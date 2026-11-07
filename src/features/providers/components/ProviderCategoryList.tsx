@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PROVIDER_LOGOS } from '../brandLogos';
 import type { ProviderBrand, ProviderGroup } from '../types';
@@ -11,9 +12,26 @@ interface ProviderCategoryListProps {
 
 export function ProviderCategoryList({ groups, activeBrand, onSelect }: ProviderCategoryListProps) {
   const { t } = useTranslation();
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // On narrow screens the list is a horizontal picker: keep the selected provider in view
+  // without scrolling the page itself.
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list || list.scrollWidth <= list.clientWidth) return;
+    const active = list.querySelector<HTMLElement>('[aria-current="page"]');
+    if (!active) return;
+    const start = active.offsetLeft; // .list is position: relative, so it is the offsetParent
+    const end = start + active.offsetWidth;
+    if (start < list.scrollLeft) {
+      list.scrollLeft = Math.max(0, start - 16);
+    } else if (end > list.scrollLeft + list.clientWidth) {
+      list.scrollLeft = end - list.clientWidth + 16;
+    }
+  }, [activeBrand]);
 
   const renderGroups = (items: ProviderGroup[]) => (
-    <div className={styles.list}>
+    <div className={styles.list} ref={listRef}>
       {items.map((group) => {
         const active = group.id === activeBrand;
         const total = group.resources.length;
@@ -62,15 +80,18 @@ export function ProviderCategoryList({ groups, activeBrand, onSelect }: Provider
                 <span className={styles.itemTitle}>
                   {t(`providersPage.providerNames.${group.id}`)}
                 </span>
-                <span className={styles.itemSubtitle}>
-                  {t('providersPage.categories.activeCount', {
-                    active: activeCount,
-                    total,
-                  })}
-                </span>
+                {/* Only a partly switched-off provider gets a caption; the count says the rest. */}
+                {total > 0 && activeCount < total ? (
+                  <span className={styles.itemSubtitle}>
+                    {t('providersPage.categories.activeCount', {
+                      active: activeCount,
+                      total,
+                    })}
+                  </span>
+                ) : null}
               </span>
             </span>
-            <span className={styles.badge}>{total}</span>
+            {total > 0 ? <span className={styles.badge}>{total}</span> : null}
           </button>
         );
       })}
@@ -79,8 +100,8 @@ export function ProviderCategoryList({ groups, activeBrand, onSelect }: Provider
 
   return (
     <div className={styles.stack}>
-      <aside className={styles.aside}>
-        <p className={styles.eyebrow}>{t('providersPage.categories.title')}</p>
+      {/* The page title already says "AI Providers": the rail is named for AT only. */}
+      <aside className={styles.aside} aria-label={t('providersPage.categories.title')}>
         {renderGroups(groups)}
       </aside>
     </div>

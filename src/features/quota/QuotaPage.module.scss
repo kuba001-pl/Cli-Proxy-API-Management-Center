@@ -7,7 +7,7 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: $space-5;
   width: 100%;
   min-width: 0;
 }
@@ -17,7 +17,7 @@
 .workbench {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: $space-5;
   min-width: 0;
 }
 
@@ -42,26 +42,32 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 8px 16px;
+  gap: $space-2 $space-4;
   min-width: 0;
+  // Tabs above already separate this row; keep the toolbar close to the content it filters.
+  margin-top: -$space-2;
 }
 
 .search {
   position: relative;
   display: flex;
   align-items: center;
-  flex: 0 1 340px;
+  // Shrinks before the sort control wraps below it (769px with the sidebar open).
+  flex: 1 1 220px;
+  max-width: 400px;
   min-width: 0;
-  height: 32px;
-  border: 1px solid var(--border-default);
-  border-radius: 8px;
-  background: var(--bg-app);
-  color: var(--text-secondary);
+  height: $control-height;
+  border: 1px solid var(--border-control);
+  border-radius: $radius-md;
+  background: var(--bg-field);
+  color: var(--icon-default);
+  transition:
+    border-color var(--dur-hover) var(--ease-out-strong),
+    box-shadow var(--dur-hover) var(--ease-out-strong);
 
   &:focus-within {
-    border-color: var(--border-hover);
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
+    border-color: var(--focus-ring);
+    box-shadow: 0 0 0 1px var(--focus-ring);
   }
 }
 
@@ -82,7 +88,7 @@
   background: transparent;
   color: var(--text-primary);
   font: inherit;
-  font-size: 13px;
+  font-size: $text-base;
   appearance: none;
 
   &::placeholder {
@@ -111,7 +117,7 @@
   cursor: pointer;
 
   &:focus-visible {
-    outline: 2px solid var(--primary-color);
+    outline: 2px solid var(--focus-ring);
     outline-offset: -2px;
   }
 
@@ -126,32 +132,40 @@
   max-width: 100%;
 
   button[aria-haspopup='listbox'] {
-    height: 32px;
-    border-color: var(--border-default);
-    border-radius: 8px;
+    height: $control-height;
+    border-color: transparent;
+    border-radius: $radius-md;
     background: var(--bg-raised);
     box-shadow: none;
-    color: var(--text-secondary);
+    color: var(--text-primary);
 
-    &:focus-visible,
-    &[aria-expanded='true'] {
-      outline: 2px solid var(--primary-color);
+    &:focus-visible {
+      outline: 2px solid var(--focus-ring);
       outline-offset: 2px;
-      background: var(--bg-secondary);
-      color: var(--text-primary);
+    }
+
+    &[aria-expanded='true'] {
+      background: var(--bg-active);
     }
   }
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .clearSearch:hover,
-  .sort button[aria-haspopup='listbox']:hover {
-    background: var(--bg-tertiary);
+  .clearSearch:hover {
+    background: var(--bg-raised);
     color: var(--text-primary);
+  }
+
+  .sort button[aria-haspopup='listbox']:hover {
+    background: var(--bg-active);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .search {
+    transition: none;
+  }
+
   .clearSearch:active {
     transform: none;
   }
@@ -160,12 +174,12 @@
 @include mobile {
   .search {
     flex: 1 1 220px;
-    height: 40px;
+    height: $hit-target-touch;
   }
 
   .clearSearch {
-    width: 36px;
-    height: 32px;
+    width: 40px;
+    height: 36px;
   }
 
   .sort button[aria-haspopup='listbox'] {
@@ -176,14 +190,13 @@
 .errorBanner {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 118px;
-  padding: 16px 20px;
-  border: 1px solid var(--border-default);
-  border-radius: 12px;
-  font-size: 13px;
-  line-height: 20px;
-  color: var(--status-danger);
+  gap: $space-3;
+  padding: $space-3 $space-4;
+  border: 1px solid var(--status-danger-border);
+  border-radius: $radius-lg;
+  @include status-tone(danger);
+  font-size: $text-sm;
+  line-height: $leading-sm;
 }
 
 .errorIcon {
@@ -203,46 +216,68 @@
 .grid {
   display: flex;
   flex-direction: column;
+  gap: $space-6;
+  min-width: 0;
+}
+
+.gridLoading {
+  gap: $space-2;
+}
+
+// No slab per provider: the heading and space group the rows; hairlines separate credentials.
+.providerGroup {
   min-width: 0;
 }
 
 .providerHeading {
-  padding: 28px 0 16px;
+  padding-bottom: $space-1;
 }
 
-/* One dashed outline owns the empty state (Figma Quota · States 66:5143 / 66:5149). */
+.providerRows {
+  // Rows (QuotaCard) switch to a stacked layout from this width, not the viewport's.
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* A quiet surface owns the empty state: icon disc, one line, one action. */
 .emptyState {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: $space-2;
   min-height: 118px;
-  padding: 24px 20px;
-  border: 1px dashed var(--border-default);
-  border-radius: 12px;
+  padding: $space-6 $space-5;
+  border-radius: $radius-lg;
+  background: var(--bg-surface);
   text-align: center;
 }
 
 .emptyIcon {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-raised);
   color: var(--icon-default);
 }
 
 .emptyTitle {
   margin: 0;
-  font-size: 13.5px;
-  line-height: 20px;
-  font-weight: 600;
+  font-size: $text-base;
+  line-height: $leading-base;
+  font-weight: 500;
   color: var(--text-primary);
 }
 
 .emptyDesc {
+  @include text-secondary;
   margin: 0;
-  max-width: 480px;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--text-tertiary);
+  max-width: 52ch;
 }
 
 /* ---------- 分页 ---------- */
@@ -256,17 +291,19 @@
 }
 
 .pageInfo {
-  font-family: $font-mono;
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.02em;
-  color: var(--text-tertiary);
+  @include text-meta;
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 
 @include mobile {
-  .page {
-    gap: 16px;
+  .page,
+  .workbench {
+    gap: $space-4;
+  }
+
+  .grid {
+    gap: $space-5;
   }
 }
 

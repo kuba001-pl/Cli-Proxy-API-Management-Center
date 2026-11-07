@@ -14,6 +14,7 @@ import {
   IconDownload,
   IconEye,
   IconFileText,
+  IconInfo,
   IconExternalLink,
   IconEyeOff,
   IconMaximize2,
@@ -27,6 +28,7 @@ import {
 } from '@/components/ui/icons';
 import { useHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useAuthStore, useConfigStore, useNotificationStore, usePrivacyStore } from '@/stores';
 import { logsApi, responseDataToText, type ErrorLogFile } from '@/services/api/logs';
 import { INITIAL_VISIBLE_LINES } from './model/logBuffer';
@@ -41,12 +43,14 @@ import {
 } from '@/features/logs/model/logSelectors';
 import { Select } from '@/components/ui/Select';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
-import { formatUnixTimestamp } from '@/utils/format';
+import { formatDisplayTime, formatDisplayTimestamp } from '@/utils/dateFormat';
+import { parseUnixTimestamp } from '@/utils/format';
 import { MANAGEMENT_API_PREFIX } from '@/utils/constants';
 import { HTTP_METHODS, STATUS_GROUPS, type LogState } from './model/logTypes';
 import { createLogRequestGuard } from './model/logRequests';
 import { errorLogViewerReducer } from './model/errorLogViewer';
 import { shouldExitLogFullscreen } from './model/logFullscreen';
+import { IconWrapText } from './components/IconWrapText';
 import { useLogFilters } from './hooks/useLogFilters';
 import { isNearBottom, useLogScroller } from './hooks/useLogScroller';
 import {
@@ -60,6 +64,12 @@ import styles from './LogsPage.module.scss';
 const INITIAL_DISPLAY_LINES = INITIAL_VISIBLE_LINES;
 
 type TabType = 'logs' | 'errors';
+
+/** File modification time in the shared human format (`Nov 6, 2026, 23:02`). */
+const formatModified = (value: unknown): string => {
+  const date = parseUnixTimestamp(value);
+  return date ? formatDisplayTimestamp(date) : '—';
+};
 
 export function LogsPage() {
   const { t } = useTranslation();
@@ -80,7 +90,11 @@ export function LogsPage() {
     true
   );
   const [showRawLogs, setShowRawLogs] = useLocalStorage('logsPage.showRawLogs', false);
-  const [wrapLogs, setWrapLogs] = useLocalStorage('logsPage.wrapLogs', false);
+  // No saved choice yet: phones wrap so the endpoint and message are visible without
+  // scrolling sideways; wide screens keep one line per entry.
+  const [savedWrapLogs, setWrapLogs] = useLocalStorage<boolean | null>('logsPage.wrapLogs', null);
+  const narrowViewport = useMediaQuery('(max-width: 900px)');
+  const wrapLogs = savedWrapLogs ?? narrowViewport;
   const [structuredFiltersExpanded, setStructuredFiltersExpanded] = useState(false);
   const [errorLogs, setErrorLogs] = useState<ErrorLogFile[]>([]);
   const errorLogNames = useMemo(
@@ -94,6 +108,8 @@ export function LogsPage() {
     status: 'closed',
   });
   const selectedErrorLog = errorLogViewer.status === 'closed' ? null : errorLogViewer.item;
+  // The diagnosis usually sits at the end of one long response line: wrap by default.
+  const [wrapErrorLog, setWrapErrorLog] = useState(true);
   const errorLogDisplay = useMemo(
     () => ({
       name: selectedErrorLog ? privacyLogFileName(privacyEnabled, selectedErrorLog.name) : '',
@@ -438,10 +454,8 @@ export function LogsPage() {
       <header className={styles.pageHeader}>
         <div className={styles.heading}>
           <h1 className={styles.pageTitle}>{t('logs.title')}</h1>
-          <p className={styles.pageCaption}>{t('logs.caption')}</p>
         </div>
         <SegmentedControl<TabType>
-          className={styles.tabBar}
           ariaLabel={t('logs.title')}
           value={activeTab}
           onChange={(tab) => {
@@ -670,6 +684,20 @@ export function LogsPage() {
                 <Button
                   variant="secondary"
                   size="sm"
+                  className={`${styles.actionButton} ${styles.liveToggle}`}
+                  aria-pressed={autoRefresh}
+                  title={t('logs.reading_enabled')}
+                  onClick={() => setAutoRefresh(!autoRefresh)}
+                  disabled={autoRefreshDisabled}
+                >
+                  <span className={styles.buttonContent}>
+                    <IconTimer size={16} aria-hidden="true" />
+                    <span className={styles.liveLabel}>{t('logs.live_toggle')}</span>
+                  </span>
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
                   onClick={() => loadLogs(false)}
                   disabled={refreshDisabled}
                   className={styles.actionButton}
@@ -678,17 +706,17 @@ export function LogsPage() {
                 >
                   <IconRefreshCw size={16} />
                 </Button>
+                <span className={styles.toolbarDivider} aria-hidden="true" />
                 <Button
                   variant="secondary"
                   size="sm"
                   className={styles.actionButton}
-                  aria-pressed={autoRefresh}
-                  aria-label={t('logs.reading_enabled')}
-                  title={t('logs.reading_enabled')}
-                  onClick={() => setAutoRefresh(!autoRefresh)}
-                  disabled={autoRefreshDisabled}
+                  aria-pressed={wrapLogs}
+                  aria-label={t('logs.wrap_lines')}
+                  title={t('logs.wrap_lines')}
+                  onClick={() => setWrapLogs(!wrapLogs)}
                 >
-                  <IconTimer size={16} />
+                  <IconWrapText size={16} />
                 </Button>
                 <Button
                   variant="secondary"
@@ -706,12 +734,13 @@ export function LogsPage() {
                   size="sm"
                   onClick={clearLogs}
                   disabled={clearDisabled}
-                  className={styles.actionButton}
+                  className={`${styles.actionButton} ${styles.clearButton}`}
                   title={t('logs.clear_button')}
                   aria-label={t('logs.clear_button')}
                 >
                   <IconTrash2 size={16} />
                 </Button>
+                <span className={styles.toolbarDivider} aria-hidden="true" />
                 <Button
                   variant="secondary"
                   size="sm"
@@ -960,7 +989,6 @@ export function LogsPage() {
                   role="status"
                   data-live={autoRefresh && !disableControls}
                 >
-                  <span className={styles.statusDot} aria-hidden="true" />
                   {t(
                     catchingUp && autoRefresh
                       ? 'logs.read_status_catching_up'
@@ -969,11 +997,7 @@ export function LogsPage() {
                         : 'logs.read_status_paused'
                   )}
                   {lastUpdated && (
-                    <>
-                      {' '}
-                      ·{' '}
-                      {t('logs.last_updated', { time: new Date(lastUpdated).toLocaleTimeString() })}
-                    </>
+                    <> · {t('logs.last_updated', { time: formatDisplayTime(lastUpdated) })}</>
                   )}
                 </div>
                 <div className={styles.bufferStatus}>
@@ -1006,7 +1030,8 @@ export function LogsPage() {
             </div>
             {requestLogEnabled && (
               <div className={styles.archiveNotice} role="status">
-                {t('logs.error_logs_request_log_enabled')}
+                <IconInfo size={16} aria-hidden="true" />
+                <span>{t('logs.error_logs_request_log_enabled')}</span>
               </div>
             )}
             {errorLogsError && (
@@ -1059,7 +1084,7 @@ export function LogsPage() {
                               : '—'}
                           </td>
                           <td className={styles.fileModified}>
-                            {item.modified ? formatUnixTimestamp(item.modified) : '—'}
+                            {item.modified ? formatModified(item.modified) : '—'}
                           </td>
                           <td>
                             <div className={styles.fileActions}>
@@ -1135,8 +1160,21 @@ export function LogsPage() {
               </span>
               <span>
                 {t('logs.error_logs_modified')}:{' '}
-                {selectedErrorLog.modified ? formatUnixTimestamp(selectedErrorLog.modified) : '-'}
+                {selectedErrorLog.modified ? formatModified(selectedErrorLog.modified) : '-'}
               </span>
+            </div>
+          )}
+          {errorLogViewer.status === 'ready' && errorLogViewer.text && (
+            <div className={styles.errorLogViewerTools}>
+              <Button
+                variant="ghost"
+                size="sm"
+                aria-pressed={wrapErrorLog}
+                onClick={() => setWrapErrorLog((value) => !value)}
+              >
+                <IconWrapText size={16} />
+                {t('logs.wrap_lines')}
+              </Button>
             </div>
           )}
           {errorLogViewer.status === 'error' && (
@@ -1145,7 +1183,10 @@ export function LogsPage() {
           {errorLogViewer.status === 'loading' && <div className="hint">{t('common.loading')}</div>}
           {errorLogViewer.status === 'ready' &&
             (errorLogViewer.text ? (
-              <pre className={styles.errorLogContent} spellCheck={false}>
+              <pre
+                className={`${styles.errorLogContent} ${wrapErrorLog ? styles.errorLogWrapped : ''}`}
+                spellCheck={false}
+              >
                 {errorLogDisplay.content}
               </pre>
             ) : (

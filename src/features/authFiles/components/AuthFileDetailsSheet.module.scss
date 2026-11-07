@@ -34,7 +34,8 @@
 }
 
 .label {
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -57,8 +58,8 @@
 
   &:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px var(--primary-10);
+    border-color: var(--focus-ring);
+    box-shadow: 0 0 0 1px var(--focus-ring);
   }
 }
 
@@ -89,16 +90,17 @@
 }
 
 .settingsLink {
-  color: var(--primary-color);
-  font-weight: 600;
+  color: var(--text-primary);
+  font-weight: 500;
   text-decoration: none;
 
   &:hover {
     text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   &:focus-visible {
-    outline: 2px solid var(--primary-color);
+    outline: 2px solid var(--focus-ring);
     outline-offset: 2px;
     border-radius: 2px;
   }

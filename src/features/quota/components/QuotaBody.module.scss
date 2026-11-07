@@ -23,7 +23,7 @@
   flex-wrap: wrap;
   align-items: baseline;
   gap: 6px;
-  font-size: 11.5px;
+  font-size: $text-xs;
 }
 .quotaModel {
   min-width: 0;
@@ -34,9 +34,9 @@
   overflow-wrap: anywhere;
 }
 .quotaPercent {
-  font-size: 15px;
+  font-size: $text-sm;
   line-height: 20px;
-  font-weight: 600;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
   color: var(--text-primary);
   white-space: nowrap;
@@ -78,17 +78,18 @@
   .quotaResetRelative {
     grid-column: 1;
     grid-row: 3;
-    font-size: 12px;
+    min-width: 0;
+    font-size: $text-xs;
     line-height: 18px;
-    white-space: nowrap;
 
     // Countdown leads the line here; the separator moves onto .quotaReset.
     &::before {
       content: none;
     }
   }
+  // Countdown column shrinks and wraps on narrow rows instead of overflowing the meter.
   &:has(.quotaResetRelative) {
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, max-content) minmax(0, 1fr) auto;
     column-gap: 0;
     .quotaModel {
       grid-column: 1 / 3;
@@ -128,8 +129,8 @@
 }
 
 .quotaAmount {
-  font-family: $font-mono;
-  font-size: 11.5px;
+  font-family: $font-family;
+  font-size: $text-xs;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   color: var(--text-secondary);
@@ -137,12 +138,10 @@
 
 .quotaMessage {
   grid-column: 1 / -1;
-  font-family: $font-mono;
-  font-size: 11.5px;
-  line-height: 1.5;
-  color: var(--text-tertiary);
-  text-align: center;
-  padding: 6px 4px;
+  font-family: $font-family;
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  color: var(--text-secondary);
 }
 
 /* ---------- 水位条（QuotaMeter）----------
@@ -209,18 +208,12 @@
 }
 
 .antigravityQuotaGroupTitle {
-  font-family: $font-mono;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include text-eyebrow;
+  font-family: $font-family;
 }
 
 .antigravityQuotaGroupDescription {
-  font-size: 11px;
-  line-height: 1.4;
-  color: var(--text-quaternary);
+  @include text-meta;
 }
 
 @include mobile {

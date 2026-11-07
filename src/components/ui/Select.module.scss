@@ -16,22 +16,23 @@
   justify-content: space-between;
   gap: 8px;
   width: 100%;
-  height: 36px;
+  height: $control-height;
   padding: 0 12px;
-  border: 1px solid var(--border-default);
+  border: 1px solid var(--border-control);
   border-radius: $radius-md;
-  background-color: var(--bg-app);
+  background-color: var(--bg-field);
   box-shadow: none;
   color: var(--text-primary);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: $text-base;
+  line-height: $leading-base;
+  font-weight: 400;
   cursor: pointer;
   appearance: none;
   text-align: left;
   box-sizing: border-box;
 
-  &:hover {
-    border-color: var(--border-strong);
+  &:hover:not(:disabled) {
+    border-color: var(--text-tertiary);
   }
 
   &:focus {
@@ -45,17 +46,25 @@
   }
 
   &[aria-expanded='true'] {
-    border-color: var(--text-secondary);
-    box-shadow: 0 0 0 2px var(--border-strong);
+    border-color: var(--accent-text);
+    box-shadow: 0 0 0 1px var(--focus-ring);
   }
 }
 
-// Toolbar selects sit on a raised surface (Figma "All levels"); form selects stay app-colored.
+// Toolbar selects read as quiet filled buttons (label + chevron identify them); form selects
+// keep the input boundary.
 .triggerSm {
-  height: 32px;
+  height: $control-height-sm;
   padding: 0 10px;
+  border-color: transparent;
   background-color: var(--bg-raised);
-  font-size: 13px;
+  font-size: $text-sm;
+  font-weight: 500;
+
+  &:hover:not(:disabled) {
+    border-color: transparent;
+    background-color: var(--bg-active);
+  }
 }
 
 .triggerText {
@@ -70,7 +79,7 @@
 
 .triggerIcon {
   display: inline-flex;
-  color: var(--text-secondary);
+  color: var(--icon-default);
   flex-shrink: 0;
   transition: transform $transition-fast;
 
@@ -81,30 +90,29 @@
 
 .dropdown {
   position: fixed;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-default);
-  border-radius: $radius-md;
-  padding: 6px;
-  box-shadow: var(--shadow-lg);
+  @include surface-floating;
+  padding: 4px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  max-height: 240px;
+  gap: 2px;
+  max-height: 280px;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
 }
 
 .option {
-  padding: 8px 12px;
-  border-radius: $radius-md;
-  border: 1px solid transparent;
+  min-height: $control-height-sm;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 0;
   background: transparent;
   color: var(--text-primary);
   cursor: pointer;
   text-align: left;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: $text-base;
+  line-height: $leading-base;
+  font-weight: 400;
   transition:
     background-color $transition-fast,
     border-color $transition-fast;
@@ -116,9 +124,13 @@
 }
 
 .optionActive {
-  border-color: var(--border-strong);
-  background: var(--bg-active);
-  font-weight: 600;
+  background: var(--accent-subtle);
+  color: var(--text-primary);
+  font-weight: 500;
+
+  &:hover {
+    background: var(--accent-subtle-hover);
+  }
 }
 
 .optionHighlighted {
@@ -129,6 +141,17 @@
 .option:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .trigger,
+  .triggerSm {
+    height: $hit-target-touch;
+  }
+
+  .option {
+    min-height: $hit-target-touch;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { animate } from 'motion/mini';
 import { Button } from '@/components/ui/Button';
+import { IconChevronDown } from '@/components/ui/icons';
+import { ResourceActionsMenu } from '@/features/providers/components/ResourceActionsMenu';
 import { prefersReducedMotion } from '@/hooks/motion';
 import { useActionBarHeightVar } from '@/hooks/useActionBarHeightVar';
 import styles from './BatchActionBar.module.scss';
@@ -76,6 +78,13 @@ export function BatchActionBar(props: BatchActionBarProps) {
 
     animationRef.current?.stop();
     animationRef.current = null;
+
+    // A selection change while the entrance is still running (e.g. two quick ticks) stops it
+    // mid-fade: settle on the fully visible state instead of leaving the bar half-transparent.
+    if (currentCount > 0 && previousCount > 0) {
+      el.style.transform = BASE_TRANSFORM;
+      el.style.opacity = '1';
+    }
 
     const reduced = prefersReducedMotion();
 
@@ -154,30 +163,65 @@ export function BatchActionBar(props: BatchActionBarProps) {
           <span className={styles.count} aria-live="polite">
             {t('auth_files.batch_selected', { count: selectionCount })}
           </span>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={onSelectPage}
-            disabled={selectablePageCount === 0}
-          >
-            {t('auth_files.batch_select_page')}
-          </Button>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={onSelectFiltered}
-            disabled={selectableFilteredCount === 0}
-          >
-            {t('auth_files.batch_select_filtered')}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onInvertPage}
-            disabled={selectablePageCount === 0}
-          >
-            {t('auth_files.batch_invert_page')}
-          </Button>
+          <span className={styles.selectionButtons}>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={onSelectPage}
+              disabled={selectablePageCount === 0}
+            >
+              {t('auth_files.batch_select_page')}
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={onSelectFiltered}
+              disabled={selectableFilteredCount === 0}
+            >
+              {t('auth_files.batch_select_filtered')}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onInvertPage}
+              disabled={selectablePageCount === 0}
+            >
+              {t('auth_files.batch_invert_page')}
+            </Button>
+          </span>
+          {/* Phones: the three selection helpers fold into one labelled menu. */}
+          <span className={styles.selectionMenu}>
+            <ResourceActionsMenu
+              label={t('auth_files.batch_selection_menu')}
+              triggerClassName={`btn btn-secondary btn-sm ${styles.selectionTrigger}`}
+              triggerContent={
+                <>
+                  {t('auth_files.batch_selection_menu')}
+                  <IconChevronDown size={14} />
+                </>
+              }
+              items={[
+                {
+                  key: 'page',
+                  label: t('auth_files.batch_select_page'),
+                  disabled: selectablePageCount === 0,
+                  onSelect: onSelectPage,
+                },
+                {
+                  key: 'filtered',
+                  label: t('auth_files.batch_select_filtered'),
+                  disabled: selectableFilteredCount === 0,
+                  onSelect: onSelectFiltered,
+                },
+                {
+                  key: 'invert',
+                  label: t('auth_files.batch_invert_page'),
+                  disabled: selectablePageCount === 0,
+                  onSelect: onInvertPage,
+                },
+              ]}
+            />
+          </span>
           <Button variant="ghost" size="sm" onClick={onDeselectAll}>
             {t('auth_files.batch_deselect')}
           </Button>

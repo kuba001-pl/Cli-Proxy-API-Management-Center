@@ -8,10 +8,11 @@ export interface OAuthHeaderProps {
 }
 
 /**
- * 标题领衔 + ▍mono 遥测 meta 行（与凭证库/额度页同语汇，无 eyebrow、无页头按钮）。
- * meta 语义：等待授权数是「进行中」（墨色 + 呼吸点），本次新增是「活数据」（绿）。
+ * Title plus, only while something is happening, one live fact: sign-ins waiting for
+ * authorization and credentials added this session. The provider count was noise.
+ * `providerCount` stays in the props for upstream compatibility.
  */
-export function OAuthHeader({ providerCount, waitingCount, addedCount }: OAuthHeaderProps) {
+export function OAuthHeader({ waitingCount, addedCount }: OAuthHeaderProps) {
   const { t } = useTranslation();
 
   return (
@@ -19,30 +20,26 @@ export function OAuthHeader({ providerCount, waitingCount, addedCount }: OAuthHe
       <h1 className={styles.title} data-reveal>
         {t('nav.oauth', { defaultValue: 'OAuth' })}
       </h1>
-      <p className={styles.meta} data-reveal>
-        <span>{t('auth_login.meta_providers', { count: providerCount })}</span>
-        {waitingCount > 0 && (
-          <>
-            <span className={styles.metaDot} aria-hidden="true">
-              ·
-            </span>
+      {(waitingCount > 0 || addedCount > 0) && (
+        <p className={styles.meta} data-reveal>
+          {waitingCount > 0 && (
             <span className={styles.metaWaiting}>
               <span className={styles.pulse} aria-hidden="true" />
               {t('auth_login.meta_waiting', { count: waitingCount })}
             </span>
-          </>
-        )}
-        {addedCount > 0 && (
-          <>
+          )}
+          {waitingCount > 0 && addedCount > 0 && (
             <span className={styles.metaDot} aria-hidden="true">
               ·
             </span>
+          )}
+          {addedCount > 0 && (
             <span className={styles.metaAdded}>
               {t('auth_login.meta_added', { count: addedCount })}
             </span>
-          </>
-        )}
-      </p>
+          )}
+        </p>
+      )}
     </header>
   );
 }

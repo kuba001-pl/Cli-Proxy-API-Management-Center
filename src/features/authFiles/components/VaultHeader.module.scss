@@ -1,3 +1,4 @@
+@use '../../../styles/mixins' as *;
 @use '../../../styles/variables' as *;
 .header {
   display: flex;
@@ -13,31 +14,21 @@
   min-width: 0;
 }
 .title {
-  margin: 0;
-  font-size: 28px;
-  line-height: 34px;
-  font-weight: 700;
-  letter-spacing: -0.4px;
-  color: var(--text-primary);
+  @include text-page-title;
 }
 .meta {
   margin: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  font-family: $font-mono;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--text-tertiary);
-}
-.metaTotal,
-.metaActive,
-.metaMuted,
-.metaDot {
-  color: var(--text-tertiary);
+  gap: $space-2;
+  @include numeric;
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  color: var(--text-secondary);
 }
 .metaProblem {
   color: var(--status-warning);
+  font-weight: 500;
 }
 .actions {
   display: flex;
@@ -56,5 +47,16 @@
 @media (prefers-reduced-motion: reduce) {
   .spinning {
     animation: none;
+  }
+}
+
+.refreshButton {
+  width: $control-height-sm;
+  padding: 0;
+}
+
+@include mobile {
+  .refreshButton {
+    width: $hit-target-touch;
   }
 }

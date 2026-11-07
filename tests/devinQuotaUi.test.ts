@@ -9,6 +9,7 @@ import { DevinQuotaBody } from '@/features/quota/providers/devin/DevinQuotaBody'
 import { QUOTA_CLASS_KEYS, bindQuotaClasses } from '@/features/quota/types';
 import { classifyQuotaFiles, buildTabCounts } from '@/features/quota/logic';
 import { QUOTA_PROVIDER_TYPES } from '@/features/authFiles/constants';
+import { formatInstantShort } from '@/utils/quota';
 import { buildTimelineLane, projectLane } from '@/features/quota/quotaTimelineModel';
 import { collectQuotaRowInstants, nextRecoveryMs } from '@/features/quota/resetSchedule';
 import {
@@ -71,9 +72,10 @@ describe('Devin quota UI integration', () => {
     expect(markup).toContain('width:0%');
     expect(markup).toContain('width:80%');
     expect(markup).toContain('Pro');
-    expect(markup).toContain('01/02');
-    expect(markup).toContain('01/08');
-    expect(markup).not.toContain('01/01');
+    // Reset instants use the shared spelled-month format (see src/utils/dateFormat.ts).
+    expect(markup).toContain(formatInstantShort(Date.parse('2099-01-02T00:00:00Z')));
+    expect(markup).toContain(formatInstantShort(Date.parse('2099-01-08T00:00:00Z')));
+    expect(markup).not.toContain(formatInstantShort(observedAtMs));
     expect(markup).not.toContain(classes.quotaMessage);
   });
 

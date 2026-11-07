@@ -1,3 +1,5 @@
+@use '../../styles/mixins' as *;
+
 /* ============================================================
  * OAuth 页壳层：纯布局，视觉细节都在各组件的 colocated 模块里。
  * ============================================================ */
@@ -5,7 +7,7 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: $space-5;
   width: 100%;
   min-width: 0;
 }
@@ -13,21 +15,17 @@
 .section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 8px;
+  gap: $space-3;
+  margin-top: $space-3;
 }
 
 .sectionLabel {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  color: var(--text-secondary);
+  @include text-card-title;
 }
 
 /* 磁贴网格：一屏看全所有提供商（窄屏自动单列）；280 让常见宽度下 6 家排成 3+3 */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(min(272px, 100%), 1fr));
+  gap: $space-3;
 }

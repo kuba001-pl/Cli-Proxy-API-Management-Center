@@ -1,253 +1,367 @@
 @use '../../styles/mixins' as *;
 
+// Layout responds to the page's own width (sidebar open/closed, tablet, phone),
+// not the viewport, so tiles never get squeezed into truncation.
 .page {
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: $space-6;
   width: 100%;
   min-width: 0;
 }
+
+/* ---------- Page header ---------- */
 
 .hero {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 16px;
+  gap: $space-4;
   flex-wrap: wrap;
 }
 
 .heroCopy {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: $space-1;
+  min-width: 0;
 }
+
 .heroTitle {
-  margin: 0;
-  font-size: 28px;
-  line-height: 34px;
-  font-weight: 700;
-  letter-spacing: -0.4px;
+  @include text-page-title;
 }
+
 .heroMeta {
   margin: 0;
-  font: 12.5px/18px $font-mono;
-  color: var(--text-tertiary);
+  @include text-secondary;
+  font-variant-numeric: tabular-nums;
 }
+
 .heroActions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: $space-2;
   flex-wrap: wrap;
-}
-.primaryAction,
-.ghostAction {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 32px;
-  padding: 6px 12px;
-  border: 1px solid var(--border-default);
-  border-radius: 8px;
-  background: var(--bg-raised);
-  color: var(--text-primary);
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background var(--dur-hover) var(--ease-out-strong);
-  &:hover {
-    background: var(--bg-active);
+
+  // Links styled as the shared buttons; keep them from inheriting link colours.
+  :global(.btn) {
+    text-decoration: none;
   }
-  &:focus-visible {
-    outline: 2px solid var(--text-secondary);
-    outline-offset: 3px;
-  }
-}
-.ghostAction {
-  border-color: transparent;
-  background: transparent;
-  color: var(--text-secondary);
-}
-.linkArrow {
-  margin-left: 4px;
-  color: var(--text-tertiary);
 }
 
+.linkArrow {
+  margin-left: $space-1;
+  color: var(--icon-default);
+  transition: transform var(--dur-hover) var(--ease-out-strong);
+}
+
+/* ---------- KPI tiles ---------- */
+
+// Plain figures on the page, separated by space: the row is already a clear group, so the
+// tiles carry no slab (de-slop rule 4).
 .statsRow {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  overflow: hidden;
-  border: 1px solid var(--border-default);
-  border-radius: 12px;
-  background: var(--bg-surface);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-5 $space-5;
 }
+
 .statTile {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: $space-2;
   min-width: 0;
-  padding: 20px;
-  & + & {
-    border-left: 1px solid var(--border-subtle);
+
+  &:first-child {
+    grid-column: 1 / -1;
   }
 }
-.statLabel {
-  font-size: 12px;
-  line-height: 16px;
-  font-weight: 400;
-  letter-spacing: 0.4px;
-  color: var(--text-secondary);
+
+// Mid widths (tablet, 1024 with the sidebar open): the requests tile sits beside a 2 x 2 block of
+// the other KPIs instead of becoming a full-width slab.
+@container (min-width: 560px) {
+  .statsRow {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .statTile:first-child {
+    grid-column: auto;
+    grid-row: span 2;
+
+    // Spanning two rows earns a hero number; the split meter and caption anchor the bottom
+    // edge, level with the neighbouring tiles' captions.
+    .statValue {
+      font-size: 40px;
+      line-height: 48px;
+    }
+
+    .heroSplit {
+      margin-top: auto;
+    }
+
+    .statHint {
+      margin-top: 0;
+    }
+  }
 }
-.eyebrow {
-  font-size: 11px;
-  line-height: 14px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+
+// Desktop (from ~1200px viewports with the sidebar open): one row of five.
+@container (min-width: 880px) {
+  .statsRow {
+    grid-template-columns: minmax(0, 1.3fr) repeat(4, minmax(0, 1fr));
+  }
+
+  .statTile:first-child {
+    grid-row: auto;
+
+    .statValue {
+      font-size: 28px;
+      line-height: 36px;
+    }
+
+    .heroSplit {
+      margin-top: 0;
+    }
+
+    .statHint {
+      margin-top: auto;
+    }
+  }
 }
-.statValue {
-  font-size: 28px;
-  line-height: 34px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
-  font-variant-numeric: tabular-nums;
+
+@container (min-width: 1100px) {
+  .statsRow {
+    column-gap: $space-6;
+  }
 }
-.statHint {
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--text-tertiary);
-}
-.statMeter {
-  margin-top: -4px;
-}
+
 .heroPanelTop {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: $space-2;
 }
-.liveBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
+
+.statLabel {
+  color: var(--text-secondary);
+  font-size: $text-sm;
+  font-weight: 500;
+  line-height: $leading-sm;
+  overflow-wrap: anywhere;
+}
+
+.statValue {
+  @include numeric;
+  color: var(--text-primary);
+  font-size: 28px;
   font-weight: 600;
+  line-height: 36px;
+  letter-spacing: -0.02em;
+}
+
+// Captions wrap instead of truncating; copy is kept short enough for one or two lines.
+.statHint {
+  @include text-meta;
+  margin: auto 0 0;
+  overflow-wrap: anywhere;
+}
+
+.hintStatus {
+  font-weight: 500;
+}
+
+// Status phrases wrap like the rest of the caption: translated phrases ("Thấp hơn nhiều so với
+// mục tiêu") are longer than a narrow tile.
+.hintStatus,
+.hintPhrase {
+  overflow-wrap: break-word;
+}
+
+.tone_good {
   color: var(--status-success);
 }
-.liveDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--status-success);
+
+.tone_warning {
+  color: var(--status-warning);
 }
+
+.tone_critical {
+  color: var(--status-danger);
+}
+
+.tone_idle {
+  color: var(--text-secondary);
+}
+
+.statMeter {
+  margin: $space-1 0;
+  height: 4px;
+}
+
+.liveBadge {
+  flex: none;
+  color: var(--text-tertiary);
+  font-size: $text-xs;
+  line-height: $leading-xs;
+}
+
 .heroSplit {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.heroSplitItem {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--text-tertiary);
-  b {
-    color: var(--text-primary);
-    font-family: $font-mono;
+  gap: 3px;
+  height: 4px;
+  margin: $space-1 0;
+  border-radius: $radius-full;
+  overflow: hidden;
+  background: var(--meter-track);
+
+  > span {
+    border-radius: inherit;
   }
 }
-.splitSwatch {
-  width: 6px;
-  height: 6px;
-  flex: none;
-}
+
 .splitSuccess {
-  background: var(--text-tertiary);
+  background: var(--text-secondary);
 }
+
 .splitFailure {
   background: var(--status-danger);
 }
 
+/* ---------- Sections ---------- */
+
 .trafficPanel,
 .panel {
-  padding: 24px;
-  border: 1px solid var(--border-default);
-  border-radius: 12px;
-  background: var(--bg-surface);
+  @include surface-panel($space-5);
   min-width: 0;
 }
+
 .trafficPanel {
+  // The chart legend anchors to this panel and switches to in-flow placement when narrow.
+  container-type: inline-size;
   position: relative;
 
   .panel {
     padding: 0;
-    border: 0;
     border-radius: 0;
     background: transparent;
   }
-  // Figma 36:1855 / 65:3949: eyebrow → title → helper on a 4px rhythm.
+
   .sectionHead {
-    gap: 4px;
-    padding-right: 200px;
-    margin-bottom: 16px;
-  }
-  // The dark reference (36:1859) hides the helper sentence; keep it for screen readers.
-  [data-theme='dark'] & .sectionDescription {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
+    margin-bottom: $space-5;
   }
 }
+
+@container (min-width: 720px) {
+  .trafficPanel .sectionHead {
+    padding-right: 260px;
+  }
+}
+
 .section {
-  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
+
 .sectionHead,
 .panelHead {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
-  margin-bottom: 16px;
+  gap: $space-1;
+  margin-bottom: $space-4;
 }
-.sectionTitle,
+
+.sectionTitle {
+  @include text-section-title;
+}
+
 .panelTitle {
-  margin: 0;
-  font-size: 18px;
-  line-height: 24px;
-  font-weight: 700;
+  @include text-card-title;
 }
-.sectionDescription,
+
+.sectionDescription {
+  @include text-secondary;
+  margin: 0;
+  max-width: 68ch;
+}
+
 .emptyNote {
+  @include text-secondary;
   margin: 0;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--text-tertiary);
 }
+
 .panelLink {
-  display: inline-block;
-  margin-top: 16px;
-  font-size: 13px;
-  color: var(--text-secondary);
-}
-.moreDetails {
-  color: var(--text-secondary);
-  font-size: 13px;
-  > summary {
-    cursor: pointer;
-    padding: 8px 0;
-    &:focus-visible {
-      outline: 2px solid var(--text-secondary);
-      outline-offset: 3px;
-    }
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-height: 32px;
+  margin-top: $space-4;
+  color: var(--accent-text);
+  font-size: $text-sm;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: $radius-sm;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  &:hover .linkArrow {
+    transform: translateX(2px);
+  }
+
+  &:focus-visible {
+    @include focus-ring(2px);
   }
 }
+
+/* ---------- "More" disclosure ----------
+   Only the summary is a surface; the opened content sits on the page so the panels
+   inside it are real surfaces instead of tone-on-tone boxes. */
+
+details.moreDetails {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+  color: var(--text-primary);
+
+  > summary {
+    min-height: 64px;
+    padding: $space-4 $space-5;
+    border-radius: $radius-lg;
+    background: var(--bg-surface);
+    font-size: $text-base;
+    font-weight: 500;
+    transition: background-color var(--dur-hover) var(--ease-out-strong);
+
+    &:hover {
+      background: var(--bg-raised);
+    }
+
+    > span:first-child {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+
+    &:focus-visible {
+      @include focus-ring(2px);
+    }
+  }
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: $space-6;
+    padding: $space-6 0 0;
+  }
+}
+
+/* ---------- Provider traffic ---------- */
+
 .fleetList,
 .healthLegend,
 .typeList,
@@ -256,226 +370,286 @@
   margin: 0;
   padding: 0;
 }
+
 .fleetRow {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 12px 0;
+  gap: $space-4;
+  min-height: 56px;
+  padding: $space-3 0;
+
   & + & {
     border-top: 1px solid var(--border-subtle);
   }
 }
+
 .fleetRank {
-  color: var(--text-muted);
-  font-family: $font-mono;
+  @include numeric;
+  width: 20px;
+  color: var(--text-tertiary);
+  font-size: $text-xs;
 }
+
 .fleetIdentity {
-  flex: 1;
-  min-width: 0;
   display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
+  min-width: 0;
 }
+
 .fleetName {
   color: var(--text-primary);
-  font-weight: 600;
+  font-size: $text-base;
+  font-weight: 500;
+  line-height: $leading-base;
   overflow-wrap: anywhere;
 }
+
 .fleetMeta,
 .fleetTotalLabel {
-  color: var(--text-tertiary);
-  font-size: 12px;
+  @include text-meta;
 }
+
 .fleetSpark {
-  width: 100px;
+  width: 120px;
   height: 28px;
 }
+
 .fleetNumbers,
 .fleetRate {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  min-width: 80px;
+  gap: $space-1;
+  min-width: 88px;
   text-align: right;
 }
+
 .fleetTotal,
 .fleetRateValue {
+  @include numeric;
   color: var(--text-primary);
-  font-family: $font-mono;
+  font-size: $text-base;
+  font-weight: 500;
 }
+
 .fleetMeter {
-  width: 80px;
+  width: 88px;
+  height: 4px;
+  margin-left: auto;
 }
+
+/* ---------- Credential status + runtime ---------- */
+
 .detailGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 24px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: $space-4;
 }
+
+@container (min-width: 720px) {
+  .detailGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.detailGrid > .panel {
+  display: flex;
+  flex-direction: column;
+}
+
 .healthBar {
   display: flex;
-  gap: 4px;
-  height: 5px;
-  margin-bottom: 16px;
+  gap: 3px;
+  height: 6px;
+  margin-bottom: $space-4;
 }
+
 .healthSegment {
-  border-radius: 3px;
+  border-radius: $radius-full;
 }
+
 .healthActive {
   background: var(--status-success);
 }
+
 .healthUnavailable {
   background: var(--status-warning);
 }
+
 .healthDisabled {
   background: var(--text-muted);
 }
+
 .healthLegend {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+
   li {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: $space-2;
+    min-height: 36px;
+    color: var(--text-secondary);
+    font-size: $text-base;
+
+    & + li {
+      border-top: 1px solid var(--border-subtle);
+    }
+
     b {
+      @include numeric;
       margin-left: auto;
-      font-family: $font-mono;
+      color: var(--text-primary);
+      font-weight: 500;
     }
   }
 }
+
 .healthKey {
-  width: 6px;
-  height: 6px;
-  border-radius: 2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
 }
+
 .typeBreakdown {
-  margin-top: 16px;
+  margin-top: $space-5;
 }
+
 .typeBreakdownLabel {
-  font-size: 12px;
-  color: var(--text-tertiary);
+  @include text-meta;
 }
+
 .typeList,
 .toggleList {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
+  gap: $space-1 $space-5;
+  margin-top: $space-2;
 }
+
+// Label/value pairs as plain text: neutral facts don't earn pills.
 .typeChip,
 .togglePill {
   display: inline-flex;
-  gap: 8px;
-  padding: 4px 8px;
-  border: 1px solid var(--border-default);
-  border-radius: 6px;
-  font-size: 12px;
+  align-items: baseline;
+  gap: $space-2;
+  min-height: 24px;
+  color: var(--text-secondary);
+  font-size: $text-sm;
+
+  b {
+    @include numeric;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
 }
+
+.toggleList {
+  margin-top: $space-4;
+}
+
+.toggleOff {
+  b {
+    color: var(--text-tertiary);
+    font-weight: 400;
+  }
+}
+
 .specList {
   margin: 0;
 }
+
 .specRow {
   display: flex;
-  justify-content: space-between;
   align-items: baseline;
-  gap: 16px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border-subtle);
+  justify-content: space-between;
+  gap: $space-4;
+  min-height: 36px;
+  padding: $space-2 0;
+
+  & + & {
+    border-top: 1px solid var(--border-subtle);
+  }
 }
+
 .specLabel {
-  color: var(--text-tertiary);
+  flex: none;
+  color: var(--text-secondary);
+  font-size: $text-base;
 }
+
 .specValue {
+  @include numeric;
   margin: 0;
+  min-width: 0;
   color: var(--text-primary);
+  font-size: $text-base;
   text-align: right;
   overflow-wrap: anywhere;
 }
+
 .specMono {
-  font-family: $font-mono;
-}
-.toggleOn {
-  color: var(--text-primary);
-}
-.toggleOff {
-  color: var(--text-tertiary);
-}
-.ctaGrid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-.ctaCard {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 16px;
-  border: 1px solid var(--border-default);
-  border-radius: 8px;
-  color: var(--text-primary);
-  background: var(--bg-surface);
-  text-decoration: none;
-  &:hover {
-    background: var(--bg-raised);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--text-secondary);
-    outline-offset: 3px;
-  }
-}
-.ctaIcon {
-  color: var(--icon-default);
-}
-.ctaTitle {
-  font-weight: 600;
-}
-.ctaDescription {
-  font-size: 12px;
-  color: var(--text-tertiary);
-}
-.ctaArrow {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  color: var(--icon-default);
+  @include text-identifier;
 }
 
-@media (max-width: 1000px) {
-  .statsRow {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .statTile {
-    border-bottom: 1px solid var(--border-subtle);
-  }
-}
+/* ---------- Narrow pages ---------- */
+
 @include mobile {
-  .statsRow {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .page {
+    gap: $space-5;
   }
-  .statTile {
-    padding: 16px;
-  }
+
   .trafficPanel,
   .panel {
-    padding: 16px;
+    padding: $space-4;
   }
-  .trafficPanel .sectionHead {
-    padding-right: 0;
+
+  .statValue {
+    font-size: 24px;
+    line-height: 32px;
   }
-  .detailGrid,
-  .ctaGrid {
-    grid-template-columns: 1fr;
+
+  details.moreDetails {
+    > summary {
+      padding: $space-3 $space-4;
+    }
+
+    > div {
+      gap: $space-5;
+      padding-top: $space-5;
+    }
   }
+
+  .heroActions :global(.btn) {
+    min-height: $hit-target-touch;
+  }
+}
+
+@container (max-width: 520px) {
   .fleetSpark,
   .fleetRank {
     display: none;
   }
+
+  .fleetNumbers,
+  .fleetRate {
+    min-width: 64px;
+  }
+
+  .fleetMeter {
+    width: 64px;
+  }
 }
+
 @media (prefers-reduced-motion: reduce) {
-  .primaryAction,
-  .ghostAction {
+  .linkArrow,
+  details.moreDetails > summary {
     transition: none;
+  }
+
+  .panelLink:hover .linkArrow {
+    transform: none;
   }
 }

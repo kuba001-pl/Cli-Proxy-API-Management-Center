@@ -28,7 +28,6 @@ export function SectionConnectivity({
   return (
     <SectionCard
       title={t('config_management.visual.sections.connectivity.title')}
-      description={t('config_management.visual.sections.connectivity.description')}
       animateIn={animateIn}
     >
       <SettingList>
@@ -76,17 +75,12 @@ export function SectionConnectivity({
         </BlockSetting>
       </SettingList>
 
-      <Collapsible
-        label={t('config_management.visual.sections.tls.title')}
-        hint={t('config_management.visual.sections.tls.description')}
-        defaultOpen={false}
-      >
+      <Collapsible label={t('config_management.visual.sections.tls.title')} defaultOpen={false}>
         <SettingList>
           <ToggleSetting
             fieldId="tlsEnable"
             wide
             label={t('config_management.visual.sections.tls.enable')}
-            description={t('config_management.visual.sections.tls.enable_desc')}
             checked={values.tlsEnable}
             disabled={disabled}
             onChange={(tlsEnable) => onChange({ tlsEnable })}
@@ -118,11 +112,7 @@ export function SectionConnectivity({
         </SettingList>
       </Collapsible>
 
-      <Collapsible
-        label={t('config_management.visual.sections.remote.title')}
-        hint={t('config_management.visual.sections.remote.description')}
-        defaultOpen={false}
-      >
+      <Collapsible label={t('config_management.visual.sections.remote.title')} defaultOpen={false}>
         <FieldStack>
           <SettingList>
             <ToggleSetting
@@ -136,7 +126,6 @@ export function SectionConnectivity({
             <ToggleSetting
               fieldId="rmDisableControlPanel"
               label={t('config_management.visual.sections.remote.disable_panel')}
-              description={t('config_management.visual.sections.remote.disable_panel_desc')}
               checked={values.rmDisableControlPanel}
               disabled={disabled}
               onChange={(rmDisableControlPanel) => onChange({ rmDisableControlPanel })}

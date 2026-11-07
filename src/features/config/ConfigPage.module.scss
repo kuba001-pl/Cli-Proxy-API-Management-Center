@@ -5,13 +5,18 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: $space-4;
   width: 100%;
   min-width: 0;
   /* 悬浮保存栏出现时由 --config-action-bar-height 撑出底部留白 */
   padding-bottom: calc(
     var(--config-action-bar-height, 0px) + 48px + env(safe-area-inset-bottom, 0px)
   );
+}
+
+/* Visual mode is a settings form: one readable column, so labels stay close to controls. */
+.page:not(.pageSource) {
+  @include readable-width;
 }
 
 /* Source mode fills the remaining viewport height (the editor region flexes into it); only
@@ -26,15 +31,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px 10px;
+  gap: $space-2 $space-3;
   flex-wrap: wrap;
   min-width: 0;
+  margin-top: $space-2;
 }
 
 .tabsRow {
   display: flex;
   min-width: 0;
-  border-bottom: 1px solid var(--border-subtle);
 }
 
 .panel {

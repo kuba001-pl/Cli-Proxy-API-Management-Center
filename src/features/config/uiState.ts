@@ -257,6 +257,20 @@ export function buildHeaderMeta(input: HeaderMetaInput): HeaderMetaSegment[] {
   return segments;
 }
 
+/**
+ * The page header shows at most one fact: the one that needs the user's attention. Errors win,
+ * then unsaved edits, then transient states (loading, saving, disconnected). The setting count
+ * and "in sync" are routine and stay out of the header.
+ */
+export function pickHeaderFact(segments: HeaderMetaSegment[]): HeaderMetaSegment | null {
+  return (
+    segments.find((segment) => segment.tone === 'error') ??
+    segments.find((segment) => segment.tone === 'warning') ??
+    segments.find((segment) => segment.tone === 'muted' && segment.key !== 'fields') ??
+    null
+  );
+}
+
 /** localStorage 读取：非法/陈旧值回退默认。 */
 export function readSavedMode(raw: string | null): ConfigEditorMode {
   return raw === 'source' ? 'source' : 'visual';

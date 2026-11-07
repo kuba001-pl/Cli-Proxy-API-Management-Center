@@ -1,12 +1,13 @@
+@use '../../../styles/mixins' as *;
 @use '../../../styles/variables' as *;
 .card {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 20px;
+  gap: $space-4;
+  padding: $space-5;
   background: var(--bg-surface);
-  border: 1px solid var(--border-default);
-  border-radius: 12px;
+  border: 0;
+  border-radius: $radius-lg;
 }
 .head {
   display: flex;
@@ -17,7 +18,7 @@
   width: 36px;
   height: 36px;
   padding: 7px;
-  border: 1px solid var(--border-default);
+  border: 0;
   background: var(--bg-raised);
   border-radius: 8px;
   object-fit: contain;
@@ -26,29 +27,29 @@
   min-width: 0;
 }
 .title {
-  margin: 0 0 2px;
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 600;
-  color: var(--text-primary);
+  @include text-card-title;
+  margin-bottom: 2px;
 }
 .caption {
   margin: 0;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--text-tertiary);
+  @include text-secondary;
 }
 .sites {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
+// Sites sit directly on the card (no slab inside a slab); a wash marks hover only.
 .site {
   position: relative;
-  padding: 8px 8px 8px 14px;
+  padding: 8px;
+  background: transparent;
+  border: 0;
+  border-radius: $radius-md;
+  transition: background-color var(--dur-hover) var(--ease-out-strong);
+}
+.site:hover {
   background: var(--bg-raised);
-  border: 1px solid var(--border-default);
-  border-radius: 10px;
 }
 .siteBody {
   display: flex;
@@ -67,9 +68,9 @@
   border: 0;
   background: none;
   font: inherit;
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 600;
+  font-size: $text-base;
+  line-height: $leading-base;
+  font-weight: 500;
   text-align: left;
   color: var(--text-primary);
   cursor: pointer;
@@ -78,17 +79,17 @@
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 10px;
+  border-radius: $radius-md;
 }
 .siteMain:focus-visible {
   outline: none;
 }
 .siteMain:focus-visible::after {
-  outline: 2px solid var(--text-primary);
-  outline-offset: 2px;
+  @include focus-ring;
 }
 .siteMeta {
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 12px;
   line-height: 18px;
   color: var(--text-tertiary);
@@ -96,13 +97,6 @@
 .status {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-}
-.statusDot {
-  width: 5px;
-  height: 5px;
-  background: currentColor;
-  border-radius: 50%;
 }
 .site[data-status='success'] .status {
   color: var(--status-success);
@@ -117,24 +111,50 @@
   align-items: center;
   gap: 6px;
   padding: 0 4px;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: $text-sm;
+  font-weight: 500;
   color: var(--text-primary);
   text-decoration: none;
   white-space: nowrap;
 }
+.signUp:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .signUp:focus-visible {
-  outline: 2px solid var(--text-primary);
-  outline-offset: 3px;
+  @include focus-ring(3px);
 }
 .trail {
   display: grid;
   place-items: center;
-  width: 32px;
+  min-width: 32px;
   height: 32px;
+  border: 0;
+  border-radius: $radius-md;
+  color: var(--icon-default);
+}
+// Shared secondary-button face (field fill + deliberate edge), never grey on the grey card.
+.trailLabel {
+  padding: 3px 10px;
   border: 1px solid var(--border-default);
-  border-radius: 8px;
-  color: var(--text-tertiary);
+  border-radius: $radius-md;
+  background: var(--bg-field);
+  box-shadow: var(--shadow-control, none);
+  color: var(--text-primary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: border-color var(--dur-hover) var(--ease-out-strong);
+}
+.site:hover .trailLabel {
+  border-color: var(--border-strong);
+}
+@media (prefers-reduced-motion: reduce) {
+  .site,
+  .trailLabel {
+    transition: none;
+  }
 }
 @media (max-width: 850px) {
   .sites {
@@ -146,6 +166,6 @@
     flex-wrap: wrap;
   }
   .signUp {
-    font-size: 11px;
+    min-height: $hit-target-touch;
   }
 }

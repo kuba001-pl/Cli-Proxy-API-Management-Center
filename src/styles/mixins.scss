@@ -44,7 +44,176 @@
   outline: none;
 
   &:focus-visible {
-    outline: 2px solid var(--text-secondary);
+    outline: 2px solid var(--focus-ring);
     outline-offset: 2px;
   }
+}
+
+// ---------------------------------------------------------------------------
+// Design-system mixins. Reference: cpamc-qa/audit2/DESIGN-SYSTEM.md.
+// Usage: `@use '<relative>/styles/mixins' as *;` then `@include text-meta;`.
+// ---------------------------------------------------------------------------
+
+// Tabular figures for any number, count, version, timestamp, size or ID column.
+@mixin numeric {
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
+}
+
+// Page title (one per route).
+@mixin text-page-title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: $text-2xl;
+  font-weight: 600;
+  line-height: $leading-2xl;
+  letter-spacing: -0.02em;
+}
+
+// Section heading inside a page.
+@mixin text-section-title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: $text-lg;
+  font-weight: 600;
+  line-height: $leading-lg;
+  letter-spacing: -0.01em;
+}
+
+// Card / panel / group title.
+@mixin text-card-title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: $text-md;
+  font-weight: 600;
+  line-height: $leading-md;
+}
+
+// Default reading text.
+@mixin text-body {
+  color: var(--text-primary);
+  font-size: $text-base;
+  font-weight: 400;
+  line-height: $leading-base;
+}
+
+// Supporting copy: descriptions, help text, secondary cells.
+@mixin text-secondary {
+  color: var(--text-secondary);
+  font-size: $text-sm;
+  font-weight: 400;
+  line-height: $leading-sm;
+}
+
+// Form and field labels.
+@mixin text-label {
+  color: var(--text-primary);
+  font-size: $text-sm;
+  font-weight: 500;
+  line-height: $leading-sm;
+}
+
+// Meta: timestamps, captions, counts, table headers. Readable (>= 4.5:1), never decorative.
+@mixin text-meta {
+  color: var(--text-tertiary);
+  font-size: $text-xs;
+  font-weight: 400;
+  line-height: $leading-xs;
+  font-variant-numeric: tabular-nums;
+}
+
+// Small uppercase group label (sidebar groups, table group headers). Use sparingly.
+@mixin text-eyebrow {
+  color: var(--text-tertiary);
+  font-size: $text-xs;
+  font-weight: 500;
+  line-height: $leading-xs;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+// Identifiers that are not code (filenames, emails, masked keys, URLs, model IDs).
+// Sans + tabular figures; break long tokens instead of overflowing.
+@mixin text-identifier {
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums slashed-zero;
+  overflow-wrap: anywhere;
+}
+
+// Real code only: log lines, YAML/source editors, code blocks.
+@mixin text-code {
+  font-family: $font-mono;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+// Shared keyboard focus ring.
+@mixin focus-ring($offset: 2px) {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: $offset;
+}
+
+// Grow an element's hit area without changing its visual size (element must not clip overflow).
+@mixin hit-area($size: $hit-target-touch) {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, #{$size});
+    height: max(100%, #{$size});
+    transform: translate(-50%, -50%);
+  }
+}
+
+// Visually hidden but announced.
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+// In-flow panel: tone, no border, no shadow.
+@mixin surface-panel($padding: $space-5) {
+  padding: $padding;
+  border: 0;
+  border-radius: $radius-lg;
+  background: var(--bg-surface);
+}
+
+// Floating surface: popovers, menus, dropdowns, tooltips.
+@mixin surface-floating {
+  border: 1px solid var(--border-default);
+  border-radius: $radius-md;
+  background: var(--bg-floating);
+  box-shadow: var(--shadow-floating);
+}
+
+// Settings forms and prose: keep labels and controls close.
+@mixin readable-width($max: $content-width-form) {
+  width: 100%;
+  max-width: $max;
+}
+
+// Quiet list row separated by a hairline (tables, stacked lists).
+@mixin hairline-row {
+  border-bottom: 1px solid var(--border-subtle);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+// Status text + subtle background for inline notices and badges.
+@mixin status-tone($status) {
+  color: var(--status-#{$status});
+  background: var(--status-#{$status}-bg);
 }

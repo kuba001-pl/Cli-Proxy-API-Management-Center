@@ -1,19 +1,12 @@
 @use '../../../styles/mixins' as *;
 
-/* ============================================================
- * OAuth 配置双卡（排除模型 / 模型别名）共用外衣：panel 配方
- * （16px 圆角 / 1px 边框 / 82% 透感纸面），列表行走 mono 遥测。
- * ============================================================ */
+/* Shared OAuth panels use a surface; nested rows rely on spacing and hover tone. */
 
 .panel {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-surface);
-  border-color: var(--border-default);
+  gap: $space-3;
+  @include surface-panel($space-5);
 }
 
 .panelHead {
@@ -25,12 +18,7 @@
 }
 
 .panelTitle {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--text-primary);
-  line-height: 20px;
+  @include text-card-title;
 }
 
 .panelExtra {
@@ -52,27 +40,26 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 2px;
+  margin-inline: -$space-3;
 }
 
 .item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding: 9px 12px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
-  background: color-mix(in srgb, var(--bg-secondary) 45%, transparent);
-  transition:
-    background-color $transition-fast,
-    border-color $transition-fast;
+  gap: $space-3;
+  min-height: 56px;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  border: 0;
+  background: transparent;
+  transition: background-color var(--dur-hover) var(--ease-out-strong);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .item:hover {
-    border-color: var(--border-hover);
-    background: color-mix(in srgb, var(--bg-secondary) 80%, transparent);
+    background: var(--bg-raised);
   }
 }
 
@@ -84,16 +71,15 @@
 }
 
 .itemProvider {
-  font-family: $font-mono;
-  font-size: 12.5px;
-  font-weight: 650;
   color: var(--text-primary);
+  font-size: $text-base;
+  line-height: $leading-base;
+  font-weight: 500;
   @include text-ellipsis;
 }
 
 .itemCount {
-  font-size: 11.5px;
-  color: var(--text-tertiary);
+  @include text-meta;
 }
 
 .itemActions {
@@ -121,12 +107,7 @@
 
 .aliasChartTitle {
   margin: 0;
-  font-family: $font-mono;
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  @include text-eyebrow;
 }
 
 .aliasChart {
@@ -137,10 +118,9 @@
 
 .panel :global(.btn) {
   transition:
-    transform var(--dur-press, 160ms) var(--ease-out-strong, ease-out),
-    background-color $transition-fast,
-    border-color $transition-fast,
-    color $transition-fast;
+    background-color var(--dur-hover) var(--ease-out-strong),
+    border-color var(--dur-hover) var(--ease-out-strong),
+    color var(--dur-hover) var(--ease-out-strong);
 }
 
 .panel :global(.btn:active:not(:disabled)) {
@@ -148,6 +128,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .item,
   .panel :global(.btn) {
     transition: none;
   }
@@ -158,14 +139,35 @@
 }
 
 .panelBody > :global(.empty-state) {
-  border: 1px dashed var(--border-subtle);
+  border: 0;
   border-radius: 8px;
   padding: 20px 16px;
 }
 
 .panelBody :global(.empty-title) {
-  color: var(--text-tertiary);
-  font-size: 12px;
-  line-height: 20px;
+  color: var(--text-secondary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
   font-weight: 400;
+}
+
+.itemActions .rowDelete {
+  color: var(--text-secondary);
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    color: var(--status-danger);
+    background: var(--destructive-10);
+  }
+}
+
+// Phones: name + count on the left, actions stay on the same row (they are short).
+@media (max-width: 520px) {
+  .item {
+    flex-wrap: wrap;
+  }
+
+  .itemActions :global(.btn) {
+    min-height: $hit-target-touch;
+  }
 }

@@ -24,11 +24,10 @@
 }
 
 .searchInput:global(.input) {
-  height: 32px;
+  height: $control-height-sm;
   padding-block: 0;
   padding-right: 64px;
-  border-radius: 6px;
-  font-size: 13px;
+  font-size: $text-sm;
 }
 
 .searchIcon {
@@ -42,8 +41,8 @@
   padding: 0 6px;
   border-radius: 4px;
   color: var(--text-tertiary);
-  font-family: $font-mono;
-  font-size: 11px;
+  font-family: $font-family;
+  font-size: $text-xs;
   font-variant-numeric: tabular-nums;
   background: var(--bg-raised);
   pointer-events: none;
@@ -56,11 +55,10 @@
   flex-shrink: 0;
 
   button {
-    min-width: 28px;
-    width: 28px;
-    height: 28px;
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
     padding: 0 !important;
-    border-radius: 6px;
   }
 }
 
@@ -84,15 +82,14 @@
 }
 
 .privacyNotice {
+  @include status-tone(warning);
   flex: 0 0 auto;
   margin: 0;
-  padding: 7px 12px;
-  border: 1px solid var(--warning-border);
-  border-radius: 8px;
-  background: var(--warning-bg);
-  color: var(--warning-text);
-  font-size: 12px;
-  line-height: 16px;
+  padding: $space-2 $space-3;
+  border: 0;
+  border-radius: $radius-md;
+  font-size: $text-sm;
+  line-height: $leading-sm;
 }
 
 .editorWrapper {
@@ -127,7 +124,7 @@
     }
 
     .cm-content {
-      padding: 14px 0;
+      padding: $space-3 0;
       caret-color: var(--text-primary);
     }
 
@@ -149,17 +146,26 @@
     .cm-gutters {
       border-right: 1px solid var(--border-subtle);
       background: var(--bg-surface);
-      color: var(--text-muted);
+      color: var(--text-tertiary);
+    }
+
+    .cm-gutter {
+      padding-top: 0;
     }
 
     .cm-lineNumbers .cm-gutterElement {
-      padding: 0 8px 0 12px;
+      padding: 0 $space-2 0 $space-3;
       min-width: 40px;
-      color: var(--text-muted);
+      color: var(--text-tertiary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .cm-activeLineGutter.cm-gutterElement {
+      color: var(--text-primary);
     }
 
     .cm-foldGutter .cm-gutterElement {
-      color: var(--text-muted);
+      color: var(--icon-default);
     }
 
     .cm-yamlScalar,
@@ -175,7 +181,7 @@
 
     .cm-activeLine,
     .cm-activeLineGutter {
-      background: color-mix(in srgb, var(--text-primary) 5%, transparent);
+      background: color-mix(in srgb, var(--text-primary) 4%, transparent);
     }
 
     .cm-selectionMatch {
@@ -205,5 +211,15 @@
   .sourceRegion {
     min-height: 360px;
     margin-bottom: 0;
+  }
+
+  .searchInput:global(.input) {
+    height: $hit-target-touch;
+  }
+
+  .searchActions button {
+    width: $hit-target-touch;
+    min-width: $hit-target-touch;
+    height: $hit-target-touch;
   }
 }

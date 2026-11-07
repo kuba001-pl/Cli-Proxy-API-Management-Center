@@ -47,11 +47,7 @@ export function SectionPayload({
   );
 
   return (
-    <SectionCard
-      title={t('config_management.visual.sections.payload.title')}
-      description={t('config_management.visual.sections.payload.description')}
-      animateIn={animateIn}
-    >
+    <SectionCard title={t('config_management.visual.sections.payload.title')} animateIn={animateIn}>
       <FieldStack>
         <FieldAnchor fieldId="payloadDefaultRules">
           <Collapsible

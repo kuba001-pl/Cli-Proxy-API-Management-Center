@@ -8,6 +8,10 @@ import type {
   XaiQuotaState,
 } from '@/types';
 import { getQuotaCacheKey } from '@/utils/quota/identity';
+import {
+  QUOTA_PROGRESS_HIGH_THRESHOLD,
+  QUOTA_PROGRESS_MEDIUM_THRESHOLD,
+} from './components/QuotaMeter';
 import type { QuotaFileEntry } from './logic';
 import type { QuotaCardState } from './providers';
 import type { QuotaProviderType } from './providers/types';
@@ -146,4 +150,31 @@ export function upcomingQuotaResets(
       )
     )
     .sort((a, b) => a.window.resetAtMs - b.window.resetAtMs || a.key.localeCompare(b.key));
+}
+
+/**
+ * What a provider summary can honestly say. `unavailable` = loaded successfully but the
+ * account reports no percentage window (e.g. xAI monthly billing / paid health).
+ */
+export type QuotaSummaryState = 'data' | 'loading' | 'error' | 'unavailable' | 'idle';
+
+export function quotaSummaryState(
+  hasWindow: boolean,
+  statuses: Array<QuotaCardState['status'] | undefined>
+): QuotaSummaryState {
+  if (hasWindow) return 'data';
+  if (statuses.includes('loading')) return 'loading';
+  if (statuses.includes('success')) return 'unavailable';
+  if (statuses.includes('error')) return 'error';
+  return 'idle';
+}
+
+/** Low but not exhausted: the range the amber meter stands for (see QuotaMeter). */
+export function isQuotaLow(percent: number | null | undefined): boolean {
+  return (
+    typeof percent === 'number' &&
+    Number.isFinite(percent) &&
+    percent < QUOTA_PROGRESS_HIGH_THRESHOLD &&
+    percent >= QUOTA_PROGRESS_MEDIUM_THRESHOLD
+  );
 }

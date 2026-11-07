@@ -23,30 +23,30 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px 24px;
-  padding: 10px;
+  padding: $space-2;
   border: 1px solid var(--border-default);
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--bg-surface) 92%, transparent);
+  border-radius: $radius-lg;
+  background: color-mix(in srgb, var(--bg-floating) 94%, transparent);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-floating);
 }
 
 .status {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding-left: 6px;
+  gap: $space-2;
+  padding-left: $space-2;
   color: var(--text-primary);
-  font-size: 13.5px;
-  font-weight: 600;
-  line-height: 20px;
+  font-size: $text-base;
+  font-weight: 500;
+  line-height: $leading-base;
   white-space: nowrap;
 }
 
 .warningDot {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   flex: 0 0 auto;
   border-radius: 50%;
   background: var(--status-warning);
@@ -70,7 +70,6 @@
   margin-left: auto;
 
   :global(.btn) {
-    font-size: 13px;
     white-space: nowrap;
   }
 }

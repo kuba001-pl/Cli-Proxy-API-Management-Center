@@ -9,15 +9,15 @@
 $tier-pad: 16px;
 $index-size: 22px;
 $rail-x: $tier-pad + 1px + 11px; // tier border + padding + half the index
-$policy-width: 300px;
-$layout-gap: 24px;
+$policy-width: 320px;
+$layout-gap: $space-6;
 $layout-stack: 1100px; // below this the policy panel stacks under the board
 $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 
 .page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: $space-5;
   width: 100%;
   min-width: 0;
   /* While the floating save bar is up, leave room to scroll the last row above it. */
@@ -37,12 +37,7 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 }
 
 .title {
-  margin: 0;
-  font-size: 28px;
-  line-height: 34px;
-  font-weight: 700;
-  letter-spacing: -0.4px;
-  color: var(--text-primary);
+  @include text-page-title;
 }
 
 .headerCopy {
@@ -52,19 +47,17 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   min-width: 0;
 }
 
-.summary {
-  margin: 0;
-  font-family: $font-mono;
-  font-size: 12px;
-  line-height: 16px;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-tertiary);
-}
-
 .headerActions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: $space-2;
+}
+
+/* Only useful once the policy panel stacks under the (long) ladder. */
+.policyJump {
+  @media (min-width: $layout-stack + 1px) {
+    display: none !important;
+  }
 }
 
 /* ---------- layout ---------- */
@@ -83,14 +76,14 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 .board {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: $space-4;
   min-width: 0;
 }
 
 .skeletons {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: $space-4;
 }
 
 .footnote {
@@ -98,9 +91,9 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   max-width: 72ch;
   margin: 0;
   padding-left: $label-x;
-  font-size: 12px;
-  line-height: 1.55;
-  color: var(--text-tertiary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  color: var(--text-secondary);
 
   @include mobile {
     padding-left: 0;
@@ -151,8 +144,9 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   border-radius: 50%;
 }
 
+// A diagram node on the rail, not a status: neutral, like the rest of the ladder.
 .entryDot {
-  background: var(--status-success);
+  background: var(--icon-active);
 }
 
 .exhaustedDot {
@@ -168,8 +162,8 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 }
 
 .entryLabel {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: $text-base;
+  font-weight: 500;
   color: var(--text-primary);
 }
 
@@ -181,16 +175,16 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 }
 
 .exhaustedText {
-  font-size: 12.5px;
-  color: var(--text-tertiary);
+  font-size: $text-sm;
+  color: var(--text-secondary);
 }
 
 .modelPicker {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4px;
-  width: min(100%, 320px);
+  gap: $space-1;
+  width: min(100%, 340px);
 }
 
 .modelInput {
@@ -198,20 +192,15 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   margin: 0;
 }
 
+/* Shared field geometry (36px, --bg-field, --border-control) comes from .input. */
 .modelField:global(.input) {
-  height: 36px;
   padding-top: 0;
   padding-bottom: 0;
-  border-radius: 6px;
-  background: var(--bg-app);
-  font-size: 13px;
 }
 
 .modelProgress {
-  font-family: $font-mono;
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-tertiary);
+  @include text-meta;
+  @include numeric;
 }
 
 /* Gaps carry the rail between tiers and open into drop zones while dragging. */
@@ -245,10 +234,10 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   align-items: center;
   justify-content: center;
   height: 40px;
-  border: 1px dashed var(--border-default);
-  border-radius: 8px;
-  font-size: 12px;
-  color: var(--text-tertiary);
+  border: 1px dashed var(--border-strong);
+  border-radius: $radius-md;
+  font-size: $text-sm;
+  color: var(--text-secondary);
   transition:
     border-color var(--dur-hover) var(--ease-out-strong),
     background-color var(--dur-hover) var(--ease-out-strong),
@@ -269,8 +258,8 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   flex-direction: column;
   gap: 0;
   padding: 0;
-  border: 1px solid var(--border-default);
-  border-radius: 10px;
+  border: 1px solid transparent;
+  border-radius: $radius-lg;
   background: var(--bg-surface);
   transition:
     border-color var(--dur-hover) var(--ease-out-strong),
@@ -287,10 +276,10 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 4px 10px;
+  gap: $space-1 10px;
   min-width: 0;
-  min-height: 48px;
-  padding: 12px $tier-pad;
+  min-height: 52px;
+  padding: $space-3 $tier-pad;
 }
 
 .tierIndex {
@@ -300,10 +289,10 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   flex-shrink: 0;
   width: $index-size;
   height: $index-size;
-  border-radius: 5px;
+  border-radius: $radius-sm;
   background: var(--bg-raised);
-  font-family: $font-mono;
-  font-size: 11.5px;
+  font-family: $font-family;
+  font-size: $text-xs;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--text-secondary);
@@ -313,17 +302,16 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 }
 
 .tierName {
-  font-size: 14px;
-  font-weight: 650;
-  letter-spacing: -0.005em;
+  font-size: $text-md;
+  line-height: $leading-md;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
 .tierPriority,
 .tierPriorityChanged {
-  font-family: $font-mono;
-  font-size: 11.5px;
-  font-variant-numeric: tabular-nums;
+  @include numeric;
+  font-size: $text-sm;
   color: var(--text-tertiary);
 }
 
@@ -335,20 +323,11 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 .tierState {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: $space-2;
   margin-left: auto;
-  font-size: 12px;
-  line-height: 1.4;
-  color: var(--text-tertiary);
-
-  &::before {
-    content: '';
-    flex-shrink: 0;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-  }
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  color: var(--text-secondary);
 
   @include mobile {
     flex-basis: 100%;
@@ -367,16 +346,12 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
     background: var(--bg-active);
     color: var(--text-primary);
   }
-
-  .tierState {
-    color: var(--status-success);
-    font-weight: 600;
-  }
 }
 
-.tierStandby .tierState::before {
-  background: transparent;
-  box-shadow: inset 0 0 0 1.25px currentColor;
+/* Serving and standby are the normal cases: plain text, no dot, no colour. Only a tier that
+   is cooling down (requests skip it) takes the warning tone. */
+.tierStandby .tierState {
+  color: var(--text-tertiary);
 }
 
 .tierCooling .tierState {
@@ -393,16 +368,12 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 
   .tierIndex {
     background: transparent;
-    box-shadow: inset 0 0 0 1px var(--border-default);
+    box-shadow: none;
     color: var(--text-tertiary);
   }
 
   .tierName {
     color: var(--text-secondary);
-  }
-
-  .tierState::before {
-    background: var(--text-muted);
   }
 }
 
@@ -410,13 +381,16 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 
 .policy {
   position: sticky;
-  top: 16px;
+  top: $space-4;
+  container: policy / inline-size;
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  border: 1px solid var(--border-default);
-  border-radius: 10px;
+  gap: $space-6;
+  padding: $space-5;
+  border: 0;
+  border-radius: $radius-lg;
   background: var(--bg-surface);
+  scroll-margin-top: $space-4;
 
   @media (max-width: $layout-stack) {
     position: static;
@@ -426,59 +400,56 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
 .policyHead {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding-bottom: 18px;
+  gap: $space-1;
 }
 
 .policyTitle {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--text-primary);
-}
+  @include text-card-title;
+  scroll-margin-top: $space-4;
 
-.policySubtitle,
-.policyHint {
-  margin: 0;
-  text-wrap: pretty;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--text-tertiary);
-}
-
-/* Sections are separated by hairlines instead of extra boxes. */
-.policySection,
-.policyRow {
-  padding: 18px 0;
-  border-top: 1px solid var(--border-subtle);
-
-  &:last-child {
-    padding-bottom: 0;
+  &:focus-visible {
+    @include focus-ring(2px);
+    border-radius: $radius-sm;
   }
 }
 
+.policyHint {
+  @include text-secondary;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* Groups are separated by space, not rules. */
 .policySection {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: $space-3;
 }
 
 .policyLabel {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--text-tertiary);
+  @include text-eyebrow;
 }
 
-/* Reuse the shared segmented control; wrap long translated labels in the narrow panel. */
+/* The shared segmented control, stacked as a list in the narrow side panel and a single
+   row once the panel has room (stacked layout). */
 .strategyGroup {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
 
   > button {
-    flex: 1 1 auto;
+    justify-content: flex-start;
+    gap: $space-2;
+    padding-inline: $space-3;
+  }
+}
+
+@container policy (min-width: 560px) {
+  .strategyGroup {
+    flex-direction: row;
+    width: auto;
+    align-self: flex-start;
   }
 }
 
@@ -486,78 +457,90 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: $space-4;
 }
 
 .policyRowText {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   min-width: 0;
 }
 
 .policyRowLabel {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: $text-base;
+  line-height: $leading-base;
+  font-weight: 500;
   color: var(--text-primary);
+}
+
+/* Same field tokens as the shared .input: 36px, --bg-field, --border-control, accent focus. */
+@mixin routing-number-input {
+  flex-shrink: 0;
+  height: $control-height;
+  padding: 0 $space-2;
+  border: 1px solid var(--border-control);
+  border-radius: $radius-md;
+  background: var(--bg-field);
+  font-family: $font-family;
+  font-size: $text-base;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  appearance: textfield;
+  transition:
+    border-color var(--dur-hover) var(--ease-out-strong),
+    box-shadow var(--dur-hover) var(--ease-out-strong);
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    margin: 0;
+    appearance: none;
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+    border-color: var(--focus-ring);
+    box-shadow: 0 0 0 1px var(--focus-ring);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @include mobile {
+    height: $hit-target-touch;
+  }
 }
 
 .numberField {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: $space-4;
 
   input {
-    flex-shrink: 0;
-    width: 60px;
-    height: 32px;
-    padding: 0 8px;
-    border: 1px solid var(--border-default);
-    border-radius: 6px;
-    background: var(--bg-app);
-    font-family: $font-mono;
-    font-size: 13px;
-    font-variant-numeric: tabular-nums;
-    color: var(--text-primary);
+    @include routing-number-input;
+    width: 72px;
     text-align: center;
-    appearance: textfield;
-    transition: border-color var(--dur-hover) var(--ease-out-strong);
-
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      margin: 0;
-      appearance: none;
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--text-secondary);
-      outline-offset: 1px;
-    }
-  }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .numberField input:hover:not(:disabled) {
-    border-color: var(--border-strong);
   }
 }
 
 /* ---------- dialogs ---------- */
 
 .dialogHint {
-  margin: 0 0 12px;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--text-secondary);
+  @include text-secondary;
+  margin: 0 0 $space-3;
 }
 
 .dialogNotice {
-  margin: 0 0 12px;
-  padding: 8px 12px;
-  border-radius: 8px;
+  margin: 0 0 $space-3;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
   background: var(--bg-raised);
-  font-size: 12.5px;
+  font-size: $text-sm;
+  line-height: $leading-sm;
   color: var(--text-secondary);
 }
 
@@ -565,7 +548,7 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   display: flex;
   flex-direction: column;
   gap: 0;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: 8px;
 }
 
@@ -573,37 +556,26 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 12px;
+  gap: $space-3;
+  padding: $space-3 0;
 
   & + & {
     border-top: 1px solid var(--border-subtle);
   }
 
   input {
+    @include routing-number-input;
     width: 110px;
-    height: 34px;
-    padding: 0 10px;
-    border: 1px solid var(--border-default);
-    border-radius: 6px;
-    background: var(--bg-app);
-    font-family: $font-mono;
-    font-size: 13px;
-    color: var(--text-primary);
+    padding: 0 $space-3;
     text-align: right;
-
-    &:focus-visible {
-      outline: 2px solid var(--text-secondary);
-      outline-offset: 1px;
-    }
   }
 }
 
 .weightLabel {
   @include text-ellipsis;
-  font-family: $font-mono;
-  font-size: 12.5px;
-  color: var(--text-secondary);
+  @include numeric;
+  font-size: $text-base;
+  color: var(--text-primary);
 }
 
 .changeList {
@@ -614,16 +586,16 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   padding: 0;
   overflow-y: auto;
   list-style: none;
-  border: 1px solid var(--border-default);
-  border-radius: 8px;
+  border: 0;
+  border-radius: $radius-md;
   background: var(--bg-surface);
-  font-family: $font-mono;
-  font-size: 12.5px;
-  line-height: 18px;
+  @include numeric;
+  font-size: $text-sm;
+  line-height: $leading-sm;
   color: var(--text-primary);
 
   li {
-    padding: 12px;
+    padding: $space-3;
     overflow-wrap: anywhere;
 
     & + li {
@@ -637,7 +609,8 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   .gapDrop,
   .tier,
   .tierIndex,
-  .numberField input {
+  .numberField input,
+  .weightRow input {
     transition: none;
   }
 }

@@ -4,37 +4,39 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: $space-6;
   min-width: 0;
   max-width: 100%;
-}
-
-.quickStartForm {
-  gap: 24px;
 }
 
 .section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: $space-4;
   min-width: 0;
 }
 
+// Section heading inside the sheet; the optional tag keeps secondary groups visibly secondary.
+.sectionHeader {
+  display: flex;
+  align-items: baseline;
+  gap: $space-2;
+  padding-top: $space-1;
+}
+
 .sectionTitle {
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0;
+  @include text-card-title;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: $space-2;
+}
+
+.sectionOptional {
+  @include text-meta;
 }
 
 .sectionDesc {
-  font-size: 12px;
-  color: var(--text-tertiary);
-  line-height: 1.5;
+  @include text-secondary;
   margin: 0;
 }
 
@@ -45,29 +47,32 @@
 }
 
 .label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
+  @include text-label;
 }
 
 .labelHint {
-  font-size: 11px;
   color: var(--text-tertiary);
+  font-size: $text-xs;
+  line-height: $leading-xs;
   font-weight: 400;
 }
 
+// Mirrors the shared .input: field fill, >= 3:1 control boundary, accent border + wash on focus.
 .input,
 .textarea {
   width: 100%;
-  height: 36px;
+  height: $control-height;
   padding: 8px 12px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-default);
-  background: var(--bg-app);
+  border-radius: $radius-md;
+  border: 1px solid var(--border-control);
+  background: var(--bg-field);
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: $text-base;
   font-family: inherit;
   box-sizing: border-box;
+  transition:
+    border-color var(--dur-hover) var(--ease-out-strong),
+    box-shadow var(--dur-hover) var(--ease-out-strong);
 
   &::placeholder {
     color: var(--text-tertiary);
@@ -78,14 +83,17 @@
   }
 
   &:focus-visible {
-    border-color: var(--border-strong);
-    outline: 2px solid var(--focus-ring);
-    outline-offset: 2px;
+    border-color: var(--focus-ring);
+    box-shadow: 0 0 0 1px var(--focus-ring);
   }
 
   &:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  @include mobile {
+    height: $hit-target-touch;
   }
 }
 
@@ -109,9 +117,9 @@
   margin-top: 2px;
   width: 16px;
   height: 16px;
-  border-radius: 4px;
-  border: 1px solid var(--border-default);
-  background: var(--bg-app);
+  border-radius: $radius-sm;
+  border: 1px solid var(--border-control);
+  background: var(--bg-field);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -121,22 +129,21 @@
   position: relative;
 
   &:checked {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
+    background: var(--accent);
+    border-color: var(--accent);
   }
 
   &:checked::after {
     content: '';
     width: 8px;
     height: 4px;
-    border-left: 2px solid var(--primary-contrast);
-    border-bottom: 2px solid var(--primary-contrast);
+    border-left: 2px solid var(--text-on-accent);
+    border-bottom: 2px solid var(--text-on-accent);
     transform: rotate(-45deg) translateY(-2px);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
+    @include focus-ring;
   }
 }
 
@@ -149,7 +156,7 @@
 
   small {
     color: var(--text-tertiary);
-    font-size: 11px;
+    font-size: $text-xs;
   }
 }
 
@@ -184,7 +191,7 @@
 }
 
 .dt {
-  font-size: 11px;
+  font-size: $text-xs;
   color: var(--text-tertiary);
   font-weight: 500;
 }
@@ -193,7 +200,8 @@
   margin: 0;
   margin-top: 2px;
   font-size: 12px;
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   color: var(--text-primary);
   word-break: break-word;
 }
@@ -203,7 +211,7 @@
 }
 
 .entryCard {
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: var(--radius-md);
   padding: 12px;
   display: flex;
@@ -212,7 +220,7 @@
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
-  background: var(--bg-surface);
+  background: var(--bg-raised);
 }
 
 .entryCardHeader {
@@ -241,7 +249,7 @@
   cursor: pointer;
 
   &:focus-visible {
-    outline: 2px solid var(--primary-color);
+    outline: 2px solid var(--focus-ring);
     outline-offset: 3px;
     border-radius: var(--radius-sm);
   }
@@ -282,13 +290,14 @@
 
 .sponsorSummaryKey {
   max-width: 140px;
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   color: var(--text-primary);
 }
 
 .sponsorSummaryUrl {
   max-width: min(360px, 45vw);
-  font-family: $font-mono;
+  font-family: $font-family;
   color: var(--text-tertiary);
 }
 
@@ -328,7 +337,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--primary-color);
+    outline: 2px solid var(--focus-ring);
     outline-offset: -1px;
   }
 }
@@ -369,12 +378,12 @@
   gap: 10px;
   min-width: 0;
   padding: 10px 12px;
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
-  background: var(--bg-surface);
+  border: 0;
+  border-radius: $radius-md;
+  background: var(--bg-raised);
   cursor: pointer;
   transition:
-    border-color var(--dur-hover) var(--ease-out-strong),
+    box-shadow var(--dur-hover) var(--ease-out-strong),
     background-color var(--dur-hover) var(--ease-out-strong);
 
   input {
@@ -388,13 +397,15 @@
   }
 
   &:hover {
-    border-color: var(--primary-color);
+    background: var(--bg-active);
   }
 }
 
-.sponsorUrlOptionActive {
-  border-color: var(--primary-color);
-  background: var(--primary-10);
+// Selected: accent wash plus an inset accent ring (tone alone is ambiguous between two options).
+.sponsorUrlOptionActive,
+.sponsorUrlOptionActive:hover {
+  background: var(--accent-subtle);
+  box-shadow: inset 0 0 0 1px var(--accent-text);
 }
 
 .sponsorUrlOptionText {
@@ -406,8 +417,9 @@
   color: var(--text-primary);
 
   small {
-    font-family: $font-mono;
-    font-size: 11px;
+    font-family: $font-family;
+    font-variant-numeric: tabular-nums;
+    font-size: $text-xs;
     line-height: 1.4;
     color: var(--text-tertiary);
     overflow-wrap: anywhere;
@@ -436,9 +448,9 @@
   flex-direction: column;
   gap: 4px;
   padding: 10px 12px;
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
-  background: var(--bg-surface);
+  border: 0;
+  border-radius: $radius-md;
+  background: var(--bg-raised);
 }
 
 .sponsorProtocolName {
@@ -448,50 +460,12 @@
 }
 
 .sponsorProtocolUrl {
-  font-family: $font-mono;
-  font-size: 11px;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
+  font-size: $text-xs;
   line-height: 1.4;
   color: var(--text-tertiary);
   overflow-wrap: anywhere;
-}
-
-.sponsorUsageSection {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.sponsorUsageResult {
-  width: 100%;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 8px 10px;
-  border: 1px solid color-mix(in srgb, var(--success-color) 34%, var(--border-default));
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--success-color) 8%, var(--bg-app));
-  color: var(--text-primary);
-  font-size: 11px;
-  line-height: 1.4;
-}
-
-.sponsorUsageResultWarning {
-  color: var(--warning-text);
-  border-color: var(--warning-border);
-  background: var(--warning-bg);
-}
-
-.sponsorUsageMain {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 500;
-}
-
-.sponsorUsageMeta {
-  color: var(--text-tertiary);
 }
 
 .connectivityRow {
@@ -505,13 +479,15 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 28px;
-  padding: 0 12px;
+  height: $control-height-sm;
+  padding: 0 $space-3;
   border-radius: var(--radius-md);
+  // Shared secondary-button face, so Test never reads as grey on the grey panel.
   border: 1px solid var(--border-default);
-  background: var(--bg-app);
+  background: var(--bg-field);
+  box-shadow: var(--shadow-control, none);
   color: var(--text-primary);
-  font-size: 12px;
+  font-size: $text-sm;
   font-weight: 500;
   cursor: pointer;
   transition:
@@ -519,8 +495,8 @@
     border-color var(--dur-hover) var(--ease-out-strong);
 
   &:hover:not(:disabled) {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
+    background: var(--bg-raised);
+    border-color: var(--border-strong);
   }
 
   &:disabled {
@@ -539,7 +515,7 @@
   border: 1px solid transparent;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 11px;
+  font-size: $text-xs;
   font-weight: 500;
   cursor: pointer;
   transition:
@@ -563,14 +539,15 @@
   color: var(--destructive-color);
   padding: 8px 10px;
   border-radius: var(--radius-md);
-  font-size: 11px;
+  font-size: $text-xs;
   line-height: 1.4;
   word-break: break-word;
 }
 
+// A passed connectivity test is a status, so it takes the success tone, not the accent.
 .connectivityHintSuccess {
-  font-size: 11px;
-  color: var(--primary-color);
+  font-size: $text-xs;
+  color: var(--status-success);
 }
 
 .statusIcon {
@@ -599,7 +576,7 @@
   flex-direction: column;
   gap: 10px;
   padding: 12px;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: var(--radius-md);
   background: var(--bg-surface);
 }
@@ -630,11 +607,11 @@
   width: 100%;
   height: 32px;
   padding: 6px 10px 6px 30px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-default);
-  background: var(--bg-app);
+  border-radius: $radius-md;
+  border: 1px solid var(--border-control);
+  background: var(--bg-field);
   color: var(--text-primary);
-  font-size: 12px;
+  font-size: $text-sm;
   box-sizing: border-box;
 
   &::placeholder {
@@ -646,9 +623,8 @@
   }
 
   &:focus-visible {
-    border-color: var(--border-strong);
-    outline: 2px solid var(--focus-ring);
-    outline-offset: 2px;
+    border-color: var(--focus-ring);
+    box-shadow: 0 0 0 1px var(--focus-ring);
   }
 }
 
@@ -657,7 +633,7 @@
   text-align: center;
   font-size: 12px;
   color: var(--text-tertiary);
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: var(--radius-md);
   background: var(--bg-app);
 }
@@ -676,7 +652,7 @@
 }
 
 .discoveryCount {
-  font-size: 11px;
+  font-size: $text-xs;
   color: var(--text-tertiary);
   font-variant-numeric: tabular-nums;
 }
@@ -690,7 +666,7 @@
   gap: 2px;
   max-height: 240px;
   overflow-y: auto;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: var(--radius-md);
   background: var(--bg-app);
 }
@@ -701,7 +677,7 @@
   justify-content: space-between;
   gap: 8px;
   padding: 8px 10px;
-  border-bottom: 1px solid var(--border-default);
+  border-bottom: 1px solid var(--border-subtle);
   font-size: 12px;
   color: var(--text-primary);
 
@@ -716,7 +692,8 @@
 }
 
 .discoveryName {
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 12px;
   word-break: break-all;
 }
@@ -729,18 +706,18 @@
 }
 
 .discoveryAlias {
-  font-size: 11px;
+  font-size: $text-xs;
   color: var(--text-tertiary);
   word-break: break-all;
 }
 
 .discoveryAddedTag {
-  font-size: 11px;
+  font-size: $text-xs;
   color: var(--text-tertiary);
   padding: 2px 8px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-default);
-  background: var(--bg-app);
+  border-radius: $radius-sm;
+  border: 0;
+  background: var(--bg-raised);
 }
 
 .discoveryFooter {
@@ -794,13 +771,14 @@
 .passwordInput {
   @extend .input;
   padding-right: 36px;
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 12.5px;
 }
 
 // URLs, proxy addresses and header names/values use the mono scale (brief typography).
 .inputMono {
-  font-family: $font-mono;
+  font-family: $font-family;
   font-size: 12.5px;
 }
 
@@ -867,9 +845,9 @@
   flex-direction: column;
   gap: 10px;
   padding: 12px;
-  border: 1px solid var(--border-default);
+  border: 0;
   border-radius: var(--radius-md);
-  background: var(--bg-surface);
+  background: var(--bg-raised);
 }
 
 .thinkingFieldset {
@@ -884,7 +862,7 @@
 .thinkingExistingHint {
   margin: 0;
   color: var(--warning-color);
-  font-size: 11px;
+  font-size: $text-xs;
   line-height: 1.5;
 }
 
@@ -902,9 +880,9 @@
   width: 100%;
   min-width: 0;
   padding: 8px 10px;
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
-  background: var(--bg-app);
+  border: 0;
+  border-radius: $radius-md;
+  background: var(--bg-raised);
   box-sizing: border-box;
 }
 
@@ -921,14 +899,15 @@
 
   code {
     color: var(--text-tertiary);
-    font-size: 10px;
+    font-size: $text-xs;
     font-weight: 400;
   }
 }
 
+// Selected chip: the shared neutral selection (raised tone plus a strong ring), no accent tint.
 .thinkingLevelOptionSelected {
-  border-color: color-mix(in srgb, var(--primary-color) 50%, var(--border-default));
-  background: color-mix(in srgb, var(--primary-color) 8%, var(--bg-app));
+  border-color: var(--border-strong);
+  background: var(--bg-selected);
 
   .thinkingLevelLabel {
     color: var(--text-primary);
@@ -950,7 +929,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   color: var(--text-primary);
 }
 
@@ -959,10 +939,10 @@
   align-items: center;
   padding: 1px 7px;
   border-radius: 4px;
-  border: 1px solid var(--border-default);
+  border: 0;
   background: var(--bg-raised);
   color: var(--text-tertiary);
-  font-size: 10px;
+  font-size: $text-xs;
   font-weight: 500;
   white-space: nowrap;
   flex-shrink: 0;
@@ -975,16 +955,16 @@
   gap: 6px;
   padding: 6px 12px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-default);
-  background: var(--bg-app);
+  border: 1px solid transparent;
+  background: var(--bg-raised);
   color: var(--text-secondary);
   cursor: pointer;
   font-size: 12px;
   font-weight: 500;
 
   &:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
+    background: var(--bg-active);
+    color: var(--text-primary);
   }
 }
 
@@ -1016,8 +996,8 @@
   gap: 6px;
   padding: 6px 12px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-default);
-  background: var(--bg-app);
+  border: 1px solid transparent;
+  background: var(--bg-raised);
   color: var(--text-secondary);
   cursor: pointer;
   font-size: 12px;
@@ -1025,8 +1005,8 @@
   align-self: flex-start;
 
   &:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
+    background: var(--bg-active);
+    color: var(--text-primary);
   }
 }
 
@@ -1061,8 +1041,8 @@
 }
 
 .footerBtnOutline {
-  border-color: var(--border-default);
-  background: var(--bg-app);
+  border-color: transparent;
+  background: var(--bg-raised);
 
   &:hover:not(:disabled) {
     background: var(--bg-raised);
@@ -1107,8 +1087,8 @@
   min-width: 0;
   max-width: 100%;
   padding: 8px 12px;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-default);
+  background: var(--bg-raised);
+  border: 0;
   border-radius: 8px;
   font-size: 12px;
 }
@@ -1122,13 +1102,14 @@
   border-radius: 50%;
   background: var(--button-primary-bg);
   color: var(--button-primary-fg);
-  font-size: 11px;
+  font-size: $text-xs;
   font-weight: 600;
   flex-shrink: 0;
 }
 
 .apiKeyEntryKey {
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-weight: 600;
   color: var(--text-primary);
   min-width: 0;
@@ -1139,7 +1120,7 @@
 
 .apiKeyEntryProxy {
   color: var(--text-tertiary);
-  font-size: 11px;
+  font-size: $text-xs;
   min-width: 0;
   max-width: 100%;
   overflow-wrap: anywhere;
@@ -1163,7 +1144,7 @@
   gap: 3px;
   padding: 2px 6px;
   border-radius: 10px;
-  font-size: 10px;
+  font-size: $text-xs;
   font-weight: 600;
 
   svg {
@@ -1229,6 +1210,33 @@
   transform: translateY(-50%);
   pointer-events: none;
   color: var(--text-primary);
-  font-family: $font-mono;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
   font-size: 13px;
+}
+
+.routingCollapsible {
+  min-width: 0;
+}
+
+// Touch layouts: the key reveal toggle and the connectivity Test button get full 40px targets
+// (the glyph stays small); the input reserves room so text never runs under the toggle.
+@include mobile {
+  .passwordInput {
+    padding-right: $hit-target-touch + 4px;
+  }
+
+  .passwordToggle {
+    right: 0;
+    width: $hit-target-touch;
+    height: $hit-target-touch;
+    padding: 0;
+  }
+
+  .connectivityBtn {
+    height: $hit-target-touch;
+    min-width: 64px;
+    justify-content: center;
+    padding: 0 $space-4;
+  }
 }

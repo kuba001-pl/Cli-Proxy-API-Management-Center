@@ -85,12 +85,12 @@ export function OAuthPage() {
         ? card.label
         : t(card.label.key);
 
+  // Browser sign-in is the default and needs no caption; only a different flow or a
+  // site domain is worth a line under the name.
   const captionOf = (card: OAuthProviderCard) => {
     if (card.kind === 'plugin') return t('auth_login.method_plugin');
-    const method = t(
-      card.flow === 'device' ? 'auth_login.method_device' : 'auth_login.method_browser'
-    );
-    return card.domain ? `${card.domain} · ${method}` : method;
+    const method = card.flow === 'device' ? t('auth_login.method_device') : '';
+    return [card.domain, method].filter(Boolean).join(' · ');
   };
 
   const iconOf = (card: OAuthProviderCard) =>
@@ -174,6 +174,7 @@ export function OAuthPage() {
         index={index + tileIndexOffset}
         status={status}
         statusLabel={tileStatusLabel(status)}
+        actionLabel={t('auth_login.tile_action_sign_in')}
         onOpen={() => openProvider(card)}
       />
     );
@@ -197,6 +198,7 @@ export function OAuthPage() {
           caption={t('auth_login.sponsor_kimi_caption')}
           icon={iconOf(sponsorCards[0])}
           signUpLabel={t('auth_login.sponsor_sign_up')}
+          signInLabel={t('auth_login.tile_action_sign_in')}
           sites={sponsorSites}
           onOpen={(siteId) => {
             const card = sponsorCards.find((sponsor) => sponsor.id === siteId);
@@ -216,6 +218,7 @@ export function OAuthPage() {
             caption={t('vertex_import.file_label')}
             icon={iconVertex}
             index={regularCards.length + tileIndexOffset}
+            actionLabel={t('auth_login.tile_action_import')}
             onOpen={openVertex}
           />
           <ProviderTile
@@ -223,6 +226,7 @@ export function OAuthPage() {
             caption={t('siwc.tile_caption')}
             icon={iconCodex}
             index={regularCards.length + tileIndexOffset + 1}
+            actionLabel={t('auth_login.tile_action_bind')}
             onOpen={openSiwc}
           />
         </div>

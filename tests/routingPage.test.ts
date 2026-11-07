@@ -156,7 +156,8 @@ describe('routing board rendering', () => {
     );
     expect(html).toContain('role="radiogroup"');
     expect(html).toMatch(/role="radio" aria-checked="true" tabindex="0"[^>]*>.*Weighted/);
-    expect(html).toContain('Requests are split across the tier by weight.');
+    // De-slop: the strategy names speak for themselves; no per-strategy explanation.
+    expect(html).not.toContain('Requests are split across the tier by weight.');
   });
 
   test('styles respect reduced motion and the route is registered behind navigation', () => {
@@ -193,7 +194,7 @@ describe('routing save bar', () => {
     expect(shared).toContain('if (!visible');
     expect(shared).toContain('useActionBarHeightVar(containerRef, heightVar, visible)');
     expect(styles).toContain('left: var(--content-center-x, 50%)');
-    expect(styles).toContain('border-radius: 10px');
+    expect(styles).toContain('border-radius: $radius-lg');
     expect(styles).toContain('-webkit-backdrop-filter: blur(12px)');
     // Review-before-save stays: the bar's save opens the change review dialog.
     expect(page).toContain('onSave={() => setReviewOpen(true)}');

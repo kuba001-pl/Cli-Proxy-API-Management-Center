@@ -1,30 +1,28 @@
-/* SIWC 状态药丸：配方同凭证卡片的 priority 药丸（mono / 全圆角 / 淡底细边）。 */
+@use '../../../styles/mixins' as *;
+
+/*
+ * SIWC binding state. A working binding ("Active") and no binding are plain meta text;
+ * only "bound but not in use" asks for attention, so only it gets a tinted tag.
+ */
 
 .badge {
-  --siwc-tone: var(--text-quaternary);
-
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 2px 8px;
-  border: 1px solid color-mix(in srgb, var(--siwc-tone) 26%, transparent);
-  border-radius: $radius-full;
-  background: color-mix(in srgb, var(--siwc-tone) 9%, transparent);
-  font-family: $font-mono;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.35;
+  gap: 4px;
+  font-family: $font-family;
+  font-variant-numeric: tabular-nums;
+  font-size: $text-xs;
+  font-weight: 400;
+  line-height: $leading-xs;
   white-space: nowrap;
   color: var(--text-secondary);
 
-  &[data-status='active'] {
-    --siwc-tone: var(--viz-success);
-    color: color-mix(in srgb, var(--viz-success) 78%, var(--text-primary));
-  }
-
   &[data-status='bound'] {
-    --siwc-tone: var(--amber-color);
-    color: color-mix(in srgb, var(--amber-color) 72%, var(--text-primary));
+    padding: 0 6px;
+    border-radius: $radius-sm;
+    @include status-tone(warning);
+    font-weight: 500;
+    line-height: 18px;
   }
 
   &[data-status='unbound'] {
@@ -32,27 +30,6 @@
   }
 }
 
-.dot {
-  flex-shrink: 0;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--siwc-tone);
-}
-
 .label {
-  font-size: 10px;
-  letter-spacing: 0.04em;
-  opacity: 0.78;
-}
-
-.badge[data-status='unbound'] {
-  background: none;
-  border: 0;
-  padding: 0;
-  font-size: 10px;
-  font-weight: 400;
-}
-.badge[data-status='unbound'] .dot {
-  display: none;
+  font-size: $text-xs;
 }

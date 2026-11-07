@@ -1,8 +1,8 @@
 .section {
   border-block: 1px solid var(--border-color);
   color: var(--warning-text);
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: $text-sm;
+  line-height: $leading-sm;
 }
 
 .summary {
@@ -20,7 +20,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--primary-color);
+    outline: 2px solid var(--focus-ring);
     outline-offset: 3px;
   }
 }
@@ -46,7 +46,8 @@
 
 .next {
   color: var(--text-secondary);
-  font-size: 11px;
+  font-size: $text-xs;
+  line-height: $leading-xs;
 }
 
 .chevron {
@@ -70,7 +71,7 @@
 
 .row {
   padding-block: 9px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-subtle);
 }
 
 .rowHead {
@@ -106,8 +107,8 @@
 .note,
 .unknown {
   color: var(--text-tertiary);
-  font-size: 11px;
-  line-height: 1.5;
+  font-size: $text-xs;
+  line-height: $leading-xs;
   overflow-wrap: anywhere;
 }
 
@@ -123,6 +124,7 @@
 
 .note {
   margin-top: 6px;
+  max-width: 72ch;
 }
 
 .actionRow {

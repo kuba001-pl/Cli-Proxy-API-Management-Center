@@ -3,8 +3,8 @@ import type { SiwcBindingStatus } from '../siwcBinding';
 import styles from './SiwcStatusBadge.module.scss';
 
 /**
- * SIWC 绑定状态药丸：状态点 + 简短状态词，mono 小字，与卡片元数据行同一语汇。
- * `withLabel` 在上下文不言自明时（SIWC 对话框内）去掉 “SIWC” 前缀。
+ * SIWC binding state as short meta text; only "bound · inactive" is tinted (needs attention).
+ * `withLabel` drops the "SIWC" prefix where the context already says it (inside the dialog).
  */
 export function SiwcStatusBadge({
   status,
@@ -16,7 +16,6 @@ export function SiwcStatusBadge({
   const { t } = useTranslation();
   return (
     <span className={styles.badge} data-status={status}>
-      <span className={styles.dot} aria-hidden="true" />
       {withLabel && <span className={styles.label}>SIWC</span>}
       <span>{t(`siwc.${status}`)}</span>
     </span>

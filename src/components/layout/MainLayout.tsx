@@ -15,6 +15,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { resolveNavTarget } from './navTarget';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { PageTransition } from '@/components/common/PageTransition';
 import { MainRoutes } from '@/router/MainRoutes';
 import { authFilesApi, pluginsApi } from '@/services/api';
@@ -24,6 +25,7 @@ import {
   IconSidebarDashboard,
   IconSidebarLogs,
   IconSidebarOauth,
+  IconSidebarPluginPage,
   IconSidebarPlugins,
   IconSidebarProviders,
   IconSidebarQuota,
@@ -53,7 +55,6 @@ import { triggerHeaderRefresh } from '@/hooks/useHeaderRefresh';
 import { LANGUAGE_LABEL_KEYS, LANGUAGE_ORDER } from '@/utils/constants';
 import { isSupportedLanguage } from '@/utils/language';
 import { getSidebarShortcutLabel, isSidebarToggleShortcut } from '@/utils/sidebarShortcut';
-import type { Theme } from '@/types';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
 import { privacyText } from '@/utils/privacy';
 
@@ -106,7 +107,11 @@ interface SidebarNavGroup {
 const flattenNavItems = (items: SidebarNavItem[]): SidebarNavLinkItem[] =>
   items.flatMap((item) => (item.kind === 'drawer' ? item.children : [item]));
 
-/** 点击菜单外或按下 Escape 时关闭弹出菜单 */
+/**
+ * 点击菜单外或按下 Escape 时关闭弹出菜单。
+ * Menu-button keyboard pattern: opening focuses the checked (or first) item, Arrow/Home/End move
+ * between items, and closing while focus is inside the menu returns focus to the trigger.
+ */
 function useMenuDismiss(
   open: boolean,
   menuRef: RefObject<HTMLDivElement | null>,
@@ -117,24 +122,76 @@ function useMenuDismiss(
       return;
     }
 
+    const container = menuRef.current;
+    const getTrigger = () =>
+      container?.querySelector<HTMLButtonElement>('button[aria-haspopup="menu"]') ?? null;
+    const getItems = () =>
+      Array.from(container?.querySelectorAll<HTMLElement>('[role^="menuitem"]') ?? []);
+    // Whether the menu currently owns focus. Cleared as soon as focus moves to anything outside
+    // the menu, so a later dismissal never pulls focus back from the user's new control.
+    let focusInside = false;
+    const trackFocus = (event: FocusEvent) => {
+      focusInside = getItems().includes(event.target as HTMLElement);
+    };
+    const handleFocusOut = (event: FocusEvent) => {
+      const next = event.relatedTarget as Node | null;
+      // null: the item was unmounted by a selection, or the window lost focus; keep ownership.
+      if (!next || container?.contains(next)) return;
+      focusInside = false;
+      onClose();
+    };
+
+    const frame = requestAnimationFrame(() => {
+      const items = getItems();
+      (items.find((item) => item.getAttribute('aria-checked') === 'true') ?? items[0])?.focus();
+    });
+
     const handlePointerDown = (event: MouseEvent) => {
-      if (!menuRef.current?.contains(event.target as Node)) {
+      if (!container?.contains(event.target as Node)) {
         onClose();
       }
     };
 
-    const handleEscape = (event: KeyboardEvent) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onClose();
+        getTrigger()?.focus();
+        return;
       }
+      const items = getItems();
+      const index = items.indexOf(document.activeElement as HTMLElement);
+      if (index === -1) return;
+      const next =
+        event.key === 'ArrowDown'
+          ? (index + 1) % items.length
+          : event.key === 'ArrowUp'
+            ? (index - 1 + items.length) % items.length
+            : event.key === 'Home'
+              ? 0
+              : event.key === 'End'
+                ? items.length - 1
+                : -1;
+      if (next === -1) return;
+      event.preventDefault();
+      items[next]?.focus();
     };
 
     document.addEventListener('mousedown', handlePointerDown);
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleKeyDown);
+    container?.addEventListener('focusin', trackFocus);
+    container?.addEventListener('focusout', handleFocusOut);
 
     return () => {
+      cancelAnimationFrame(frame);
       document.removeEventListener('mousedown', handlePointerDown);
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleKeyDown);
+      container?.removeEventListener('focusin', trackFocus);
+      container?.removeEventListener('focusout', handleFocusOut);
+      // Selecting an item unmounts it; hand focus back to the trigger instead of <body>. Only do
+      // so while focus is still in the menu (or was dropped to <body> by the unmount).
+      const active = document.activeElement;
+      const focusDropped = !active || active === document.body || container?.contains(active);
+      if (focusInside && focusDropped) getTrigger()?.focus();
     };
   }, [open, menuRef, onClose]);
 }
@@ -146,7 +203,7 @@ function PluginSidebarIcon({ src }: { src: string }) {
   return showImage ? (
     <img src={src} alt="" onError={() => setFailed(true)} />
   ) : (
-    <IconSidebarPlugins size={18} />
+    <IconSidebarPluginPage size={18} />
   );
 }
 
@@ -219,37 +276,6 @@ const headerIcons = {
       <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" />
     </svg>
   ),
-  whiteTheme: (
-    <svg {...headerIconProps}>
-      <circle cx="12" cy="12" r="7" />
-      <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" />
-    </svg>
-  ),
-  autoTheme: (
-    <svg {...headerIconProps}>
-      <defs>
-        <clipPath id="mainLayoutAutoThemeSunLeftHalf">
-          <rect x="0" y="0" width="12" height="24" />
-        </clipPath>
-      </defs>
-      <circle cx="12" cy="12" r="4" />
-      <circle
-        cx="12"
-        cy="12"
-        r="4"
-        clipPath="url(#mainLayoutAutoThemeSunLeftHalf)"
-        fill="currentColor"
-      />
-      <path d="M12 2v2" />
-      <path d="M12 20v2" />
-      <path d="M4.93 4.93l1.41 1.41" />
-      <path d="M17.66 17.66l1.41 1.41" />
-      <path d="M2 12h2" />
-      <path d="M20 12h2" />
-      <path d="M6.34 17.66l-1.41 1.41" />
-      <path d="M19.07 4.93l-1.41 1.41" />
-    </svg>
-  ),
   logout: (
     <svg {...headerIconProps}>
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -258,13 +284,6 @@ const headerIcons = {
     </svg>
   ),
 };
-
-const THEME_CARDS: Array<{ key: Theme; labelKey: string }> = [
-  { key: 'auto', labelKey: 'theme.auto' },
-  { key: 'white', labelKey: 'theme.white' },
-  { key: 'light', labelKey: 'theme.light' },
-  { key: 'dark', labelKey: 'theme.dark' },
-];
 
 export function MainLayout() {
   const { t } = useTranslation();
@@ -281,8 +300,8 @@ export function MainLayout() {
   const fetchConfig = useConfigStore((state) => state.fetchConfig);
   const clearCache = useConfigStore((state) => state.clearCache);
 
-  const theme = useThemeStore((state) => state.theme);
   const setTheme = useThemeStore((state) => state.setTheme);
+  const resolvedTheme = useThemeStore((state) => state.resolvedTheme);
   const language = useLanguageStore((state) => state.language);
   const setLanguage = useLanguageStore((state) => state.setLanguage);
 
@@ -297,7 +316,6 @@ export function MainLayout() {
     top: number;
   } | null>(null);
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
-  const [themeMenuOpen, setThemeMenuOpen] = useState(false);
   const [pluginResources, setPluginResources] = useState<PluginResourceEntry[]>([]);
   const [expandedPluginResourceIDs, setExpandedPluginResourceIDs] = useState<Set<string>>(
     () => new Set()
@@ -307,7 +325,6 @@ export function MainLayout() {
   const railTooltipRef = useRef<HTMLDivElement | null>(null);
   const focusedRailItemRef = useRef<HTMLElement | null>(null);
   const languageMenuRef = useRef<HTMLDivElement | null>(null);
-  const themeMenuRef = useRef<HTMLDivElement | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
 
   const fullBrandName = 'CLI Proxy API Management Center';
@@ -316,6 +333,8 @@ export function MainLayout() {
   const isLogsPage = location.pathname.startsWith('/logs');
   const isPluginResourcePage = location.pathname.startsWith('/plugin-pages');
   const showSidebarLabels = !sidebarCollapsed || sidebarOpen;
+  // Phones: the off-canvas drawer must not hold focusable links while it is closed.
+  const isMobileShell = useMediaQuery('(max-width: 768px)');
 
   // Keep floating header height available to sticky mobile elements and overlays.
   useLayoutEffect(() => {
@@ -407,27 +426,18 @@ export function MainLayout() {
   }, []);
 
   const closeLanguageMenu = useCallback(() => setLanguageMenuOpen(false), []);
-  const closeThemeMenu = useCallback(() => setThemeMenuOpen(false), []);
   useMenuDismiss(languageMenuOpen, languageMenuRef, closeLanguageMenu);
-  useMenuDismiss(themeMenuOpen, themeMenuRef, closeThemeMenu);
 
   const toggleLanguageMenu = useCallback(() => {
     setLanguageMenuOpen((prev) => !prev);
-    setThemeMenuOpen(false);
   }, []);
 
-  const toggleThemeMenu = useCallback(() => {
-    setThemeMenuOpen((prev) => !prev);
+  // One control, two themes: flip whatever is currently shown between dark and Pure White.
+  const isDarkTheme = resolvedTheme === 'dark';
+  const toggleTheme = useCallback(() => {
     setLanguageMenuOpen(false);
-  }, []);
-
-  const handleThemeSelect = useCallback(
-    (nextTheme: Theme) => {
-      setTheme(nextTheme);
-      setThemeMenuOpen(false);
-    },
-    [setTheme]
-  );
+    setTheme(isDarkTheme ? 'white' : 'dark');
+  }, [isDarkTheme, setTheme]);
 
   const handleLanguageSelect = useCallback(
     (nextLanguage: string) => {
@@ -993,7 +1003,50 @@ export function MainLayout() {
             {sidebarOpen ? headerIcons.close : headerIcons.menu}
           </Button>
         </div>
+      </header>
 
+      <div className="main-body">
+        <button
+          type="button"
+          className={`sidebar-backdrop ${sidebarOpen ? 'visible' : ''}`}
+          onClick={() => setSidebarOpen(false)}
+          aria-label={t('common.close')}
+          aria-hidden={!sidebarOpen}
+          tabIndex={sidebarOpen ? 0 : -1}
+        />
+
+        <aside
+          className={`sidebar ${sidebarOpen ? 'open' : ''} ${sidebarCollapsed ? 'collapsed' : ''}`}
+          inert={isMobileShell && !sidebarOpen}
+        >
+          <div className="sidebar-header">
+            <div className="sidebar-brand" title={fullBrandName}>
+              <img src={INLINE_LOGO_JPEG} alt="" className="sidebar-brand-logo" />
+              {showSidebarLabels && (
+                <span className="sidebar-brand-text">
+                  <span className="sidebar-brand-title">{abbrBrandName}</span>
+                  <span className="sidebar-brand-subtitle">{t('sidebar.subtitle')}</span>
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="nav-section">
+            {navGroups.map((group, idx) => (
+              <div className="nav-group" key={group.id}>
+                {showSidebarLabels ? (
+                  <div className="nav-group-label">{t(group.labelKey)}</div>
+                ) : (
+                  idx > 0 && <div className="nav-group-divider" aria-hidden="true" />
+                )}
+                {group.items.map((item) => renderNavItem(item))}
+              </div>
+            ))}
+          </div>
+        </aside>
+
+        {/* Global utilities come after navigation in DOM and focus order: docked in the sidebar
+            footer on desktop, floating top-right on phones (positioned in layout.scss). */}
         <div className="header-actions floating-actions">
           <Button
             variant="ghost"
@@ -1049,54 +1102,15 @@ export function MainLayout() {
               </div>
             )}
           </div>
-          <div className={`theme-menu ${themeMenuOpen ? 'open' : ''}`} ref={themeMenuRef}>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleThemeMenu}
-              title={t('theme.switch')}
-              aria-label={t('theme.switch')}
-              aria-haspopup="menu"
-              aria-expanded={themeMenuOpen}
-            >
-              {theme === 'auto'
-                ? headerIcons.autoTheme
-                : theme === 'dark'
-                  ? headerIcons.moon
-                  : theme === 'white'
-                    ? headerIcons.whiteTheme
-                    : headerIcons.sun}
-            </Button>
-            {themeMenuOpen && (
-              <div
-                className="notification entering theme-menu-popover"
-                role="menu"
-                aria-label={t('theme.switch')}
-              >
-                {THEME_CARDS.map((tc) => (
-                  <button
-                    key={tc.key}
-                    type="button"
-                    className={`theme-card ${theme === tc.key ? 'active' : ''}`}
-                    onClick={() => handleThemeSelect(tc.key)}
-                    role="menuitemradio"
-                    aria-checked={theme === tc.key}
-                  >
-                    <span className="theme-card-preview" aria-hidden="true">
-                      {tc.key === 'auto'
-                        ? headerIcons.autoTheme
-                        : tc.key === 'dark'
-                          ? headerIcons.moon
-                          : tc.key === 'white'
-                            ? headerIcons.whiteTheme
-                            : headerIcons.sun}
-                    </span>
-                    <span className="theme-card-label">{t(tc.labelKey)}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleTheme}
+            title={t(isDarkTheme ? 'theme.switch_to_light' : 'theme.switch_to_dark')}
+            aria-label={t(isDarkTheme ? 'theme.switch_to_light' : 'theme.switch_to_dark')}
+          >
+            {isDarkTheme ? headerIcons.sun : headerIcons.moon}
+          </Button>
           <Button
             variant="ghost"
             size="sm"
@@ -1107,46 +1121,6 @@ export function MainLayout() {
             {headerIcons.logout}
           </Button>
         </div>
-      </header>
-
-      <div className="main-body">
-        <button
-          type="button"
-          className={`sidebar-backdrop ${sidebarOpen ? 'visible' : ''}`}
-          onClick={() => setSidebarOpen(false)}
-          aria-label={t('common.close')}
-          aria-hidden={!sidebarOpen}
-          tabIndex={sidebarOpen ? 0 : -1}
-        />
-
-        <aside
-          className={`sidebar ${sidebarOpen ? 'open' : ''} ${sidebarCollapsed ? 'collapsed' : ''}`}
-        >
-          <div className="sidebar-header">
-            <div className="sidebar-brand" title={fullBrandName}>
-              <img src={INLINE_LOGO_JPEG} alt="" className="sidebar-brand-logo" />
-              {showSidebarLabels && (
-                <span className="sidebar-brand-text">
-                  <span className="sidebar-brand-title">{abbrBrandName}</span>
-                  <span className="sidebar-brand-subtitle">{t('sidebar.subtitle')}</span>
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="nav-section">
-            {navGroups.map((group, idx) => (
-              <div className="nav-group" key={group.id}>
-                {showSidebarLabels ? (
-                  <div className="nav-group-label">{t(group.labelKey)}</div>
-                ) : (
-                  idx > 0 && <div className="nav-group-divider" aria-hidden="true" />
-                )}
-                {group.items.map((item) => renderNavItem(item))}
-              </div>
-            ))}
-          </div>
-        </aside>
 
         {railTooltip && (
           <div

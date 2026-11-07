@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
+import { formatDisplayDateTime } from '@/utils/dateFormat';
 import { privacyText } from '@/utils/privacy';
 import type { PluginQuotaMetric, PluginQuotaState } from '@/types';
 import { QuotaMeter } from '../../components/QuotaMeter';
@@ -8,7 +9,7 @@ import type { QuotaBodyProps } from '../../types';
 const formatReset = (value: string | undefined): string => {
   if (!value) return '-';
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+  return Number.isNaN(date.getTime()) ? value : formatDisplayDateTime(date);
 };
 
 const formatMetric = (metric: PluginQuotaMetric): string => {

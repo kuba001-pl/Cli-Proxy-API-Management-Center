@@ -1,11 +1,12 @@
 @use '../../../styles/mixins' as *;
 @use '../../../styles/variables' as *;
 
+/* Data table: sans, hairline rows, quiet header, comfortable 44px+ rows. Full width is fine. */
 .wrap {
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border: 0;
+  border-radius: $radius-lg;
   overflow: hidden;
-  background: var(--bg-primary);
+  background: var(--bg-surface);
 }
 
 .scroll {
@@ -16,21 +17,25 @@
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  font-size: 13px;
+  font-size: $text-base;
+  line-height: $leading-base;
   color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 }
 
 .head {
-  background: var(--muted-bg);
+  background: transparent;
 
   th {
     color: var(--text-tertiary);
     font-weight: 500;
-    font-size: 12px;
+    font-size: $text-xs;
+    line-height: $leading-xs;
     text-align: left;
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border-subtle);
-    vertical-align: middle;
+    padding: 12px 16px 10px;
+    border-bottom: 1px solid var(--border-default);
+    vertical-align: bottom;
+    white-space: nowrap;
   }
 
   th.alignRight {
@@ -39,25 +44,24 @@
 }
 
 .body {
-  background: var(--bg-primary);
+  background: transparent;
 }
 
 .row {
   transition: background-color $transition-fast;
 
   td {
-    padding: 12px 14px;
+    padding: 12px 16px;
     border-bottom: 1px solid var(--border-subtle);
-    vertical-align: top;
-    line-height: 1.5;
+    vertical-align: middle;
   }
 
   &:hover td {
-    background: var(--bg-raised);
+    background: color-mix(in srgb, var(--bg-raised) 60%, transparent);
   }
 
   &.selected td {
-    background: var(--bg-active);
+    background: var(--accent-subtle);
   }
 }
 

@@ -6,7 +6,7 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg;
+  gap: $space-5;
   width: 100%;
 }
 
@@ -15,147 +15,86 @@
 .pageHeader {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: $space-1;
 }
 
 .title {
-  margin: 0;
-  color: var(--text-primary);
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1.2;
+  @include text-page-title;
 }
 
-.description {
-  margin: 0;
+/* One quiet fact under the title: where plugins live. */
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-1 $space-4;
+  margin: $space-2 0 0;
   color: var(--text-secondary);
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: $text-sm;
+  line-height: $leading-sm;
+  font-variant-numeric: tabular-nums;
+}
+
+.summaryItem {
+  display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+  align-items: center;
+  gap: $space-2;
+}
+
+.summaryPath {
+  @include text-identifier;
+  @include text-ellipsis;
+  min-width: 0;
+  max-width: min(360px, 58vw);
+  color: var(--text-primary);
 }
 
 // ─── Alert Boxes ────────────────────────────────────────
 
 .errorBox,
 .warningBox {
-  padding: $spacing-md;
+  padding: $space-2 $space-3;
+  border: 0;
   border-radius: $radius-md;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: $text-sm;
+  line-height: $leading-sm;
 }
 
 .errorBox {
-  border: 1px solid var(--danger-color);
-  background: color-mix(in srgb, var(--status-danger) 10%, transparent);
-  color: var(--danger-color);
+  @include status-tone(danger);
 }
 
 .warningBox {
-  border: 1px solid color-mix(in srgb, var(--warning-color) 42%, var(--border-color));
-  background: color-mix(in srgb, var(--warning-color) 9%, var(--bg-secondary));
-  color: var(--text-primary);
-}
-
-// ─── Status Bar ─────────────────────────────────────────
-
-.statusBar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border-radius: $radius-md;
-  border: 1px solid var(--border-default);
-  background: var(--bg-surface);
-  flex-wrap: wrap;
-}
-
-.statusPill {
-  display: inline-flex;
-  min-width: 0;
-  max-width: 100%;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border-radius: $radius-sm;
-  border: 1px solid var(--border-default);
-  background: var(--bg-raised);
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.statusDot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.statusDotOn {
-  background: var(--status-success);
-  box-shadow: none;
-}
-
-.statusDotOff {
-  background: var(--text-tertiary);
-}
-
-.statusLabel {
-  color: var(--text-secondary);
-}
-
-.statusValue {
-  color: var(--text-primary);
-  font-weight: 700;
-}
-
-.statusPathValue {
-  display: block;
-  min-width: 0;
-  max-width: min(360px, 58vw);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.statusDivider {
-  width: 1px;
-  height: 20px;
-  background: var(--border-default);
-  flex-shrink: 0;
-
-  @include mobile {
-    display: none;
-  }
+  @include status-tone(warning);
 }
 
 // ─── Toolbar ────────────────────────────────────────────
 
 .toolbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: $spacing-sm;
+  gap: $space-2;
 
   :global(.form-group) {
-    flex: 1;
+    flex: 1 1 280px;
     max-width: 480px;
     margin: 0;
-  }
-
-  :global(.input) {
-    padding-right: 36px;
   }
 
   :global(.btn > span) {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: $space-2;
   }
 
   @include mobile {
-    flex-direction: column;
-    align-items: stretch;
+    flex-wrap: wrap;
 
     :global(.form-group) {
+      flex: 1 1 100%;
       max-width: none;
     }
   }
@@ -163,37 +102,25 @@
 
 // ─── Plugin List ────────────────────────────────────────
 
+/* Rows sit on the page, separated by hairlines (a list, so the rule carries meaning); no
+   slab around them. The list is a size container so rows stack by their own width. */
 .pluginList {
+  container: plugin-list / inline-size;
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  border: 1px solid var(--border-default);
-  border-radius: $radius-lg;
-  overflow: hidden;
-  background: var(--border-subtle);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 // ─── Plugin Row ─────────────────────────────────────────
 
 .pluginRow {
   display: grid;
-  grid-template-columns: 40px 1fr auto;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
   align-items: center;
-  gap: $spacing-md;
-  padding: $spacing-md $spacing-lg;
-  background: var(--bg-primary);
-  transition: background-color $transition-fast;
-
-  &:hover {
-    background: var(--bg-hover);
-  }
-
-  @include mobile {
-    grid-template-columns: 36px 1fr;
-    grid-template-rows: auto auto;
-    gap: $spacing-sm;
-    padding: $spacing-md;
-  }
+  gap: $space-2 $space-4;
+  padding: $space-4 0;
+  @include hairline-row;
 }
 
 .logoBox {
@@ -204,28 +131,23 @@
   justify-content: center;
   overflow: hidden;
   border-radius: $radius-md;
-  border: 1px solid var(--border-default);
+  border: 0;
   background: var(--bg-raised);
-  color: var(--text-secondary);
+  color: var(--icon-default);
   flex-shrink: 0;
+  align-self: start;
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-
-  @include mobile {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-  }
 }
 
 .pluginInfo {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   min-width: 0;
 }
 
@@ -233,36 +155,146 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px $spacing-sm;
+  gap: $space-1 $space-3;
   min-width: 0;
 
-  // The name keeps its full width; badges wrap below it instead of squeezing it.
   h2 {
     flex: 0 1 auto;
     max-width: 100%;
     min-width: 0;
     margin: 0;
     color: var(--text-primary);
-    font-size: 15px;
-    font-weight: 650;
-    line-height: 1.3;
+    font-size: $text-md;
+    font-weight: 600;
+    line-height: $leading-md;
     @include text-ellipsis;
   }
 }
 
-.pluginId {
-  color: var(--text-tertiary);
-  font-family: $font-mono;
-  font-size: 12px;
-  @include text-ellipsis;
+/* Row state, shown only when it is not the normal running case. */
+.state {
+  display: inline-flex;
+  align-items: center;
+  font-size: $text-xs;
+  line-height: $leading-xs;
+  white-space: nowrap;
 }
+
+.state_off {
+  color: var(--text-tertiary);
+}
+
+// Should run but does not: the one state that asks for attention gets a tinted tag.
+.state_warning {
+  padding: 1px 6px;
+  border-radius: $radius-sm;
+  font-weight: 500;
+  @include status-tone(warning);
+}
+
+.stateHint {
+  color: var(--status-warning);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+}
+
+.capability {
+  color: var(--text-tertiary);
+  font-size: $text-xs;
+  font-weight: 500;
+  line-height: $leading-xs;
+}
+
+.pluginId {
+  @include text-identifier;
+  @include text-ellipsis;
+  color: var(--text-secondary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+}
+
+.pluginIdDetails {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.pluginIdSummary {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  max-width: 100%;
+  min-width: 0;
+  border-radius: $radius-sm;
+  color: var(--icon-default);
+  list-style: none;
+  cursor: pointer;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+  &:hover .pluginId {
+    color: var(--text-primary);
+  }
+  &:focus-visible {
+    @include focus-ring(2px);
+  }
+  > svg {
+    flex-shrink: 0;
+    transition: transform var(--dur-hover) var(--ease-out-strong);
+  }
+}
+
+.pluginIdDetails[open] > .pluginIdSummary > svg {
+  transform: rotate(180deg);
+}
+
+.pluginPath {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 $space-2;
+  margin: $space-1 0 0;
+  color: var(--text-secondary);
+  font-size: $text-sm;
+  line-height: $leading-sm;
+}
+
+.pluginPathLabel {
+  color: var(--text-tertiary);
+}
+
+.pluginPathValue {
+  @include text-identifier;
+  user-select: text;
+}
+
+.visuallyHidden {
+  @include visually-hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pluginIdSummary > svg {
+    transition: none;
+  }
+}
+
+@include mobile {
+  .pluginIdSummary {
+    @include hit-area;
+  }
+}
+
+/* Each item carries a leading dot; shifting the row one dot slot left and clipping it hides
+   the dot of whichever item starts a line. */
+$meta-dot-slot: 3px + $space-2;
 
 .pluginMeta {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
+  gap: $space-1 $space-2;
   flex-wrap: wrap;
-  margin-top: 2px;
+  min-width: 0;
+  margin-left: -$meta-dot-slot;
+  clip-path: inset(-4px -4px -4px $meta-dot-slot);
 }
 
 .metaItem {
@@ -270,21 +302,17 @@
   min-width: 0;
   max-width: 100%;
   align-items: center;
-  gap: 4px;
+  gap: $space-2;
   color: var(--text-tertiary);
-  font-size: 12px;
+  font-size: $text-xs;
+  line-height: $leading-xs;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 
   strong {
     color: var(--text-secondary);
-    font-weight: 600;
+    font-weight: 500;
   }
-}
-
-.metaPath {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .metaDot {
@@ -295,62 +323,14 @@
   flex-shrink: 0;
 }
 
-// ─── Badges ─────────────────────────────────────────────
-
-.badgeRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-
-.badge,
-.badgeSuccess,
-.badgeWarning,
-.badgeMuted {
-  display: inline-flex;
-  min-height: 22px;
-  align-items: center;
-  border-radius: 6px;
-  padding: 2px 8px;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.25;
-}
-
-.badge {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-default);
-  color: var(--text-secondary);
-}
-
-.badgeSuccess {
-  background: color-mix(in srgb, var(--status-success) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--status-success) 20%, transparent);
-  color: var(--success-color);
-}
-
-.badgeWarning {
-  background: color-mix(in srgb, var(--status-warning) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--status-warning) 20%, transparent);
-  color: var(--warning-color);
-}
-
-.badgeMuted {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-default);
-  color: var(--text-tertiary);
-}
-
 // ─── Row Actions ────────────────────────────────────────
 
 .rowActions {
   display: flex;
   min-width: 0;
-  max-width: min(560px, 48vw);
-  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
-  gap: $spacing-sm;
+  gap: $space-2;
   flex-shrink: 0;
 
   :global(.btn > span) {
@@ -358,41 +338,71 @@
     align-items: center;
     gap: 6px;
   }
-
-  @include mobile {
-    grid-column: 1 / -1;
-    justify-content: flex-start;
-    max-width: none;
-  }
 }
 
-.iconLink {
+.iconLink,
+.deleteButton:global(.btn) {
   display: inline-flex;
-  min-height: 30px;
+  width: $control-height-sm;
+  height: $control-height-sm;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--border-color);
+  padding: 0;
+  border: 0;
   border-radius: $radius-md;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-size: 12px;
-  font-weight: 600;
+  background: transparent;
+  color: var(--icon-default);
   text-decoration: none;
   transition:
-    border-color $transition-fast,
-    background-color $transition-fast,
-    color $transition-fast;
+    background-color var(--dur-hover) var(--ease-out-strong),
+    color var(--dur-hover) var(--ease-out-strong);
 
   &:hover {
-    border-color: var(--primary-color);
-    background: var(--bg-hover);
-    color: var(--primary-color);
+    background: var(--bg-raised);
+    color: var(--text-primary);
+  }
+
+  &:focus-visible {
+    @include focus-ring(0);
   }
 }
 
-.iconLink {
-  width: 30px;
-  flex: 0 0 auto;
+/* Deletion stays quiet at rest and turns red only on hover / keyboard focus. */
+.deleteButton:global(.btn) {
+  &:hover:not(:disabled),
+  &:focus-visible {
+    background: var(--status-danger-bg);
+    color: var(--status-danger);
+  }
+}
+
+/* Narrow rows (tablet boundary, phones): actions move under the identity instead of
+   squeezing the name. */
+@container plugin-list (max-width: 680px) {
+  .pluginRow {
+    grid-template-columns: 40px minmax(0, 1fr);
+    padding: $space-4 0;
+  }
+
+  .rowActions {
+    grid-column: 2 / -1;
+    justify-content: flex-start;
+  }
+}
+
+@include mobile {
+  .rowActions :global(.btn),
+  .iconLink,
+  .deleteButton:global(.btn) {
+    min-height: $hit-target-touch;
+  }
+
+  .iconLink,
+  .deleteButton:global(.btn) {
+    width: $hit-target-touch;
+    height: $hit-target-touch;
+  }
 }
 
 // ─── Skeleton ───────────────────────────────────────────
@@ -400,9 +410,9 @@
 .skeletonRow {
   display: flex;
   align-items: center;
-  gap: $spacing-md;
-  padding: $spacing-md $spacing-lg;
-  background: var(--bg-primary);
+  gap: $space-4;
+  padding: $space-4 0;
+  @include hairline-row;
 }
 
 .skeletonAvatar {
@@ -457,10 +467,7 @@
   gap: $spacing-md;
 
   h3 {
-    margin: 0;
-    color: var(--text-primary);
-    font-size: 16px;
-    font-weight: 700;
+    @include text-card-title;
   }
 
   :global(.form-group) {
@@ -475,7 +482,7 @@
   gap: $spacing-md;
   min-height: 52px;
   padding: $spacing-md;
-  border: 1px solid var(--border-color);
+  border: 0;
   border-radius: $radius-md;
   background: var(--bg-surface);
 }
@@ -486,17 +493,15 @@
 
 .fieldLabel {
   color: var(--text-primary);
-  font-size: 14px;
-  font-weight: 650;
+  font-size: $text-base;
+  font-weight: 500;
   overflow-wrap: anywhere;
 }
 
 .fieldDescription,
 .fieldHint {
-  margin-top: 4px;
-  color: var(--text-tertiary);
-  font-size: 12px;
-  line-height: 1.45;
+  @include text-secondary;
+  margin-top: $space-1;
   overflow-wrap: anywhere;
 }
 
@@ -506,48 +511,44 @@
   gap: 6px;
 
   label {
-    color: var(--text-primary);
-    font-size: 14px;
-    font-weight: 600;
+    @include text-label;
     overflow-wrap: anywhere;
   }
 }
 
+/* JSON fields are code: mono, on the shared field tokens. */
 .textarea {
+  @include text-code;
   min-height: 148px;
   resize: vertical;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-control);
   border-radius: $radius-md;
-  padding: 10px 12px;
-  background: var(--bg-primary);
+  padding: $space-2 $space-3;
+  background: var(--bg-field);
   color: var(--text-primary);
-  font-family: $font-mono;
-  font-size: 13px;
-  line-height: 1.5;
 
   &:focus {
-    border-color: var(--text-secondary);
+    border-color: var(--accent-text);
     outline: none;
-    box-shadow: 0 0 0 2px var(--border-strong);
+    box-shadow: 0 0 0 1px var(--focus-ring);
   }
 }
 
 .fieldError {
-  padding: 8px 10px;
-  border-radius: $radius-sm;
-  background: color-mix(in srgb, var(--status-danger) 10%, transparent);
-  color: var(--danger-color);
-  font-size: 12px;
-  line-height: 1.4;
+  @include status-tone(danger);
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  font-size: $text-sm;
+  line-height: $leading-sm;
 }
 
 .emptyConfig {
   padding: $spacing-md;
-  border: 1px dashed var(--border-color);
+  border: 0;
   border-radius: $radius-md;
   background: var(--bg-surface);
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: $text-sm;
 }
 
 // ─── Animation ──────────────────────────────────────────
@@ -565,7 +566,7 @@
 
 @include mobile {
   .page {
-    gap: $spacing-md;
+    gap: $space-4;
   }
 
   .sheetFooter {
@@ -579,8 +580,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .skeletonAvatar,
-  .skeletonLine,
-  .skeletonBody {
+  .skeletonLine {
     animation: none;
+  }
+
+  .iconLink,
+  .deleteButton:global(.btn) {
+    transition: none;
   }
 }

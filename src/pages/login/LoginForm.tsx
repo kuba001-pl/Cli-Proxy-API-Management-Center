@@ -79,19 +79,20 @@ export function LoginForm({
   return (
     <form className={styles.form} onSubmit={handleSubmit} noValidate>
       <div className={styles.field} data-stagger>
-        <span className={styles.label}>{t('login.connection_current')}</span>
-        <div className={styles.inputWrap}>
-          <span className={styles.fieldIcon} aria-hidden="true">
-            {connectionIcon}
-          </span>
-          <div
-            className={`${styles.readout} ${styles.mono}`}
-            data-custom={editingBase}
-            title={detectedBase}
-          >
-            <span className={styles.readoutText}>{detectedBase}</span>
-          </div>
-        </div>
+        {/* While a custom URL is being entered, the overridden origin is only context (below). */}
+        {!editingBase && (
+          <>
+            <span className={styles.label}>{t('login.connection_current')}</span>
+            <div className={styles.inputWrap}>
+              <span className={styles.fieldIcon} aria-hidden="true">
+                {connectionIcon}
+              </span>
+              <div className={`${styles.readout} ${styles.mono}`} title={detectedBase}>
+                <span className={styles.readoutText}>{detectedBase}</span>
+              </div>
+            </div>
+          </>
+        )}
         <button
           type="button"
           role="switch"
@@ -111,9 +112,10 @@ export function LoginForm({
           <span className={styles.switchTrack} aria-hidden="true" />
           <span className={styles.connectionCopy}>
             <span className={styles.connectionLabel}>{t('login.custom_connection_label')}</span>
-            <span className={styles.hint}>
-              {t(editingBase ? 'login.custom_connection_hint' : 'login.connection_auto_hint')}
-            </span>
+            {/* Off needs no caption: the current URL is shown right above. */}
+            {editingBase && (
+              <span className={styles.hint}>{t('login.custom_connection_hint')}</span>
+            )}
           </span>
           <span className={styles.srOnly}>
             {t(editingBase ? 'login.connection_done' : 'login.connection_edit')}
@@ -144,6 +146,11 @@ export function LoginForm({
               onChange={(event) => onApiBaseChange(event.target.value)}
             />
           </div>
+        )}
+        {editingBase && detectedBase && (
+          <p className={`${styles.hint} ${styles.overriddenBase}`} title={detectedBase}>
+            {t('login.connection_overrides', { url: detectedBase })}
+          </p>
         )}
       </div>
 

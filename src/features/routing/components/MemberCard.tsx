@@ -1,4 +1,12 @@
-import { useEffect, useId, useRef, useState, type DragEvent, type KeyboardEvent } from 'react';
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type DragEvent,
+  type KeyboardEvent,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { IconEllipsis, IconGripVertical, IconLock } from '@/components/ui/icons';
 import { PROVIDER_LOGOS } from '@/features/providers/brandLogos';
@@ -64,12 +72,29 @@ export function MemberCard({
   const privacyEnabled = usePrivacyStore((state) => state.enabled);
   const display = routingMemberDisplay(member, privacyEnabled);
   const [menuOpen, setMenuOpen] = useState(false);
+  // Opens upward when the space below the trigger cannot hold the menu (e.g. the last member
+  // near the bottom of a phone screen), so every action is visible without scrolling.
+  const [menuUp, setMenuUp] = useState(false);
   const menuId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const icon = memberIcon(member, theme);
   const state = route?.state;
+
+  useLayoutEffect(() => {
+    if (!menuOpen) {
+      setMenuUp(false);
+      return;
+    }
+    const trigger = menuButtonRef.current?.getBoundingClientRect();
+    const menuHeight = menuRef.current?.offsetHeight ?? 0;
+    if (!trigger || !menuHeight) return;
+    const margin = 8;
+    const spaceBelow = window.innerHeight - trigger.bottom - margin;
+    const spaceAbove = trigger.top - margin;
+    setMenuUp(spaceBelow < menuHeight + 6 && spaceAbove > spaceBelow);
+  }, [menuOpen]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -251,7 +276,7 @@ export function MemberCard({
             ref={menuRef}
             id={menuId}
             role="menu"
-            className={styles.menu}
+            className={menuUp ? `${styles.menu} ${styles.menuUp}` : styles.menu}
             onKeyDown={handleMenuKeyDown}
           >
             {member.locked ? <p className={styles.menuNote}>{t('routing.locked')}</p> : null}
