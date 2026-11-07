@@ -10,6 +10,7 @@ import type { ResolvedTheme } from '@/types';
 import { prefersReducedMotion } from '@/hooks/motion';
 import { formatDisplayDay, formatDisplayTime } from '@/utils/dateFormat';
 import { formatInstantShort, formatRelativeInstant } from '@/utils/quota';
+import { getQuotaCacheKey } from '@/utils/quota/identity';
 import { resolveTimeZoneLabel } from '@/utils/time/timezone';
 import { privacyText } from '@/utils/privacy';
 import { quotaAccountLabel } from '../accountLabel';
@@ -186,7 +187,21 @@ export function QuotaSummary({
                     <span className={styles.lowState}>{t('quota_management.low_state')}</span>
                   )}
                 </div>
-                <QuotaMeter percent={window.remaining} classes={meterClasses} />
+                {/* One segment per credential, so every account's level stays visible. */}
+                <div className={styles.meters}>
+                  {observations.map(({ entry, window: observation }) => {
+                    const name = quotaAccountLabel(entry.file, privacyEnabled).primary;
+                    const value =
+                      observation.remaining === null
+                        ? '—'
+                        : `${Math.round(observation.remaining)}%`;
+                    return (
+                      <div key={getQuotaCacheKey(entry.file)} title={`${name} · ${value}`}>
+                        <QuotaMeter percent={observation.remaining} classes={meterClasses} />
+                      </div>
+                    );
+                  })}
+                </div>
                 <p className={styles.reset}>
                   {observations.length > 1 && (
                     <span title={lowestName}>
