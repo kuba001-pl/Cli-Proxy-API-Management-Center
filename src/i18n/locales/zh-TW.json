@@ -106,7 +106,6 @@
   },
   "nav": {
     "dashboard": "儀表板",
-    "quick_start": "快速設定",
     "ai_providers": "AI 供應商",
     "auth_files": "驗證檔案",
     "oauth": "OAuth 登入",
@@ -127,7 +126,6 @@
   },
   "nav_meta": {
     "dashboard": "運行總覽",
-    "quick_start": "APIKEY.FUN 快速設定",
     "ai_providers": "上游模型路由",
     "auth_files": "Auth 檔案與憑證",
     "oauth": "OAuth 授權登入",
@@ -2140,7 +2138,6 @@
     },
     "categories": {
       "title": "提供商",
-      "quickFill": "快速接入",
       "activeCount": "{{active}}/{{total}} 活躍"
     },
     "providerNames": {
@@ -2152,9 +2149,6 @@
       "claude": "Claude",
       "vertex": "Vertex",
       "openaiCompatibility": "OpenAI 相容",
-      "apikeyFun": "APIKEY.FUN",
-      "fennoAI": "FennoAI",
-      "qiniuCloud": "七牛雲",
       "kimi": "Kimi"
     },
     "table": {
@@ -2179,19 +2173,8 @@
     "sponsor": {
       "protocolSummary": "Anthropic / OpenAI / Gemini / Codex API (Responses)",
       "detailHint": "{{provider}} 會按協議分別寫入對應的 API Key 設定,此處只做聚合管理。",
-      "registerLink": "點此註冊",
       "registerNow": "立即註冊",
-      "dashboardLink": "控制面板",
-      "emptyRegisterHint": "尚未新增設定",
       "apiKeyHint": "此金鑰只會寫入目前選擇的分組/協議設定。",
-      "usageCheck": "查詢額度",
-      "usageChecking": "查詢中",
-      "usageRemaining": "剩餘額度: {{amount}} {{unit}}",
-      "usageBreakdown": "已用 {{used}} / 總額 {{limit}}",
-      "usageStatus": "狀態: {{status}}",
-      "usageInvalid": "Key 無效",
-      "usageEmpty": "端點未回傳額度資料",
-      "usageApiKeyRequired": "API 金鑰必填",
       "aggregationConflict": "此聚合提供商包含多筆後端設定或多個 OpenAI 金鑰。為避免資料遺失，請在原始碼設定中編輯。",
       "partialMutationWarning": "操作失敗，但一個或多個協議可能已更新。已重新讀取最新設定，請檢查後再重試。",
       "groupedKeysTitle": "分組金鑰",
@@ -2205,8 +2188,6 @@
       "urlMode": "{{provider}} URL",
       "urlHint": "不同 URL 的使用規範一致,儲存時只會寫入目前分組協議對應位址。",
       "urlOptions": {
-        "standard": "普通 URL",
-        "direct": "專線直連 URL",
         "domestic": "中國大陸線路",
         "overseas": "海外線路",
         "mainlandChina": "中國大陸（推薦）",

@@ -106,7 +106,6 @@
   },
   "nav": {
     "dashboard": "Pano",
-    "quick_start": "Hızlı Kurulum",
     "ai_providers": "AI Sağlayıcıları",
     "auth_files": "Kimlik Dosyaları",
     "oauth": "OAuth Girişi",
@@ -127,7 +126,6 @@
   },
   "nav_meta": {
     "dashboard": "İşletim Özeti",
-    "quick_start": "APIKEY.FUN Kurulumu",
     "ai_providers": "Yukarı Akış Model Yönlendirmesi",
     "auth_files": "Kimlik Dosyaları ve Kimlik Bilgileri",
     "oauth": "OAuth Yetkilendirmesi",
@@ -2114,7 +2112,6 @@
     },
     "categories": {
       "title": "Sağlayıcılar",
-      "quickFill": "Hızlı Doldur",
       "activeCount": "{{active}} / {{total}} Aktif"
     },
     "providerNames": {
@@ -2126,9 +2123,6 @@
       "claude": "Claude",
       "vertex": "Vertex",
       "openaiCompatibility": "OpenAI Uyumlu",
-      "apikeyFun": "APIKEY.FUN",
-      "fennoAI": "FennoAI",
-      "qiniuCloud": "Qiniu Cloud",
       "kimi": "Kimi"
     },
     "table": {
@@ -2153,19 +2147,8 @@
     "sponsor": {
       "protocolSummary": "Anthropic / OpenAI / Gemini / Codex API (Responses)",
       "detailHint": "{{provider}} Protokole Göre Eşleşen API Anahtarı Yapılandırmalarına Yazılır. Bu Görünüm Onları Birlikte Yönetir.",
-      "registerLink": "Buradan Kaydol",
       "registerNow": "Hemen Kaydol",
-      "dashboardLink": "Pano",
-      "emptyRegisterHint": "Henüz Yapılandırma Yok.",
       "apiKeyHint": "Bu Anahtar Yalnızca Seçilen Grup/Protokol Yapılandırmasına Yazılır.",
-      "usageCheck": "Kullanımı Kontrol Et",
-      "usageChecking": "Kontrol Ediliyor",
-      "usageRemaining": "Kalan: {{amount}} {{unit}}",
-      "usageBreakdown": "Kullanılan {{used}} / Sınır {{limit}}",
-      "usageStatus": "Durum: {{status}}",
-      "usageInvalid": "Geçersiz Anahtar",
-      "usageEmpty": "Uç Nokta Kullanım Verisi Döndürmedi.",
-      "usageApiKeyRequired": "API Anahtarı Gerekli",
       "aggregationConflict": "Bu Gruplanmış Sağlayıcı Birden Fazla Arka Uç Yapılandırması veya OpenAI Anahtarı İçeriyor. Veri Kaybını Önlemek için Kaynak Yapılandırmada Düzenle.",
       "partialMutationWarning": "Bir veya Daha Fazla Protokol Güncellenmiş Olabilecekken İşlem Başarısız Oldu. En Son Yapılandırma Yeniden Yüklendi. Yeniden Denemeden Önce İncele.",
       "groupedKeysTitle": "Gruplanmış Anahtarlar",
@@ -2179,8 +2162,6 @@
       "urlMode": "{{provider}} URL'si",
       "urlHint": "Tüm URL'ler Aynı API Kurallarını Kullanır. Kayıt Yalnızca Geçerli Gruplanmış Protokolün Uç Noktasını Yazar.",
       "urlOptions": {
-        "standard": "Standart URL",
-        "direct": "Doğrudan URL",
         "domestic": "Çin Ana Karası Rotası",
         "overseas": "Yurt Dışı Rotası",
         "mainlandChina": "Çin Ana Karası (Önerilen)",

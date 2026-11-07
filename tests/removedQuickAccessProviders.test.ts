@@ -9,7 +9,14 @@ const retiredEndpoints = [
   ['infistar', 'https://infistar.ai'],
   ['claudeApi', 'https://gw.apito.ai'],
   ['claudeApi', 'https://gw.claudeapi.com'],
+  ['fennoAI', 'https://api.fenno.ai'],
+  ['qiniuCloud', 'https://api.qnaigc.com'],
+  ['qiniuCloud', 'https://api.modelink.ai'],
+  ['apikeyFun', 'https://api.apikey.fan'],
+  ['apikeyFun', 'https://slb.apikey.fan'],
 ] as const;
+
+const removedBrands = ['fennoAI', 'qiniuCloud', 'apikeyFun'] as const;
 
 describe('removed quick-access providers', () => {
   test('removes retired brand groups', () => {
@@ -17,10 +24,35 @@ describe('removed quick-access providers', () => {
     for (const [brand] of retiredEndpoints) {
       expect(ids).not.toContain(brand);
     }
-    for (const brand of ['apikeyFun', 'fennoAI', 'qiniuCloud', 'kimi']) {
+    for (const brand of removedBrands) {
+      expect(ids).not.toContain(brand);
+    }
+    for (const brand of ['kimi']) {
       expect(ids).toContain(brand);
     }
   });
+
+  for (const [name, baseUrl] of retiredEndpoints.filter(([brand]) =>
+    (removedBrands as readonly string[]).includes(brand)
+  )) {
+    test(`keeps ${baseUrl} official protocol URLs in generic protocol groups`, () => {
+      const versionedUrl = `${baseUrl}/v1`;
+      const config: Config = {
+        geminiApiKeys: [{ apiKey: 'test-retired-key', baseUrl }],
+        codexApiKeys: [{ apiKey: 'test-retired-key', baseUrl: versionedUrl }],
+        claudeApiKeys: [{ apiKey: 'test-retired-key', baseUrl }],
+        openaiCompatibility: [
+          { name, baseUrl: versionedUrl, apiKeyEntries: [{ apiKey: 'test-retired-key' }] },
+        ],
+      };
+      const groups = buildProviderGroups(config);
+      for (const brand of ['gemini', 'codex', 'claude', 'openaiCompatibility']) {
+        expect(groups.find((group) => group.id === brand)!.resources).toHaveLength(1);
+      }
+      expect(groups.find((group) => group.id === 'kimi')!.resources).toHaveLength(0);
+      expect(groups.flatMap((group) => group.resources)).toHaveLength(4);
+    });
+  }
 
   for (const [name, baseUrl] of retiredEndpoints) {
     test(`keeps ${baseUrl} configs editable in generic protocol groups`, () => {
