@@ -90,6 +90,18 @@
   }
 }
 
+// One segment per credential: the bar reads as the provider's pool, split by account.
+.meters {
+  display: flex;
+  gap: 6px;
+  min-height: 5px;
+
+  > div {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
 .reset {
   @include text-meta;
   margin: $space-1 0 0;
