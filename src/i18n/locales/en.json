@@ -163,9 +163,7 @@
     "stat_credentials_hint": "{{active}} serving · {{disabled}} not serving",
     "stat_credentials_empty": "No credential files found",
     "stat_provider_keys": "Provider keys",
-    "stat_provider_keys_hint": "Configured API keys",
     "stat_models": "Models",
-    "stat_models_hint": "Served by the proxy",
     "traffic_title": "Throughput",
     "traffic_description": "Requests per 10 minutes, last {{window}}",
     "traffic_keyboard_hint": "Use the arrow keys to move between buckets, or open the data table for exact counts.",
@@ -202,13 +200,6 @@
     "runtime_ws_auth": "WebSocket auth",
     "runtime_model_prefix": "Model prefix",
     "runtime_link": "Edit configuration",
-    "cta_title": "Where to go from here",
-    "cta_providers_desc": "Add API keys, set priorities, and test brands.",
-    "cta_auth_files_desc": "Upload, refresh, and disable OAuth credentials.",
-    "cta_config_desc": "Tune routing, retries, logging, and access.",
-    "cta_quota_desc": "Check remaining quota per credential.",
-    "cta_logs_desc": "Tail requests and download error reports.",
-    "cta_system_desc": "Version details and management center info.",
     "window_m": "{{minutes}}m",
     "window_h": "{{hours}}h",
     "window_hm": "{{hours}}h {{minutes}}m"
@@ -782,12 +773,12 @@
     "provider_hint": "Defaults to the current filter; pick an existing provider or type a new name.",
     "model_source_loading": "Loading models...",
     "model_source_unsupported": "The current CPA version does not support fetching model lists (manual input still works).",
-    "model_source_loaded": "{{count}} models loaded. Use the dropdown in 'Source model name', or type custom values. Saving an empty list removes that provider. Enable 'Keep original' to keep the original name while adding the alias.",
+    "model_source_loaded": "{{count}} models loaded. Saving an empty list removes only this provider's aliases; credentials stay.",
     "alias_label": "Model aliases",
     "alias_name_placeholder": "Source model name",
     "alias_placeholder": "Alias (required)",
     "duplicate_alias": "Each alias must be unique for this provider.",
-    "alias_fork_label": "Keep original",
+    "alias_fork_label": "Keep original name too",
     "add_alias": "Add alias",
     "save": "Save/Update",
     "save_success": "Model aliases updated",
@@ -1783,6 +1774,7 @@
     "global_disabled": "Disabled",
     "global_disabled_hint": "plugins.enabled is false, so enabled plugin instances will not become effective.",
     "plugins_dir": "Plugin directory",
+    "file_path": "File path",
     "discovered": "Discovered",
     "effective": "Effective",
     "search_placeholder": "Search plugin ID, name, author, or resource...",
@@ -2003,13 +1995,8 @@
     "turkish": "Turkish"
   },
   "theme": {
-    "switch": "Theme",
     "switch_to_light": "Switch to light mode",
-    "switch_to_dark": "Switch to dark mode",
-    "light": "Wool Paper",
-    "white": "Pure White",
-    "dark": "Dark",
-    "auto": "Follow system"
+    "switch_to_dark": "Switch to dark mode"
   },
   "sidebar": {
     "toggle_expand": "Expand sidebar",
@@ -2393,9 +2380,6 @@
         "clear": "Clear",
         "empty": "No models configured yet"
       }
-    },
-    "modelCatalog": {
-      "notLoaded": "Not loaded"
     }
   },
   "claude_reset": {

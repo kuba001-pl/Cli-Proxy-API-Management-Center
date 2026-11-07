@@ -41,19 +41,6 @@ interface SheetState {
   resource: ProviderResource | null;
 }
 
-const formatDateTime = (iso: string, locale?: string) => {
-  try {
-    const date = new Date(iso);
-    if (Number.isNaN(date.getTime())) return iso;
-    return new Intl.DateTimeFormat(locale, {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    }).format(date);
-  } catch {
-    return iso;
-  }
-};
-
 const matchesFilter = (r: ProviderResource, normalized: string): boolean => {
   if (!normalized) return true;
   const haystack = [
@@ -94,7 +81,7 @@ const getResourceRecentSuccess = (
 };
 
 export function ProvidersWorkbenchPage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const connectionStatus = useAuthStore((s) => s.connectionStatus);
   const { showNotification, showConfirmation } = useNotificationStore();
 
@@ -253,14 +240,6 @@ export function ProvidersWorkbenchPage() {
     [groups]
   );
 
-  const providerFamilies = useMemo(
-    () => groups.filter((g) => g.resources.length > 0).length,
-    [groups]
-  );
-
-  const updatedAtLabel = workbench.snapshot
-    ? formatDateTime(workbench.snapshot.fetchedAt, i18n.language)
-    : t('providersPage.modelCatalog.notLoaded');
   const errorBanner = workbench.errorMessage ? (
     <div className="error-box">{workbench.errorMessage}</div>
   ) : null;
@@ -368,8 +347,6 @@ export function ProvidersWorkbenchPage() {
         <ProviderHeaderCard
           totalActive={0}
           totalResources={0}
-          providerFamilies={0}
-          updatedAtLabel={updatedAtLabel}
           isFetching={workbench.isFetching}
           onRefresh={() => void handleRefresh()}
           onNew={() => {}}
@@ -385,8 +362,6 @@ export function ProvidersWorkbenchPage() {
       <ProviderHeaderCard
         totalActive={totalActive}
         totalResources={totalResources}
-        providerFamilies={providerFamilies}
-        updatedAtLabel={updatedAtLabel}
         isFetching={workbench.isFetching}
         isNewDisabled={disableMutations}
         // An empty provider's panel carries the single "add" action itself.

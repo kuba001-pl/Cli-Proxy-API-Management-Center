@@ -7,8 +7,10 @@ interface ProviderHeaderCardProps {
   title?: string;
   totalActive: number;
   totalResources: number;
-  providerFamilies: number;
-  updatedAtLabel: string;
+  /** No longer rendered (one-fact caption); optional for upstream call-site compatibility. */
+  providerFamilies?: number;
+  /** No longer rendered (one-fact caption); optional for upstream call-site compatibility. */
+  updatedAtLabel?: string;
   isFetching?: boolean;
   isNewDisabled?: boolean;
   showNewAction?: boolean;

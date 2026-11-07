@@ -163,9 +163,7 @@
     "stat_credentials_hint": "{{active}} 個可用 · {{disabled}} 個未參與排程",
     "stat_credentials_empty": "找不到憑證檔案",
     "stat_provider_keys": "供應商金鑰",
-    "stat_provider_keys_hint": "已設定的 API Key",
     "stat_models": "模型",
-    "stat_models_hint": "由代理提供",
     "traffic_title": "吞吐量",
     "traffic_description": "最近 {{window}} 內每 10 分鐘的請求數",
     "traffic_keyboard_hint": "使用方向鍵在時間區段之間移動，或開啟資料表查看精確數值。",
@@ -202,13 +200,6 @@
     "runtime_ws_auth": "WebSocket 驗證",
     "runtime_model_prefix": "模型前綴",
     "runtime_link": "編輯設定",
-    "cta_title": "接下來前往",
-    "cta_providers_desc": "新增 API Key、設定優先順序並測試品牌。",
-    "cta_auth_files_desc": "上傳、更新與停用 OAuth 憑證。",
-    "cta_config_desc": "調整路由、重試、日誌與存取控制。",
-    "cta_quota_desc": "查看各憑證的剩餘額度。",
-    "cta_logs_desc": "即時追蹤請求並下載錯誤報告。",
-    "cta_system_desc": "版本詳情與管理中心資訊。",
     "window_m": "{{minutes}} 分鐘",
     "window_h": "{{hours}} 小時",
     "window_hm": "{{hours}} 小時 {{minutes}} 分"
@@ -778,12 +769,12 @@
     "provider_hint": "預設選取目前篩選的供應商，也可直接輸入或選擇其他名稱。",
     "model_source_loading": "正在載入模型清單...",
     "model_source_unsupported": "目前 CPA 版本不支援取得模型清單（仍可手動輸入）。",
-    "model_source_loaded": "已載入 {{count}} 個模型，可在「原模型名稱」中下拉選擇；也可手動輸入。留空儲存將刪除該供應商記錄；開啟「保留原名」會在保留原模型名的同時新增別名。",
+    "model_source_loaded": "已載入 {{count}} 個模型。儲存空清單只會移除該供應商的別名，憑證不受影響。",
     "alias_label": "模型別名",
     "alias_name_placeholder": "原模型名稱",
     "alias_placeholder": "別名（必填）",
     "duplicate_alias": "同一供應商下的別名不能重複。",
-    "alias_fork_label": "保留原名",
+    "alias_fork_label": "同時保留原名",
     "add_alias": "新增別名",
     "save": "儲存/更新",
     "save_success": "模型別名已更新",
@@ -1804,6 +1795,7 @@
     "global_disabled": "已停用",
     "global_disabled_hint": "目前 plugins.enabled 為 false，插件實例即使啟用也不會生效。",
     "plugins_dir": "插件目錄",
+    "file_path": "檔案路徑",
     "discovered": "發現插件",
     "effective": "生效插件",
     "search_placeholder": "搜尋插件 ID、名稱、作者或資源...",
@@ -2024,13 +2016,8 @@
     "turkish": "土耳其文"
   },
   "theme": {
-    "switch": "主題",
     "switch_to_light": "切換至淺色模式",
-    "switch_to_dark": "切換至深色模式",
-    "light": "羊毛紙",
-    "white": "純白",
-    "dark": "深色",
-    "auto": "跟隨系統"
+    "switch_to_dark": "切換至深色模式"
   },
   "sidebar": {
     "toggle_expand": "展開側邊欄",
@@ -2414,9 +2401,6 @@
         "clear": "清空",
         "empty": "尚無已設定模型"
       }
-    },
-    "modelCatalog": {
-      "notLoaded": "未載入"
     }
   },
   "claude_reset": {

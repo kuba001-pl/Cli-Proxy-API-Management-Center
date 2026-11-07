@@ -594,68 +594,6 @@ details.moreDetails {
   @include text-identifier;
 }
 
-/* ---------- Shortcuts ---------- */
-
-.ctaGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: $space-3;
-}
-
-.ctaCard {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: $space-1;
-  min-height: 112px;
-  padding: $space-4 $space-5;
-  border: 0;
-  border-radius: $radius-lg;
-  background: var(--bg-surface);
-  color: var(--text-primary);
-  text-decoration: none;
-  transition: background-color var(--dur-hover) var(--ease-out-strong);
-
-  &:hover {
-    background: var(--bg-raised);
-  }
-
-  &:hover .ctaArrow {
-    transform: translateX(2px);
-    color: var(--icon-active);
-  }
-
-  &:focus-visible {
-    @include focus-ring(2px);
-  }
-}
-
-.ctaIcon {
-  display: inline-flex;
-  margin-bottom: $space-2;
-  color: var(--icon-default);
-}
-
-.ctaTitle {
-  font-size: $text-base;
-  font-weight: 500;
-  line-height: $leading-base;
-}
-
-.ctaDescription {
-  @include text-secondary;
-}
-
-.ctaArrow {
-  position: absolute;
-  top: $space-4;
-  right: $space-5;
-  color: var(--icon-default);
-  transition:
-    transform var(--dur-hover) var(--ease-out-strong),
-    color var(--dur-hover) var(--ease-out-strong);
-}
-
 /* ---------- Narrow pages ---------- */
 
 @include mobile {
@@ -707,14 +645,11 @@ details.moreDetails {
 
 @media (prefers-reduced-motion: reduce) {
   .linkArrow,
-  .ctaCard,
-  .ctaArrow,
   details.moreDetails > summary {
     transition: none;
   }
 
-  .panelLink:hover .linkArrow,
-  .ctaCard:hover .ctaArrow {
+  .panelLink:hover .linkArrow {
     transform: none;
   }
 }

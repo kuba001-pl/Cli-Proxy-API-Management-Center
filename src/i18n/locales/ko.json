@@ -163,9 +163,7 @@
     "stat_credentials_hint": "제공 중 {{active}}개 · 비제공 {{disabled}}개",
     "stat_credentials_empty": "자격 증명 파일을 찾을 수 없습니다",
     "stat_provider_keys": "공급자 키",
-    "stat_provider_keys_hint": "설정된 API 키",
     "stat_models": "모델",
-    "stat_models_hint": "프록시에서 제공",
     "traffic_title": "처리량",
     "traffic_description": "최근 {{window}} 동안 10분 단위 요청 수",
     "traffic_keyboard_hint": "화살표 키로 구간 사이를 이동하거나 데이터 표를 열어 정확한 값을 확인하세요.",
@@ -202,13 +200,6 @@
     "runtime_ws_auth": "WebSocket 인증",
     "runtime_model_prefix": "모델 접두사",
     "runtime_link": "설정 편집",
-    "cta_title": "다음 작업 안내",
-    "cta_providers_desc": "API 키를 추가하고 우선순위를 설정하며 브랜드를 테스트합니다.",
-    "cta_auth_files_desc": "OAuth 자격 증명을 업로드, 새로 고침 및 비활성화합니다.",
-    "cta_config_desc": "라우팅, 재시도, 로깅 및 접근 권한을 조정합니다.",
-    "cta_quota_desc": "자격 증명별 남은 할당량을 확인합니다.",
-    "cta_logs_desc": "요청을 실시간 추적하고 오류 보고서를 다운로드합니다.",
-    "cta_system_desc": "버전 세부 정보 및 관리 센터 정보입니다.",
     "window_m": "{{minutes}}분",
     "window_h": "{{hours}}시간",
     "window_hm": "{{hours}}시간 {{minutes}}분"
@@ -782,12 +773,12 @@
     "provider_hint": "현재 필터의 공급자가 기본으로 지정됩니다. 기존 공급자를 선택하거나 새 이름을 입력하세요.",
     "model_source_loading": "모델을 불러오는 중...",
     "model_source_unsupported": "현재 CPA 버전은 모델 목록 가져오기를 지원하지 않습니다(수동 입력은 가능).",
-    "model_source_loaded": "{{count}}개 모델을 불러왔습니다. '원본 모델 이름' 드롭다운을 사용하거나 직접 값을 입력하세요. 목록을 비운 채로 저장하면 해당 공급자가 삭제됩니다. '원본 유지'를 활성화하면 원본 이름을 유지하면서 별칭을 추가합니다.",
+    "model_source_loaded": "모델 {{count}}개를 불러왔습니다. 빈 목록을 저장하면 이 공급자의 별칭만 제거되며 자격 증명은 유지됩니다.",
     "alias_label": "모델 별칭",
     "alias_name_placeholder": "원본 모델 이름",
     "alias_placeholder": "별칭(필수)",
     "duplicate_alias": "이 공급자 내에서 각 별칭은 고유해야 합니다.",
-    "alias_fork_label": "원본 유지",
+    "alias_fork_label": "원본 이름도 유지",
     "add_alias": "별칭 추가",
     "save": "저장/업데이트",
     "save_success": "모델 별칭이 업데이트되었습니다",
@@ -1783,6 +1774,7 @@
     "global_disabled": "비활성화됨",
     "global_disabled_hint": "plugins.enabled가 false이므로 활성화된 플러그인 인스턴스가 적용되지 않습니다.",
     "plugins_dir": "플러그인 디렉터리",
+    "file_path": "파일 경로",
     "discovered": "발견됨",
     "effective": "적용됨",
     "search_placeholder": "플러그인 ID, 이름, 작성자 또는 리소스 검색...",
@@ -2003,13 +1995,8 @@
     "turkish": "터키어"
   },
   "theme": {
-    "switch": "테마",
     "switch_to_light": "라이트 모드로 전환",
-    "switch_to_dark": "다크 모드로 전환",
-    "light": "양모 종이",
-    "white": "순백",
-    "dark": "다크",
-    "auto": "시스템 설정 따름"
+    "switch_to_dark": "다크 모드로 전환"
   },
   "sidebar": {
     "toggle_expand": "사이드바 펼치기",
@@ -2393,9 +2380,6 @@
         "clear": "선택 해제",
         "empty": "아직 설정된 모델이 없습니다."
       }
-    },
-    "modelCatalog": {
-      "notLoaded": "로드되지 않음"
     }
   },
   "claude_reset": {

@@ -163,9 +163,7 @@
     "stat_credentials_hint": "{{active}} Hizmette · {{disabled}} Hizmet Vermiyor",
     "stat_credentials_empty": "Kimlik Dosyası Bulunamadı",
     "stat_provider_keys": "Sağlayıcı Anahtarları",
-    "stat_provider_keys_hint": "Yapılandırılmış API Anahtarları",
     "stat_models": "Modeller",
-    "stat_models_hint": "Proxy Üzerinden Sunuluyor",
     "traffic_title": "Verim",
     "traffic_description": "Son {{window}} İçinde 10 Dakikalık Dilimlere Göre İstekler",
     "traffic_keyboard_hint": "Dilimler Arasında Gezinmek için Ok Tuşlarını Kullan veya Kesin Sayılar için Veri Tablosunu Aç.",
@@ -202,13 +200,6 @@
     "runtime_ws_auth": "WebSocket Kimlik Doğrulaması",
     "runtime_model_prefix": "Model Öneki",
     "runtime_link": "Yapılandırmayı Düzenle",
-    "cta_title": "Buradan Nereye",
-    "cta_providers_desc": "API Anahtarları Ekle, Öncelikleri Ayarla ve Markaları Sına.",
-    "cta_auth_files_desc": "OAuth Kimlik Bilgilerini Yükle, Yenile ve Devre Dışı Bırak.",
-    "cta_config_desc": "Yönlendirme, Yeniden Deneme, Günlük ve Erişimi Ayarla.",
-    "cta_quota_desc": "Kimlik Bilgisi Başına Kalan Kotayı Kontrol Et.",
-    "cta_logs_desc": "İstekleri İzle ve Hata Raporlarını İndir.",
-    "cta_system_desc": "Sürüm Ayrıntıları ve Yönetim Merkezi Bilgisi.",
     "window_m": "{{minutes}} dk",
     "window_h": "{{hours}} sa",
     "window_hm": "{{hours}} sa {{minutes}} dk"
@@ -782,12 +773,12 @@
     "provider_hint": "Varsayılan Olarak Geçerli Süzgeç Kullanılır. Var Olan Bir Sağlayıcı Seç veya Yeni Bir Ad Yaz.",
     "model_source_loading": "Modeller Yükleniyor...",
     "model_source_unsupported": "Geçerli CPA Sürümü Model Listelerini Getirmeyi Desteklemiyor (Elle Giriş Yine Çalışır).",
-    "model_source_loaded": "{{count}} Model Yüklendi. 'Kaynak Model Adı' Açılır Listesini Kullan veya Özel Değerler Yaz. Boş Liste Kaydetmek O Sağlayıcıyı Kaldırır. Özgün Adı Koruyup Takma Ad Eklemek için 'Özgün Adı Koru' Seçeneğini Etkinleştir.",
+    "model_source_loaded": "{{count}} model yüklendi. Boş liste kaydedilirse yalnızca bu sağlayıcının takma adları kaldırılır; kimlik bilgileri korunur.",
     "alias_label": "Model Takma Adları",
     "alias_name_placeholder": "Kaynak Model Adı",
     "alias_placeholder": "Takma Ad (Zorunlu)",
     "duplicate_alias": "Bu Sağlayıcı için Her Takma Ad Benzersiz Olmalıdır.",
-    "alias_fork_label": "Özgün Adı Koru",
+    "alias_fork_label": "Özgün adı da koru",
     "add_alias": "Takma Ad Ekle",
     "save": "Kaydet/Güncelle",
     "save_success": "Model Takma Adları Güncellendi",
@@ -1783,6 +1774,7 @@
     "global_disabled": "Devre Dışı",
     "global_disabled_hint": "plugins.enabled false. Etkin Eklenti Örnekleri Geçerli Olmaz.",
     "plugins_dir": "Eklenti Dizini",
+    "file_path": "Dosya Yolu",
     "discovered": "Keşfedilen",
     "effective": "Geçerli",
     "search_placeholder": "Eklenti Kimliği, Adı, Yazarı veya Kaynağı Ara...",
@@ -2003,13 +1995,8 @@
     "turkish": "Türkçe"
   },
   "theme": {
-    "switch": "Tema",
     "switch_to_light": "Açık moda geç",
-    "switch_to_dark": "Koyu moda geç",
-    "light": "Yün Kağıt",
-    "white": "Saf Beyaz",
-    "dark": "Koyu",
-    "auto": "Sistemi İzle"
+    "switch_to_dark": "Koyu moda geç"
   },
   "sidebar": {
     "toggle_expand": "Kenar Çubuğunu Genişlet",
@@ -2393,9 +2380,6 @@
         "clear": "Temizle",
         "empty": "Henüz Yapılandırılmış Model Yok"
       }
-    },
-    "modelCatalog": {
-      "notLoaded": "Yüklenmedi"
     }
   },
   "claude_reset": {

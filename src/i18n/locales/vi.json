@@ -163,9 +163,7 @@
     "stat_credentials_hint": "{{active}} đang phục vụ · {{disabled}} không phục vụ",
     "stat_credentials_empty": "Chưa tìm thấy file credential nào",
     "stat_provider_keys": "Key provider",
-    "stat_provider_keys_hint": "API key đã cấu hình",
     "stat_models": "Model",
-    "stat_models_hint": "Phục vụ qua proxy",
     "traffic_title": "Thông lượng",
     "traffic_description": "Số yêu cầu mỗi 10 phút trong {{window}} vừa qua",
     "traffic_keyboard_hint": "Dùng phím mũi tên để chuyển giữa các khoảng thời gian, hoặc mở bảng dữ liệu để xem số chính xác.",
@@ -202,13 +200,6 @@
     "runtime_ws_auth": "Xác thực WebSocket",
     "runtime_model_prefix": "Tiền tố model",
     "runtime_link": "Chỉnh sửa cấu hình",
-    "cta_title": "Nên đi đâu từ đây",
-    "cta_providers_desc": "Thêm API key, đặt ưu tiên và kiểm thử các thương hiệu.",
-    "cta_auth_files_desc": "Tải lên, làm mới và vô hiệu hóa credential OAuth.",
-    "cta_config_desc": "Tinh chỉnh định tuyến, thử lại, ghi log và truy cập.",
-    "cta_quota_desc": "Kiểm tra quota còn lại của từng credential.",
-    "cta_logs_desc": "Theo dõi yêu cầu và tải báo cáo lỗi.",
-    "cta_system_desc": "Chi tiết phiên bản và thông tin trung tâm quản lý.",
     "window_m": "{{minutes}}p",
     "window_h": "{{hours}}g",
     "window_hm": "{{hours}}g {{minutes}}p"
@@ -735,12 +726,12 @@
     "provider_hint": "Mặc định theo bộ lọc hiện tại; chọn provider có sẵn hoặc nhập tên mới.",
     "model_source_loading": "Đang tải model...",
     "model_source_unsupported": "Phiên bản CPA hiện tại không hỗ trợ lấy danh sách model (vẫn có thể nhập thủ công).",
-    "model_source_loaded": "Đã tải {{count}} model. Dùng menu thả trong 'Tên model gốc', hoặc nhập giá trị tùy chỉnh. Lưu danh sách trống sẽ xóa provider đó. Bật 'Giữ tên gốc' để giữ tên gốc trong khi thêm bí danh.",
+    "model_source_loaded": "Đã tải {{count}} model. Lưu danh sách trống chỉ xóa bí danh của provider này; thông tin xác thực vẫn giữ nguyên.",
     "alias_label": "Bí danh model",
     "alias_name_placeholder": "Tên model gốc",
     "alias_placeholder": "Bí danh (bắt buộc)",
     "duplicate_alias": "Mỗi bí danh phải là duy nhất cho provider này.",
-    "alias_fork_label": "Giữ tên gốc",
+    "alias_fork_label": "Giữ cả tên gốc",
     "add_alias": "Thêm bí danh",
     "save": "Lưu/Cập nhật",
     "save_success": "Đã cập nhật bí danh model",
@@ -1739,6 +1730,7 @@
     "global_disabled": "Đã tắt",
     "global_disabled_hint": "plugins.enabled đang là false nên phiên bản plugin đã bật sẽ không có hiệu lực.",
     "plugins_dir": "Thư mục plugin",
+    "file_path": "Đường dẫn tệp",
     "discovered": "Đã phát hiện",
     "effective": "Có hiệu lực",
     "search_placeholder": "Tìm ID, tên, tác giả hoặc tài nguyên plugin...",
@@ -1959,13 +1951,8 @@
     "turkish": "Tiếng Thổ Nhĩ Kỳ"
   },
   "theme": {
-    "switch": "Giao diện",
     "switch_to_light": "Chuyển sang chế độ sáng",
-    "switch_to_dark": "Chuyển sang chế độ tối",
-    "light": "Giấy len",
-    "white": "Trắng tinh",
-    "dark": "Tối",
-    "auto": "Theo hệ thống"
+    "switch_to_dark": "Chuyển sang chế độ tối"
   },
   "sidebar": {
     "toggle_expand": "Mở rộng thanh bên",
@@ -2271,9 +2258,6 @@
         "clear": "Xóa",
         "empty": "Chưa cấu hình model nào"
       }
-    },
-    "modelCatalog": {
-      "notLoaded": "Chưa tải"
     },
     "behavior": {
       "title": "Hành vi dành riêng cho provider",

@@ -5,8 +5,10 @@ import { useRevealGroup } from '@/hooks/motion';
 import styles from './VaultHeader.module.scss';
 
 export type VaultHeaderProps = {
-  totalCount: number;
-  activeCount: number;
+  /** No longer rendered; optional for upstream call-site compatibility. */
+  totalCount?: number;
+  /** No longer rendered; optional for upstream call-site compatibility. */
+  activeCount?: number;
   problemCount: number;
   loading: boolean;
   refreshing: boolean;
@@ -22,7 +24,6 @@ export type VaultHeaderProps = {
 /**
  * Vault header: title, one meaningful caption (credentials needing attention, only when
  * there are any) and actions. Totals already live in the provider tabs and sidebar badge.
- * `totalCount` / `activeCount` stay in the props for upstream compatibility.
  */
 export function VaultHeader(props: VaultHeaderProps) {
   const {

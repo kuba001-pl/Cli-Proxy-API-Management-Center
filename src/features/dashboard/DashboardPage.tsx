@@ -1,14 +1,7 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import {
-  IconBot,
-  IconFileText,
-  IconSidebarConfig,
-  IconSidebarLogs,
-  IconSidebarQuota,
-  IconSidebarSystem,
-} from '@/components/ui/icons';
+import { IconBot, IconSidebarLogs } from '@/components/ui/icons';
 import { Collapsible } from '@/components/ui/Collapsible';
 import { useAuthStore } from '@/stores';
 import { usePrivacyStore } from '@/stores/usePrivacyStore';
@@ -52,7 +45,6 @@ export function DashboardPage() {
   const trafficRef = useRevealOnScroll<HTMLElement>();
   const fleetRef = useRevealOnScroll<HTMLElement>();
   const detailRef = useRevealGroup<HTMLElement>();
-  const ctaRef = useRevealGroup<HTMLElement>();
 
   const animatedTotal = useCountUp(traffic.total, connected);
 
@@ -92,7 +84,8 @@ export function DashboardPage() {
     key: string;
     label: string;
     value: string;
-    hint: string;
+    /** Optional: only when it adds something the label does not already say. */
+    hint?: string;
     status?: { tone: MeterTone; label: string };
     meter: number | null;
     meterLabel?: string;
@@ -133,7 +126,6 @@ export function DashboardPage() {
       key: 'providerKeys',
       label: t('dashboard.stat_provider_keys'),
       value: counts.providerKeys === null ? DASH : counts.providerKeys.toLocaleString(),
-      hint: t('dashboard.stat_provider_keys_hint'),
       meter: null,
       tone: undefined,
     },
@@ -141,7 +133,6 @@ export function DashboardPage() {
       key: 'models',
       label: t('dashboard.stat_models'),
       value: counts.models === null ? DASH : counts.models.toLocaleString(),
-      hint: t('dashboard.stat_models_hint'),
       meter: null,
       tone: undefined,
     },
@@ -175,45 +166,6 @@ export function DashboardPage() {
         { label: t('dashboard.runtime_model_prefix'), on: Boolean(config.forceModelPrefix) },
       ]
     : [];
-
-  const ctaCards = [
-    {
-      to: '/ai-providers',
-      icon: <IconBot size={20} />,
-      title: t('nav.ai_providers'),
-      description: t('dashboard.cta_providers_desc'),
-    },
-    {
-      to: '/auth-files',
-      icon: <IconFileText size={20} />,
-      title: t('nav.auth_files'),
-      description: t('dashboard.cta_auth_files_desc'),
-    },
-    {
-      to: '/config',
-      icon: <IconSidebarConfig size={20} />,
-      title: t('nav.config_management'),
-      description: t('dashboard.cta_config_desc'),
-    },
-    {
-      to: '/quota',
-      icon: <IconSidebarQuota size={20} />,
-      title: t('nav.quota_management'),
-      description: t('dashboard.cta_quota_desc'),
-    },
-    {
-      to: '/logs',
-      icon: <IconSidebarLogs size={20} />,
-      title: t('nav.logs'),
-      description: t('dashboard.cta_logs_desc'),
-    },
-    {
-      to: '/system',
-      icon: <IconSidebarSystem size={20} />,
-      title: t('nav.system_info'),
-      description: t('dashboard.cta_system_desc'),
-    },
-  ];
 
   return (
     <div className={styles.page}>
@@ -269,17 +221,19 @@ export function DashboardPage() {
                 className={styles.statMeter}
               />
             )}
-            <p className={styles.statHint}>
-              {tile.status && (
-                <>
-                  <span className={`${styles.hintStatus} ${styles[`tone_${tile.status.tone}`]}`}>
-                    {tile.status.label}
-                  </span>
-                  {' · '}
-                </>
-              )}
-              {tile.status ? <span className={styles.hintPhrase}>{tile.hint}</span> : tile.hint}
-            </p>
+            {tile.status || tile.hint ? (
+              <p className={styles.statHint}>
+                {tile.status && (
+                  <>
+                    <span className={`${styles.hintStatus} ${styles[`tone_${tile.status.tone}`]}`}>
+                      {tile.status.label}
+                    </span>
+                    {tile.hint ? ' · ' : null}
+                  </>
+                )}
+                {tile.status ? <span className={styles.hintPhrase}>{tile.hint}</span> : tile.hint}
+              </p>
+            ) : null}
           </article>
         ))}
       </section>
@@ -472,25 +426,6 @@ export function DashboardPage() {
                 →
               </span>
             </Link>
-          </div>
-        </section>
-
-        {/* ---------- CTA ---------- */}
-        <section className={styles.section} ref={ctaRef}>
-          <header className={styles.sectionHead} data-reveal>
-            <h2 className={styles.sectionTitle}>{t('dashboard.cta_title')}</h2>
-          </header>
-          <div className={styles.ctaGrid}>
-            {ctaCards.map((card) => (
-              <Link key={card.to} to={card.to} className={styles.ctaCard} data-reveal>
-                <span className={styles.ctaIcon}>{card.icon}</span>
-                <span className={styles.ctaTitle}>{card.title}</span>
-                <span className={styles.ctaDescription}>{card.description}</span>
-                <span className={styles.ctaArrow} aria-hidden="true">
-                  →
-                </span>
-              </Link>
-            ))}
           </div>
         </section>
       </Collapsible>
