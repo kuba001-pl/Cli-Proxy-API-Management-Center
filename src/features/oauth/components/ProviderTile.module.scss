@@ -79,20 +79,23 @@
   color: var(--icon-default);
   padding: 0 $space-1;
 }
-// Quiet secondary-button look; the whole tile is the hit area.
+// Same face as the shared secondary button (field fill + deliberate edge); the whole tile is
+// the hit area, so this is a visual label, not a nested button.
 .trailLabel {
-  padding: 4px 10px;
+  padding: 3px 10px;
+  border: 1px solid var(--border-default);
   border-radius: $radius-md;
-  background: var(--bg-raised);
+  background: var(--bg-field);
+  box-shadow: var(--shadow-control, none);
   color: var(--text-primary);
   font-size: $text-sm;
   line-height: $leading-sm;
   font-weight: 500;
   white-space: nowrap;
-  transition: background-color var(--dur-hover) var(--ease-out-strong);
+  transition: border-color var(--dur-hover) var(--ease-out-strong);
 }
 .tile:hover .trailLabel {
-  background: var(--bg-active);
+  border-color: var(--border-strong);
 }
 .status {
   display: inline-flex;

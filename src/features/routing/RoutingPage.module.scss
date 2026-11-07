@@ -501,7 +501,7 @@ $label-x: $tier-pad + 1px + $index-size + 10px; // where tier names begin
   &:focus-visible {
     outline: none;
     border-color: var(--focus-ring);
-    box-shadow: 0 0 0 3px var(--accent-subtle);
+    box-shadow: 0 0 0 1px var(--focus-ring);
   }
 
   &:disabled {

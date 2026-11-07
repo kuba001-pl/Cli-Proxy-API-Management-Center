@@ -32,18 +32,19 @@
     color var(--dur-press) var(--ease-out-strong),
     background-color var(--dur-press) var(--ease-out-strong);
 
-  &:hover:not(:disabled) {
+  &:hover:not(:disabled):not([aria-checked='true']) {
     color: var(--text-primary);
   }
-  /* Selected: a lifted chip plus a hairline ring, so selection never relies on tone alone. */
+  // Selected: an inverted pill (the strong neutral accent). Two adjacent greys were too close
+  // to tell apart; the inverted face clears 3:1 against the track in every theme.
   &[aria-checked='true'] {
-    background: var(--bg-selected);
-    box-shadow: inset 0 0 0 1px var(--border-strong);
-    color: var(--text-primary);
+    background: var(--accent);
+    color: var(--text-on-accent);
   }
+  // Focus stays a separate cue: a ring outside the pill, with a track-coloured gap.
   &:focus-visible {
     outline: 2px solid var(--focus-ring);
-    outline-offset: 1px;
+    outline-offset: 2px;
   }
   &:disabled {
     opacity: 0.45;

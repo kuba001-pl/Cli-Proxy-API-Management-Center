@@ -133,21 +133,26 @@
   border-radius: $radius-md;
   color: var(--icon-default);
 }
+// Shared secondary-button face (field fill + deliberate edge), never grey on the grey card.
 .trailLabel {
-  padding: 4px 10px;
+  padding: 3px 10px;
+  border: 1px solid var(--border-default);
   border-radius: $radius-md;
-  background: var(--bg-raised);
+  background: var(--bg-field);
+  box-shadow: var(--shadow-control, none);
   color: var(--text-primary);
   font-size: $text-sm;
   line-height: $leading-sm;
   font-weight: 500;
   white-space: nowrap;
+  transition: border-color var(--dur-hover) var(--ease-out-strong);
 }
 .site:hover .trailLabel {
-  background: var(--bg-active);
+  border-color: var(--border-strong);
 }
 @media (prefers-reduced-motion: reduce) {
-  .site {
+  .site,
+  .trailLabel {
     transition: none;
   }
 }

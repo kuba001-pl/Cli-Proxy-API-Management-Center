@@ -190,27 +190,6 @@
   align-items: center;
 }
 
-// Dense lists repeat the switch on every row; in dark mode the solid accent track becomes a
-// heavy blue column. Keep "on" unmistakable (accent outline + accent thumb, right side) with
-// a soft wash instead of a solid fill. Off stays the shared outlined track.
-:global([data-theme='dark']) .toggleWrap label input[role='switch']:checked + span {
-  background: var(--accent-subtle);
-  border-color: var(--accent-text);
-
-  > span {
-    background: var(--accent-text);
-  }
-}
-
-:global([data-theme='dark'])
-  .toggleWrap
-  label:hover
-  input[role='switch']:checked:not(:disabled)
-  + span {
-  background: var(--accent-subtle-hover);
-  border-color: var(--accent-text);
-}
-
 .iconBtn {
   display: inline-flex;
   align-items: center;

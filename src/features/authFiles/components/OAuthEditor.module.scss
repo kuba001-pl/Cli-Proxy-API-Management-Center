@@ -125,16 +125,18 @@
   gap: $spacing-sm;
   min-height: $control-height;
   max-width: 100%;
-  padding: 6px 10px;
-  border: 0;
+  padding: 5px 10px;
+  // Shared secondary-button face: never a grey chip on the grey settings panel.
+  border: 1px solid var(--border-default);
   border-radius: $radius-md;
-  background: var(--bg-raised);
+  background: var(--bg-field);
   color: var(--text-secondary);
   font-size: $text-sm;
   font-weight: 500;
   cursor: pointer;
   transition:
     background-color var(--dur-press) var(--ease-out-strong),
+    border-color var(--dur-press) var(--ease-out-strong),
     color var(--dur-press) var(--ease-out-strong);
 
   @include mobile {
@@ -168,7 +170,7 @@
 
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled) {
-      background: var(--bg-active);
+      border-color: var(--border-strong);
       color: var(--text-primary);
     }
   }
@@ -178,10 +180,10 @@
   display: none;
 }
 
-// One clear selected state: accent wash + check, no outline.
+// One clear selected state: strong neutral edge + check.
 .providerOptionActive,
 .providerOptionActive:hover:not(:disabled) {
-  background: var(--accent-subtle);
+  border-color: var(--accent);
   color: var(--text-primary);
 
   .providerCheck {
@@ -230,14 +232,12 @@
   }
 }
 
+// One line of consequence, not an instruction callout: plain secondary text, no slab.
 .catalogHint {
   display: flex;
   align-items: flex-start;
   gap: $space-2;
-  margin: 0 $space-5 $space-2;
-  padding: $space-2 $space-3;
-  border-radius: $radius-md;
-  background: var(--bg-raised);
+  margin: 0 $space-5 $space-3;
 
   svg {
     margin-top: 2px;
